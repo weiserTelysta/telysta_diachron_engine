@@ -11,7 +11,6 @@ class Configs:
     SNAPSHOT_DIR = DATA_DIR / "era_snapshots"
 
     # 全局配置
-    SEED = 1816153515
     DEFAULT_LEXICON = "Swadesh-Yakhontov_35.json"
 
     # 音素池
