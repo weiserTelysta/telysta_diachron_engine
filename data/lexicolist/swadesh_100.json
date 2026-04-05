@@ -1,0 +1,604 @@
+{
+    "swadesh_100": [
+        {
+            "id": 1,
+            "en": "I",
+            "zh": "我",
+            "pos": "pronoun"
+        },
+        {
+            "id": 2,
+            "en": "you",
+            "zh": "你",
+            "pos": "pronoun"
+        },
+        {
+            "id": 3,
+            "en": "we",
+            "zh": "我们",
+            "pos": "pronoun"
+        },
+        {
+            "id": 4,
+            "en": "this",
+            "zh": "这",
+            "pos": "pronoun"
+        },
+        {
+            "id": 5,
+            "en": "that",
+            "zh": "那",
+            "pos": "pronoun"
+        },
+        {
+            "id": 6,
+            "en": "who",
+            "zh": "谁",
+            "pos": "pronoun"
+        },
+        {
+            "id": 7,
+            "en": "what",
+            "zh": "什么",
+            "pos": "pronoun"
+        },
+        {
+            "id": 8,
+            "en": "not",
+            "zh": "不",
+            "pos": "adverb"
+        },
+        {
+            "id": 9,
+            "en": "all",
+            "zh": "全部",
+            "pos": "determiner"
+        },
+        {
+            "id": 10,
+            "en": "many",
+            "zh": "多",
+            "pos": "adjective"
+        },
+        {
+            "id": 11,
+            "en": "one",
+            "zh": "一",
+            "pos": "numeral"
+        },
+        {
+            "id": 12,
+            "en": "two",
+            "zh": "二",
+            "pos": "numeral"
+        },
+        {
+            "id": 13,
+            "en": "big",
+            "zh": "大",
+            "pos": "adjective"
+        },
+        {
+            "id": 14,
+            "en": "long",
+            "zh": "长",
+            "pos": "adjective"
+        },
+        {
+            "id": 15,
+            "en": "small",
+            "zh": "小",
+            "pos": "adjective"
+        },
+        {
+            "id": 16,
+            "en": "woman",
+            "zh": "女人",
+            "pos": "noun"
+        },
+        {
+            "id": 17,
+            "en": "man",
+            "zh": "男人",
+            "pos": "noun"
+        },
+        {
+            "id": 18,
+            "en": "person",
+            "zh": "人",
+            "pos": "noun"
+        },
+        {
+            "id": 19,
+            "en": "fish",
+            "zh": "鱼",
+            "pos": "noun"
+        },
+        {
+            "id": 20,
+            "en": "bird",
+            "zh": "鸟",
+            "pos": "noun"
+        },
+        {
+            "id": 21,
+            "en": "dog",
+            "zh": "狗",
+            "pos": "noun"
+        },
+        {
+            "id": 22,
+            "en": "louse",
+            "zh": "虱子",
+            "pos": "noun"
+        },
+        {
+            "id": 23,
+            "en": "tree",
+            "zh": "树",
+            "pos": "noun"
+        },
+        {
+            "id": 24,
+            "en": "seed",
+            "zh": "种子",
+            "pos": "noun"
+        },
+        {
+            "id": 25,
+            "en": "leaf",
+            "zh": "叶子",
+            "pos": "noun"
+        },
+        {
+            "id": 26,
+            "en": "root",
+            "zh": "根",
+            "pos": "noun"
+        },
+        {
+            "id": 27,
+            "en": "bark",
+            "zh": "树皮",
+            "pos": "noun"
+        },
+        {
+            "id": 28,
+            "en": "skin",
+            "zh": "皮肤",
+            "pos": "noun"
+        },
+        {
+            "id": 29,
+            "en": "flesh",
+            "zh": "肉",
+            "pos": "noun"
+        },
+        {
+            "id": 30,
+            "en": "blood",
+            "zh": "血",
+            "pos": "noun"
+        },
+        {
+            "id": 31,
+            "en": "bone",
+            "zh": "骨头",
+            "pos": "noun"
+        },
+        {
+            "id": 32,
+            "en": "grease",
+            "zh": "油/脂肪",
+            "pos": "noun"
+        },
+        {
+            "id": 33,
+            "en": "egg",
+            "zh": "蛋",
+            "pos": "noun"
+        },
+        {
+            "id": 34,
+            "en": "horn",
+            "zh": "角",
+            "pos": "noun"
+        },
+        {
+            "id": 35,
+            "en": "tail",
+            "zh": "尾巴",
+            "pos": "noun"
+        },
+        {
+            "id": 36,
+            "en": "feather",
+            "zh": "羽毛",
+            "pos": "noun"
+        },
+        {
+            "id": 37,
+            "en": "hair",
+            "zh": "头发",
+            "pos": "noun"
+        },
+        {
+            "id": 38,
+            "en": "head",
+            "zh": "头",
+            "pos": "noun"
+        },
+        {
+            "id": 39,
+            "en": "ear",
+            "zh": "耳朵",
+            "pos": "noun"
+        },
+        {
+            "id": 40,
+            "en": "eye",
+            "zh": "眼睛",
+            "pos": "noun"
+        },
+        {
+            "id": 41,
+            "en": "nose",
+            "zh": "鼻子",
+            "pos": "noun"
+        },
+        {
+            "id": 42,
+            "en": "mouth",
+            "zh": "嘴巴",
+            "pos": "noun"
+        },
+        {
+            "id": 43,
+            "en": "tooth",
+            "zh": "牙齿",
+            "pos": "noun"
+        },
+        {
+            "id": 44,
+            "en": "tongue",
+            "zh": "舌头",
+            "pos": "noun"
+        },
+        {
+            "id": 45,
+            "en": "claw",
+            "zh": "爪子",
+            "pos": "noun"
+        },
+        {
+            "id": 46,
+            "en": "foot",
+            "zh": "脚",
+            "pos": "noun"
+        },
+        {
+            "id": 47,
+            "en": "knee",
+            "zh": "膝盖",
+            "pos": "noun"
+        },
+        {
+            "id": 48,
+            "en": "hand",
+            "zh": "手",
+            "pos": "noun"
+        },
+        {
+            "id": 49,
+            "en": "belly",
+            "zh": "肚子",
+            "pos": "noun"
+        },
+        {
+            "id": 50,
+            "en": "neck",
+            "zh": "脖子",
+            "pos": "noun"
+        },
+        {
+            "id": 51,
+            "en": "breast",
+            "zh": "乳房",
+            "pos": "noun"
+        },
+        {
+            "id": 52,
+            "en": "heart",
+            "zh": "心",
+            "pos": "noun"
+        },
+        {
+            "id": 53,
+            "en": "liver",
+            "zh": "肝",
+            "pos": "noun"
+        },
+        {
+            "id": 54,
+            "en": "drink",
+            "zh": "喝",
+            "pos": "verb"
+        },
+        {
+            "id": 55,
+            "en": "eat",
+            "zh": "吃",
+            "pos": "verb"
+        },
+        {
+            "id": 56,
+            "en": "bite",
+            "zh": "咬",
+            "pos": "verb"
+        },
+        {
+            "id": 57,
+            "en": "see",
+            "zh": "看",
+            "pos": "verb"
+        },
+        {
+            "id": 58,
+            "en": "hear",
+            "zh": "听",
+            "pos": "verb"
+        },
+        {
+            "id": 59,
+            "en": "know",
+            "zh": "知道",
+            "pos": "verb"
+        },
+        {
+            "id": 60,
+            "en": "sleep",
+            "zh": "睡觉",
+            "pos": "verb"
+        },
+        {
+            "id": 61,
+            "en": "die",
+            "zh": "死",
+            "pos": "verb"
+        },
+        {
+            "id": 62,
+            "en": "kill",
+            "zh": "杀",
+            "pos": "verb"
+        },
+        {
+            "id": 63,
+            "en": "swim",
+            "zh": "游泳",
+            "pos": "verb"
+        },
+        {
+            "id": 64,
+            "en": "fly",
+            "zh": "飞",
+            "pos": "verb"
+        },
+        {
+            "id": 65,
+            "en": "walk",
+            "zh": "走",
+            "pos": "verb"
+        },
+        {
+            "id": 66,
+            "en": "come",
+            "zh": "来",
+            "pos": "verb"
+        },
+        {
+            "id": 67,
+            "en": "lie",
+            "zh": "躺",
+            "pos": "verb"
+        },
+        {
+            "id": 68,
+            "en": "sit",
+            "zh": "坐",
+            "pos": "verb"
+        },
+        {
+            "id": 69,
+            "en": "stand",
+            "zh": "站",
+            "pos": "verb"
+        },
+        {
+            "id": 70,
+            "en": "give",
+            "zh": "给",
+            "pos": "verb"
+        },
+        {
+            "id": 71,
+            "en": "say",
+            "zh": "说",
+            "pos": "verb"
+        },
+        {
+            "id": 72,
+            "en": "sun",
+            "zh": "太阳",
+            "pos": "noun"
+        },
+        {
+            "id": 73,
+            "en": "moon",
+            "zh": "月亮",
+            "pos": "noun"
+        },
+        {
+            "id": 74,
+            "en": "star",
+            "zh": "星星",
+            "pos": "noun"
+        },
+        {
+            "id": 75,
+            "en": "water",
+            "zh": "水",
+            "pos": "noun"
+        },
+        {
+            "id": 76,
+            "en": "rain",
+            "zh": "雨",
+            "pos": "noun"
+        },
+        {
+            "id": 77,
+            "en": "stone",
+            "zh": "石头",
+            "pos": "noun"
+        },
+        {
+            "id": 78,
+            "en": "sand",
+            "zh": "沙子",
+            "pos": "noun"
+        },
+        {
+            "id": 79,
+            "en": "earth",
+            "zh": "土地",
+            "pos": "noun"
+        },
+        {
+            "id": 80,
+            "en": "cloud",
+            "zh": "云",
+            "pos": "noun"
+        },
+        {
+            "id": 81,
+            "en": "smoke",
+            "zh": "烟",
+            "pos": "noun"
+        },
+        {
+            "id": 82,
+            "en": "fire",
+            "zh": "火",
+            "pos": "noun"
+        },
+        {
+            "id": 83,
+            "en": "ash",
+            "zh": "灰烬",
+            "pos": "noun"
+        },
+        {
+            "id": 84,
+            "en": "burn",
+            "zh": "燃烧",
+            "pos": "verb"
+        },
+        {
+            "id": 85,
+            "en": "path",
+            "zh": "路",
+            "pos": "noun"
+        },
+        {
+            "id": 86,
+            "en": "mountain",
+            "zh": "山",
+            "pos": "noun"
+        },
+        {
+            "id": 87,
+            "en": "red",
+            "zh": "红色",
+            "pos": "adjective"
+        },
+        {
+            "id": 88,
+            "en": "green",
+            "zh": "绿色",
+            "pos": "adjective"
+        },
+        {
+            "id": 89,
+            "en": "yellow",
+            "zh": "黄色",
+            "pos": "adjective"
+        },
+        {
+            "id": 90,
+            "en": "white",
+            "zh": "白色",
+            "pos": "adjective"
+        },
+        {
+            "id": 91,
+            "en": "black",
+            "zh": "黑色",
+            "pos": "adjective"
+        },
+        {
+            "id": 92,
+            "en": "night",
+            "zh": "夜晚",
+            "pos": "noun"
+        },
+        {
+            "id": 93,
+            "en": "hot",
+            "zh": "热",
+            "pos": "adjective"
+        },
+        {
+            "id": 94,
+            "en": "cold",
+            "zh": "冷",
+            "pos": "adjective"
+        },
+        {
+            "id": 95,
+            "en": "full",
+            "zh": "满",
+            "pos": "adjective"
+        },
+        {
+            "id": 96,
+            "en": "new",
+            "zh": "新",
+            "pos": "adjective"
+        },
+        {
+            "id": 97,
+            "en": "good",
+            "zh": "好",
+            "pos": "adjective"
+        },
+        {
+            "id": 98,
+            "en": "round",
+            "zh": "圆",
+            "pos": "adjective"
+        },
+        {
+            "id": 99,
+            "en": "dry",
+            "zh": "干燥",
+            "pos": "adjective"
+        },
+        {
+            "id": 100,
+            "en": "name",
+            "zh": "名字",
+            "pos": "noun"
+        }
+    ]
+}
