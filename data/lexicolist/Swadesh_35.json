@@ -1,0 +1,214 @@
+{
+    "swadesh207": [
+        {
+            "id": "sy_001",
+            "en": "I",
+            "zh": "我",
+            "pos": "pronoun"
+        },
+        {
+            "id": "sy_002",
+            "en": "you",
+            "zh": "你",
+            "pos": "pronoun"
+        },
+        {
+            "id": "sy_003",
+            "en": "this",
+            "zh": "这",
+            "pos": "pronoun"
+        },
+        {
+            "id": "sy_004",
+            "en": "who",
+            "zh": "谁",
+            "pos": "pronoun"
+        },
+        {
+            "id": "sy_005",
+            "en": "what",
+            "zh": "什么",
+            "pos": "pronoun"
+        },
+        {
+            "id": "sy_006",
+            "en": "one",
+            "zh": "一",
+            "pos": "numeral"
+        },
+        {
+            "id": "sy_007",
+            "en": "two",
+            "zh": "二",
+            "pos": "numeral"
+        },
+        {
+            "id": "sy_008",
+            "en": "fish",
+            "zh": "鱼",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_009",
+            "en": "dog",
+            "zh": "狗",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_010",
+            "en": "louse",
+            "zh": "虱子",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_011",
+            "en": "blood",
+            "zh": "血",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_012",
+            "en": "bone",
+            "zh": "骨头",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_013",
+            "en": "egg",
+            "zh": "蛋",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_014",
+            "en": "horn",
+            "zh": "角",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_015",
+            "en": "tail",
+            "zh": "尾巴",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_016",
+            "en": "ear",
+            "zh": "耳朵",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_017",
+            "en": "eye",
+            "zh": "眼睛",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_018",
+            "en": "nose",
+            "zh": "鼻子",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_019",
+            "en": "tooth",
+            "zh": "牙齿",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_020",
+            "en": "tongue",
+            "zh": "舌头",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_021",
+            "en": "hand",
+            "zh": "手",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_022",
+            "en": "know",
+            "zh": "知道",
+            "pos": "verb"
+        },
+        {
+            "id": "sy_023",
+            "en": "die",
+            "zh": "死",
+            "pos": "verb"
+        },
+        {
+            "id": "sy_024",
+            "en": "give",
+            "zh": "给",
+            "pos": "verb"
+        },
+        {
+            "id": "sy_025",
+            "en": "sun",
+            "zh": "太阳",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_026",
+            "en": "moon",
+            "zh": "月亮",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_027",
+            "en": "water",
+            "zh": "水",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_028",
+            "en": "salt",
+            "zh": "盐",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_029",
+            "en": "stone",
+            "zh": "石头",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_030",
+            "en": "wind",
+            "zh": "风",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_031",
+            "en": "fire",
+            "zh": "火",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_032",
+            "en": "year",
+            "zh": "年",
+            "pos": "noun"
+        },
+        {
+            "id": "sy_033",
+            "en": "full",
+            "zh": "满",
+            "pos": "adjective"
+        },
+        {
+            "id": "sy_034",
+            "en": "new",
+            "zh": "新",
+            "pos": "adjective"
+        },
+        {
+            "id": "sy_035",
+            "en": "name",
+            "zh": "名字",
+            "pos": "noun"
+        }
+    ]
+}
