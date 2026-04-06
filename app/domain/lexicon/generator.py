@@ -65,7 +65,7 @@ class BasicLexiconGenerator:
                 concept=concept_en,
                 pos=pos,
                 ipa_current=ipa_sound,
-                ipa_history=[ipa_sound],
+                ipa_history=[],
                 frequency_weight=round(weight, 4),
                 is_dead=False,
                 ipa_exemplars=[{"form": ipa_sound, "weight": 1.0}],
