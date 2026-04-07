@@ -8,6 +8,7 @@ from app.domain.lexicon.dag import WordDAG
 if TYPE_CHECKING:
     from app.domain.lexicon.models import LexicalEntity
     from app.domain.storage.event_log import DeltaEvent
+    from app.domain.syntax.typology import TypologyMatrix
 
 
 class EngineHotState:
@@ -149,14 +150,21 @@ class EngineHotState:
     # Snapshot / clone
     # ------------------------------------------------------------------
 
-    def snapshot(self) -> dict:
-        """Return a full serializable dict of the current state."""
+    def snapshot(self, typology: "TypologyMatrix | None" = None) -> dict:
+        """Return a full serializable dict of the current state.
+
+        When *typology* is provided it is included in the snapshot, making
+        it possible to reconstruct the full language state from a keyframe.
+        """
         from dataclasses import asdict
-        return {
+        result: dict = {
             "era": self.current_era,
             "lexicon": {wid: asdict(e) for wid, e in self.lexicon.items()},
             "dag": self.dag.to_dict(),
         }
+        if typology is not None:
+            result["typology"] = typology.to_dict()
+        return result
 
     def clone(self) -> "EngineHotState":
         """Deep-copy the state for read-only historical reconstruction."""

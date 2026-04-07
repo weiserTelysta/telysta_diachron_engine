@@ -127,7 +127,7 @@ class EvolutionEngine:
         if hot is None:
             hot = EngineHotState(current_era=era_offset, swadesh_concepts=swadesh_concepts)
             hot.load_entities(entities)
-            km.write_keyframe(era_offset, hot.snapshot())
+            km.write_keyframe(era_offset, hot.snapshot(typology=current_typology))
             logger.debug("Era %d | 初始词库 %d 词，已保存关键帧。", era_offset, len(hot))
         else:
             hot.current_era = era_offset
@@ -218,7 +218,7 @@ class EvolutionEngine:
 
             # Keyframe + file log
             if km.should_write_keyframe(era):
-                km.write_keyframe(era, hot.snapshot())
+                km.write_keyframe(era, hot.snapshot(typology=current_typology))
             drift_info = f"  typology={current_typology.morph_type}" if drift_stats.gram_density >= 0.15 else ""
             logger.debug(
                 "Era %2d | changes=%d  ops=%s  resolved=%d%s",
