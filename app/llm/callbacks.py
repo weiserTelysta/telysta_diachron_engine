@@ -89,7 +89,7 @@ def generate_and_validate_proposal(
     prompt = _build_proposal_prompt(req)
     result = backend.call(prompt, schema_hint=SEMANTIC_PROPOSAL_RESPONSE_SCHEMA)
 
-    # Stage 1: Schema sanitization
+    # Stage 1: Schema sanitization — structural error → hard reject
     san: SanitizeResult = sanitize(
         result.raw_json,
         "SemanticProposalResponse",
@@ -98,27 +98,46 @@ def generate_and_validate_proposal(
         current_era=req.era,
     )
     if not san.ok:
-        logger.warning("Proposal schema rejected for era %d: %s", req.era, san.errors)
+        logger.warning(
+            "Proposal rejected (era=%d, stage=schema): %s",
+            req.era, "; ".join(san.errors),
+        )
         return CallbackVerdict(status="rejected", reason="; ".join(san.errors))
 
-    proposal = SemanticProposalResponse.from_dict(san.data)  # type: ignore[arg-type]
+    try:
+        proposal = SemanticProposalResponse.from_dict(san.data)  # type: ignore[arg-type]
+    except KeyError as exc:
+        logger.error("Proposal contract deserialization failed: %s", exc)
+        return CallbackVerdict(status="rejected", reason=f"Deserialization error: {exc}")
 
-    # Stage 2: Symbolic validation
+    # Stage 2: Symbolic validation — domain mismatch → lore_only (not commit)
     sym_errors = _symbolic_validate(proposal, known_primes, req.context_chain)
     if sym_errors:
-        logger.warning("Proposal symbolic rejected: %s", sym_errors)
+        logger.warning(
+            "Proposal lore_only (era=%d, stage=symbolic): %s",
+            req.era, "; ".join(sym_errors),
+        )
         return CallbackVerdict(
             status="lore_only",
             proposal=proposal,
             reason="; ".join(sym_errors),
         )
 
-    # Stage 3: Commit policy
+    # Stage 3: Commit policy — low-confidence proposals are lore-only
     if proposal.confidence < 0.2:
+        logger.info(
+            "Proposal lore_only (era=%d, stage=commit): confidence=%.2f",
+            req.era, proposal.confidence,
+        )
         return CallbackVerdict(
             status="lore_only",
             proposal=proposal,
-            reason=f"Low confidence: {proposal.confidence}",
+            reason=f"Low confidence: {proposal.confidence:.2f}",
         )
 
+    logger.info(
+        "Proposal accepted (era=%d): %s %s→%s conf=%.2f",
+        req.era, proposal.word_id, proposal.from_prime,
+        proposal.to_prime, proposal.confidence,
+    )
     return CallbackVerdict(status="accepted", proposal=proposal)

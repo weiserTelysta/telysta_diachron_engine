@@ -1,6 +1,7 @@
 """Integration test: evolve() with is_llm on and off.
 
-Ensures the symbolic evolution path is unaffected by the LLM flag.
+Ensures the symbolic evolution path is unaffected by the LLM flag,
+and that Phase 5 orchestrator receives real era delta events.
 """
 
 from app.core.settings import GlobalSettings, global_settings
@@ -9,7 +10,6 @@ from app.domain.storage.hot_state import EngineHotState
 
 
 def _evolve_with_flag(is_llm: bool, seed: int = 888) -> EngineHotState:
-    """Run a minimal evolve with the given LLM flag and return the final state."""
     from main import evolve
 
     settings_dict = {"seed": seed, "is_llm": is_llm}
@@ -58,3 +58,43 @@ class TestEvolveLLMFlag:
         hot = _evolve_with_flag(is_llm=True, seed=888)
         total_entries = sum(len(e.semantic_era_log) for e in hot.all_alive())
         assert total_entries > 0
+
+    def test_lore_files_created_with_llm_on(self) -> None:
+        """Era lore sidecar files must be written when lore is enabled."""
+        from app.core.config import configs
+        from app.llm.lore import LoreSidecar
+
+        _evolve_with_flag(is_llm=True, seed=888)
+
+        sidecar = LoreSidecar(configs.SNAPSHOT_DIR / "lore_test")
+        lore_entries = sidecar.load_all()
+        assert len(lore_entries) > 0, "Expected lore files to be written"
+
+    def test_era_deltas_not_empty_for_lore(self) -> None:
+        """Smoke test: orchestrator receives non-trivial delta lists by era 3."""
+        captured_deltas: list[list] = []
+
+        from app.core.settings import global_settings
+        from app.domain.lexicon.factory import create_basic_lexicon_generator
+        from app.llm.backends.mock_backend import MockBackend
+        from app.llm.lore import LoreSidecar
+        from app.llm.orchestrator import Phase5Orchestrator
+        from app.core.config import configs
+        from main import evolve
+
+        global_settings.modify_settings({"seed": 42, "is_llm": True})
+
+        class SpyOrchestrator(Phase5Orchestrator):
+            def on_era_end(self, era, hot_state, active_ops, delta_events, typology, **kw):
+                captured_deltas.append(list(delta_events))
+                return super().on_era_end(era, hot_state, active_ops, delta_events, typology, **kw)
+
+        backend = MockBackend(seed=42)
+        orch = SpyOrchestrator(backend, global_settings, LoreSidecar(configs.SNAPSHOT_DIR / "lore_test"))
+
+        words = create_basic_lexicon_generator(global_settings).generate()
+        evolve(words, era_steps=3, swadesh_concepts={e.concept for e in words}, phase5_orchestrator=orch)
+
+        # At least one era should have produced sound-change delta events
+        total_deltas = sum(len(d) for d in captured_deltas)
+        assert total_deltas > 0, "Expected non-empty delta events passed to orchestrator"

@@ -58,10 +58,18 @@ def generate_era_lore(
 
     san: SanitizeResult = sanitize(result.raw_json, "EraLoreResponse")
     if not san.ok:
-        logger.warning("Lore sanitize failed for era %d: %s", req.era, san.errors)
+        logger.warning(
+            "Lore rejected (era=%d, stage=schema): %s",
+            req.era, "; ".join(san.errors),
+        )
         return None
 
-    resp = EraLoreResponse.from_dict(san.data)  # type: ignore[arg-type]
+    try:
+        resp = EraLoreResponse.from_dict(san.data)  # type: ignore[arg-type]
+    except KeyError as exc:
+        logger.error("Lore contract deserialization failed: %s", exc)
+        return None
+
     resp.era = req.era
     return resp
 

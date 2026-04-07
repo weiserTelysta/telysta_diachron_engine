@@ -83,10 +83,10 @@ class EraLoreResponse:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> EraLoreResponse:
+    def from_dict(cls, d: dict[str, Any]) -> "EraLoreResponse":
         return cls(
-            narrative=d.get("narrative", ""),
-            tags=d.get("tags", []),
+            narrative=d["narrative"],
+            tags=d["tags"],
             era=d.get("era", 0),
         )
 
@@ -105,12 +105,12 @@ class SemanticProposalResponse:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> SemanticProposalResponse:
+    def from_dict(cls, d: dict[str, Any]) -> "SemanticProposalResponse":
         return cls(
-            word_id=d.get("word_id", ""),
-            shift_type=d.get("shift_type", ""),
-            from_prime=d.get("from_prime", ""),
-            to_prime=d.get("to_prime", ""),
+            word_id=d["word_id"],
+            shift_type=d["shift_type"],
+            from_prime=d["from_prime"],
+            to_prime=d["to_prime"],
             chain=d.get("chain", []),
             confidence=d.get("confidence", 0.0),
             reasoning=d.get("reasoning", ""),
@@ -130,10 +130,10 @@ class RagLexemeResponse:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> RagLexemeResponse:
+    def from_dict(cls, d: dict[str, Any]) -> "RagLexemeResponse":
         return cls(
-            new_concept=d.get("new_concept", ""),
-            new_ipa=d.get("new_ipa", ""),
+            new_concept=d["new_concept"],
+            new_ipa=d["new_ipa"],
             root_ids_used=d.get("root_ids_used", []),
             morpheme_breakdown=d.get("morpheme_breakdown", ""),
             confidence=d.get("confidence", 0.0),
@@ -153,9 +153,9 @@ class ReverseEtymologyResponse:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> ReverseEtymologyResponse:
+    def from_dict(cls, d: dict[str, Any]) -> "ReverseEtymologyResponse":
         return cls(
-            modern_word_id=d.get("modern_word_id", ""),
+            modern_word_id=d["modern_word_id"],
             accepted_chain=d.get("accepted_chain", []),
             rejected_candidates=d.get("rejected_candidates", []),
             confidence_band=d.get("confidence_band", "unknown"),

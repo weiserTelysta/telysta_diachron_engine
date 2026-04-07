@@ -36,7 +36,7 @@ def bootstrap_app() -> None:
     from app.core.logging import configure_root
     ui_mock_data = {"seed": 888, "is_llm": True}
     global_settings.modify_settings(ui_mock_data)
-    configure_root(global_settings.log_level)
+    configure_root(global_settings.log_level, verbose=global_settings.log_verbose, force=True)
     logger.info("系统引导完成，配置已就绪。")
 
 
@@ -215,6 +215,10 @@ def evolve(
 
         era_event = DeltaEvent(event_type=DeltaEventType.ERA_ADVANCE, era=era, word_id="")
         hot.apply_delta(era_event)
+
+        # Capture delta snapshot BEFORE flush_era clears the buffer.
+        era_deltas = [e for e in km._delta_buffer if e.era == era]
+
         km.flush_era(era)
 
         drift_stats = drift_engine.observe(hot)
@@ -222,8 +226,6 @@ def evolve(
 
         # --- Phase 5: LLM orchestration at era boundary ---
         if phase5_orchestrator is not None:
-            era_deltas = [e for e in km._delta_buffer if e.era == era] + \
-                         [ev for pair in homophone_pairs for ev in homophone_resolver.resolve(pair, era, rng) if False]
             p5_summary = phase5_orchestrator.on_era_end(
                 era=era,
                 hot_state=hot,

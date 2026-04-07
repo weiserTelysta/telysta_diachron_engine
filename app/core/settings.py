@@ -33,6 +33,7 @@ class GlobalSettings:
     llm_enable_reverse_etymology: bool = False
     llm_max_proposals_per_era: int = 5
     log_level: str = "INFO"
+    log_verbose: bool = False
 
     _inventory: "PhonemeInventory | None" = field(default=None, repr=False, compare=False)
 
@@ -41,7 +42,7 @@ class GlobalSettings:
             "is_llm", "llm_provider", "llm_model", "llm_api_key", "llm_base_url",
             "llm_timeout_s", "llm_strict_schema", "llm_enable_lore",
             "llm_enable_callback", "llm_enable_rag", "llm_enable_reverse_etymology",
-            "llm_max_proposals_per_era", "log_level",
+            "llm_max_proposals_per_era", "log_level", "log_verbose",
         }),
         repr=False, compare=False,
     )

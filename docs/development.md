@@ -1135,13 +1135,62 @@ def test_final_vowel_drop():
 
 **目标**：引入 LLM，将语言学数据包装为世界观叙事，并建立受控回调通道。
 
-- [ ] LLM 接口抽象层（支持多模型后端热切换，统一输入/输出 Schema）
-- [ ] 强 JSON Schema 数据交接格式定义（引擎 → LLM）
-- [ ] 时代纪事生成（~100 字历史叙事，封装为"神话/迁徙/技术革命"）
-- [ ] 受控回调协议实现（LLM 语义提案 → 校验器 → 入库或拒绝）
-- [ ] RAG 锚点新词推演（相关古词根检索 → LLM 推断新词义 → 校验）
-- [ ] 逆向词源引擎（预设现代词 → 倒推词源，含放弃判定阈值）
-- [ ] LLM 功能全局开关（纯符号模式须完全可用）
+- [x] LLM 接口抽象层（`app/llm/base.py` `LLMBackend` ABC；`MockBackend` + `OpenAICompatibleBackend` 实现）
+- [x] 强 JSON Schema 数据交接格式定义（`app/llm/schema.py` 定义四类 schema；`app/llm/contracts.py` 对应 dataclass）
+- [x] 时代纪事生成（`app/llm/lore.py`；sidecar 持久化至 `data/era_snapshots/lore/`）
+- [x] 受控回调协议实现（`app/llm/callbacks.py`：schema 校验 → symbolic 校验 → commit 策略三段式）
+- [x] RAG 锚点新词推演（`app/llm/rag.py`；结构化检索，无向量数据库依赖）
+- [x] 逆向词源引擎（`app/llm/etymology.py`；置信度低时返回 `unknown` 而不是伪造路径）
+- [x] LLM 功能全局开关（`GlobalSettings.is_llm`；各子功能独立 flag：`llm_enable_lore / callback / rag / reverse_etymology`）
+
+#### 已实现模块
+
+| 模块 | 路径 | 说明 |
+|------|------|------|
+| 抽象接口 | `app/llm/base.py` | `LLMBackend` ABC，`LLMCallResult` 数据包 |
+| 合约层 | `app/llm/contracts.py` | 四类请求/响应 dataclass，必填字段严格消费 |
+| Schema | `app/llm/schema.py` | JSON Schema（required / enum / range / maxLength） |
+| 安全层 | `app/llm/sanitizer.py` | 七层防护（见下文） |
+| 编排器 | `app/llm/orchestrator.py` | `Phase5Orchestrator`，era 边界统一调度 |
+| 纪事 | `app/llm/lore.py` | 生成 + sidecar 持久化 |
+| 回调 | `app/llm/callbacks.py` | 三段式校验，按层记录拒绝/降级原因 |
+| RAG | `app/llm/rag.py` | 结构化检索 + 新词推演 |
+| 词源 | `app/llm/etymology.py` | 逆向推演 + 放弃阈值 |
+| 工厂 | `app/llm/factory.py` | 按 `llm_provider` 热切换后端 |
+| Mock | `app/llm/backends/mock_backend.py` | 确定性 fixture，离线测试 |
+| HTTP | `app/llm/backends/openai_compatible.py` | OpenAI-compatible endpoint 适配 |
+
+#### LLM 安全约束（Sanitizer 七层防护）
+
+所有 LLM 原始输出必须通过 `app/llm/sanitizer.sanitize()` 后才能进入 contract 反序列化。
+
+1. **JSON 解析隔离** — 非合法 JSON 立即拒绝
+2. **顶层类型** — 必须为 dict，数组/原始值拒绝
+3. **字段白名单** — 未知键静默删除（警告日志），不透传
+4. **必填字段** — schema `required` 中缺失任意字段 → 拒绝
+5. **类型 / 枚举 / 数值范围** — `shift_type` / `confidence_band` 枚举；`confidence` 限 `[0, 1]`
+6. **内容清洗** — HTML/JS/shell 注入模式拒绝；IPA 字段非法字符剥离；prime ID 格式验证
+7. **速率异常** — 每 era `SemanticProposalResponse` 不超过 `llm_max_proposals_per_era`
+
+Callback 分层策略：
+- schema 失败 → `rejected`（不进入 lore）
+- symbolic 失败 → `lore_only`（有叙事记录，不写入语义层）
+- 低置信度 → `lore_only`
+- 全部通过 → `accepted`，写入 `LexicalEntity.semantic_era_log`
+
+#### 日志与可观测性
+
+- 统一入口：所有模块使用 `from app.core.logging import get_logger; logger = get_logger(__name__)`
+- 启动时序：`bootstrap_app()` 调用 `configure_root(level, verbose, force=True)` 覆盖默认配置
+- `GlobalSettings.log_level`（默认 `INFO`）和 `log_verbose`（默认 `False`）控制输出格式
+- `app.llm` 子树固定在 `DEBUG`，方便调试后端调用
+- 拒绝事件日志格式：`"Proposal rejected (era=N, stage=<schema|symbolic|commit>): <reason>"`
+
+#### 已知约束与未来加固项
+
+- **Provider 侧 schema 强制**：当前仅发送 `response_format: json_object`，未发送完整 schema 给 provider。本地 sanitizer 是最终裁决层，后续可按 provider 能力升级为 `json_schema` 模式。
+- **RAG 检索为结构化召回**：v1 使用 POS/词频/DAG 祖先打分，无向量检索。后续可接入 embedding 层提升语义相关性。
+- **逆向词源置信度**：目前依赖 LLM 自报置信度，未做独立验证。未来可加入 Levenshtein 距离与音变规则匹配作为辅助评分。
 
 ---
 
