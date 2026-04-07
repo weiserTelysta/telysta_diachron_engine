@@ -37,3 +37,4 @@ class LexicalEntity:
     grammaticalized_from_id: str = ""
     grammatical_function: str = ""
     # "" | "aspect_marker" | "tense_marker" | "case_marker" | "coordinator" | "subordinator" | "locative" | "negation"
+    stasis_counter: int = 0

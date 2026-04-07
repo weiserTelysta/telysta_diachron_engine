@@ -1073,13 +1073,13 @@ def test_final_vowel_drop():
 
 - [x] `LexicalEntity` 语法化字段扩展（`word_class`, `grammaticalization_stage`, `grammaticalized_from_id`, `grammatical_function`）
 - [x] `data/grammaticalization_pathways.yaml` 语义-功能路由配置（7 条预设路径，含类型学三分支）
-- [ ] 语言类型漂移引擎（孤立语 ↔ 黏着语 ↔ 屈折语，含触发阈值配置）
-- [ ] `GrammaticalizationOperator`：读取 `grammaticalization_pathways.yaml`，按触发条件（`true_freq_rank` + 磨损步数）将高频实词降级为虚词，产物形态由类型学参数决定
-- [ ] 语法化演变链配置化（内置预设路径 + 用户自定义路径）
-- [ ] 语序漂移触发条件（格位脱落率 → 语序固化判定）
-- [ ] 汉藏路线：虚词/助词生成系统
-- [ ] 印欧路线：后缀屈折磨损系统
-- [ ] 类推传播（Analogy）：相似词群之间的形态模式扩散
+- [x] 语言类型漂移引擎（孤立语 ↔ 黏着语 ↔ 屈折语，含触发阈值配置）
+- [x] `GrammaticalizationOperator`：读取 `grammaticalization_pathways.yaml`，按触发条件（`true_freq_rank` + 磨损步数）将高频实词降级为虚词，产物形态由类型学参数决定
+- [x] 语法化演变链配置化（内置预设路径 + 用户自定义路径）
+- [x] 语序漂移触发条件（格位脱落率 → 语序固化判定）
+- [x] 汉藏路线：虚词/助词生成系统（`free_particle` role + `GenerationTree` 粒子位置）
+- [x] 印欧路线：后缀屈折磨损系统（`PortmanteauMorpheme` + `PortmanteauRegistry` 融卷算法）
+- [x] 类推传播（Analogy）：相似词群之间的形态模式扩散（`AnalogyPropagator` 音系相似度）
 
 ---
 

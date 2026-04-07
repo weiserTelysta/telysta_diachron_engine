@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+禁止任何基于字符串 Symbol 的逻辑判断，所有音系判定必须通过 Phoneme.matches(feature_spec) 运行。”

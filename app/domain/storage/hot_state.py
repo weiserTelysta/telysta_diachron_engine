@@ -134,7 +134,10 @@ class EngineHotState:
         elif event.event_type == DeltaEventType.DAG_EDGE_ADD:
             if event.dag_parent_id and event.word_id and event.edge_type:
                 self.dag.add_edge(
-                    event.dag_parent_id, event.word_id, event.era, event.edge_type  # type: ignore[arg-type]
+                    event.dag_parent_id,
+                    event.word_id,
+                    event.era,
+                    event.edge_type,  # type: ignore[arg-type]
                 )
 
         elif event.event_type == DeltaEventType.ERA_ADVANCE:

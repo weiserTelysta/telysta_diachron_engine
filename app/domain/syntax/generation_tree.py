@@ -76,6 +76,11 @@ class GenerationTree:
             elif word.role == "modifier":
                 modifier_nodes.append(GenerationNode(word=word, syntactic_slot="MOD"))
 
+        particle_nodes: list[GenerationNode] = []
+        for word in words:
+            if word.role == "particle":
+                particle_nodes.append(GenerationNode(word=word, syntactic_slot="PAR"))
+
         for slot in slot_order:
             node = core_nodes.get(slot)
             if node is not None:
@@ -83,9 +88,15 @@ class GenerationTree:
                     tree.append(mod)
                 modifier_nodes.clear()
                 tree.append(node)
+                if slot == "V":
+                    for par in particle_nodes:
+                        tree.append(par)
+                    particle_nodes.clear()
 
         for mod in modifier_nodes:
             tree.append(mod)
+        for par in particle_nodes:
+            tree.append(par)
 
         return tree
 

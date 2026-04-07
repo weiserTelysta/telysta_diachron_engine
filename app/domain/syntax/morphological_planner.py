@@ -8,6 +8,7 @@ from app.domain.syntax.typology import TypologyMatrix
 
 if TYPE_CHECKING:
     from app.domain.lexicon.models import LexicalEntity
+    from app.domain.morphology.portmanteau import PortmanteauRegistry
     from app.domain.syntax.csg import ControlledSemanticGraph
 
 
@@ -34,16 +35,26 @@ class MorphologicalPlanner:
     2. Write agent's person/number to FeatureBlackboard for Agreement.
     3. Attach case suffixes to subject/object per case_system.
     4. Attach tense/aspect morpheme to verb per tense_system.
-    5. Attach agreement suffix to verb if agreement_features is non-empty.
+    5. Check PortmanteauRegistry for fused endings before concatenating.
+    6. Attach agreement suffix to verb if agreement_features is non-empty.
 
     Edge convention in CSG:
     - ``FROM →[agent]→ TO``: FROM is the agent, TO is the predicate.
     - ``FROM →[patient]→ TO``: FROM is the predicate, TO is the patient.
     - ``FROM →[modifier]→ TO``: FROM modifies TO.
+
+    When typology.morph_type == "isolating", grammaticalized function words
+    that carry the ``word_class="function"`` flag are planned as ``"particle"``
+    role entries rather than being attached as affixes.
     """
 
-    def __init__(self, typology: TypologyMatrix) -> None:
+    def __init__(
+        self,
+        typology: TypologyMatrix,
+        portmanteau_registry: "PortmanteauRegistry | None" = None,
+    ) -> None:
         self._typ = typology
+        self._port = portmanteau_registry
 
     def plan(
         self,
@@ -82,6 +93,10 @@ class MorphologicalPlanner:
                 pw = self._plan_modifier(edge.from_id, csg, lexmap)
                 if pw is not None:
                     planned.append(pw)
+
+        if self._typ.morph_type == "isolating":
+            for pw in self._plan_particles(lexmap):
+                planned.append(pw)
 
         return planned
 
@@ -182,6 +197,9 @@ class MorphologicalPlanner:
             if agr:
                 suffixes.append(agr)
 
+        if self._port and suffixes:
+            suffixes = self._fuse_suffixes(suffixes)
+
         return PlannedWord(
             role="verb",
             lexeme_ipa=entity.ipa_current,
@@ -189,6 +207,62 @@ class MorphologicalPlanner:
             suffixes=suffixes,
             pos=entity.pos,
         )
+
+    def _fuse_suffixes(self, suffixes: list[str]) -> list[str]:
+        """Replace adjacent suffix pairs with portmanteau forms where available.
+
+        Iterates left-to-right; on a match, replaces the pair with the fused
+        surface form and continues from the next unmatched suffix. Also tracks
+        co-occurrences for future automatic fusion via maybe_fuse.
+        """
+        if self._port is None or len(suffixes) < 2:
+            return suffixes
+
+        result: list[str] = []
+        i = 0
+        while i < len(suffixes):
+            if i + 1 < len(suffixes):
+                key_a = suffixes[i]
+                key_b = suffixes[i + 1]
+                self._port.track_cooccurrence(key_a, key_b)
+                fused = self._port.lookup(frozenset({key_a, key_b}))
+                if fused is not None:
+                    result.append(fused.surface_form)
+                    i += 2
+                    continue
+            result.append(suffixes[i])
+            i += 1
+        return result
+
+    def _plan_particles(
+        self,
+        lexmap: dict[str, "LexicalEntity | None"],
+    ) -> list[PlannedWord]:
+        """Collect function-word particles for isolating-language output.
+
+        In isolating typology, grammaticalized function words (word_class="function",
+        grammaticalization_stage >= 2) appear as independent syntactic tokens
+        (particles) rather than as affixes. This implements the Sino-Tibetan route
+        where grammaticalized content words become free particles (了, 在, 把…).
+        """
+        particles: list[PlannedWord] = []
+        for entity in lexmap.values():
+            if entity is None:
+                continue
+            if (
+                entity.word_class == "function"
+                and entity.grammaticalization_stage >= 2
+                and entity.grammatical_function
+                and entity.ipa_current
+            ):
+                particles.append(
+                    PlannedWord(
+                        role="particle",
+                        lexeme_ipa=entity.ipa_current,
+                        pos=entity.pos,
+                    )
+                )
+        return particles
 
     def _plan_modifier(
         self,
