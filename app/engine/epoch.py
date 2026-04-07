@@ -255,14 +255,33 @@ class EpochManager:
         epoch: EpochConfig,
         typology: "TypologyMatrix",
     ) -> "TypologyMatrix":
-        """Return a typology adjusted by epoch's morph_type_bias."""
+        """Adjust typology based on epoch's morph_type_bias.
+
+        Instead of directly overwriting morph_type (which caused the "style
+        layer override" bug), the bias sets per-domain states uniformly and
+        then syncs the legacy field.  'auto' leaves everything untouched.
+        """
+        from app.domain.syntax.typology import AGGLUTINATIVE, ANALYTIC, FUSIONAL, MorphologicalState
+
         bias = epoch.morph_type_bias
         if bias == "auto":
             return typology
         if bias == "random":
             bias = random.choice(_MORPH_CYCLE)
-        if typology.morph_type != bias:
-            return typology.clone_with(morph_type=bias)
+
+        level_map = {"isolating": ANALYTIC, "agglutinative": AGGLUTINATIVE, "fusional": FUSIONAL}
+        level = level_map.get(bias)
+        if level is None:
+            return typology
+
+        def_level = min(level, 1)  # definiteness capped at 1
+        typology.morph_state = MorphologicalState(
+            verb_tam=level,
+            verb_agreement=level,
+            noun_case=level,
+            noun_definiteness=def_level,
+        )
+        typology.sync_morph_type()
         return typology
 
 

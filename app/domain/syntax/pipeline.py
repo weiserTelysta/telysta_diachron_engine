@@ -8,6 +8,7 @@ from app.domain.syntax.feature_blackboard import FeatureBlackboard
 from app.domain.syntax.generation_tree import GenerationTree
 from app.domain.syntax.lexicalization import LexicalizationLayer
 from app.domain.syntax.morphological_planner import MorphologicalPlanner
+from app.domain.syntax.morphological_validator import MorphologicalConsistencyValidator
 from app.domain.syntax.surface_phonology import SurfacePhonologyApplier
 from app.domain.syntax.typology import TypologyMatrix
 
@@ -60,6 +61,7 @@ class CSGPipeline:
         self._prime_graph = prime_graph
         self._default_typology = typology
         self._validator = CSGValidator(prime_graph)
+        self._morph_validator = MorphologicalConsistencyValidator()
         self._lex_layer = LexicalizationLayer(prime_graph)
         self._surface = SurfacePhonologyApplier(registry, inventory)
         self._portmanteau = portmanteau_registry
@@ -74,9 +76,15 @@ class CSGPipeline:
         """Run the full five-step pipeline for a single era / typology."""
         typ = typology if typology is not None else self._default_typology
 
-        # ① Validate
+        # ① Validate CSG structure
         errors = self._validator.validate(csg)
         warnings = [f"CSG: {e}" for e in errors]
+
+        # ①b Validate morphological consistency
+        morph_check = self._morph_validator.validate(typ)
+        if morph_check.errors:
+            warnings.extend(f"MORPH_ERROR: {e}" for e in morph_check.errors)
+        warnings.extend(f"MORPH_WARN: {w}" for w in morph_check.warnings)
 
         # ② Lexicalize
         lexmap = self._lex_layer.lexicalize(hot_state)
