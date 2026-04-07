@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from app.core.logging import get_logger
 from app.domain.syntax.csg import CSGValidator, ControlledSemanticGraph
 from app.domain.syntax.feature_blackboard import FeatureBlackboard
 from app.domain.syntax.generation_tree import GenerationTree
@@ -11,6 +12,8 @@ from app.domain.syntax.morphological_planner import MorphologicalPlanner
 from app.domain.syntax.morphological_validator import MorphologicalConsistencyValidator
 from app.domain.syntax.surface_phonology import SurfacePhonologyApplier
 from app.domain.syntax.typology import TypologyMatrix
+
+_logger = get_logger(__name__)
 
 if TYPE_CHECKING:
     from app.domain.morphology.portmanteau import PortmanteauRegistry
@@ -80,11 +83,15 @@ class CSGPipeline:
         errors = self._validator.validate(csg)
         warnings = [f"CSG: {e}" for e in errors]
 
-        # ①b Validate morphological consistency
+        # ①b Validate morphological consistency (structural pre-flight check)
         morph_check = self._morph_validator.validate(typ)
         if morph_check.errors:
+            for err in morph_check.errors:
+                _logger.error("Morphological consistency error: %s", err)
             warnings.extend(f"MORPH_ERROR: {e}" for e in morph_check.errors)
-        warnings.extend(f"MORPH_WARN: {w}" for w in morph_check.warnings)
+        for warn in morph_check.warnings:
+            _logger.debug("Morphological plausibility warning: %s", warn)
+            warnings.append(f"MORPH_WARN: {warn}")
 
         # ② Lexicalize
         lexmap = self._lex_layer.lexicalize(hot_state)

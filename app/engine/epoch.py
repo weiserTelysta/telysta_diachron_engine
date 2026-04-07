@@ -261,15 +261,22 @@ class EpochManager:
         layer override" bug), the bias sets per-domain states uniformly and
         then syncs the legacy field.  'auto' leaves everything untouched.
         """
+        from app.domain.syntax.bias_profile import BiasProfile
         from app.domain.syntax.typology import AGGLUTINATIVE, ANALYTIC, FUSIONAL, MorphologicalState
 
         bias = epoch.morph_type_bias
         if bias == "auto":
+            typology.bias_profile = BiasProfile.neutral()
             return typology
         if bias == "random":
             bias = random.choice(_MORPH_CYCLE)
 
         level_map = {"isolating": ANALYTIC, "agglutinative": AGGLUTINATIVE, "fusional": FUSIONAL}
+        preset_map = {
+            "isolating": BiasProfile.modern,
+            "agglutinative": BiasProfile.primal,
+            "fusional": BiasProfile.imperial,
+        }
         level = level_map.get(bias)
         if level is None:
             return typology
@@ -282,6 +289,8 @@ class EpochManager:
             noun_definiteness=def_level,
         )
         typology.sync_morph_type()
+        # Attach BiasProfile so per-era drift inherits epoch-level style intention
+        typology.bias_profile = preset_map[bias]()
         return typology
 
 

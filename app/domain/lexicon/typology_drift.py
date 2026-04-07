@@ -8,6 +8,7 @@ from app.domain.syntax.typology import AGGLUTINATIVE, ANALYTIC, FUSIONAL
 
 if TYPE_CHECKING:
     from app.domain.storage.hot_state import EngineHotState
+    from app.domain.syntax.bias_profile import BiasProfile
     from app.domain.syntax.typology import MorphologicalState, TypologyMatrix
 
 
@@ -93,12 +94,17 @@ class TypologyDriftEngine:
         stats: DriftStats,
         era: int = 0,
         rng: random.Random | None = None,
+        bias_profile: "BiasProfile | None" = None,
     ) -> "TypologyMatrix":
         """Return a (possibly updated) TypologyMatrix based on observed stats.
 
-        Word-order lock is applied first. Then per-domain Markov transitions
+        Word-order lock is applied first.  Then per-domain Markov transitions
         are evaluated independently, each with ``drift_probability`` gated by
         cooldown.
+
+        When *bias_profile* is provided its per-domain transition weights are
+        multiplied into the effective drift probability before each roll.
+        Passing ``typology.bias_profile`` here is the canonical usage.
         """
         if not self._word_order_locked and stats.case_density < self.case_loss_threshold:
             self._word_order_locked = True
@@ -106,20 +112,21 @@ class TypologyDriftEngine:
         if era - self._last_drift_era < self.cooldown_eras:
             return typology
 
+        effective_bias = bias_profile or (typology.bias_profile if typology else None)
         rng = rng or random.Random()
         ms = typology.morph_state
         changed = False
 
         for domain in _TERNARY_DOMAINS:
             current = getattr(ms, domain)
-            next_val = self._ternary_transition(current, stats, rng)
+            next_val = self._ternary_transition(current, stats, rng, domain, effective_bias)
             if next_val != current:
                 setattr(ms, domain, next_val)
                 changed = True
 
         for domain in _BINARY_DOMAINS:
             current = getattr(ms, domain)
-            next_val = self._binary_transition(current, stats, rng)
+            next_val = self._binary_transition(current, stats, rng, domain, effective_bias)
             if next_val != current:
                 setattr(ms, domain, next_val)
                 changed = True
@@ -130,41 +137,64 @@ class TypologyDriftEngine:
 
         return typology
 
+    def _effective_drift_prob(
+        self,
+        domain: str,
+        from_state: int,
+        to_state: int,
+        bias_profile: "BiasProfile | None",
+    ) -> float:
+        """Return drift probability multiplied by BiasProfile weight if available."""
+        base = self.drift_probability
+        if bias_profile is not None:
+            base = min(base * bias_profile.weight_for(domain, from_state, to_state), 1.0)
+        return base
+
     def _ternary_transition(
-        self, current: int, stats: DriftStats, rng: random.Random
+        self,
+        current: int,
+        stats: DriftStats,
+        rng: random.Random,
+        domain: str = "",
+        bias_profile: "BiasProfile | None" = None,
     ) -> int:
         """Markov transition for a 3-state domain (0 ↔ 1 → 2 → 0)."""
-        if rng.random() > self.drift_probability:
-            return current
-
         gram = stats.gram_density
         if current == ANALYTIC:
-            # 0 → 1: driven by grammaticalization pressure
-            if gram >= self.gram_density_threshold:
+            p = self._effective_drift_prob(domain, ANALYTIC, AGGLUTINATIVE, bias_profile)
+            if rng.random() <= p and gram >= self.gram_density_threshold:
                 return AGGLUTINATIVE
         elif current == AGGLUTINATIVE:
-            # 1 → 2: phonetic fusion (higher gram density = more co-occurrence)
-            if gram >= self.gram_density_threshold * 1.5:
+            p_fuse = self._effective_drift_prob(domain, AGGLUTINATIVE, FUSIONAL, bias_profile)
+            if rng.random() <= p_fuse and gram >= self.gram_density_threshold * 1.5:
                 return FUSIONAL
-            # 1 → 0: erosion can also collapse back (lower probability)
-            if stats.case_density < self.case_loss_threshold and rng.random() < 0.3:
+            p_collapse = self._effective_drift_prob(domain, AGGLUTINATIVE, ANALYTIC, bias_profile)
+            if (stats.case_density < self.case_loss_threshold
+                    and rng.random() <= p_collapse * 0.3):
                 return ANALYTIC
         elif current == FUSIONAL:
-            # 2 → 0: erosion collapses endings (entropy-irreversible bypass)
-            if rng.random() < 0.4:
+            p = self._effective_drift_prob(domain, FUSIONAL, ANALYTIC, bias_profile)
+            if rng.random() <= p * 0.4:
                 return ANALYTIC
         return current
 
     def _binary_transition(
-        self, current: int, stats: DriftStats, rng: random.Random
+        self,
+        current: int,
+        stats: DriftStats,
+        rng: random.Random,
+        domain: str = "",
+        bias_profile: "BiasProfile | None" = None,
     ) -> int:
         """Markov transition for noun_definiteness (only 0 ↔ 1)."""
-        if rng.random() > self.drift_probability:
-            return current
-        if current == 0 and stats.gram_density >= self.gram_density_threshold:
-            return 1
-        if current == 1 and stats.case_density < self.case_loss_threshold:
-            return 0
+        if current == 0:
+            p = self._effective_drift_prob(domain, 0, 1, bias_profile)
+            if rng.random() <= p and stats.gram_density >= self.gram_density_threshold:
+                return 1
+        elif current == 1:
+            p = self._effective_drift_prob(domain, 1, 0, bias_profile)
+            if rng.random() <= p and stats.case_density < self.case_loss_threshold:
+                return 0
         return current
 
     # Legacy-compatible single-step helper (used by old callers)

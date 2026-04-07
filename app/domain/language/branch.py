@@ -11,6 +11,7 @@ from app.domain.syntax.pipeline import CSGPipeline, GenerationResult
 from app.domain.syntax.typology import TypologyMatrix
 
 if TYPE_CHECKING:
+    from app.domain.lexicon.grammaticalization_operator import GrammaticalizationOperator
     from app.domain.morphology.portmanteau import PortmanteauRegistry
     from app.domain.phonology.operators.registry import OperatorRegistry
     from app.domain.phonology.phoneme import PhonemeInventory
@@ -58,6 +59,7 @@ class BranchLanguage:
         registry: "OperatorRegistry",
         inventory: "PhonemeInventory",
         portmanteau_registry: "PortmanteauRegistry | None" = None,
+        grammaticalization_operator: "GrammaticalizationOperator | None" = None,
     ) -> None:
         self.config = config
         self.hot_state: "EngineHotState" = initial_state.clone()
@@ -71,6 +73,7 @@ class BranchLanguage:
         self._inventory = inventory
         self._portmanteau = portmanteau_registry
         self._drift_engine = TypologyDriftEngine()
+        self._gram_op: "GrammaticalizationOperator | None" = grammaticalization_operator
         self._pipeline = CSGPipeline(
             prime_graph=prime_graph,
             typology=self.typology,
@@ -146,9 +149,25 @@ class BranchLanguage:
         )
         self.hot_state.apply_delta(era_event)
 
+        # Optional grammaticalization: runs if an operator was injected at
+        # construction time.  Each alive entity is evaluated against configured
+        # pathways and stasis rules; results are applied to the hot state.
+        if self._gram_op is not None:
+            alive = self.hot_state.all_alive()
+            self._gram_op.prepare_era(alive)
+            for entity in alive:
+                gram_result = self._gram_op.check(
+                    entity, self.hot_state, self.typology, next_era
+                )
+                if gram_result is not None:
+                    self.typology.morpheme_table[gram_result.morpheme_key] = gram_result.new_ipa
+
         # Per-domain typology drift for this branch
         drift_stats = self._drift_engine.observe(self.hot_state)
-        self._drift_engine.maybe_drift(self.typology, drift_stats, era=next_era, rng=rng)
+        self._drift_engine.maybe_drift(
+            self.typology, drift_stats, era=next_era, rng=rng,
+            bias_profile=self.typology.bias_profile,
+        )
 
         return changed_count
 

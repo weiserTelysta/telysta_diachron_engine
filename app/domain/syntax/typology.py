@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
+
+if TYPE_CHECKING:
+    from app.domain.syntax.bias_profile import BiasProfile
 
 WordOrderScheme = Literal["SOV", "SVO", "VSO", "VOS", "OVS", "OSV"]
 TenseSystem = Literal["inflectional", "isolating", "tenseless"]
@@ -122,6 +125,10 @@ class TypologyMatrix:
     morph_state: MorphologicalState = field(default_factory=MorphologicalState)
     feature_presence: FeaturePresence = field(default_factory=FeaturePresence)
 
+    # Optional style bias profile; consumed by TypologyDriftEngine per era.
+    # Not linguistic data — purely a probability weight carrier.
+    bias_profile: "BiasProfile | None" = field(default=None, repr=False)
+
     def __post_init__(self) -> None:
         if self.word_order not in _VALID_WORD_ORDERS:
             raise ValueError(f"Invalid word_order: {self.word_order!r}")
@@ -198,7 +205,11 @@ class TypologyMatrix:
         return clone
 
     def to_dict(self) -> dict:
-        """Full serializable representation including morph_state and presence."""
+        """Full serializable representation including morph_state and presence.
+
+        bias_profile is intentionally excluded — it is runtime metadata, not
+        part of the linguistic state that should be persisted in keyframes.
+        """
         return {
             "word_order": self.word_order,
             "tense_system": self.tense_system,

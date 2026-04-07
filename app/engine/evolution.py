@@ -163,7 +163,12 @@ class EvolutionEngine:
             # Typology drift
             drift_stats = drift_engine.observe(hot)
             _morph_before = current_typology.morph_type
-            current_typology = drift_engine.maybe_drift(current_typology, drift_stats, era)
+            current_typology = drift_engine.maybe_drift(
+                current_typology,
+                drift_stats,
+                era,
+                bias_profile=current_typology.bias_profile,
+            )
             _typology_changed = current_typology.morph_type != _morph_before
 
             # Phase 5 LLM orchestration
