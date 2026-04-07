@@ -2,7 +2,10 @@ import random
 from pathlib import Path
 
 from app.core.config import configs
+from app.core.logging import get_logger
 from app.core.settings import global_settings
+
+logger = get_logger(__name__)
 from app.domain.language.branch import BranchConfig, BranchLanguage
 from app.domain.lexicon.analogy import AnalogyPropagator
 from app.domain.lexicon.factory import create_basic_lexicon_generator
@@ -30,9 +33,11 @@ from app.domain.syntax.typology import TypologyMatrix
 
 
 def bootstrap_app() -> None:
-    ui_mock_data = {"seed": 888, "is_llm": False}
+    from app.core.logging import configure_root
+    ui_mock_data = {"seed": 888, "is_llm": True}
     global_settings.modify_settings(ui_mock_data)
-    print("[Main] 系统引导完成，配置已就绪。")
+    configure_root(global_settings.log_level)
+    logger.info("系统引导完成，配置已就绪。")
 
 
 def build_registry(backend: NativeBackend) -> OperatorRegistry:
@@ -51,7 +56,10 @@ def evolve(
     keyframe_interval: int = 10,
     swadesh_concepts: set[str] | None = None,
     typology: TypologyMatrix | None = None,
+    phase5_orchestrator: "Phase5Orchestrator | None" = None,
 ) -> tuple[EngineHotState, TypologyMatrix]:
+    from app.llm.orchestrator import Phase5Orchestrator
+
     inv = global_settings.inventory
     backend = NativeBackend()
     registry = build_registry(backend)
@@ -79,7 +87,7 @@ def evolve(
     hot.load_entities(entities)
 
     km.write_keyframe(0, hot.snapshot())
-    print(f"\n[Era 0] 初始词库 {len(hot)} 词，已保存关键帧。")
+    logger.info("Era 0 | 初始词库 %d 词，已保存关键帧。", len(hot))
 
     for era in range(1, era_steps + 1):
         rng = random.Random(global_settings.seed + era)
@@ -212,6 +220,20 @@ def evolve(
         drift_stats = drift_engine.observe(hot)
         current_typology = drift_engine.maybe_drift(current_typology, drift_stats, era)
 
+        # --- Phase 5: LLM orchestration at era boundary ---
+        if phase5_orchestrator is not None:
+            era_deltas = [e for e in km._delta_buffer if e.era == era] + \
+                         [ev for pair in homophone_pairs for ev in homophone_resolver.resolve(pair, era, rng) if False]
+            p5_summary = phase5_orchestrator.on_era_end(
+                era=era,
+                hot_state=hot,
+                active_ops=active_ops,
+                delta_events=era_deltas,
+                typology=current_typology,
+            )
+            if not p5_summary.get("skipped"):
+                logger.info("Era %2d | Phase5: %s", era, {k: v for k, v in p5_summary.items() if k != "era"})
+
         drift_info = ""
         if drift_stats.gram_density >= 0.15:
             drift_info = f"  类型学: {current_typology.morph_type}"
@@ -219,14 +241,14 @@ def evolve(
         homophone_summary = f"  同音词消解 {resolved_count} 事件" if resolved_count else ""
         if km.should_write_keyframe(era):
             km.write_keyframe(era, hot.snapshot())
-            print(
-                f"[Era {era:2d}] 音变 {changed_count:3d} 词，已保存关键帧。"
-                f"  活跃算子: {[o.name for o in active_ops]}{homophone_summary}{drift_info}"
+            logger.info(
+                "Era %2d | 音变 %3d 词，已保存关键帧。  活跃算子: %s%s%s",
+                era, changed_count, [o.name for o in active_ops], homophone_summary, drift_info,
             )
         else:
-            print(
-                f"[Era {era:2d}] 音变 {changed_count:3d} 词。"
-                f"  活跃算子: {[o.name for o in active_ops]}{homophone_summary}{drift_info}"
+            logger.info(
+                "Era %2d | 音变 %3d 词。  活跃算子: %s%s%s",
+                era, changed_count, [o.name for o in active_ops], homophone_summary, drift_info,
             )
 
     return hot, current_typology
@@ -273,10 +295,10 @@ def demo_csg_pipeline(
     pipeline = CSGPipeline(prime_graph, svo_typology, registry, inv)
     csg = _build_demo_csg()
 
-    print("\n" + "=" * 60)
-    print("[Phase 3] CSG 跨时代同句对比")
-    print("=" * 60)
-    print("  CSG: I-SEE-YOU / tense=PAST / agent=1sg")
+    logger.info("\n" + "=" * 60)
+    logger.info("[Phase 3] CSG 跨时代同句对比")
+    logger.info("=" * 60)
+    logger.info("  CSG: I-SEE-YOU / tense=PAST / agent=1sg")
 
     results = pipeline.compare_eras(
         csg,
@@ -291,14 +313,14 @@ def demo_csg_pipeline(
             for k, v in r.lexmap_used.items()
             if k in ("I", "SEE", "YOU")
         )
-        print(f"  {r}   [{lexmap_str}]")
+        logger.info("  %s   [%s]", r, lexmap_str)
         if r.warnings:
             for w in r.warnings:
-                print(f"    ⚠ {w}")
+                logger.warning("    %s", w)
 
-    print("\n" + "=" * 60)
-    print("[Phase 3] 分支语言独立演化对比")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("[Phase 3] 分支语言独立演化对比")
+    logger.info("=" * 60)
 
     branch_a = BranchLanguage(
         BranchConfig(name="北方方言 (SVO)", fork_era=0),
@@ -319,9 +341,9 @@ def demo_csg_pipeline(
     result_a = branch_a.generate(csg)
     result_b = branch_b.generate(csg)
 
-    print(f"  {branch_a.name:20s} (Era {branch_a.current_era}): /{result_a.sentence}/")
-    print(f"  {branch_b.name:20s} (Era {branch_b.current_era}): /{result_b.sentence}/")
-    print("=" * 60)
+    logger.info("  %s (Era %d): /%s/", branch_a.name, branch_a.current_era, result_a.sentence)
+    logger.info("  %s (Era %d): /%s/", branch_b.name, branch_b.current_era, result_b.sentence)
+    logger.info("=" * 60)
 
 
 def main() -> None:
@@ -329,7 +351,7 @@ def main() -> None:
 
     engine = create_basic_lexicon_generator(global_settings)
     generated_words = engine.generate()
-    print(f"\n[Main] 创世完成，共生成 {len(generated_words)} 个核心词汇。")
+    logger.info("创世完成，共生成 %d 个核心词汇。", len(generated_words))
 
     swadesh_concepts = {e.concept for e in generated_words}
 
@@ -337,24 +359,39 @@ def main() -> None:
     era0_hot.load_entities(generated_words)
     era0_snapshot = era0_hot.clone()
 
-    hot, final_typology = evolve(generated_words, era_steps=10, swadesh_concepts=swadesh_concepts)
-    print(f"\n[Main] 最终类型学: {final_typology.morph_type} / {final_typology.word_order}")
+    # --- Phase 5: Initialize orchestrator ---
+    phase5_orch = None
+    if global_settings.is_llm:
+        from app.llm.factory import create_backend
+        from app.llm.lore import LoreSidecar
+        from app.llm.orchestrator import Phase5Orchestrator
+
+        llm_backend = create_backend(global_settings)
+        lore_sidecar = LoreSidecar(configs.SNAPSHOT_DIR / "lore")
+        phase5_orch = Phase5Orchestrator(llm_backend, global_settings, lore_sidecar)
+        logger.info("Phase5 orchestrator initialized (provider=%s)", llm_backend.provider_name)
+
+    hot, final_typology = evolve(
+        generated_words, era_steps=10, swadesh_concepts=swadesh_concepts,
+        phase5_orchestrator=phase5_orch,
+    )
+    logger.info("最终类型学: %s / %s", final_typology.morph_type, final_typology.word_order)
 
     sample = list(hot.all_alive())[:5]
-    print("\n[Main] 演化后词库样本（前 5 词）：")
+    logger.info("演化后词库样本（前 5 词）：")
     for e in sample:
         history = " → ".join(e.ipa_history + [e.ipa_current]) if e.ipa_history else e.ipa_current
-        print(f"  [{e.concept}] {history}")
+        logger.info("  [%s] %s", e.concept, history)
 
     alive = list(hot.all_alive())
     assembler = SentenceAssembler(alive)
     rng = random.Random(global_settings.seed)
     proto_sentences = assembler.assemble(n=10, rng=rng)
-    print("\n[Main] Proto-sentence assembly（10 句，纯 IPA 拼接，无形态变化）：")
+    logger.info("Proto-sentence assembly（10 句，纯 IPA 拼接，无形态变化）：")
     for i, s in enumerate(proto_sentences, 1):
-        print(f"  {i:2d}. /{s}/")
+        logger.info("  %2d. /%s/", i, s)
 
-    print(f"\n[Main] DAG 词源图: {hot.dag}")
+    logger.info("DAG 词源图: %s", hot.dag)
 
     backend = NativeBackend()
     registry = build_registry(backend)

@@ -3,6 +3,19 @@ from typing import List
 
 
 @dataclass
+class SemanticEraEntry:
+    """One auditable record of an LLM-proposed semantic change."""
+    era: int
+    proposal_type: str          # "metaphor" | "metonymy" | "broadening" | "narrowing" | "lore_only"
+    from_prime: str = ""
+    to_prime: str = ""
+    chain: List[str] = field(default_factory=list)
+    validator_status: str = ""  # "accepted" | "rejected" | "lore_only"
+    reason: str = ""
+    lore_only: bool = False
+
+
+@dataclass
 class LexicalEntity:
     # --- Phase 0 ---
     id: str
@@ -28,8 +41,7 @@ class LexicalEntity:
 
     # --- Phase 3 ---
     semantic_primes: List[str] = field(default_factory=list)
-    semantic_era_log: List[dict] = field(default_factory=list)
-    # [{"era": 3, "shift": "METAPHOR", "from": "SUN", "to": "SOUL"}]
+    semantic_era_log: List[SemanticEraEntry] = field(default_factory=list)
 
     # --- Phase 4 ---
     grammaticalization_stage: int = 0

@@ -3,8 +3,11 @@ import random
 from dataclasses import asdict
 
 from app.core.config import configs
+from app.core.logging import get_logger
 from app.domain.lexicon.models import LexicalEntity
 from app.domain.phonology.phoneme import PhonemeInventory
+
+logger = get_logger(__name__)
 
 
 class BasicLexiconGenerator:
@@ -111,12 +114,12 @@ class BasicLexiconGenerator:
         dict_data = [asdict(item) for item in lexicon_data]
         with open(save_path, "w", encoding="utf-8") as f:
             json.dump(dict_data, f, ensure_ascii=False, indent=4)
-        print(f"\n[System] 创世快照已永久保存至: {save_path}")
+        logger.info("创世快照已永久保存至: %s", save_path)
 
     def generate(self) -> list[LexicalEntity]:
-        print(f"[System] 引擎启动，当前创世种子: {self.seed}")
-        print(f"[System] 正在读取语义图纸: {self.lexicolist_filepath}")
-        print(f"[System] 使用音素库: {self.inventory}")
+        logger.info("引擎启动，当前创世种子: %d", self.seed)
+        logger.info("正在读取语义图纸: %s", self.lexicolist_filepath)
+        logger.info("使用音素库: %s", self.inventory)
 
         swadesh_list = self._json_get(self.lexicolist_filepath)
         final_lexicon: list[LexicalEntity] = []
@@ -146,7 +149,7 @@ class BasicLexiconGenerator:
             )
 
             final_lexicon.append(word_entity)
-            print(f"[{concept_en}] ({pos}/{word_class}) -> /{ipa_sound}/ w={weight}")
+            logger.debug("[%s] (%s/%s) -> /%s/ w=%s", concept_en, pos, word_class, ipa_sound, weight)
 
         snapshot_filename = f"era_0_snapshot_seed_{self.seed}.json"
         self._json_save(final_lexicon, snapshot_filename)
