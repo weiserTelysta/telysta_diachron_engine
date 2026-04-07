@@ -1054,16 +1054,16 @@ def test_final_vowel_drop():
 
 **目标**：用受控语义图（CSG）替代 AST 解析方案，打通五步生成管线。
 
-- [ ] CSG Schema 设计与校验器（含语义环检测）
-- [ ] 词汇化层（Lexicalization）：CSG 语义基元 → Era N 存活词干映射
-- [ ] 语义基元网络（Semantic Primes）基础结构
-- [ ] 类型学参数矩阵（语序、时态/体貌路线、格位系统、一致性约束）
-- [ ] 特征黑板（Feature Blackboard）与 Agreement 合一检查
-- [ ] 句法与形态规划器（读取类型学参数，决定词缀挂载）
-- [ ] 生成树线性化（Generation Tree → 音素序列）
-- [ ] 表层音系输出（对生成序列再次触发音变规则）
-- [ ] 跨时代同句对比输出（同一 CSG，Era 0 vs Era 5 vs Era 10）
-- [ ] 分支语言独立演化管线（各分支维护独立参数矩阵）
+- [x] CSG Schema 设计与校验器（含语义环检测）
+- [x] 词汇化层（Lexicalization）：CSG 语义基元 → Era N 存活词干映射
+- [x] 语义基元网络（Semantic Primes）基础结构
+- [x] 类型学参数矩阵（语序、时态/体貌路线、格位系统、一致性约束）
+- [x] 特征黑板（Feature Blackboard）与 Agreement 合一检查
+- [x] 句法与形态规划器（读取类型学参数，决定词缀挂载）
+- [x] 生成树线性化（Generation Tree → 音素序列）
+- [x] 表层音系输出（对生成序列再次触发音变规则）
+- [x] 跨时代同句对比输出（同一 CSG，Era 0 vs Era 5 vs Era 10）
+- [x] 分支语言独立演化管线（各分支维护独立参数矩阵）
 
 ---
 

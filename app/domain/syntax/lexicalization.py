@@ -27,7 +27,6 @@ class LexicalizationLayer:
     def lexicalize(
         self,
         hot_state: "EngineHotState",
-        era: int | None = None,
     ) -> dict[str, "LexicalEntity | None"]:
         """Return {prime_id → LexicalEntity | None} for all known primes."""
         alive = {

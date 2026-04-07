@@ -64,6 +64,12 @@ class BranchLanguage:
         self._prime_graph = prime_graph
         self._registry = registry
         self._inventory = inventory
+        self._pipeline = CSGPipeline(
+            prime_graph=prime_graph,
+            typology=self.typology,
+            registry=registry,
+            inventory=inventory,
+        )
 
     @property
     def name(self) -> str:
@@ -125,13 +131,9 @@ class BranchLanguage:
 
     def generate(self, csg: "ControlledSemanticGraph") -> GenerationResult:
         """Generate a surface-form sentence using this branch's current state."""
-        pipeline = CSGPipeline(
-            prime_graph=self._prime_graph,
-            typology=self.typology,
-            registry=self._registry,
-            inventory=self._inventory,
+        return self._pipeline.generate(
+            csg, self.hot_state, era=self.hot_state.current_era, typology=self.typology
         )
-        return pipeline.generate(csg, self.hot_state, era=self.hot_state.current_era)
 
     def __repr__(self) -> str:
         return (
