@@ -33,6 +33,14 @@ class GrammaticalizationPathway:
             return self.typology_output.fusional
         return self.typology_output.agglutinative
 
+    def product_type_for_state(self, domain_state: int) -> MorphemeProductType:
+        """Return product type based on per-domain coupling depth (0/1/2)."""
+        if domain_state == 0:
+            return self.typology_output.isolating
+        if domain_state >= 2:
+            return self.typology_output.fusional
+        return self.typology_output.agglutinative
+
     def triggers_for(self, freq_rank: int, erosion_stage: int) -> bool:
         """Return True when both trigger conditions are satisfied."""
         return freq_rank <= self.max_true_freq_rank and erosion_stage >= self.min_erosion_stage

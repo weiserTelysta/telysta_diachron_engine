@@ -120,6 +120,21 @@ class GrammaticalizationOperator:
                 return rank
         return len(alive)
 
+    def _domain_state_for_function(self, function: str, typology: "TypologyMatrix") -> int:
+        """Map a grammaticalization target_function to its morphological domain state."""
+        ms = typology.morph_state
+        func_lower = function.lower()
+        if func_lower in ("tense_marker", "aspect_marker", "mood_marker"):
+            return ms.verb_tam
+        if func_lower in ("agreement", "clitic"):
+            return ms.verb_agreement
+        if func_lower in ("case_marker", "locative", "adposition"):
+            return ms.noun_case
+        if func_lower in ("definiteness", "determiner"):
+            return ms.noun_definiteness
+        # Fallback: derive from legacy morph_type via average
+        return max(ms.verb_tam, ms.noun_case)
+
     def _apply_pathway(
         self,
         entity: "LexicalEntity",
@@ -127,7 +142,8 @@ class GrammaticalizationOperator:
         typology: "TypologyMatrix",
         alive: list["LexicalEntity"],
     ) -> GrammaticalResult | None:
-        product_type = pathway.product_type_for(typology.morph_type)
+        domain_state = self._domain_state_for_function(pathway.target_function, typology)
+        product_type = pathway.product_type_for_state(domain_state)
         host = self._pick_host(entity, alive)
         if host is None:
             return None
@@ -165,11 +181,12 @@ class GrammaticalizationOperator:
             return None
 
         old_stage = entity.grammaticalization_stage
+        function = self._infer_function(entity)
+        domain_state = self._domain_state_for_function(function, typology)
         product_type: MorphemeProductType = (
-            "free_particle" if typology.morph_type == "isolating" else "prefix"
+            "free_particle" if domain_state == 0 else "prefix"
         )
         new_ipa = self._reduce_ipa(entity.ipa_current, product_type)
-        function = self._infer_function(entity)
         morpheme_key = self._morpheme_key_for(function, product_type)
 
         entity.word_class = "function"

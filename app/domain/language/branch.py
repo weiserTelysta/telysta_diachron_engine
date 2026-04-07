@@ -6,10 +6,12 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from app.domain.language.evolution_profile import EvolutionProfile
+from app.domain.lexicon.typology_drift import TypologyDriftEngine
 from app.domain.syntax.pipeline import CSGPipeline, GenerationResult
 from app.domain.syntax.typology import TypologyMatrix
 
 if TYPE_CHECKING:
+    from app.domain.morphology.portmanteau import PortmanteauRegistry
     from app.domain.phonology.operators.registry import OperatorRegistry
     from app.domain.phonology.phoneme import PhonemeInventory
     from app.domain.storage.hot_state import EngineHotState
@@ -55,6 +57,7 @@ class BranchLanguage:
         prime_graph: "SemanticGraph",
         registry: "OperatorRegistry",
         inventory: "PhonemeInventory",
+        portmanteau_registry: "PortmanteauRegistry | None" = None,
     ) -> None:
         self.config = config
         self.hot_state: "EngineHotState" = initial_state.clone()
@@ -66,11 +69,14 @@ class BranchLanguage:
         self._prime_graph = prime_graph
         self._registry = registry
         self._inventory = inventory
+        self._portmanteau = portmanteau_registry
+        self._drift_engine = TypologyDriftEngine()
         self._pipeline = CSGPipeline(
             prime_graph=prime_graph,
             typology=self.typology,
             registry=registry,
             inventory=inventory,
+            portmanteau_registry=portmanteau_registry,
         )
 
     @property
@@ -139,6 +145,11 @@ class BranchLanguage:
             word_id="",
         )
         self.hot_state.apply_delta(era_event)
+
+        # Per-domain typology drift for this branch
+        drift_stats = self._drift_engine.observe(self.hot_state)
+        self._drift_engine.maybe_drift(self.typology, drift_stats, era=next_era, rng=rng)
+
         return changed_count
 
     def generate(self, csg: "ControlledSemanticGraph") -> GenerationResult:

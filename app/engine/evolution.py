@@ -360,7 +360,7 @@ class EvolutionEngine:
         homophone_pairs = resolver.detect(hot.lexicon)
         resolved_count = 0
 
-        morph_type = current_typology.morph_type if current_typology else "isolating"
+        morph_type = current_typology.derived_morph_type if current_typology else "isolating"
         for pair in homophone_pairs:
             a, b = pair
             if a.is_dead or b.is_dead or a.ipa_current != b.ipa_current:
