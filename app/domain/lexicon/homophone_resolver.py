@@ -10,9 +10,12 @@ from app.domain.storage.event_log import DeltaEvent, DeltaEventType
 
 MorphologicalType = Literal["agglutinative", "isolating", "fusional"]
 
-# Default distinguishing suffixes used by the affixation strategy.
-# Chosen to be phonologically simple and cross-linguistically plausible.
 _DEFAULT_SUFFIX_POOL = ["na", "ɾa", "li", "mu", "ta"]
+
+# Per-era age bonus for seniority protection. A word that survived 100 eras
+# gains +0.05 to its effective frequency weight, enough to outweigh a young
+# low-frequency newcomer in homophone conflicts.
+_SENIORITY_RATE: float = 0.0005
 
 
 class HomophoneResolver:
@@ -77,7 +80,7 @@ class HomophoneResolver:
 
         Returns a list of DeltaEvents (may be empty if no strategy applies).
         """
-        high, low = self._sort_by_frequency(pair)
+        high, low = self._sort_by_frequency(pair, current_era=era)
         strategy_order = self._strategy_order(morphological_type)
 
         for strategy in strategy_order:
@@ -93,10 +96,18 @@ class HomophoneResolver:
     @staticmethod
     def _sort_by_frequency(
         pair: tuple[LexicalEntity, LexicalEntity],
+        current_era: int = 0,
     ) -> tuple[LexicalEntity, LexicalEntity]:
-        """Return (higher_freq, lower_freq)."""
+        """Return (higher_effective_weight, lower_effective_weight).
+
+        effective_weight = frequency_weight + age_bonus, where age_bonus rewards
+        words that have persisted many eras (seniority protection).
+        """
+        def _eff(e: LexicalEntity) -> float:
+            return e.frequency_weight + max(0, current_era - e.era_born) * _SENIORITY_RATE
+
         a, b = pair
-        if a.frequency_weight >= b.frequency_weight:
+        if _eff(a) >= _eff(b):
             return a, b
         return b, a
 

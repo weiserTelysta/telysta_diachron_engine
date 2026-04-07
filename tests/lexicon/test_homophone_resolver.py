@@ -12,15 +12,17 @@ def make_entity(
     ipa: str,
     freq: float = 0.01,
     is_dead: bool = False,
+    era_born: int = 0,
 ) -> LexicalEntity:
     return LexicalEntity(
         id=wid,
         concept=wid,
-        pos="n.",
+        pos="noun",
         ipa_current=ipa,
         ipa_history=[],
         frequency_weight=freq,
         is_dead=is_dead,
+        era_born=era_born,
     )
 
 
@@ -131,3 +133,23 @@ def test_only_borrowing_stub_returns_empty() -> None:
     rng = random.Random(0)
     events = resolver.resolve((high, low), era=1, rng=rng)
     assert events == []
+
+
+# ------------------------------------------------------------------
+# resolve — seniority protection
+# ------------------------------------------------------------------
+
+def test_seniority_protects_older_word() -> None:
+    """An old low-freq word should outweigh a young higher-freq newcomer."""
+    resolver = HomophoneResolver()
+    # "ancient" word: born at era 0, freq=0.001; at era 100 it has +0.05 bonus
+    ancient = make_entity("ancient", "zu", freq=0.001, era_born=0)
+    # "newcomer" word: born at era 99, freq=0.002; almost no seniority bonus
+    newcomer = make_entity("newcomer", "zu", freq=0.002, era_born=99)
+    rng = random.Random(0)
+    # fusional favours semantic_shift / lexical_death on the loser
+    events = resolver.resolve((ancient, newcomer), era=100, rng=rng, morphological_type="fusional")
+    dead_events = [e for e in events if e.event_type == DeltaEventType.MARK_DEAD]
+    assert dead_events, "expected at least one MARK_DEAD event"
+    # newcomer should be the one that dies, not the ancient word
+    assert dead_events[0].word_id == "newcomer"

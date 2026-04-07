@@ -54,5 +54,11 @@ class LexicalEntity:
     _GRAM_STAGE_MAX: int = 3
 
     def __post_init__(self) -> None:
+        _pos_norm: dict[str, str] = {
+            "n.": "noun", "v.": "verb", "adj.": "adjective",
+            "adv.": "adverb", "pron.": "pronoun", "prep.": "preposition",
+            "conj.": "conjunction", "interj.": "interjection",
+        }
+        self.pos = _pos_norm.get(self.pos, self.pos)
         if self.grammaticalization_stage > self._GRAM_STAGE_MAX:
             self.grammaticalization_stage = self._GRAM_STAGE_MAX

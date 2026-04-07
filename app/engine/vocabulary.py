@@ -207,6 +207,9 @@ class CompoundingEngine:
         with open(compounds_file, encoding="utf-8") as f:
             self._rules: list[dict] = json.load(f)
 
+    # Maximum IPA character length for a compound word (physical lock 2)
+    _MAX_COMPOUND_IPA_LEN: int = 10
+
     def generate(
         self,
         hot: "EngineHotState",
@@ -216,38 +219,36 @@ class CompoundingEngine:
     ) -> list[LexicalEntity]:
         alive_by_concept: dict[str, LexicalEntity] = {}
         for e in hot.all_alive():
-            if e.concept not in alive_by_concept:
+            # Physical lock 1: only pure roots (no "_" in concept) can be parents
+            if "_" not in e.concept and e.concept not in alive_by_concept:
                 alive_by_concept[e.concept] = e
 
         existing_concepts = {e.concept for e in hot.lexicon.values()}
         generated: list[LexicalEntity] = []
 
-        # #region agent log
-        _skip_reasons: dict[str, int] = {"epoch_min": 0, "exists": 0, "missing_comp": 0}
-        # #endregion
         for rule in self._rules:
             if rule.get("epoch_min", 0) > epoch_idx:
-                # #region agent log
-                _skip_reasons["epoch_min"] += 1
-                # #endregion
                 continue
             comp_a, comp_b = rule["components"]
             target_concept = rule["concept"]
 
             if target_concept in existing_concepts:
-                # #region agent log
-                _skip_reasons["exists"] += 1
-                # #endregion
                 continue
             if comp_a not in alive_by_concept or comp_b not in alive_by_concept:
-                # #region agent log
-                _skip_reasons["missing_comp"] += 1
-                # #endregion
                 continue
 
             parent_a = alive_by_concept[comp_a]
             parent_b = alive_by_concept[comp_b]
+
+            # Physical lock 3: parents must have non-empty IPA
+            if not parent_a.ipa_current or not parent_b.ipa_current:
+                continue
+
             compound_ipa = self._blend_ipa(parent_a.ipa_current, parent_b.ipa_current)
+
+            # Physical lock 2: reject oversized compounds
+            if len(compound_ipa) > self._MAX_COMPOUND_IPA_LEN:
+                continue
 
             entity = LexicalEntity(
                 id=f"cmp_{rule['id']}_{era}",
