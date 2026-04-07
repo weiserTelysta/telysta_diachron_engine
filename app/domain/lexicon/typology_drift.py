@@ -52,7 +52,7 @@ class TypologyDriftEngine:
 
     def __init__(
         self,
-        gram_density_threshold: float = 0.15,
+        gram_density_threshold: float = 0.03,
         case_loss_threshold: float = 0.02,
         cooldown_eras: int = 5,
     ) -> None:

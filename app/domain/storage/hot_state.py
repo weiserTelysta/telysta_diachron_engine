@@ -117,6 +117,7 @@ class EngineHotState:
             DeltaEventType.INJECT_WORD,
             DeltaEventType.BORROW_WORD,
             DeltaEventType.FOSSIL_SPAWN,
+            DeltaEventType.COMPOUND_SPAWN,
         ):
             if event.new_entity:
                 self.lexicon[event.new_entity.id] = event.new_entity
@@ -125,6 +126,7 @@ class EngineHotState:
                     edge_type = (
                         "borrowing" if event.event_type == DeltaEventType.BORROW_WORD
                         else "fossil_prefix" if event.event_type == DeltaEventType.FOSSIL_SPAWN
+                        else "compound" if event.event_type == DeltaEventType.COMPOUND_SPAWN
                         else "sound_change"
                     )
                     self.dag.add_edge(

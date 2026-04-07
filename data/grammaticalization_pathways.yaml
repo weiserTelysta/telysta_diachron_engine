@@ -7,75 +7,76 @@
 #   fusional     → stem_alternation / case_ending (屈折语：词根变形/格尾)
 #
 # trigger 触发条件（AND关系）：
-#   min_true_freq_rank : 候选词的 true_freq_rank 须 <= 此值（即足够高频）
-#   min_erosion_stage  : 累积音变磨损步数须 >= 此值
+#   max_true_freq_rank : 候选词的频率排名须 <= 此值（排名越小越高频）
+#   min_erosion_stage  : 累积音变步数须 >= 此值（len(ipa_history)）
+#
+# 所有 semantic_prime 必须与 swadesh_207.json 中的 "en" 字段大小写匹配（忽略大小写）。
 
 version: "1.0"
 
 pathways:
 
-  - id: "exist_to_aspect"
-    semantic_prime: "EXIST"
-    description: "存在/居住动词 → 进行体标记"
+  - id: "come_to_directional"
+    semantic_prime: "come"
+    description: "来向动词 → 方向/趋向标记（近指来向规律）"
     examples:
-      zh: "在（居住→在做某事）"
-      en: "be (exist → progressive marker)"
-    target_function: "aspect_marker"
-    typology_output:
-      isolating: "free_particle"
-      agglutinative: "suffix"
-      fusional: "stem_alternation"
-    trigger:
-      max_true_freq_rank: 600
-      min_erosion_stage: 2
-
-  - id: "want_to_future"
-    semantic_prime: "WANT"
-    description: "意愿动词 → 将来时标记（欲望变将来规律）"
-    examples:
-      zh: "要（索取→将要）"
-      en: "will (desire → future tense)"
-    target_function: "tense_marker"
-    typology_output:
-      isolating: "free_particle"
-      agglutinative: "prefix"
-      fusional: "prefix"
-    trigger:
-      max_true_freq_rank: 500
-      min_erosion_stage: 2
-
-  - id: "go_to_locative"
-    semantic_prime: "GO"
-    description: "移动动词 → 方向/趋向标记（空间优先规律）"
-    examples:
-      zh: "从（随行→空间起点→时间起点）"
-      en: "going to (physical movement → future)"
+      zh: "来（移动→来向标记）"
+      en: "come → allative marker"
     target_function: "locative"
     typology_output:
       isolating: "free_particle"
       agglutinative: "suffix"
       fusional: "case_ending"
     trigger:
-      max_true_freq_rank: 400
+      max_true_freq_rank: 30
       min_erosion_stage: 3
 
-  - id: "finish_to_perfective"
-    semantic_prime: "FINISH"
-    description: "完成动词 → 完成体/过去时标记"
+  - id: "walk_to_future"
+    semantic_prime: "walk"
+    description: "行走动词 → 将来时/方向标记（位移变将来规律）"
     examples:
-      zh: "了（完结→动作完成标记）"
-      en: "have (possess → perfect aspect)"
+      zh: "走（移动→将要）"
+      en: "going to (walk → future marker)"
+    target_function: "tense_marker"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "prefix"
+      fusional: "prefix"
+    trigger:
+      max_true_freq_rank: 50
+      min_erosion_stage: 3
+
+  - id: "see_to_evidential"
+    semantic_prime: "see"
+    description: "感知动词 → 直证据标记（视觉→认识论规律）"
+    examples:
+      en: "see → evidential marker (I see → I know for sure)"
     target_function: "aspect_marker"
     typology_output:
       isolating: "free_particle"
       agglutinative: "suffix"
       fusional: "stem_alternation"
     trigger:
-      max_true_freq_rank: 800
-      min_erosion_stage: 2
+      max_true_freq_rank: 60
+      min_erosion_stage: 3
+
+  - id: "die_to_perfective"
+    semantic_prime: "die"
+    description: "死亡动词 → 完成体/终结体标记（完结→完成规律）"
+    examples:
+      zh: "完（完结→动作完成标记）"
+      en: "die → completive / perfective marker"
+    target_function: "aspect_marker"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "suffix"
+      fusional: "stem_alternation"
+    trigger:
+      max_true_freq_rank: 100
+      min_erosion_stage: 3
 
   - id: "hold_to_case"
-    semantic_prime: "HOLD"
+    semantic_prime: "hold"
     description: "握持动词 → 宾格/工具格标记"
     examples:
       zh: "把（握住→宾语引出标记）"
@@ -86,11 +87,11 @@ pathways:
       agglutinative: "suffix"
       fusional: "case_ending"
     trigger:
-      max_true_freq_rank: 1200
+      max_true_freq_rank: 120
       min_erosion_stage: 3
 
   - id: "give_to_benefactive"
-    semantic_prime: "GIVE"
+    semantic_prime: "give"
     description: "给予动词 → 与格/受益格标记"
     examples:
       zh: "给（给予→受益者标记）"
@@ -100,11 +101,11 @@ pathways:
       agglutinative: "suffix"
       fusional: "case_ending"
     trigger:
-      max_true_freq_rank: 200
+      max_true_freq_rank: 40
       min_erosion_stage: 3
 
   - id: "say_to_quotative"
-    semantic_prime: "SAY"
+    semantic_prime: "say"
     description: "言说动词 → 引语标记/从句连词"
     examples:
       en: "that (say → complementizer)"
@@ -114,5 +115,5 @@ pathways:
       agglutinative: "suffix"
       fusional: "prefix"
     trigger:
-      max_true_freq_rank: 120
-      min_erosion_stage: 2
+      max_true_freq_rank: 40
+      min_erosion_stage: 3

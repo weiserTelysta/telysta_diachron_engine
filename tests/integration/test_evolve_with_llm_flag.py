@@ -1,4 +1,4 @@
-"""Integration test: evolve() with is_llm on and off.
+"""Integration test: EvolutionEngine.run() with is_llm on and off.
 
 Ensures the symbolic evolution path is unaffected by the LLM flag,
 and that Phase 5 orchestrator receives real era delta events.
@@ -7,16 +7,15 @@ and that Phase 5 orchestrator receives real era delta events.
 from app.core.settings import GlobalSettings, global_settings
 from app.domain.lexicon.factory import create_basic_lexicon_generator
 from app.domain.storage.hot_state import EngineHotState
+from app.engine.evolution import EvolutionEngine
 
 
 def _evolve_with_flag(is_llm: bool, seed: int = 888) -> EngineHotState:
-    from main import evolve
-
     settings_dict = {"seed": seed, "is_llm": is_llm}
     global_settings.modify_settings(settings_dict)
 
-    engine = create_basic_lexicon_generator(global_settings)
-    words = engine.generate()
+    engine = EvolutionEngine(global_settings)
+    words = create_basic_lexicon_generator(global_settings).generate()
     swadesh = {e.concept for e in words}
 
     phase5_orch = None
@@ -30,7 +29,7 @@ def _evolve_with_flag(is_llm: bool, seed: int = 888) -> EngineHotState:
         lore_sc = LoreSidecar(configs.SNAPSHOT_DIR / "lore_test")
         phase5_orch = Phase5Orchestrator(backend, global_settings, lore_sc)
 
-    hot, _ = evolve(
+    hot, _ = engine.run(
         words, era_steps=3, swadesh_concepts=swadesh,
         phase5_orchestrator=phase5_orch,
     )
@@ -74,13 +73,13 @@ class TestEvolveLLMFlag:
         """Smoke test: orchestrator receives non-trivial delta lists by era 3."""
         captured_deltas: list[list] = []
 
+        from app.core.config import configs
         from app.core.settings import global_settings
         from app.domain.lexicon.factory import create_basic_lexicon_generator
+        from app.engine.evolution import EvolutionEngine
         from app.llm.backends.mock_backend import MockBackend
         from app.llm.lore import LoreSidecar
         from app.llm.orchestrator import Phase5Orchestrator
-        from app.core.config import configs
-        from main import evolve
 
         global_settings.modify_settings({"seed": 42, "is_llm": True})
 
@@ -92,9 +91,9 @@ class TestEvolveLLMFlag:
         backend = MockBackend(seed=42)
         orch = SpyOrchestrator(backend, global_settings, LoreSidecar(configs.SNAPSHOT_DIR / "lore_test"))
 
+        engine = EvolutionEngine(global_settings)
         words = create_basic_lexicon_generator(global_settings).generate()
-        evolve(words, era_steps=3, swadesh_concepts={e.concept for e in words}, phase5_orchestrator=orch)
+        engine.run(words, era_steps=3, swadesh_concepts={e.concept for e in words}, phase5_orchestrator=orch)
 
-        # At least one era should have produced sound-change delta events
         total_deltas = sum(len(d) for d in captured_deltas)
         assert total_deltas > 0, "Expected non-empty delta events passed to orchestrator"

@@ -34,6 +34,8 @@ class GlobalSettings:
     llm_max_proposals_per_era: int = 5
     log_level: str = "INFO"
     log_verbose: bool = False
+    log_retention_count: int = 10
+    llm_log_raw_prompts: bool = False
 
     _inventory: "PhonemeInventory | None" = field(default=None, repr=False, compare=False)
 
@@ -43,6 +45,7 @@ class GlobalSettings:
             "llm_timeout_s", "llm_strict_schema", "llm_enable_lore",
             "llm_enable_callback", "llm_enable_rag", "llm_enable_reverse_etymology",
             "llm_max_proposals_per_era", "log_level", "log_verbose",
+            "log_retention_count", "llm_log_raw_prompts",
         }),
         repr=False, compare=False,
     )

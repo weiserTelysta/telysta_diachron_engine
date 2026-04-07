@@ -1,0 +1,41 @@
+# 默认五时代演化配置
+# 每个时代（Epoch）包含若干 era，并可配置：
+#   morph_type_bias: isolating | agglutinative | fusional | auto | random
+#     auto   — 不强制，由 TypologyDriftEngine 自然演化
+#     random — 每次随机选一个
+#   domain_inject: 域词汇文件名（不含 .json），null 表示不注入
+#   compound_enabled: 是否在本时代边界触发 CompoundingEngine
+
+version: "1.0"
+
+epochs:
+
+  - name: "proto"
+    era_count: 20
+    morph_type_bias: "isolating"
+    domain_inject: null
+    compound_enabled: false
+
+  - name: "ancient"
+    era_count: 20
+    morph_type_bias: "auto"
+    domain_inject: "agriculture"
+    compound_enabled: true
+
+  - name: "medieval"
+    era_count: 20
+    morph_type_bias: "auto"
+    domain_inject: "trade_and_craft"
+    compound_enabled: true
+
+  - name: "premodern"
+    era_count: 20
+    morph_type_bias: "auto"
+    domain_inject: "governance"
+    compound_enabled: true
+
+  - name: "modern"
+    era_count: 20
+    morph_type_bias: "auto"
+    domain_inject: "abstract"
+    compound_enabled: true

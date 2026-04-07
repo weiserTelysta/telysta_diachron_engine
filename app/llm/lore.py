@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from app.core.event_bus import get_event_bus
 from app.core.logging import get_logger
 from app.llm.base import LLMBackend
 from app.llm.contracts import EraLoreRequest, EraLoreResponse
@@ -71,6 +72,16 @@ def generate_era_lore(
         return None
 
     resp.era = req.era
+    get_event_bus().emit("llm", "LORE_GEN", era=req.era, length=len(resp.narrative))
+
+    from app.core.settings import global_settings
+    if global_settings.llm_log_raw_prompts:
+        get_event_bus().write_raw(
+            "llm_raw",
+            f"era_{req.era:04d}_lore.txt",
+            f"=== PROMPT ===\n{prompt}\n\n=== RESPONSE ===\n{result.raw_json}",
+        )
+
     return resp
 
 

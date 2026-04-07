@@ -13,7 +13,10 @@ Initialization contract:
 from __future__ import annotations
 
 import logging
+import shutil
 import sys
+from datetime import datetime
+from pathlib import Path
 
 _CONFIGURED = False
 
@@ -52,6 +55,7 @@ def configure_root(
 
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
+    handler.setLevel(logging.WARNING)
     root.addHandler(handler)
 
     # LLM subsystem always gets DEBUG regardless of root level,
@@ -64,3 +68,42 @@ def get_logger(name: str) -> logging.Logger:
     if not _CONFIGURED:
         configure_root()
     return logging.getLogger(name)
+
+
+def _cleanup_old_runs(log_dir: Path, keep: int) -> None:
+    """Delete the oldest run directories beyond *keep* most-recent."""
+    if keep <= 0:
+        return
+    runs = sorted(log_dir.glob("run_*"), key=lambda p: p.stat().st_mtime)
+    for old in runs[:-keep]:
+        shutil.rmtree(old, ignore_errors=True)
+
+
+def setup_run_logger(seed: int) -> None:
+    """Create a per-run log directory and wire file handlers + EventBus.
+
+    Call order: ``_bootstrap()`` must run first so ``global_settings``
+    is fully configured before this function reads ``log_retention_count``.
+    """
+    from app.core.config import configs
+    from app.core.event_bus import get_event_bus
+    from app.core.settings import global_settings
+
+    log_dir: Path = configs.LOG_DIR
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_dir = log_dir / f"run_{seed}_{ts}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+
+    formatter = logging.Formatter(VERBOSE_FORMAT)
+    fh = logging.FileHandler(run_dir / "session.log", encoding="utf-8")
+    fh.setFormatter(formatter)
+    logging.getLogger().addHandler(fh)
+
+    get_event_bus().setup(run_dir)
+    _cleanup_old_runs(log_dir, global_settings.log_retention_count)
+
+    logging.getLogger(__name__).info(
+        "Run log directory: %s (seed=%d)", run_dir, seed
+    )

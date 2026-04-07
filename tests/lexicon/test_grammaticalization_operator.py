@@ -60,82 +60,83 @@ def _isolating() -> TypologyMatrix:
 
 
 class TestYamlPathwayPath:
-    def _exist_entity(self, freq: float = 0.9, erosion: int = 3) -> LexicalEntity:
-        # EXIST pathway: max_freq_rank=600, min_erosion=2
+    def _come_entity(self, freq: float = 0.9, erosion: int = 3) -> LexicalEntity:
+        # come_to_directional pathway: max_freq_rank=30, min_erosion=3
+        history: list[str] = ["bam", "ba", "bɛ"][:erosion]
         return _make_entity(
-            "e1", "EXIST", "bɛ", pos="verb",
+            "e1", "come", "bɛ", pos="verb",
             frequency_weight=freq,
             word_class="content",
-            ipa_history=["ba", "bɛ"] if erosion >= 2 else [],
+            ipa_history=history,
         )
 
     def test_pathway_fires_when_both_conditions_met(self):
-        entity = self._exist_entity()
+        entity = self._come_entity()
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         hot = _hot([entity, host])
         op = _op()
         result = op.check(entity, hot, _agglutinative(), era=5)
         assert result is not None
-        assert result.pathway_id == "exist_to_aspect"
+        assert result.pathway_id == "come_to_directional"
 
-    def test_pathway_sets_new_stage_2(self):
-        entity = self._exist_entity()
+    def test_pathway_sets_new_stage_3(self):
+        entity = self._come_entity()
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         result = op.check(entity, _hot([entity, host]), _agglutinative(), era=5)
-        assert result.new_stage == 2
+        assert result.new_stage == 3
 
     def test_pathway_product_type_agglutinative_is_suffix(self):
-        entity = self._exist_entity()
+        entity = self._come_entity()
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         result = op.check(entity, _hot([entity, host]), _agglutinative(), era=5)
         assert result.product_type == "suffix"
 
     def test_pathway_product_type_isolating_is_free_particle(self):
-        entity = self._exist_entity()
+        entity = self._come_entity()
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         result = op.check(entity, _hot([entity, host]), _isolating(), era=5)
         assert result.product_type == "free_particle"
 
     def test_pathway_fires_only_when_erosion_stage_sufficient(self):
-        entity = self._exist_entity(erosion=0)
+        entity = self._come_entity(erosion=0)
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         result = op.check(entity, _hot([entity, host]), _agglutinative(), era=5)
         assert result is None
 
     def test_entity_word_class_updated_to_function(self):
-        entity = self._exist_entity()
+        entity = self._come_entity()
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         op.check(entity, _hot([entity, host]), _agglutinative(), era=5)
         assert entity.word_class == "function"
 
     def test_entity_grammatical_function_set(self):
-        entity = self._exist_entity()
+        entity = self._come_entity()
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         op.check(entity, _hot([entity, host]), _agglutinative(), era=5)
-        assert entity.grammatical_function == "aspect_marker"
+        assert entity.grammatical_function == "locative"
 
     def test_already_at_stage3_skipped(self):
-        entity = self._exist_entity()
+        entity = self._come_entity()
         entity.grammaticalization_stage = 3
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         assert op.check(entity, _hot([entity, host]), _agglutinative(), era=5) is None
 
     def test_old_stage_reflects_entity_stage_before_mutation(self):
-        entity = self._exist_entity()
+        entity = self._come_entity()
         entity.grammaticalization_stage = 1
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         result = op.check(entity, _hot([entity, host]), _agglutinative(), era=5)
         assert result is not None
         assert result.old_stage == 1
-        assert result.new_stage == 2
+        assert result.new_stage == 3
 
 
 class TestStasisPath:
@@ -175,12 +176,12 @@ class TestStasisPath:
         op = _op()
         assert op.check(pronoun, _hot([pronoun, host]), _agglutinative(), era=3) is None
 
-    def test_stasis_sets_stage_4(self):
+    def test_stasis_sets_stage_3(self):
         pronoun = self._pronoun(3)
         host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
         op = _op()
         result = op.check(pronoun, _hot([pronoun, host]), _agglutinative(), era=3)
-        assert result.new_stage == 4
+        assert result.new_stage == 3
 
     def test_stasis_reduces_ipa_dropping_final_vowel(self):
         pronoun = self._pronoun(3)
@@ -221,4 +222,4 @@ class TestStasisPath:
         result = op.check(pronoun, _hot([pronoun, host]), _agglutinative(), era=3)
         assert result is not None
         assert result.old_stage == 2
-        assert result.new_stage == 4
+        assert result.new_stage == 3

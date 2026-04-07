@@ -20,9 +20,11 @@ class DeltaEventType(str, Enum):
     INJECT_WORD = "inject_word"
     ERA_ADVANCE = "era_advance"
     EXEMPLAR_UPDATE = "exemplar_update"
-    BORROW_WORD = "borrow_word"       # 跨语言借词注入
-    FOSSIL_SPAWN = "fossil_spawn"     # 化石前缀生成
-    DAG_EDGE_ADD = "dag_edge_add"     # 显式 DAG 边记录
+    BORROW_WORD = "borrow_word"             # 跨语言借词注入
+    FOSSIL_SPAWN = "fossil_spawn"           # 化石前缀生成
+    DAG_EDGE_ADD = "dag_edge_add"           # 显式 DAG 边记录
+    REPLACEMENT_NEEDED = "replacement_needed"  # Swadesh 概念空位，需补充替代词
+    COMPOUND_SPAWN = "compound_spawn"       # 复合词生成
 
 
 @dataclass
@@ -37,6 +39,7 @@ class DeltaEvent:
     dag_parent_id: str = ""           # BORROW_WORD / FOSSIL_SPAWN 的父词 ID
     source_language: str = ""         # BORROW_WORD 来源语言名
     edge_type: str = ""               # DAG_EDGE_ADD 的边类型
+    concept: str = ""                 # REPLACEMENT_NEEDED 的目标概念名
     timestamp: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )

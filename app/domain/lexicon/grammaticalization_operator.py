@@ -137,7 +137,7 @@ class GrammaticalizationOperator:
         morpheme_key = self._morpheme_key_for(pathway.target_function, product_type)
 
         entity.word_class = "function"
-        entity.grammaticalization_stage = 2
+        entity.grammaticalization_stage = 3
         entity.grammaticalized_from_id = entity.id
         entity.grammatical_function = pathway.target_function
         entity.stasis_counter = 0
@@ -146,7 +146,7 @@ class GrammaticalizationOperator:
             entity_id=entity.id,
             pathway_id=pathway.id,
             old_stage=old_stage,
-            new_stage=2,
+            new_stage=3,
             new_ipa=new_ipa,
             new_function=pathway.target_function,
             product_type=product_type,
@@ -173,7 +173,7 @@ class GrammaticalizationOperator:
         morpheme_key = self._morpheme_key_for(function, product_type)
 
         entity.word_class = "function"
-        entity.grammaticalization_stage = 4
+        entity.grammaticalization_stage = 3
         entity.grammaticalized_from_id = entity.id
         entity.grammatical_function = function
         entity.stasis_counter = 0
@@ -182,7 +182,7 @@ class GrammaticalizationOperator:
             entity_id=entity.id,
             pathway_id="stasis_promotion",
             old_stage=old_stage,
-            new_stage=4,
+            new_stage=3,
             new_ipa=new_ipa,
             new_function=function,
             product_type=product_type,
@@ -191,12 +191,13 @@ class GrammaticalizationOperator:
         )
 
     def _is_stasis_candidate(self, entity: "LexicalEntity") -> bool:
+        # High-frequency monosyllabic function words that resist sound change
+        # are promoted via stasis path regardless of their nucleus phoneme shape.
         return (
             entity.word_class == "function"
             and entity.frequency_weight >= 0.04
             and entity.grammaticalization_stage < 3
             and self._syllable_count(entity.ipa_current) <= 1
-            and self._is_nucleus_block_profile(entity.ipa_current)
         )
 
     def _is_stasis_ready(self, entity: "LexicalEntity") -> bool:

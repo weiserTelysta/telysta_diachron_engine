@@ -13,6 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from app.core.event_bus import get_event_bus
 from app.core.logging import get_logger
 from app.llm.base import LLMBackend
 from app.llm.contracts import SemanticProposalRequest, SemanticProposalResponse
@@ -98,11 +99,13 @@ def generate_and_validate_proposal(
         current_era=req.era,
     )
     if not san.ok:
-        logger.warning(
-            "Proposal rejected (era=%d, stage=schema): %s",
-            req.era, "; ".join(san.errors),
+        reason = "; ".join(san.errors)
+        logger.warning("Proposal rejected (era=%d, stage=schema): %s", req.era, reason)
+        get_event_bus().emit(
+            "llm", "PROPOSAL_REJ",
+            era=req.era, word_id=req.word_id, stage="schema", reason=reason[:80],
         )
-        return CallbackVerdict(status="rejected", reason="; ".join(san.errors))
+        return CallbackVerdict(status="rejected", reason=reason)
 
     try:
         proposal = SemanticProposalResponse.from_dict(san.data)  # type: ignore[arg-type]
@@ -113,31 +116,33 @@ def generate_and_validate_proposal(
     # Stage 2: Symbolic validation — domain mismatch → lore_only (not commit)
     sym_errors = _symbolic_validate(proposal, known_primes, req.context_chain)
     if sym_errors:
-        logger.warning(
-            "Proposal lore_only (era=%d, stage=symbolic): %s",
-            req.era, "; ".join(sym_errors),
+        reason = "; ".join(sym_errors)
+        logger.warning("Proposal lore_only (era=%d, stage=symbolic): %s", req.era, reason)
+        get_event_bus().emit(
+            "llm", "PROPOSAL_LORE",
+            era=req.era, word_id=req.word_id, stage="symbolic", reason=reason[:80],
         )
-        return CallbackVerdict(
-            status="lore_only",
-            proposal=proposal,
-            reason="; ".join(sym_errors),
-        )
+        return CallbackVerdict(status="lore_only", proposal=proposal, reason=reason)
 
     # Stage 3: Commit policy — low-confidence proposals are lore-only
     if proposal.confidence < 0.2:
-        logger.info(
-            "Proposal lore_only (era=%d, stage=commit): confidence=%.2f",
-            req.era, proposal.confidence,
+        reason = f"Low confidence: {proposal.confidence:.2f}"
+        logger.info("Proposal lore_only (era=%d, stage=commit): %s", req.era, reason)
+        get_event_bus().emit(
+            "llm", "PROPOSAL_LORE",
+            era=req.era, word_id=req.word_id, stage="commit", reason=reason,
         )
-        return CallbackVerdict(
-            status="lore_only",
-            proposal=proposal,
-            reason=f"Low confidence: {proposal.confidence:.2f}",
-        )
+        return CallbackVerdict(status="lore_only", proposal=proposal, reason=reason)
 
     logger.info(
         "Proposal accepted (era=%d): %s %s→%s conf=%.2f",
         req.era, proposal.word_id, proposal.from_prime,
         proposal.to_prime, proposal.confidence,
+    )
+    get_event_bus().emit(
+        "llm", "PROPOSAL_ACC",
+        era=req.era, word_id=proposal.word_id,
+        from_prime=proposal.from_prime, to_prime=proposal.to_prime,
+        conf=f"{proposal.confidence:.2f}",
     )
     return CallbackVerdict(status="accepted", proposal=proposal)

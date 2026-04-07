@@ -9,6 +9,9 @@ class Configs:
         self.SNAPSHOT_DIR = self.DATA_DIR / "era_snapshots"
         self.PHONEME_PRESETS_DIR = self.DATA_DIR / "phoneme_presets"
         self.SOUND_RULES_DIR = self.DATA_DIR / "sound_change_rules"
+        self.EPOCH_PRESETS_DIR = self.DATA_DIR / "epoch_presets"
+        self.DOMAIN_VOCAB_DIR = self.DATA_DIR / "domain_vocabulary"
+        self.LOG_DIR = self.BASE_DIR / "logs"
 
         self.SEED_MAX = (2**64) - 1
         self.SEED_MIN = 0

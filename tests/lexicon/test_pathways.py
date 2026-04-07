@@ -21,12 +21,13 @@ class TestLoadPathways:
             assert isinstance(pw, GrammaticalizationPathway)
 
     def test_first_pathway_fields(self):
+        # come_to_directional: max_freq_rank=30, min_erosion_stage=3
         pw = load_pathways(_YAML)[0]
-        assert pw.id == "exist_to_aspect"
-        assert pw.semantic_prime == "EXIST"
-        assert pw.target_function == "aspect_marker"
-        assert pw.max_true_freq_rank == 600
-        assert pw.min_erosion_stage == 2
+        assert pw.id == "come_to_directional"
+        assert pw.semantic_prime == "come"
+        assert pw.target_function == "locative"
+        assert pw.max_true_freq_rank == 30
+        assert pw.min_erosion_stage == 3
 
     def test_typology_output_isolating(self):
         pw = load_pathways(_YAML)[0]
@@ -38,7 +39,7 @@ class TestLoadPathways:
 
     def test_typology_output_fusional(self):
         pw = load_pathways(_YAML)[0]
-        assert pw.typology_output.fusional == "stem_alternation"
+        assert pw.typology_output.fusional == "case_ending"
 
 
 class TestProductTypeFor:
@@ -51,8 +52,8 @@ class TestProductTypeFor:
     def test_agglutinative_returns_suffix(self):
         assert self.pw.product_type_for("agglutinative") == "suffix"
 
-    def test_fusional_returns_stem_alternation(self):
-        assert self.pw.product_type_for("fusional") == "stem_alternation"
+    def test_fusional_returns_case_ending(self):
+        assert self.pw.product_type_for("fusional") == "case_ending"
 
     def test_unknown_morph_type_falls_back_to_agglutinative(self):
         assert self.pw.product_type_for("unknown") == "suffix"
@@ -60,17 +61,17 @@ class TestProductTypeFor:
 
 class TestTriggersFor:
     def setup_method(self):
-        # exist_to_aspect: max_freq_rank=600, min_erosion_stage=2
+        # come_to_directional: max_freq_rank=30, min_erosion_stage=3
         self.pw = load_pathways(_YAML)[0]
 
     def test_both_conditions_met(self):
-        assert self.pw.triggers_for(freq_rank=300, erosion_stage=3) is True
+        assert self.pw.triggers_for(freq_rank=20, erosion_stage=4) is True
 
     def test_freq_rank_too_high(self):
-        assert self.pw.triggers_for(freq_rank=700, erosion_stage=3) is False
+        assert self.pw.triggers_for(freq_rank=50, erosion_stage=4) is False
 
     def test_erosion_stage_too_low(self):
-        assert self.pw.triggers_for(freq_rank=300, erosion_stage=1) is False
+        assert self.pw.triggers_for(freq_rank=20, erosion_stage=2) is False
 
     def test_exactly_at_threshold(self):
-        assert self.pw.triggers_for(freq_rank=600, erosion_stage=2) is True
+        assert self.pw.triggers_for(freq_rank=30, erosion_stage=3) is True

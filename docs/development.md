@@ -17,7 +17,7 @@ TelystaLexisEngine 是一个高度自动化的架空语言（Conlang）生成与
 
 ---
 
-## 〇、架构决策记录（ADR）
+## 附录 A、架构决策记录（ADR）
 
 本节记录项目中尚未最终拍板的重大架构抉择。每条 ADR 包含选项分析与当前倾向，需在对应 Phase 启动前最终确认。
 
@@ -449,22 +449,40 @@ LLM 推演 → 以强 JSON Schema 返回结构化提案
 动词"去" → 助词"将要" → 将来时前缀 ga- → （磨损脱落）
 ```
 
-#### 2.5.2 双变量磨损模型（Dual-Variable Erosion）
+#### 2.5.2 三变量磨损模型（Triple-Variable Erosion）
 
-旧模型 `Erosion_Rate = f(Frequency)` 存在语音学缺陷：许多高频词若处于**重音（Stress）**位置，不仅不会磨损，反而会发生音素强化（Fortition）。
+旧的双变量模型 `Erosion_Rate = f(Frequency, Stress_Position)` 无法区分"低频且高形态负载"的语法标记（如格尾）与"低频普通词根"之间的抗磨损差异。引入第三变量 **形态负荷（Morphological Load）**：
 
-**新模型**：
+**当前模型**：
 
 ```
-Erosion_Rate = f(Frequency, Stress_Position)
+Erosion_Rate = f(Frequency, Stress_Position, Morphological_Load)
 
 具体规则：
-  词尾非重音音节的高频词  → 急速磨损（如助词、后缀）
-  词根重音音节的高频词    → 轻度磨损，可能发生强化
-  低频词的任意音节        → 轻度磨损，倾向保持完整
+  词尾非重音音节的高频词              → 急速磨损（如助词、后缀）
+  词根重音音节的高频词                → 轻度磨损，可能发生强化
+  低频词的任意音节                   → 轻度磨损，倾向保持完整
+  高形态负荷语法标记（格尾、人称标记） → 抗磨损增强，保护性偏置激活
 ```
 
-这一模型同时解释了：为何助词（低重音、高频）最先消失，而核心词根（重音）能抵御磨损。
+**形态负荷预计算**：在每个 Era 开始前，系统扫描词库并为每个语素分配形态信息负荷系数：
+
+- 屈折语/黏着语模式下，承担唯一主宾区分功能的格尾：`morphological_load = 0.9`
+- 已转化为孤立语（靠语序）后，原有格尾的负荷降为：`morphological_load = 0.0`
+
+**NumPy 热路径实现**（无 Python OOP 循环侵入）：
+
+```python
+# morphological_load_array 在 Era 开始时批量预计算，不在热路径中修改
+change_mask = np.random.random(target_count) < (
+    prob_vector * (1 - morphological_load_array[target_mask])
+)
+exemplar_matrix[target_mask][change_mask, voiced_col] = 1
+```
+
+底层引擎不感知"格尾"语义，只感知数值权重——形态负荷极高时音变触发概率被压低，负荷为零时与普通音素无异。
+
+这一模型同时解释了：助词（低重音、高频）最先磨损；核心词根（重音）抵御磨损；屈折语格尾在形态压力下即便高频也能维持较长时间。
 
 #### 2.5.3 规则冲突分类与消解
 
@@ -530,6 +548,21 @@ def batch_collapse_exemplars(matrix: np.ndarray, keep_top_k: int = 5) -> np.ndar
 #### 2.5.5 不规则性（Irregularity）
 
 **完全规则的语言是假语言**。基于齐夫矩阵，极高频词（如"我"、"是"、"去"）须被锁定，阻断其参与正常规则化演变，自然产生历史遗留的不规则变位（如 go/went）。不规则性是系统的目标，不是 bug。
+
+#### 2.5.6 功能守恒协议（Functional Conservation Protocol）
+
+自然语言中语言功能不会凭空消失，只会转移载体。当一个斯瓦迪士核心概念（Swadesh 100）的独立词汇形式因音变极度磨损而成为"仅能作为词缀存在"的形态时，引擎不强制保留该词，而是触发**功能守恒协议**：
+
+**核心原则**：核心词的"词汇死亡"可以发生，但必须保证该概念在词库中至少存在一个活跃的功能继承者（functional successor）。
+
+继承者的两类合法形式：
+
+1. **语法化形式**：该词已语法化为前缀/后缀（`grammaticalization_stage ≥ 2`），核心概念以语法角色继续存活
+2. **新词替代**：词库中存在另一个携带相同核心概念的存活独立词条
+
+**REPLACEMENT_NEEDED 事件**：若一个核心概念（Swadesh 100）面临"没有合法功能继承者"的语义真空（Semantic Vacuum），引擎触发 `DeltaEventType.REPLACEMENT_NEEDED` 事件，由 `VocabularyRenewalEngine` 响应，优先从 `DomainInjector`（LLM 关闭时）或 `RagInjector`（LLM 开启时）生成一个新词条填补真空。
+
+这一协议模拟了历时语言学中"代词更新循环（Pronoun Renewal Cycle）"的真实机制——旧词可以消亡，但功能不消失。
 
 ---
 
@@ -658,6 +691,12 @@ class LexicalEntity:
     semantic_primes: List[str] = field(default_factory=list)
     semantic_era_log: List[dict] = field(default_factory=list)
     # [{"era": 3, "shift": "METAPHOR", "from": "SUN", "to": "SOUL"}]
+
+    # --- Phase 4（语法化）---
+    word_class: str = "content"           # "content"（实词）/ "function"（虚词）
+    grammaticalization_stage: int = 0     # 0=实词 / 1=附着词 / 2=词缀 / 3=消失
+    grammaticalized_from_id: str = ""     # 语法化来源词的 ID（如 "word_go_42"）
+    grammatical_function: str = ""        # "tense_marker" / "subject_prefix" 等
 ```
 
 ### 3.2 核心引擎层（Engine Layer）
@@ -742,6 +781,11 @@ YAML 规则文件
 - **CSG 规划器**：读取 CSG + 类型学参数，经五步管线输出当代语法句
 - **特征黑板**：维护句子级特征状态，供一致性检查使用
 - **范例坍缩器**：定期将范例池收缩至 top-k，防止内存爆炸
+- **EpochManager**：纪元级演化编排器，按 YAML 预设依次执行词汇注入、复合词生成、功能守恒检查，并将 `EngineHotState` 连同 `era_offset` 跨纪元连续传递
+- **CompoundingEngine**：语义复合词生成器，基于 `semantic_compounds.json` 预定义规则检测词库中存活的语义基元组合，生成新复合词并注入词库
+- **DomainInjector**：领域词汇注入器，在纪元边界从 `domain_vocabulary/*.json` 批量注入文化领域词汇（LLM 关闭时的保底路径）
+- **RagInjector**：RAG 管线注入器，在纪元边界调用 `rag.generate_new_word()` 推演新词汇（LLM 开启时的增强路径）
+- **VocabularyRenewalEngine**：词汇续命引擎，响应 `REPLACEMENT_NEEDED` 事件，为核心概念真空触发注入机制
 
 ### 3.3 数据存储与语义层（Data Layer）
 
@@ -935,6 +979,96 @@ def test_final_vowel_drop():
 ```
 
 单元测试覆盖：规则本身、规则优先级顺序、合法性校验、范例坍缩、CSG 生成树输出。
+
+### 5.8 纪元架构（Epoch Architecture）
+
+**纪元（Epoch）** 是比时代（Era）更高一级的时间分层单位。每个纪元包含若干 Era 并携带独立的演化配置，代表一个文化历史阶段。
+
+**层级关系**：
+
+```
+Epoch（纪元）：文化历史阶段（如"上古"、"中古"）
+  └── Era（时代）：引擎单次演化步骤（如 Era 21–40 属于 ancient 纪元）
+```
+
+**EpochConfig YAML 格式**（`data/epoch_presets/default.yaml`）：
+
+```yaml
+epochs:
+  - name: "proto"
+    era_count: 20               # 本纪元内的 era 数量（3–500 可配置）
+    morph_type_bias: "isolating"  # 形态偏置："isolating" / "auto" / "random"
+    domain_inject: null         # 领域注入域（null 或文件名，如 "agriculture"）
+    compound_enabled: false     # 是否激活复合词生成
+  - name: "ancient"
+    era_count: 20
+    morph_type_bias: "auto"
+    domain_inject: "agriculture"
+    compound_enabled: true
+```
+
+支持 3–10 个纪元，当前内置 5 个（proto / ancient / medieval / premodern / modern）。
+
+**EpochManager 运行逻辑**：
+
+```
+对每个 Epoch：
+  1. 根据 morph_type_bias 调整 TypologyDriftEngine 的触发倾向
+  2. 在 Epoch 边界执行词汇注入（DomainInjector 或 RagInjector）
+  3. 调用 CompoundingEngine 生成复合词（若 compound_enabled）
+  4. 扫描 REPLACEMENT_NEEDED 事件，调用 VocabularyRenewalEngine
+  5. 将 EngineHotState + era_offset 传给 EvolutionEngine.run()
+  6. 收集 EpochResult 遥测数据
+```
+
+**EpochResult** 结构收集每纪元的完整遥测：注入词列表、复合词列表、替换的核心概念列表、词库大小与结束时的类型学状态，为 Streamlit Epochs 面板提供可视化数据源。
+
+### 5.9 词汇爆炸机制（Vocabulary Explosion Mechanism）
+
+目标：以约 200 核心词根为基础，通过四种扩展路径产出 1500–2000 词的词库，而非凭空随机生成大量词根。
+
+**四条路径与各自定位**：
+
+| 路径 | 机制 | 触发时机 | LLM 依赖 |
+|---|---|---|---|
+| **复合构词（Compounding）** | `semantic_compounds.json` 预定义组合规则 | 每个 Epoch 边界 | 无 |
+| **域词汇注入（Domain Injection）** | `domain_vocabulary/*.json` 文化领域词汇文件 | 每个 Epoch 边界 | 无 |
+| **RAG 新词推演** | `RagInjector` 调用 LLM `rag.generate_new_word()` | Epoch 边界（LLM 开启时） | 需要 |
+| **功能续命（Renewal）** | `VocabularyRenewalEngine` 响应核心概念真空 | `REPLACEMENT_NEEDED` 事件 | 按注入器策略 |
+
+**乘数效应原理**：
+
+```
+核心词根（≈200）
+  ├── 复合构词：200 词两两组合 × 规则过滤 → 产出 ≈100–300 新词
+  ├── 派生扩展：词根 × 语法化词缀 → 产出 ≈100–200 新词（Phase 4 后续）
+  ├── 域词汇注入：4 个领域文件 × 25 词/文件 = 100 词（固定底数）
+  ├── RAG 推演：LLM 生成 ≈ 10–30 词/Epoch
+  └── 语义扩展：一词多义（Phase 4 语义漂移）→ 词条数量不变，语义密度翻倍
+```
+
+**共享注入接口（WordInjector 协议）**：
+
+```python
+@runtime_checkable
+class WordInjector(Protocol):
+    def inject(
+        self,
+        hot: EngineHotState,
+        epoch_idx: int,
+        existing_concepts: set[str],
+    ) -> list[LexicalEntity]: ...
+```
+
+`DomainInjector` 和 `RagInjector` 均实现此协议。`EpochManager` 通过同一接口调用，LLM 开启状态在外部切换，注入逻辑本身无感知。
+
+**词库量级目标**：
+
+| 阶段 | 词汇量 | 能力描述 |
+|---|---|---|
+| MVP | 800–1000 | 可构建基础叙事 |
+| 推荐 | 1500–2000 | 奇幻世界观甜点区，语义漂移可高频触发 |
+| 暂不追求 | 5000+ | 维护成本指数上升，性价比下降 |
 
 ---
 
@@ -1198,13 +1332,51 @@ Callback 分层策略：
 
 **目标**：完成可展示、可朗读的完整交互系统。
 
+#### 6.1 引擎解耦（Phase 6 前置重构）
+
+将 `main.py` 的 165 行 `evolve()` god-function 解耦为 `app/engine/` 模块，CLI 与 Streamlit 共用同一引擎 API。
+
+- [x] `app/engine/evolution.py`：`EvolutionEngine` 类（从 `main.evolve` 提取，拆分为 `run` / `_evolve_entities` / `_resolve_homophones`）
+- [x] `app/engine/evolution.py` 扩展：`hot` 传递参数 + `era_offset` 纪元偏移，支持跨纪元热状态连续传递
+- [x] `app/engine/session.py`：`EngineSession` + `RunResult`（bootstrap → generate → evolve → collect）
+- [x] `app/engine/demo.py`：CSG 预设库 + 跨时代对比 + 分支对比（从 `main.demo_csg_pipeline` 提取）
+- [x] `main.py` 瘦身至 ~25 行薄入口
+- [x] 集成测试 `test_evolve_with_llm_flag.py` 迁移至 `app.engine.evolution` 导入
+
+#### 6.2 Streamlit MVP Demo
+
+- [x] 依赖添加：`streamlit >= 1.30`
+- [x] `streamlit_app.py` 入口 + 7-Tab 调度（含 Epochs tab）
+- [x] `ui/sidebar.py`：参数配置面板（seed / preset / era_steps / LLM toggle）+ Epoch Mode 开关 + Epoch Preset 选择器（与 era_steps 互斥）
+- [x] `ui/tab_dashboard.py`：概览仪表盘（指标卡片 + 音变/存活词折线图 + morpheme table）
+- [x] `ui/tab_lexicon.py`：词库浏览器（搜索 + 过滤 + 排序 + 词详情展开器）
+- [x] `ui/tab_timeline.py`：时代时间轴（Delta 事件表 + Lore 叙事 + 时代统计）
+- [x] `ui/tab_dag.py`：词源 DAG 可视化（Graphviz DOT + `st.graphviz_chart`，支持祖先/后代/全图模式）
+- [x] `ui/tab_csg.py`：CSG 管线演示（预设 CSG × 跨时代对比）
+- [x] `ui/tab_branches.py`：分支语言对比（SVO vs SOV 并排）
+- [x] `ui/tab_epochs.py`：纪元概览面板（词库增长折线图、各纪元汇总卡片、注入/复合词展开器）
+
+#### 6.3 纪元架构与词汇爆炸 ✅ 已完成
+
+- [x] `app/engine/epoch.py`：`EpochConfig` + `EpochResult` + `load_epoch_config()` + `EpochManager`
+- [x] `data/epoch_presets/default.yaml`：5 纪元预设（proto / ancient / medieval / premodern / modern，各 20 eras）
+- [x] `app/engine/vocabulary.py`：`WordInjector` 协议 + `DomainInjector` + `RagInjector` + `CompoundingEngine` + `VocabularyRenewalEngine`
+- [x] `data/semantic_compounds.json`：100+ 条预定义语义复合词规则（含 `epoch_min` 触发阈值）
+- [x] `data/domain_vocabulary/`：4 个领域词汇文件（agriculture / trade_and_craft / governance / abstract）
+- [x] `app/engine/session.py` 扩展：`RunResult.epoch_results` + `EngineSession` epoch/flat 双模式分支 + `_load_swadesh_100()` 静态方法
+- [x] `app/domain/storage/event_log.py` 扩展：`REPLACEMENT_NEEDED` + `COMPOUND_SPAWN` 事件类型 + `DeltaEvent.concept` 字段
+- [x] `app/domain/storage/hot_state.py` 扩展：`apply_delta` 处理 `COMPOUND_SPAWN` 事件及 DAG 边
+- [x] `tests/engine/test_epoch_manager.py` + `tests/engine/test_vocabulary.py`（470 个测试全部通过）
+
+#### 6.4 待完成（后续迭代）
+
+- [ ] 三变量磨损模型的 `morphological_load_array` 预计算与 NumPy 热路径集成（架构设计已在 2.5.2 节完成，实现待排期）
+- [ ] 派生词生成（Derivation）：`derivation_rules.yaml` + `DerivationEngine`（从语法化词缀反向生成新词汇）
+- [ ] 语义扩展规则（Semantic Extension）：`semantic_extension_rules.yaml`（触发一词多义，不依赖 LLM）
 - [ ] TTS 后端最终选型与集成（eSpeak NG 精确音素 + Edge-TTS 长句韵律）
 - [ ] G2P 正字法系统（IPA ↔ 奇幻字符拼写映射，前端可自定义）
-- [ ] 各时代字典前端展示（含发音按钮、词性、语义、词源链接）
-- [ ] 词源演化树可视化（可交互 DAG，支持展开/折叠分支）
-- [ ] 历史时期时间轴拖拽导航（跨时代状态重建）
-- [ ] UI 参数配置仪表盘（CSG 输入表单 + 参数拖拽 + 实时预览）
-- [ ] 多分支语言对比展示（同词根跨分支演化路径对比）
+- [ ] FastAPI 封装（CSG 作为 JSON-over-HTTP API，WebSocket 实时推送）
+- [ ] Tauri 桌面打包（共享 React 前端 + Python sidecar）
 
 ---
 
@@ -1223,7 +1395,10 @@ Callback 分层策略：
 | Neo4j | 成熟期 DAG 词源图数据库 | 🔜 Phase 2+ |
 | eSpeak NG | 精确 IPA 单音素合成 | 🔜 Phase 6 评估 |
 | Edge-TTS / Azure TTS | 长句韵律与语调合成 | 🔜 Phase 6 评估 |
-| Streamlit / Gradio | 开发期快速 UI | 🔜 Phase 6 MVP |
+| Streamlit | 开发期快速 UI（Phase 6 MVP） | ✅ 已完成 |
+| YAML 纪元预设（epoch_presets/） | 纪元架构多阶段演化配置 | ✅ Phase 6 |
+| semantic_compounds.json | 语义复合词生成规则（100+ 条）| ✅ Phase 6 |
+| domain_vocabulary/*.json | 领域词汇注入文件（农业/贸易/治理/抽象）| ✅ Phase 6 |
 | 独立 Web UI 框架 | 发布期语言维基系统 | 🔜 待定 |
 | LLM API（多后端） | 语义渲染与纪事生成 | 🔜 Phase 5 |
 
@@ -1261,5 +1436,5 @@ Callback 分层策略：
 
 ---
 
-*文档版本：0.3 — 2026-04-06*
-*对应代码版本：Phase 0 进行中*
+*文档版本：0.5 — 2026-04-07*
+*对应代码版本：Phase 6 Epoch Architecture + Vocabulary Explosion 完成*
