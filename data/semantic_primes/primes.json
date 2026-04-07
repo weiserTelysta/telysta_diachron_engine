@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "source": "NSM (Natural Semantic Metalanguage) — Wierzbicka/Goddard 65 primes, pruned to 60",
+  "nodes": [
+    {"id": "I",          "label_en": "I",          "category": "substantives",   "relations": []},
+    {"id": "YOU",        "label_en": "you",         "category": "substantives",   "relations": []},
+    {"id": "SOMEONE",    "label_en": "someone",     "category": "substantives",   "relations": ["PERSON"]},
+    {"id": "PEOPLE",     "label_en": "people",      "category": "substantives",   "relations": ["SOMEONE"]},
+    {"id": "SOMETHING",  "label_en": "something",   "category": "substantives",   "relations": []},
+    {"id": "BODY",       "label_en": "body",        "category": "substantives",   "relations": ["SOMETHING"]},
+    {"id": "PLACE",      "label_en": "place",       "category": "substantives",   "relations": ["SOMETHING"]},
+    {"id": "TIME",       "label_en": "time",        "category": "substantives",   "relations": ["SOMETHING"]},
+    {"id": "WORLD",      "label_en": "world",       "category": "substantives",   "relations": ["PLACE"]},
+    {"id": "KIND",       "label_en": "kind",        "category": "substantives",   "relations": ["SOMETHING"]},
+    {"id": "PART",       "label_en": "part",        "category": "substantives",   "relations": ["SOMETHING"]},
+
+    {"id": "THIS",       "label_en": "this",        "category": "determiners",    "relations": []},
+    {"id": "THE_SAME",   "label_en": "the same",    "category": "determiners",    "relations": []},
+    {"id": "OTHER",      "label_en": "other",       "category": "determiners",    "relations": []},
+    {"id": "ONE",        "label_en": "one",         "category": "quantifiers",    "relations": []},
+    {"id": "TWO",        "label_en": "two",         "category": "quantifiers",    "relations": ["ONE"]},
+    {"id": "SOME",       "label_en": "some",        "category": "quantifiers",    "relations": []},
+    {"id": "ALL",        "label_en": "all",         "category": "quantifiers",    "relations": ["SOME"]},
+    {"id": "MUCH_MANY",  "label_en": "much/many",   "category": "quantifiers",    "relations": ["SOME"]},
+    {"id": "LITTLE_FEW", "label_en": "little/few",  "category": "quantifiers",    "relations": ["SOME"]},
+
+    {"id": "KNOW",       "label_en": "know",        "category": "mental",         "relations": []},
+    {"id": "THINK",      "label_en": "think",       "category": "mental",         "relations": ["KNOW"]},
+    {"id": "WANT",       "label_en": "want",        "category": "mental",         "relations": []},
+    {"id": "FEEL",       "label_en": "feel",        "category": "mental",         "relations": []},
+    {"id": "SEE",        "label_en": "see",         "category": "perception",     "relations": []},
+    {"id": "HEAR",       "label_en": "hear",        "category": "perception",     "relations": []},
+
+    {"id": "SAY",        "label_en": "say",         "category": "speech",         "relations": []},
+    {"id": "WORD",       "label_en": "word",        "category": "speech",         "relations": ["SOMETHING"]},
+    {"id": "TRUE",       "label_en": "true",        "category": "speech",         "relations": []},
+
+    {"id": "DO",         "label_en": "do",          "category": "actions",        "relations": []},
+    {"id": "HAPPEN",     "label_en": "happen",      "category": "actions",        "relations": ["DO"]},
+    {"id": "MOVE",       "label_en": "move",        "category": "actions",        "relations": ["DO"]},
+    {"id": "TOUCH",      "label_en": "touch",       "category": "actions",        "relations": ["DO", "BODY"]},
+
+    {"id": "BE_ALIVE",   "label_en": "be alive",    "category": "life_death",     "relations": []},
+    {"id": "DIE",        "label_en": "die",         "category": "life_death",     "relations": ["BE_ALIVE"]},
+    {"id": "BE_BORN",    "label_en": "be born",     "category": "life_death",     "relations": ["BE_ALIVE"]},
+
+    {"id": "THERE_IS",   "label_en": "there is",    "category": "existence",      "relations": []},
+    {"id": "HAVE",       "label_en": "have",        "category": "existence",      "relations": ["THERE_IS"]},
+    {"id": "BE",         "label_en": "be (pred)",   "category": "existence",      "relations": ["THERE_IS"]},
+
+    {"id": "GOOD",       "label_en": "good",        "category": "evaluators",     "relations": []},
+    {"id": "BAD",        "label_en": "bad",         "category": "evaluators",     "relations": ["GOOD"]},
+
+    {"id": "BIG",        "label_en": "big",         "category": "descriptors",    "relations": []},
+    {"id": "SMALL",      "label_en": "small",       "category": "descriptors",    "relations": ["BIG"]},
+
+    {"id": "LONG_TIME",  "label_en": "long time",   "category": "time",           "relations": ["TIME"]},
+    {"id": "SHORT_TIME", "label_en": "short time",  "category": "time",           "relations": ["TIME"]},
+    {"id": "NOW",        "label_en": "now",         "category": "time",           "relations": ["TIME"]},
+    {"id": "BEFORE",     "label_en": "before",      "category": "time",           "relations": ["TIME"]},
+    {"id": "AFTER",      "label_en": "after",       "category": "time",           "relations": ["TIME"]},
+    {"id": "WHEN",       "label_en": "when",        "category": "time",           "relations": ["TIME"]},
+    {"id": "A_LONG_TIME","label_en": "a long time", "category": "time",           "relations": ["TIME", "LONG_TIME"]},
+
+    {"id": "WHERE",      "label_en": "where",       "category": "space",          "relations": ["PLACE"]},
+    {"id": "HERE",       "label_en": "here",        "category": "space",          "relations": ["PLACE"]},
+    {"id": "ABOVE",      "label_en": "above",       "category": "space",          "relations": ["PLACE"]},
+    {"id": "BELOW",      "label_en": "below",       "category": "space",          "relations": ["PLACE", "ABOVE"]},
+    {"id": "FAR",        "label_en": "far",         "category": "space",          "relations": ["PLACE"]},
+    {"id": "NEAR",       "label_en": "near",        "category": "space",          "relations": ["PLACE", "FAR"]},
+    {"id": "SIDE",       "label_en": "side",        "category": "space",          "relations": ["PLACE"]},
+    {"id": "INSIDE",     "label_en": "inside",      "category": "space",          "relations": ["PLACE"]},
+
+    {"id": "NOT",        "label_en": "not",         "category": "logical",        "relations": []},
+    {"id": "IF",         "label_en": "if",          "category": "logical",        "relations": []},
+    {"id": "BECAUSE",    "label_en": "because",     "category": "logical",        "relations": []}
+  ]
+}
