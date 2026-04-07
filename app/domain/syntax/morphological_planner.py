@@ -173,7 +173,8 @@ class MorphologicalPlanner:
             return None
 
         prefixes: list[str] = []
-        suffixes: list[str] = []
+        # Collect (function_key, ipa) pairs so _fuse_suffixes can use correct keys
+        suffix_items: list[tuple[str, str]] = []
 
         tense = node.attributes.get("tense", "")
         aspect = node.attributes.get("aspect", "")
@@ -185,7 +186,7 @@ class MorphologicalPlanner:
                     prefixes.append(pre)
                 suf = self._typ.get_suffix(gram_key)
                 if suf:
-                    suffixes.append(suf)
+                    suffix_items.append((gram_key, suf))
         elif self._typ.tense_system == "isolating":
             pass
 
@@ -195,10 +196,9 @@ class MorphologicalPlanner:
             agr_key = f"{person}{number.upper()}"
             agr = self._typ.get_suffix(agr_key)
             if agr:
-                suffixes.append(agr)
+                suffix_items.append((agr_key, agr))
 
-        if self._port and suffixes:
-            suffixes = self._fuse_suffixes(suffixes)
+        suffixes = self._fuse_suffixes(suffix_items) if self._port and suffix_items else [ipa for _, ipa in suffix_items]
 
         return PlannedWord(
             role="verb",
@@ -208,29 +208,37 @@ class MorphologicalPlanner:
             pos=entity.pos,
         )
 
-    def _fuse_suffixes(self, suffixes: list[str]) -> list[str]:
+    def _fuse_suffixes(self, items: list[tuple[str, str]]) -> list[str]:
         """Replace adjacent suffix pairs with portmanteau forms where available.
 
-        Iterates left-to-right; on a match, replaces the pair with the fused
-        surface form and continues from the next unmatched suffix. Also tracks
-        co-occurrences for future automatic fusion via maybe_fuse.
+        ``items`` is a list of (function_key, ipa) pairs, e.g. [("PAST","et"),("1SG","m")].
+        Co-occurrence is tracked by function key; lookup and maybe_fuse also use keys.
+        On successful automatic fusion, the fused form is registered in the morpheme_table.
+        Returns a plain list of IPA strings for PlannedWord.suffixes.
         """
-        if self._port is None or len(suffixes) < 2:
-            return suffixes
+        if self._port is None or len(items) < 2:
+            return [ipa for _, ipa in items]
 
+        existing_values = set(self._typ.morpheme_table.values())
         result: list[str] = []
         i = 0
-        while i < len(suffixes):
-            if i + 1 < len(suffixes):
-                key_a = suffixes[i]
-                key_b = suffixes[i + 1]
+        while i < len(items):
+            if i + 1 < len(items):
+                key_a, ipa_a = items[i]
+                key_b, ipa_b = items[i + 1]
                 self._port.track_cooccurrence(key_a, key_b)
                 fused = self._port.lookup(frozenset({key_a, key_b}))
+                if fused is None:
+                    fused = self._port.maybe_fuse(key_a, ipa_a, key_b, ipa_b, existing_values)
+                    if fused is not None:
+                        combined_key = f"{key_a}+{key_b}"
+                        self._typ.morpheme_table[combined_key] = fused.surface_form
+                        existing_values.add(fused.surface_form)
                 if fused is not None:
                     result.append(fused.surface_form)
                     i += 2
                     continue
-            result.append(suffixes[i])
+            result.append(items[i][1])
             i += 1
         return result
 

@@ -127,6 +127,16 @@ class TestYamlPathwayPath:
         op = _op()
         assert op.check(entity, _hot([entity, host]), _agglutinative(), era=5) is None
 
+    def test_old_stage_reflects_entity_stage_before_mutation(self):
+        entity = self._exist_entity()
+        entity.grammaticalization_stage = 1
+        host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
+        op = _op()
+        result = op.check(entity, _hot([entity, host]), _agglutinative(), era=5)
+        assert result is not None
+        assert result.old_stage == 1
+        assert result.new_stage == 2
+
 
 class TestStasisPath:
     def _pronoun(self, counter: int = 3) -> LexicalEntity:
@@ -197,3 +207,18 @@ class TestStasisPath:
         op = _op()
         op.note_changed(pronoun)
         assert pronoun.stasis_counter == 0
+
+    def test_stasis_old_stage_reflects_entity_stage_before_mutation(self):
+        pronoun = _make_entity(
+            "p1", "I", "ʃu", pos="pron.",
+            frequency_weight=0.05,
+            word_class="function",
+            grammaticalization_stage=2,
+            stasis_counter=3,
+        )
+        host = _make_entity("h1", "eat", "zɛga", pos="verb", frequency_weight=0.01)
+        op = _op()
+        result = op.check(pronoun, _hot([pronoun, host]), _agglutinative(), era=3)
+        assert result is not None
+        assert result.old_stage == 2
+        assert result.new_stage == 4

@@ -35,9 +35,11 @@ class TypologyDriftEngine:
 
     Two drift triggers:
 
-    1. Morphological type drift (isolating → agglutinative):
+    1. Morphological type drift (isolating → agglutinative → fusional):
        When grammaticalized-word density exceeds gram_density_threshold,
-       the language starts developing regular affixes (morph_type shifts).
+       morph_type advances one step. A cooldown of ``cooldown_eras`` prevents
+       the next drift from firing until enough eras have passed, avoiding
+       unrealistically fast typological cycling.
 
     2. Word-order locking (case-loss → rigid syntax):
        When case-marker density drops below case_loss_threshold, the word
@@ -45,17 +47,20 @@ class TypologyDriftEngine:
 
     Each call to :meth:`maybe_drift` returns either the unchanged typology
     or a new TypologyMatrix instance (via clone_with). The engine is
-    stateless between calls except for ``word_order_locked``.
+    stateful: it tracks ``word_order_locked`` and the era of the last drift.
     """
 
     def __init__(
         self,
         gram_density_threshold: float = 0.15,
         case_loss_threshold: float = 0.02,
+        cooldown_eras: int = 5,
     ) -> None:
         self.gram_density_threshold = gram_density_threshold
         self.case_loss_threshold = case_loss_threshold
+        self.cooldown_eras = cooldown_eras
         self._word_order_locked: bool = False
+        self._last_drift_era: int = -999
 
     def observe(self, hot_state: "EngineHotState") -> DriftStats:
         """Compute DriftStats from the current alive lexicon."""
@@ -78,11 +83,13 @@ class TypologyDriftEngine:
         self,
         typology: "TypologyMatrix",
         stats: DriftStats,
+        era: int = 0,
     ) -> "TypologyMatrix":
         """Return a (possibly updated) TypologyMatrix based on observed stats.
 
         Word-order lock is applied first: once locked, word_order never drifts.
-        Morphological type drift may still occur after locking.
+        Morphological type drift fires at most once per ``cooldown_eras`` eras
+        to prevent unrealistically rapid typological cycling.
         """
         updated = typology
 
@@ -90,7 +97,10 @@ class TypologyDriftEngine:
             self._word_order_locked = True
 
         if stats.gram_density >= self.gram_density_threshold:
-            updated = self._drift_morph_type(updated)
+            if era - self._last_drift_era >= self.cooldown_eras:
+                updated = self._drift_morph_type(updated)
+                if updated is not typology:
+                    self._last_drift_era = era
 
         return updated
 

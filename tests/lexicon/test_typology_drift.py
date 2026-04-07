@@ -125,3 +125,30 @@ class TestMaybeDrift:
         stats = DriftStats(total_alive=10, grammaticalized_count=2, case_marker_count=0, word_order_locked=False)
         result = engine.maybe_drift(typ, stats)
         assert result is not typ
+
+    def test_cooldown_blocks_second_drift_in_same_window(self):
+        engine = TypologyDriftEngine(gram_density_threshold=0.15, cooldown_eras=5)
+        typ = TypologyMatrix(morph_type="isolating")
+        stats = DriftStats(total_alive=100, grammaticalized_count=20, case_marker_count=5, word_order_locked=False)
+        after_first = engine.maybe_drift(typ, stats, era=3)
+        assert after_first.morph_type == "agglutinative"
+        # era 4 is only 1 era after drift at era 3 — still in cooldown
+        after_second = engine.maybe_drift(after_first, stats, era=4)
+        assert after_second.morph_type == "agglutinative"
+
+    def test_cooldown_allows_drift_after_window_expires(self):
+        engine = TypologyDriftEngine(gram_density_threshold=0.15, cooldown_eras=5)
+        typ = TypologyMatrix(morph_type="isolating")
+        stats = DriftStats(total_alive=100, grammaticalized_count=20, case_marker_count=5, word_order_locked=False)
+        after_first = engine.maybe_drift(typ, stats, era=3)
+        assert after_first.morph_type == "agglutinative"
+        # era 8 is 5 eras after drift at era 3 — cooldown expired
+        after_second = engine.maybe_drift(after_first, stats, era=8)
+        assert after_second.morph_type == "fusional"
+
+    def test_last_drift_era_tracks_most_recent_drift(self):
+        engine = TypologyDriftEngine(gram_density_threshold=0.15, cooldown_eras=5)
+        typ = TypologyMatrix(morph_type="isolating")
+        stats = DriftStats(total_alive=100, grammaticalized_count=20, case_marker_count=5, word_order_locked=False)
+        engine.maybe_drift(typ, stats, era=7)
+        assert engine._last_drift_era == 7

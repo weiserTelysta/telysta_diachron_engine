@@ -1,6 +1,7 @@
 import pytest
 
 from app.domain.lexicon.models import LexicalEntity
+from app.domain.morphology.portmanteau import PortmanteauRegistry
 from app.domain.syntax.csg import CSGEdge, CSGNode, ControlledSemanticGraph
 from app.domain.syntax.feature_blackboard import FeatureBlackboard
 from app.domain.syntax.morphological_planner import MorphologicalPlanner, PlannedWord
@@ -189,6 +190,77 @@ class TestMorphologicalPlannerMissingLexEntry:
         result = planner.plan(csg, lm, board)
         roles = [w.role for w in result]
         assert "object" not in roles
+
+
+class TestPortmanteauFusion:
+    """Verify _fuse_suffixes uses function keys (not IPA) for registry operations."""
+
+    def _typology(self) -> TypologyMatrix:
+        return TypologyMatrix(
+            word_order="SVO",
+            tense_system="inflectional",
+            morph_type="agglutinative",
+            case_system="none",
+            agreement_features=["person", "number"],
+            morpheme_table={"PAST": "et", "1SG": "m"},
+        )
+
+    def test_preregistered_portmanteau_replaces_suffix_pair(self):
+        registry = PortmanteauRegistry()
+        registry.register("PAST", "1SG", "om", {"PAST": "past", "1SG": "1sg"})
+        typ = self._typology()
+        planner = MorphologicalPlanner(typ, portmanteau_registry=registry)
+        csg = _make_svo_csg(tense="PAST", person="1", number="sg")
+        lm = _lexmap(
+            _entity("I", "pron.", "ni"),
+            _entity("SEE", "v.", "vid"),
+            _entity("MAN", "n.", "min"),
+        )
+        board = FeatureBlackboard()
+        result = planner.plan(csg, lm, board)
+        verb = next(w for w in result if w.role == "verb")
+        assert verb.suffixes == ["om"]
+        assert verb.surface_ipa == "vidom"
+
+    def test_cooccurrence_tracked_by_function_key_not_ipa(self):
+        registry = PortmanteauRegistry(cooccurrence_threshold=10)
+        typ = self._typology()
+        planner = MorphologicalPlanner(typ, portmanteau_registry=registry)
+        csg = _make_svo_csg(tense="PAST", person="1", number="sg")
+        lm = _lexmap(
+            _entity("I", "pron.", "ni"),
+            _entity("SEE", "v.", "vid"),
+            _entity("MAN", "n.", "min"),
+        )
+        board = FeatureBlackboard()
+        planner.plan(csg, lm, board)
+        assert registry.cooccurrence_count("PAST", "1SG") == 1
+        assert registry.cooccurrence_count("et", "m") == 0
+
+    def test_automatic_fusion_fires_after_threshold_and_registers_to_morpheme_table(self):
+        # Use morpheme_table where combined "et"+"t" = "ett" triggers haplology → "et"
+        # ipa_a="et" ends with "t", ipa_b="t" starts with "t" → haplology → fused="et"
+        # fused != combined ("ett") → condition met for fusion
+        registry = PortmanteauRegistry(cooccurrence_threshold=2)
+        typ = TypologyMatrix(
+            word_order="SVO",
+            tense_system="inflectional",
+            morph_type="agglutinative",
+            case_system="none",
+            agreement_features=["person", "number"],
+            morpheme_table={"PAST": "et", "1SG": "t"},
+        )
+        planner = MorphologicalPlanner(typ, portmanteau_registry=registry)
+        csg = _make_svo_csg(tense="PAST", person="1", number="sg")
+        lm = _lexmap(
+            _entity("I", "pron.", "ni"),
+            _entity("SEE", "v.", "vid"),
+            _entity("MAN", "n.", "min"),
+        )
+        board = FeatureBlackboard()
+        for _ in range(3):
+            planner.plan(csg, lm, board)
+        assert "PAST+1SG" in typ.morpheme_table
 
 
 class TestMorphologicalPlannerIsolating:

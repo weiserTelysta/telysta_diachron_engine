@@ -58,6 +58,12 @@ class GrammaticalizationOperator:
         self._pathways = {pw.semantic_prime.upper(): pw for pw in pathways}
         self._inventory = inventory
         self.stasis_threshold = stasis_threshold
+        self._freq_rank_cache: dict[str, int] = {}
+
+    def prepare_era(self, alive: "list[LexicalEntity]") -> None:
+        """Pre-compute frequency ranks once per era to avoid O(N²) sorting in check()."""
+        sorted_entities = sorted(alive, key=lambda e: e.frequency_weight, reverse=True)
+        self._freq_rank_cache = {e.id: rank for rank, e in enumerate(sorted_entities, start=1)}
 
     def note_blocked(self, entity: "LexicalEntity") -> None:
         """Record a phonotactic block event for a candidate entity."""
@@ -106,6 +112,8 @@ class GrammaticalizationOperator:
         entity: "LexicalEntity",
         alive: list["LexicalEntity"],
     ) -> int:
+        if self._freq_rank_cache:
+            return self._freq_rank_cache.get(entity.id, len(alive))
         sorted_by_freq = sorted(alive, key=lambda e: e.frequency_weight, reverse=True)
         for rank, e in enumerate(sorted_by_freq, start=1):
             if e.id == entity.id:
@@ -124,6 +132,7 @@ class GrammaticalizationOperator:
         if host is None:
             return None
 
+        old_stage = entity.grammaticalization_stage
         new_ipa = self._reduce_ipa(entity.ipa_current, product_type)
         morpheme_key = self._morpheme_key_for(pathway.target_function, product_type)
 
@@ -136,7 +145,7 @@ class GrammaticalizationOperator:
         return GrammaticalResult(
             entity_id=entity.id,
             pathway_id=pathway.id,
-            old_stage=0,
+            old_stage=old_stage,
             new_stage=2,
             new_ipa=new_ipa,
             new_function=pathway.target_function,
@@ -155,6 +164,7 @@ class GrammaticalizationOperator:
         if host is None:
             return None
 
+        old_stage = entity.grammaticalization_stage
         product_type: MorphemeProductType = (
             "free_particle" if typology.morph_type == "isolating" else "prefix"
         )
@@ -171,7 +181,7 @@ class GrammaticalizationOperator:
         return GrammaticalResult(
             entity_id=entity.id,
             pathway_id="stasis_promotion",
-            old_stage=0,
+            old_stage=old_stage,
             new_stage=4,
             new_ipa=new_ipa,
             new_function=function,

@@ -4,6 +4,7 @@ from pathlib import Path
 from app.core.config import configs
 from app.core.settings import global_settings
 from app.domain.language.branch import BranchConfig, BranchLanguage
+from app.domain.lexicon.analogy import AnalogyPropagator
 from app.domain.lexicon.factory import create_basic_lexicon_generator
 from app.domain.lexicon.fossil import FossilPrefixExtractor
 from app.domain.lexicon.grammaticalization_operator import GrammaticalizationOperator
@@ -62,6 +63,7 @@ def evolve(
         load_pathways(configs.DATA_DIR / "grammaticalization_pathways.yaml"), inv
     )
     drift_engine = TypologyDriftEngine()
+    analogy_prop = AnalogyPropagator(inv)
     fossil_extractor = FossilPrefixExtractor()
     homophone_resolver = HomophoneResolver(swadesh_concepts=swadesh_concepts)
 
@@ -83,6 +85,8 @@ def evolve(
         rng = random.Random(global_settings.seed + era)
         changed_count = 0
         active_ops = registry.active_operators_for_era(era)
+
+        gram_op.prepare_era(hot.all_alive())
 
         for entity in hot.all_alive():
             effective_rate = erosion.rate(entity.frequency_weight, entity.stress_pattern)
@@ -156,6 +160,19 @@ def evolve(
                 hot.apply_delta(edge_event)
                 if gram_result.product_type in ("prefix", "suffix"):
                     current_typology.morpheme_table[gram_result.morpheme_key] = gram_result.new_ipa
+                affected_ids = analogy_prop.propagate(
+                    entity, hot.all_alive(), gram_result.morpheme_key, gram_result.new_ipa, current_typology, rng
+                )
+                for aid in affected_ids:
+                    analogy_edge = DeltaEvent(
+                        event_type=DeltaEventType.DAG_EDGE_ADD,
+                        era=era,
+                        word_id=aid,
+                        dag_parent_id=entity.id,
+                        edge_type="analogy",
+                    )
+                    km.record(analogy_edge)
+                    hot.apply_delta(analogy_edge)
                 changed_count += 1
 
         # Homophone detection and resolution at era boundary
@@ -193,7 +210,7 @@ def evolve(
         km.flush_era(era)
 
         drift_stats = drift_engine.observe(hot)
-        current_typology = drift_engine.maybe_drift(current_typology, drift_stats)
+        current_typology = drift_engine.maybe_drift(current_typology, drift_stats, era)
 
         drift_info = ""
         if drift_stats.gram_density >= 0.15:
