@@ -222,15 +222,27 @@ class CompoundingEngine:
         existing_concepts = {e.concept for e in hot.lexicon.values()}
         generated: list[LexicalEntity] = []
 
+        # #region agent log
+        _skip_reasons: dict[str, int] = {"epoch_min": 0, "exists": 0, "missing_comp": 0}
+        # #endregion
         for rule in self._rules:
             if rule.get("epoch_min", 0) > epoch_idx:
+                # #region agent log
+                _skip_reasons["epoch_min"] += 1
+                # #endregion
                 continue
             comp_a, comp_b = rule["components"]
             target_concept = rule["concept"]
 
             if target_concept in existing_concepts:
+                # #region agent log
+                _skip_reasons["exists"] += 1
+                # #endregion
                 continue
             if comp_a not in alive_by_concept or comp_b not in alive_by_concept:
+                # #region agent log
+                _skip_reasons["missing_comp"] += 1
+                # #endregion
                 continue
 
             parent_a = alive_by_concept[comp_a]
@@ -293,8 +305,8 @@ class VocabularyRenewalEngine:
     """Monitors Swadesh 100 for concept vacuums and triggers renewal.
 
     A 'vacuum' occurs when every word carrying a Swadesh core concept
-    has grammaticalization_stage >= 4 (fully bound morpheme) and is
-    therefore no longer an independent lexical word.
+    has grammaticalization_stage >= 3 (disappeared) and is therefore
+    no longer an independent lexical word.
 
     For each vacuum, a REPLACEMENT_NEEDED event is emitted and a new
     word is generated via the provided injector.
@@ -341,20 +353,36 @@ class VocabularyRenewalEngine:
     ) -> list[LexicalEntity]:
         """Generate a phonologically fresh replacement word for *concept*."""
         ipa = DomainInjector._generate_ipa(inv, rng)
+        original_pos = self._lookup_original_pos(hot, concept)
+        original_wc = self._lookup_original_word_class(hot, concept)
         entity = LexicalEntity(
             id=f"renewal_{concept.replace(' ', '_')}_{era}",
             concept=concept,
-            pos="n.",
+            pos=original_pos,
             ipa_current=ipa,
             ipa_history=[],
             frequency_weight=0.01,
-            word_class="content",
+            word_class=original_wc,
             is_dead=False,
             ipa_exemplars=[{"form": ipa, "weight": 1.0}],
             era_born=era,
         )
         hot.insert_word(entity, era)
         return [entity]
+
+    @staticmethod
+    def _lookup_original_pos(hot: "EngineHotState", concept: str) -> str:
+        for e in hot.lexicon.values():
+            if e.concept == concept:
+                return e.pos
+        return "n."
+
+    @staticmethod
+    def _lookup_original_word_class(hot: "EngineHotState", concept: str) -> str:
+        for e in hot.lexicon.values():
+            if e.concept == concept:
+                return e.word_class
+        return "content"
 
     @staticmethod
     def _find_vacuums(

@@ -29,7 +29,7 @@ pathways:
       fusional: "case_ending"
     trigger:
       max_true_freq_rank: 30
-      min_erosion_stage: 3
+      min_erosion_stage: 2
 
   - id: "walk_to_future"
     semantic_prime: "walk"
@@ -44,7 +44,7 @@ pathways:
       fusional: "prefix"
     trigger:
       max_true_freq_rank: 50
-      min_erosion_stage: 3
+      min_erosion_stage: 2
 
   - id: "see_to_evidential"
     semantic_prime: "see"
@@ -58,7 +58,7 @@ pathways:
       fusional: "stem_alternation"
     trigger:
       max_true_freq_rank: 60
-      min_erosion_stage: 3
+      min_erosion_stage: 2
 
   - id: "die_to_perfective"
     semantic_prime: "die"
@@ -73,7 +73,7 @@ pathways:
       fusional: "stem_alternation"
     trigger:
       max_true_freq_rank: 100
-      min_erosion_stage: 3
+      min_erosion_stage: 2
 
   - id: "hold_to_case"
     semantic_prime: "hold"
@@ -88,7 +88,7 @@ pathways:
       fusional: "case_ending"
     trigger:
       max_true_freq_rank: 120
-      min_erosion_stage: 3
+      min_erosion_stage: 2
 
   - id: "give_to_benefactive"
     semantic_prime: "give"
@@ -102,7 +102,7 @@ pathways:
       fusional: "case_ending"
     trigger:
       max_true_freq_rank: 40
-      min_erosion_stage: 3
+      min_erosion_stage: 2
 
   - id: "say_to_quotative"
     semantic_prime: "say"
@@ -116,4 +116,4 @@ pathways:
       fusional: "prefix"
     trigger:
       max_true_freq_rank: 40
-      min_erosion_stage: 3
+      min_erosion_stage: 2

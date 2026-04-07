@@ -38,10 +38,18 @@ from app.domain.syntax.typology import TypologyMatrix
 
 if TYPE_CHECKING:
     from app.domain.lexicon.models import LexicalEntity
+    from app.domain.morphology.compounding import CompoundingEngine as MorphCompoundingEngine
     from app.domain.phonology.phoneme import PhonemeInventory
     from app.llm.orchestrator import Phase5Orchestrator
 
 logger = get_logger(__name__)
+
+# #region agent log
+def _dbg_c8f986(loc: str, msg: str, data: dict | None = None, hyp: str = "") -> None:
+    import json as _j, time as _t
+    with open("/home/weiser/TelystaLexisEngine/.cursor/debug-c8f986.log", "a") as _f:
+        _f.write(_j.dumps({"sessionId":"c8f986","location":loc,"message":msg,"data":data or {},"hypothesisId":hyp,"timestamp":int(_t.time()*1000)}) + "\n")
+# #endregion
 
 
 class EvolutionEngine:
@@ -83,6 +91,7 @@ class EvolutionEngine:
         era_offset: int = 0,
         epoch_name: str = "",
         total_eras: int = 0,
+        morph_compounding: "MorphCompoundingEngine | None" = None,
     ) -> tuple[EngineHotState, TypologyMatrix]:
         """Execute the full evolution loop.
 
@@ -151,6 +160,25 @@ class EvolutionEngine:
                 homophone_resolver, fossil_extractor,
                 current_typology=current_typology,
             )
+
+            compound_count = 0
+            if morph_compounding is not None:
+                new_compounds = morph_compounding.generate_compounds(
+                    hot.all_alive(), era, rng
+                )
+                for c in new_compounds:
+                    hot.put(c)
+                    km.record(DeltaEvent(
+                        event_type=DeltaEventType.COMPOUND_SPAWN,
+                        era=era, word_id=c.id, new_entity=c,
+                        dag_parent_id=c.dag_parent_ids[0] if c.dag_parent_ids else "",
+                        edge_type="compound",
+                    ))
+                compound_count = len(new_compounds)
+                # #region agent log
+                if compound_count > 0 and era % 10 == 0:
+                    _dbg_c8f986("evolution.py:run", "morph_compound", {"era": era, "count": compound_count, "alive": len(hot.all_alive())}, "H2")
+                # #endregion
 
             # Era advance
             hot.apply_delta(
@@ -340,6 +368,11 @@ class EvolutionEngine:
                     hot.apply_delta(analogy_edge)
                 changed_count += 1
 
+        # #region agent log
+        over3 = [(e.id, e.concept, e.grammaticalization_stage) for e in hot.all_alive() if e.grammaticalization_stage > 3]
+        if over3:
+            _dbg_c8f986("evolution.py:_evolve_entities_end", "stage>3_found", {"era": era, "entities": over3}, "H1")
+        # #endregion
         return changed_count
 
     # ------------------------------------------------------------------
@@ -360,6 +393,9 @@ class EvolutionEngine:
         homophone_pairs = resolver.detect(hot.lexicon)
         resolved_count = 0
 
+        # #region agent log
+        _dbg_c8f986("evolution.py:_resolve_homophones", "detect", {"era": era, "pair_count": len(homophone_pairs), "sample": [(a.concept, b.concept, a.ipa_current) for a, b in homophone_pairs[:5]]}, "H4")
+        # #endregion
         morph_type = current_typology.morph_type if current_typology else "isolating"
         for pair in homophone_pairs:
             a, b = pair

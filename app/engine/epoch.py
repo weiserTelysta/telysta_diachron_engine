@@ -109,12 +109,14 @@ class EpochManager:
         compounding_engine: "CompoundingEngine | None" = None,
         renewal_engine: "VocabularyRenewalEngine | None" = None,
         seed: int = 888,
+        morph_compounding: object | None = None,
     ) -> None:
         self._epochs = epochs
         self._domain_injector_factory = domain_injector_factory
         self._compounding_engine = compounding_engine
         self._renewal_engine = renewal_engine
         self._seed = seed
+        self._morph_compounding = morph_compounding
 
     def run(
         self,
@@ -194,6 +196,7 @@ class EpochManager:
                 era_offset=era_cursor,
                 epoch_name=epoch.name,
                 total_eras=total_eras,
+                morph_compounding=self._morph_compounding,
             )
 
             replaced: list[str] = []

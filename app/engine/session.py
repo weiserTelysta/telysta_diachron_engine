@@ -163,6 +163,11 @@ class EngineSession:
             DomainInjector,
             VocabularyRenewalEngine,
         )
+        from app.domain.morphology.compounding import (
+            CompoundingEngine as MorphCompoundingEngine,
+            CompoundingConfig,
+        )
+        from app.domain.phonology.validator import WellFormednessValidator
         from app.domain.syntax.typology import TypologyMatrix
 
         epoch_name = self.epoch_config or "default"
@@ -172,6 +177,12 @@ class EngineSession:
         epoch_configs = load_epoch_config(preset_path)
 
         compounding = CompoundingEngine(configs.DATA_DIR / "semantic_compounds.json")
+
+        morph_compounder = MorphCompoundingEngine(
+            inventory=engine.inventory,
+            validator=WellFormednessValidator(engine.inventory),
+            config=CompoundingConfig(era_threshold=5, max_new_per_era=5, compound_probability=0.3),
+        )
 
         def domain_injector_factory(domain: str) -> DomainInjector:
             return DomainInjector(domain, configs.DOMAIN_VOCAB_DIR)
@@ -196,6 +207,7 @@ class EngineSession:
             compounding_engine=compounding,
             renewal_engine=renewal,
             seed=self.seed,
+            morph_compounding=morph_compounder,
         )
 
         final_hot, final_typology, epoch_results = manager.run(

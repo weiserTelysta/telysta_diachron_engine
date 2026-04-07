@@ -170,7 +170,7 @@
         },
         {
             "id": 29,
-            "en": "flesh",
+            "en": "meat",
             "zh": "肉",
             "pos": "noun"
         },
@@ -188,7 +188,7 @@
         },
         {
             "id": 32,
-            "en": "grease",
+            "en": "fat",
             "zh": "油/脂肪",
             "pos": "noun"
         },
@@ -266,7 +266,7 @@
         },
         {
             "id": 45,
-            "en": "claw",
+            "en": "fingernail",
             "zh": "爪子",
             "pos": "noun"
         },
@@ -494,7 +494,7 @@
         },
         {
             "id": 83,
-            "en": "ash",
+            "en": "ashes",
             "zh": "灰烬",
             "pos": "noun"
         },
@@ -506,7 +506,7 @@
         },
         {
             "id": 85,
-            "en": "path",
+            "en": "road",
             "zh": "路",
             "pos": "noun"
         },
@@ -554,7 +554,7 @@
         },
         {
             "id": 93,
-            "en": "hot",
+            "en": "warm",
             "zh": "热",
             "pos": "adjective"
         },

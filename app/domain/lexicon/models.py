@@ -45,8 +45,14 @@ class LexicalEntity:
 
     # --- Phase 4 ---
     grammaticalization_stage: int = 0
-    # 0=实词, 1=原虚词(proto-function), 2=虚词, 3=附着词(clitic), 4=词缀
+    # 0=实词, 1=附着词(clitic), 2=词缀(affix), 3=消失(disappeared)
     grammaticalized_from_id: str = ""
     grammatical_function: str = ""
     # "" | "aspect_marker" | "tense_marker" | "case_marker" | "coordinator" | "subordinator" | "locative" | "negation"
     stasis_counter: int = 0
+
+    _GRAM_STAGE_MAX: int = 3
+
+    def __post_init__(self) -> None:
+        if self.grammaticalization_stage > self._GRAM_STAGE_MAX:
+            self.grammaticalization_stage = self._GRAM_STAGE_MAX

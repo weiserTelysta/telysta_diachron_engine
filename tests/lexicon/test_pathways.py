@@ -21,13 +21,13 @@ class TestLoadPathways:
             assert isinstance(pw, GrammaticalizationPathway)
 
     def test_first_pathway_fields(self):
-        # come_to_directional: max_freq_rank=30, min_erosion_stage=3
+        # come_to_directional: max_freq_rank=30, min_erosion_stage=2
         pw = load_pathways(_YAML)[0]
         assert pw.id == "come_to_directional"
         assert pw.semantic_prime == "come"
         assert pw.target_function == "locative"
         assert pw.max_true_freq_rank == 30
-        assert pw.min_erosion_stage == 3
+        assert pw.min_erosion_stage == 2
 
     def test_typology_output_isolating(self):
         pw = load_pathways(_YAML)[0]
@@ -61,17 +61,17 @@ class TestProductTypeFor:
 
 class TestTriggersFor:
     def setup_method(self):
-        # come_to_directional: max_freq_rank=30, min_erosion_stage=3
+        # come_to_directional: max_freq_rank=30, min_erosion_stage=2
         self.pw = load_pathways(_YAML)[0]
 
     def test_both_conditions_met(self):
-        assert self.pw.triggers_for(freq_rank=20, erosion_stage=4) is True
+        assert self.pw.triggers_for(freq_rank=20, erosion_stage=3) is True
 
     def test_freq_rank_too_high(self):
-        assert self.pw.triggers_for(freq_rank=50, erosion_stage=4) is False
+        assert self.pw.triggers_for(freq_rank=50, erosion_stage=3) is False
 
     def test_erosion_stage_too_low(self):
-        assert self.pw.triggers_for(freq_rank=20, erosion_stage=2) is False
+        assert self.pw.triggers_for(freq_rank=20, erosion_stage=1) is False
 
     def test_exactly_at_threshold(self):
-        assert self.pw.triggers_for(freq_rank=30, erosion_stage=3) is True
+        assert self.pw.triggers_for(freq_rank=30, erosion_stage=2) is True
