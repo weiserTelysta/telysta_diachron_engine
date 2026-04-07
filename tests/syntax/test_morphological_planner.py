@@ -238,17 +238,20 @@ class TestPortmanteauFusion:
         assert registry.cooccurrence_count("et", "m") == 0
 
     def test_automatic_fusion_fires_after_threshold_and_registers_to_morpheme_table(self):
+        # Auto-fusion (maybe_fuse) only triggers at fusional state (2).
         # Use morpheme_table where combined "et"+"t" = "ett" triggers haplology → "et"
         # ipa_a="et" ends with "t", ipa_b="t" starts with "t" → haplology → fused="et"
         # fused != combined ("ett") → condition met for fusion
+        from app.domain.syntax.typology import MorphologicalState
         registry = PortmanteauRegistry(cooccurrence_threshold=2)
         typ = TypologyMatrix(
             word_order="SVO",
             tense_system="inflectional",
-            morph_type="agglutinative",
+            morph_type="fusional",
             case_system="none",
             agreement_features=["person", "number"],
             morpheme_table={"PAST": "et", "1SG": "t"},
+            morph_state=MorphologicalState(verb_tam=2, verb_agreement=2),
         )
         planner = MorphologicalPlanner(typ, portmanteau_registry=registry)
         csg = _make_svo_csg(tense="PAST", person="1", number="sg")

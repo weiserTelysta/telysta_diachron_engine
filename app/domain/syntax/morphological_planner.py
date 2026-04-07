@@ -94,7 +94,17 @@ class MorphologicalPlanner:
                 if pw is not None:
                     planned.append(pw)
 
-        if self._typ.morph_type == "isolating":
+        # Collect particles: in analytic domains (state 0) grammaticalized
+        # function words surface as independent tokens instead of affixes.
+        # Also fires in fully isolating languages for backward compatibility.
+        ms = self._typ.morph_state
+        has_analytic_domain = (
+            ms.verb_tam == 0
+            or ms.verb_agreement == 0
+            or ms.noun_case == 0
+            or self._typ.morph_type == "isolating"
+        )
+        if has_analytic_domain:
             for pw in self._plan_particles(lexmap):
                 planned.append(pw)
 
@@ -146,10 +156,25 @@ class MorphologicalPlanner:
             return None
 
         suffixes: list[str] = []
-        if self._typ.case_system != "none":
-            suf = self._typ.get_suffix(case_key)
-            if suf:
-                suffixes.append(suf)
+        fp = self._typ.feature_presence
+        ms = self._typ.morph_state
+
+        if fp.case and self._typ.case_system != "none" and ms.noun_case > 0:
+            if ms.noun_case == 2 and self._port is not None:
+                # Fusional: try portmanteau lookup first
+                fused = self._port.lookup(frozenset({case_key}))
+                if fused is not None:
+                    suffixes.append(fused.surface_form)
+                else:
+                    suf = self._typ.get_suffix(case_key)
+                    if suf:
+                        suffixes.append(suf)
+            else:
+                # Agglutinative (state 1): transparent suffix
+                suf = self._typ.get_suffix(case_key)
+                if suf:
+                    suffixes.append(suf)
+            # state 0: no word-internal case marking (handled by word order / adpositions)
 
         return PlannedWord(
             role=role,
@@ -172,25 +197,29 @@ class MorphologicalPlanner:
         if entity is None:
             return None
 
+        fp = self._typ.feature_presence
+        ms = self._typ.morph_state
         prefixes: list[str] = []
-        # Collect (function_key, ipa) pairs so _fuse_suffixes can use correct keys
         suffix_items: list[tuple[str, str]] = []
 
         tense = node.attributes.get("tense", "")
         aspect = node.attributes.get("aspect", "")
 
-        if self._typ.tense_system == "inflectional":
-            for gram_key in filter(None, [tense, aspect]):
+        # TAM morphology — only attach when domain state > 0
+        if ms.verb_tam > 0 and self._typ.tense_system == "inflectional":
+            tam_keys = [k for k in [tense, aspect] if k and (
+                (k == tense and fp.tense) or (k == aspect and fp.aspect)
+            )]
+            for gram_key in tam_keys:
                 pre = self._typ.get_prefix(gram_key)
                 if pre:
                     prefixes.append(pre)
                 suf = self._typ.get_suffix(gram_key)
                 if suf:
                     suffix_items.append((gram_key, suf))
-        elif self._typ.tense_system == "isolating":
-            pass
 
-        if self._typ.agreement_features:
+        # Agreement morphology — only attach when domain state > 0
+        if ms.verb_agreement > 0 and fp.agreement and self._typ.agreement_features:
             person = board.read_or("person", "3")
             number = board.read_or("number", "sg")
             agr_key = f"{person}{number.upper()}"
@@ -198,6 +227,8 @@ class MorphologicalPlanner:
             if agr:
                 suffix_items.append((agr_key, agr))
 
+        # Portmanteau fusion: always check pre-registered entries when a
+        # registry exists; automatic fusion (maybe_fuse) only fires at state 2
         suffixes = self._fuse_suffixes(suffix_items) if self._port and suffix_items else [ipa for _, ipa in suffix_items]
 
         return PlannedWord(
@@ -213,12 +244,17 @@ class MorphologicalPlanner:
 
         ``items`` is a list of (function_key, ipa) pairs, e.g. [("PAST","et"),("1SG","m")].
         Co-occurrence is tracked by function key; lookup and maybe_fuse also use keys.
-        On successful automatic fusion, the fused form is registered in the morpheme_table.
-        Returns a plain list of IPA strings for PlannedWord.suffixes.
+
+        Pre-registered portmanteau entries are always checked (lookup).
+        Automatic fusion (maybe_fuse) only fires when at least one contributing
+        verb domain is at fusional state (2), preventing premature fusion in
+        purely agglutinative systems.
         """
         if self._port is None or len(items) < 2:
             return [ipa for _, ipa in items]
 
+        ms = self._typ.morph_state
+        allow_auto_fuse = ms.verb_tam == 2 or ms.verb_agreement == 2
         existing_values = set(self._typ.morpheme_table.values())
         result: list[str] = []
         i = 0
@@ -228,7 +264,7 @@ class MorphologicalPlanner:
                 key_b, ipa_b = items[i + 1]
                 self._port.track_cooccurrence(key_a, key_b)
                 fused = self._port.lookup(frozenset({key_a, key_b}))
-                if fused is None:
+                if fused is None and allow_auto_fuse:
                     fused = self._port.maybe_fuse(key_a, ipa_a, key_b, ipa_b, existing_values)
                     if fused is not None:
                         combined_key = f"{key_a}+{key_b}"

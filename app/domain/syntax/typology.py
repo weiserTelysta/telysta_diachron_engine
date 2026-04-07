@@ -125,6 +125,22 @@ class TypologyMatrix:
     def __post_init__(self) -> None:
         if self.word_order not in _VALID_WORD_ORDERS:
             raise ValueError(f"Invalid word_order: {self.word_order!r}")
+        # Backward-compat: infer morph_state from legacy morph_type when
+        # morph_state is still at all-zero defaults but morph_type is not isolating.
+        _all_zero = (
+            self.morph_state.verb_tam == 0
+            and self.morph_state.verb_agreement == 0
+            and self.morph_state.noun_case == 0
+            and self.morph_state.noun_definiteness == 0
+        )
+        if _all_zero and self.morph_type != "isolating":
+            level = AGGLUTINATIVE if self.morph_type == "agglutinative" else FUSIONAL
+            self.morph_state = MorphologicalState(
+                verb_tam=level,
+                verb_agreement=level,
+                noun_case=level if self.case_system != "none" else ANALYTIC,
+                noun_definiteness=0,
+            )
 
     @property
     def derived_morph_type(self) -> MorphType:

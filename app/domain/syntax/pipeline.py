@@ -12,6 +12,7 @@ from app.domain.syntax.surface_phonology import SurfacePhonologyApplier
 from app.domain.syntax.typology import TypologyMatrix
 
 if TYPE_CHECKING:
+    from app.domain.morphology.portmanteau import PortmanteauRegistry
     from app.domain.phonology.operators.registry import OperatorRegistry
     from app.domain.phonology.phoneme import PhonemeInventory
     from app.domain.storage.hot_state import EngineHotState
@@ -54,12 +55,14 @@ class CSGPipeline:
         typology: TypologyMatrix,
         registry: "OperatorRegistry",
         inventory: "PhonemeInventory",
+        portmanteau_registry: "PortmanteauRegistry | None" = None,
     ) -> None:
         self._prime_graph = prime_graph
         self._default_typology = typology
         self._validator = CSGValidator(prime_graph)
         self._lex_layer = LexicalizationLayer(prime_graph)
         self._surface = SurfacePhonologyApplier(registry, inventory)
+        self._portmanteau = portmanteau_registry
 
     def generate(
         self,
@@ -82,7 +85,7 @@ class CSGPipeline:
         }
 
         # ③ Morphological planning
-        planner = MorphologicalPlanner(typ)
+        planner = MorphologicalPlanner(typ, portmanteau_registry=self._portmanteau)
         board = FeatureBlackboard()
         planned = planner.plan(csg, lexmap, board)
 
