@@ -217,6 +217,42 @@ environment: {before: {syllabic: true}, after: {syllabic: true}}
 
 三种类型是**演化阶段**，不是静态标签。轮回方向：孤立语 → 黏着语 → 屈折语 → 磨损崩塌 → 回到孤立语。
 
+#### 分域形态状态模型（Per-Domain Morphological State Model）
+
+自然语言中不同语法域的演化速度不同。英语的代词保留古屈折 (I/me/my)，名词已全面分析化，动词半黏着 (walk-ed)。全局单标签 `morph_type` 无法表达这种"类型学缝合怪"现象。
+
+引擎采用 **4 维形态状态矩阵** (`MorphologicalState`)，每个域独立演化：
+
+| 域名 | 捆绑范畴 | 状态 0 (分析) | 状态 1 (黏着) | 状态 2 (融合) |
+|---|---|---|---|---|
+| `verb_tam` | Tense + Aspect + Mood | 独立助词 (will go) | 规则后缀 (walk-ed) | 内部音变/范式表 (sing→sang) |
+| `verb_agreement` | Person + Number Agreement | 无标记 | 规则后缀 (-s) | 融合变位 (am/is/are) |
+| `noun_case` | Case + Number | 介词+语序 | 规则后缀 (ev-ler-de) | 融合格尾 (domin-us) |
+| `noun_definiteness` | Definiteness | 独立冠词 (the) | 后缀冠词 (-en) | — (上限 1) |
+
+总状态空间：3 × 3 × 3 × 2 = **54 种**，可完全枚举和测试。
+
+同时维护 `FeaturePresence` 布尔矩阵，区分"该语言没有格系统" (case=False) 和"有格但用介词实现" (case=True, noun_case=0)。
+
+旧字段 `morph_type` 保留为**派生属性** (`derived_morph_type`)，由域状态平均值推算，仅用于 UI/日志/向后兼容。
+
+#### 形态生成协议（Morphological Generation Protocol）
+
+Planner 按"由内而外"的固定流水线组装词形，杜绝挂载冲突：
+
+1. **State 2 (融合) 优先**：查 `PortmanteauRegistry`，输出不可分割的融合形式
+2. **State 1 (黏着) 次之**：按 Bybee 相关性原则排列 Slot (内层 TAM → 外层 Agreement)
+3. **State 0 (分析) 最后**：将语法信息作为独立 particle 输出到句子中
+
+当 `verb_tam=2` 和 `verb_agreement=2` 同时成立时，强制合并为单一范式查表（Paradigm Check），避免对同一词根进行两次独立音变。
+
+#### 形态一致性校验器（Morphological Consistency Validator）
+
+在 CSGPipeline 生成前执行两层校验：
+
+1. **结构校验 (Hard Errors)**：FeaturePresence 与 MorphologicalState 矛盾检测（如 tense=False 但 verb_tam>0）
+2. **类型学评分 (Soft Warnings)**：稀有但合法的跨语言组合提示（如 noun_case=2 + verb_agreement=0）
+
 #### 屈折语的特征融卷算法（Feature Fusion）
 
 黏着语的形态逻辑是"乐高式叠加"（词根 + 时态后缀 + 人称后缀），代码容易实现。但**屈折语**中一个词缀同时编码多个特征（如拉丁语 `-o` 单独表达第一人称/单数/现在时/主动语态的融合），这在算法上是本质性的挑战，不可等同于黏着语处理。
@@ -1442,5 +1478,15 @@ Callback 分层策略：
 
 ---
 
-*文档版本：0.5 — 2026-04-07*
-*对应代码版本：Phase 6 Epoch Architecture + Vocabulary Explosion 完成*
+15. **morph_type 是派生属性，不是输入**：`TypologyMatrix.morph_type` 只能由 `MorphologicalState` 四个域状态的加权平均推算 (`derived_morph_type`)。任何直接赋值 `morph_type` 的代码须同时调用 `sync_morph_type()` 或改为操作域状态。
+
+16. **风格预设只输出概率偏置，不直接设定结构**：`BiasProfile` (imperial/primal/modern) 只能改变 `TypologyDriftEngine` 的域状态转移概率，不允许直接覆写 `MorphologicalState` 字段。这防止 Style 层越权 Structure 层。
+
+17. **快照必须包含完整类型学**：`EngineHotState.snapshot()` 必须接收 `typology` 参数并序列化 `MorphologicalState` + `FeaturePresence`，使 keyframe 具备完整语言状态重建能力。
+
+18. **语法胚胎校验**：创世词库必须包含代词、核心动词、指示代词、否定标记等功能种子词。`EngineSession` 在生成词库后执行 `_verify_grammar_embryo` 检查，缺少时发出警告。
+
+---
+
+*文档版本：0.6 — 2026-04-08*
+*对应代码版本：Phase 7 Per-Domain Morphological State Architecture 完成*

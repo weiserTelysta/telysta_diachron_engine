@@ -86,6 +86,7 @@ class EngineSession:
         words = create_basic_lexicon_generator(global_settings).generate()
         logger.debug("创世完成，共生成 %d 个核心词汇。", len(words))
 
+        self._verify_grammar_embryo(words)
         swadesh_concepts = self._load_swadesh_100()
 
         era0_hot = EngineHotState(current_era=0)
@@ -212,6 +213,35 @@ class EngineSession:
             combined_era_log.extend(ep.era_log)
 
         return final_hot, final_typology, epoch_results, combined_era_log
+
+    @staticmethod
+    def _verify_grammar_embryo(words: list["LexicalEntity"]) -> None:
+        """Ensure the initial lexicon contains sufficient functional seeds.
+
+        Grammaticalization pathways require source material: pronouns,
+        core verbs (be/have/go), demonstratives, and negation markers.
+        Without these, the engine cannot produce case markers, tense
+        affixes, or definiteness clitics through natural evolution.
+        """
+        required_pos = {"pron.", "v."}
+        found_pos = {w.pos for w in words}
+        missing = required_pos - found_pos
+        if missing:
+            logger.warning(
+                "Grammar embryo check: missing POS categories %s. "
+                "Grammaticalization pathways may be starved.",
+                missing,
+            )
+
+        concepts_lower = {w.concept.lower() for w in words}
+        core_concepts = {"i", "you", "this", "that", "not", "be", "go", "give"}
+        found_core = core_concepts & concepts_lower
+        if len(found_core) < 3:
+            logger.warning(
+                "Grammar embryo check: only %d/%d core functional concepts "
+                "found (%s). Consider enriching the seed lexicon.",
+                len(found_core), len(core_concepts), found_core,
+            )
 
     def _bootstrap(self) -> None:
         settings_dict = {
