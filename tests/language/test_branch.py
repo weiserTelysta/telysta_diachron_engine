@@ -3,6 +3,7 @@ import random
 import pytest
 
 from app.domain.language.branch import BranchConfig, BranchLanguage
+from app.domain.language.evolution_profile import EvolutionProfile
 from app.domain.lexicon.models import LexicalEntity
 from app.domain.phonology.backends.native_backend import NativeBackend
 from app.domain.phonology.operators.final_vowel_drop import FinalVowelDropOperator
@@ -199,3 +200,72 @@ class TestBranchGenerate:
         r = repr(branch)
         assert "forest" in r
         assert "era=0" in r
+
+
+class TestBranchEvolutionProfile:
+    def test_default_config_has_no_profile(self):
+        config = BranchConfig(name="b", fork_era=0)
+        assert config.evolution_profile is None
+
+    def test_zero_operator_rate_blocks_all_sound_changes(self):
+        """operator_rate_overrides={"final_vowel_drop": 0.0} suppresses the operator entirely."""
+        inv = _inv()
+        hs = _hot_state(_entity("SEE", "v.", "vidi"))
+        profile = EvolutionProfile(operator_rate_overrides={"final_vowel_drop": 0.0})
+        config = BranchConfig(name="b", fork_era=0, evolution_profile=profile)
+        branch = BranchLanguage(config, hs, _base_typology(), _prime_graph(), _registry(inv), inv)
+        for _ in range(5):
+            branch.evolve_one_era(rng=random.Random(42))
+        assert branch.hot_state.get("see").ipa_current == "vidi"
+
+    def test_zero_position_bias_blocks_final_stress_words(self):
+        """erosion_position_bias={"final": 0.0} makes effective_rate=0 for final-stress words."""
+        inv = _inv()
+        entity = LexicalEntity(
+            id="see", concept="SEE", pos="v.",
+            ipa_current="vidi", ipa_history=[],
+            frequency_weight=0.05,
+            stress_pattern="final",
+        )
+        hs = EngineHotState()
+        hs.put(entity)
+        profile = EvolutionProfile(erosion_position_bias={"final": 0.0})
+        config = BranchConfig(name="b", fork_era=0, evolution_profile=profile)
+        branch = BranchLanguage(config, hs, _base_typology(), _prime_graph(), _registry(inv), inv)
+        for _ in range(5):
+            branch.evolve_one_era(rng=random.Random(0))
+        assert branch.hot_state.get("see").ipa_current == "vidi"
+
+    def test_two_branches_with_different_profiles_diverge(self):
+        """Same seed, one branch with elven profile (slow erosion) vs none (default)."""
+        inv = _inv()
+        parent = _hot_state(_entity("SEE", "v.", "vidi"), _entity("I", "pron.", "ni"))
+        primes = _prime_graph()
+        typ = _base_typology()
+        reg = _registry(inv)
+
+        branch_normal = BranchLanguage(BranchConfig("normal", 0), parent, typ, primes, reg, inv)
+        elven_profile = EvolutionProfile(operator_rate_overrides={"final_vowel_drop": 0.0})
+        branch_elven = BranchLanguage(
+            BranchConfig("elven", 0, evolution_profile=elven_profile),
+            parent, typ, primes, reg, inv,
+        )
+        rng = random.Random(1)
+        for _ in range(5):
+            branch_normal.evolve_one_era(rng=rng)
+            branch_elven.evolve_one_era(rng=rng)
+
+        normal_ipa = branch_normal.hot_state.get("see").ipa_current
+        elven_ipa = branch_elven.hot_state.get("see").ipa_current
+        # Elven profile blocks final_vowel_drop → elven branch should retain more original form
+        assert elven_ipa == "vidi" or normal_ipa != elven_ipa
+
+    def test_profile_does_not_affect_era_advance(self):
+        """EvolutionProfile must not break the era counter."""
+        inv = _inv()
+        hs = _hot_state(_entity("I", "pron.", "ni"))
+        profile = EvolutionProfile(operator_rate_overrides={"final_vowel_drop": 0.0})
+        config = BranchConfig(name="b", fork_era=0, evolution_profile=profile)
+        branch = BranchLanguage(config, hs, _base_typology(), _prime_graph(), _registry(inv), inv)
+        branch.evolve_one_era(rng=random.Random(0))
+        assert branch.current_era == 1

@@ -5,6 +5,7 @@ import random
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from app.domain.language.evolution_profile import EvolutionProfile
 from app.domain.syntax.pipeline import CSGPipeline, GenerationResult
 from app.domain.syntax.typology import TypologyMatrix
 
@@ -23,6 +24,7 @@ class BranchConfig:
     name: str
     fork_era: int
     typology_override: TypologyMatrix | None = None
+    evolution_profile: EvolutionProfile | None = None
 
 
 class BranchLanguage:
@@ -99,12 +101,22 @@ class BranchLanguage:
         next_era = self.hot_state.current_era + 1
         active_ops = self._registry.active_operators_for_era(next_era)
         erosion = ErosionModel()
+        profile = self.config.evolution_profile
         changed_count = 0
 
         for entity in self.hot_state.all_alive():
             effective_rate = erosion.rate(entity.frequency_weight, entity.stress_pattern)
+            # Differential Erosion: scale by position bias from EvolutionProfile
+            if profile is not None and profile.erosion_position_bias:
+                pos_bias = profile.erosion_position_bias.get(entity.stress_pattern, 1.0)
+                effective_rate = min(effective_rate * pos_bias, 1.0)
+
             for op in active_ops:
-                if rng.random() > effective_rate * op.change_rate:
+                # Phonetic Drift: per-operator rate override from EvolutionProfile
+                op_rate = op.change_rate
+                if profile is not None and profile.operator_rate_overrides:
+                    op_rate *= profile.operator_rate_overrides.get(op.name, 1.0)
+                if rng.random() > effective_rate * op_rate:
                     continue
                 tokens = self._inventory.tokenize(entity.ipa_current)
                 result = op.apply(tokens, entity.stress_pattern)
