@@ -1,0 +1,118 @@
+# 语法化路由配置
+# 格式：语义基元 → 语法功能，按类型学分支决定产物形态
+#
+# typology_output 三条路由：
+#   isolating    → free_particle     (孤立语：独立虚词，不附着)
+#   agglutinative → suffix / prefix  (黏着语：规则词缀)
+#   fusional     → stem_alternation / case_ending (屈折语：词根变形/格尾)
+#
+# trigger 触发条件（AND关系）：
+#   min_true_freq_rank : 候选词的 true_freq_rank 须 <= 此值（即足够高频）
+#   min_erosion_stage  : 累积音变磨损步数须 >= 此值
+
+version: "1.0"
+
+pathways:
+
+  - id: "exist_to_aspect"
+    semantic_prime: "EXIST"
+    description: "存在/居住动词 → 进行体标记"
+    examples:
+      zh: "在（居住→在做某事）"
+      en: "be (exist → progressive marker)"
+    target_function: "aspect_marker"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "suffix"
+      fusional: "stem_alternation"
+    trigger:
+      max_true_freq_rank: 600
+      min_erosion_stage: 2
+
+  - id: "want_to_future"
+    semantic_prime: "WANT"
+    description: "意愿动词 → 将来时标记（欲望变将来规律）"
+    examples:
+      zh: "要（索取→将要）"
+      en: "will (desire → future tense)"
+    target_function: "tense_marker"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "prefix"
+      fusional: "prefix"
+    trigger:
+      max_true_freq_rank: 500
+      min_erosion_stage: 2
+
+  - id: "go_to_locative"
+    semantic_prime: "GO"
+    description: "移动动词 → 方向/趋向标记（空间优先规律）"
+    examples:
+      zh: "从（随行→空间起点→时间起点）"
+      en: "going to (physical movement → future)"
+    target_function: "locative"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "suffix"
+      fusional: "case_ending"
+    trigger:
+      max_true_freq_rank: 400
+      min_erosion_stage: 3
+
+  - id: "finish_to_perfective"
+    semantic_prime: "FINISH"
+    description: "完成动词 → 完成体/过去时标记"
+    examples:
+      zh: "了（完结→动作完成标记）"
+      en: "have (possess → perfect aspect)"
+    target_function: "aspect_marker"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "suffix"
+      fusional: "stem_alternation"
+    trigger:
+      max_true_freq_rank: 800
+      min_erosion_stage: 2
+
+  - id: "hold_to_case"
+    semantic_prime: "HOLD"
+    description: "握持动词 → 宾格/工具格标记"
+    examples:
+      zh: "把（握住→宾语引出标记）"
+      en: "with (accompany → instrumental)"
+    target_function: "case_marker"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "suffix"
+      fusional: "case_ending"
+    trigger:
+      max_true_freq_rank: 1200
+      min_erosion_stage: 3
+
+  - id: "give_to_benefactive"
+    semantic_prime: "GIVE"
+    description: "给予动词 → 与格/受益格标记"
+    examples:
+      zh: "给（给予→受益者标记）"
+    target_function: "case_marker"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "suffix"
+      fusional: "case_ending"
+    trigger:
+      max_true_freq_rank: 200
+      min_erosion_stage: 3
+
+  - id: "say_to_quotative"
+    semantic_prime: "SAY"
+    description: "言说动词 → 引语标记/从句连词"
+    examples:
+      en: "that (say → complementizer)"
+    target_function: "subordinator"
+    typology_output:
+      isolating: "free_particle"
+      agglutinative: "suffix"
+      fusional: "prefix"
+    trigger:
+      max_true_freq_rank: 120
+      min_erosion_stage: 2

@@ -131,6 +131,18 @@ class PhonemeInventory:
         weights = [p.selection_weight for p in pool]
         return rng.choices(pool, weights=weights, k=1)[0]
 
+    def sample_coda_consonant(self, rng: random.Random) -> Phoneme:
+        """Weighted sample of a coda-preferred consonant (sonorant or nasal).
+
+        Sonorants and nasals are cross-linguistically preferred in coda position.
+        Falls back to the full consonant pool if no sonorants are available.
+        """
+        pool = [p for p in self.consonants if p.features.get("sonorant") or p.features.get("nasal")]
+        if not pool:
+            pool = self.consonants
+        weights = [p.selection_weight for p in pool]
+        return rng.choices(pool, weights=weights, k=1)[0]
+
     @classmethod
     def from_preset(cls, preset_name: str) -> "PhonemeInventory":
         """Load a PhonemeInventory from data/phoneme_presets/<preset_name>.json."""

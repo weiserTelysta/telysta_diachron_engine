@@ -4,1243 +4,1657 @@
             "id": 1,
             "en": "I",
             "zh": "我",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 10,
+            "word_class": "function"
         },
         {
             "id": 2,
             "en": "you",
             "zh": "你",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 22,
+            "word_class": "function"
         },
         {
             "id": 3,
             "en": "he",
             "zh": "他",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 30,
+            "word_class": "function"
         },
         {
             "id": 4,
             "en": "we",
             "zh": "我们",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 45,
+            "word_class": "function"
         },
         {
             "id": 5,
             "en": "you",
             "zh": "你们",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 55,
+            "word_class": "function"
         },
         {
             "id": 6,
             "en": "they",
             "zh": "他们",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 50,
+            "word_class": "function"
         },
         {
             "id": 7,
             "en": "this",
             "zh": "这",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 28,
+            "word_class": "function"
         },
         {
             "id": 8,
             "en": "that",
             "zh": "那",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 15,
+            "word_class": "function"
         },
         {
             "id": 9,
             "en": "here",
             "zh": "这里",
-            "pos": "adverb"
+            "pos": "adverb",
+            "true_freq_rank": 150,
+            "word_class": "function"
         },
         {
             "id": 10,
             "en": "there",
             "zh": "那里",
-            "pos": "adverb"
+            "pos": "adverb",
+            "true_freq_rank": 35,
+            "word_class": "function"
         },
         {
             "id": 11,
             "en": "who",
             "zh": "谁",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 80,
+            "word_class": "function"
         },
         {
             "id": 12,
             "en": "what",
             "zh": "什么",
-            "pos": "pronoun"
+            "pos": "pronoun",
+            "true_freq_rank": 58,
+            "word_class": "function"
         },
         {
             "id": 13,
             "en": "where",
             "zh": "哪",
-            "pos": "adverb"
+            "pos": "adverb",
+            "true_freq_rank": 200,
+            "word_class": "function"
         },
         {
             "id": 14,
             "en": "when",
             "zh": "何时",
-            "pos": "adverb"
+            "pos": "adverb",
+            "true_freq_rank": 180,
+            "word_class": "function"
         },
         {
             "id": 15,
             "en": "how",
             "zh": "如何",
-            "pos": "adverb"
+            "pos": "adverb",
+            "true_freq_rank": 120,
+            "word_class": "function"
         },
         {
             "id": 16,
             "en": "not",
             "zh": "不",
-            "pos": "adverb"
+            "pos": "adverb",
+            "true_freq_rank": 23,
+            "word_class": "function"
         },
         {
             "id": 17,
             "en": "all",
             "zh": "所有",
-            "pos": "determiner"
+            "pos": "determiner",
+            "true_freq_rank": 70,
+            "word_class": "content"
         },
         {
             "id": 18,
             "en": "many",
             "zh": "多",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 300,
+            "word_class": "content"
         },
         {
             "id": 19,
             "en": "some",
             "zh": "一些",
-            "pos": "determiner"
+            "pos": "determiner",
+            "true_freq_rank": 90,
+            "word_class": "content"
         },
         {
             "id": 20,
             "en": "few",
             "zh": "少",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 600,
+            "word_class": "content"
         },
         {
             "id": 21,
             "en": "other",
             "zh": "其他",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 100,
+            "word_class": "content"
         },
         {
             "id": 22,
             "en": "one",
             "zh": "一",
-            "pos": "numeral"
+            "pos": "numeral",
+            "true_freq_rank": 40,
+            "word_class": "content"
         },
         {
             "id": 23,
             "en": "two",
             "zh": "二",
-            "pos": "numeral"
+            "pos": "numeral",
+            "true_freq_rank": 100,
+            "word_class": "content"
         },
         {
             "id": 24,
             "en": "three",
             "zh": "三",
-            "pos": "numeral"
+            "pos": "numeral",
+            "true_freq_rank": 210,
+            "word_class": "content"
         },
         {
             "id": 25,
             "en": "four",
             "zh": "四",
-            "pos": "numeral"
+            "pos": "numeral",
+            "true_freq_rank": 500,
+            "word_class": "content"
         },
         {
             "id": 26,
             "en": "five",
             "zh": "五",
-            "pos": "numeral"
+            "pos": "numeral",
+            "true_freq_rank": 720,
+            "word_class": "content"
         },
         {
             "id": 27,
             "en": "big",
             "zh": "大",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 220,
+            "word_class": "content"
         },
         {
             "id": 28,
             "en": "long",
             "zh": "长",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 245,
+            "word_class": "content"
         },
         {
             "id": 29,
             "en": "wide",
             "zh": "宽",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1200,
+            "word_class": "content"
         },
         {
             "id": 30,
             "en": "thick",
             "zh": "厚",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 2800,
+            "word_class": "content"
         },
         {
             "id": 31,
             "en": "heavy",
             "zh": "重",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 3500,
+            "word_class": "content"
         },
         {
             "id": 32,
             "en": "small",
             "zh": "小",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 310,
+            "word_class": "content"
         },
         {
             "id": 33,
             "en": "short",
             "zh": "短",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1050,
+            "word_class": "content"
         },
         {
             "id": 34,
             "en": "narrow",
             "zh": "窄",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 2500,
+            "word_class": "content"
         },
         {
             "id": 35,
             "en": "thin",
             "zh": "薄",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1600,
+            "word_class": "content"
         },
         {
             "id": 36,
             "en": "woman",
             "zh": "女",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 360,
+            "word_class": "content"
         },
         {
             "id": 37,
             "en": "man",
             "zh": "男",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 165,
+            "word_class": "content"
         },
         {
             "id": 38,
             "en": "person",
             "zh": "人",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 170,
+            "word_class": "content"
         },
         {
             "id": 39,
             "en": "child",
             "zh": "孩",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 410,
+            "word_class": "content"
         },
         {
             "id": 40,
             "en": "wife",
             "zh": "妻",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1250,
+            "word_class": "content"
         },
         {
             "id": 41,
             "en": "husband",
             "zh": "夫",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 620,
+            "word_class": "content"
         },
         {
             "id": 42,
             "en": "mother",
             "zh": "母",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 530,
+            "word_class": "content"
         },
         {
             "id": 43,
             "en": "father",
             "zh": "父",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 510,
+            "word_class": "content"
         },
         {
             "id": 44,
             "en": "animal",
             "zh": "动物",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2600,
+            "word_class": "content"
         },
         {
             "id": 45,
             "en": "fish",
             "zh": "鱼",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 810,
+            "word_class": "content"
         },
         {
             "id": 46,
             "en": "bird",
             "zh": "鸟",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 720,
+            "word_class": "content"
         },
         {
             "id": 47,
             "en": "dog",
             "zh": "狗",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 630,
+            "word_class": "content"
         },
         {
             "id": 48,
             "en": "louse",
             "zh": "虱",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 15500,
+            "word_class": "content"
         },
         {
             "id": 49,
             "en": "snake",
             "zh": "蛇",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2300,
+            "word_class": "content"
         },
         {
             "id": 50,
             "en": "worm",
             "zh": "虫",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 5200,
+            "word_class": "content"
         },
         {
             "id": 51,
             "en": "tree",
             "zh": "树",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1250,
+            "word_class": "content"
         },
         {
             "id": 52,
             "en": "forest",
             "zh": "森",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3600,
+            "word_class": "content"
         },
         {
             "id": 53,
             "en": "stick",
             "zh": "枝",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2900,
+            "word_class": "content"
         },
         {
             "id": 54,
             "en": "fruit",
             "zh": "果",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1600,
+            "word_class": "content"
         },
         {
             "id": 55,
             "en": "seed",
             "zh": "种",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 4200,
+            "word_class": "content"
         },
         {
             "id": 56,
             "en": "leaf",
             "zh": "叶",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2300,
+            "word_class": "content"
         },
         {
             "id": 57,
             "en": "root",
             "zh": "根",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2100,
+            "word_class": "content"
         },
         {
             "id": 58,
             "en": "bark",
             "zh": "树皮",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 12500,
+            "word_class": "content"
         },
         {
             "id": 59,
             "en": "flower",
             "zh": "花",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3100,
+            "word_class": "content"
         },
         {
             "id": 60,
             "en": "grass",
             "zh": "草",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 820,
+            "word_class": "content"
         },
         {
             "id": 61,
             "en": "rope",
             "zh": "绳",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 4800,
+            "word_class": "content"
         },
         {
             "id": 62,
             "en": "skin",
             "zh": "肤",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1400,
+            "word_class": "content"
         },
         {
             "id": 63,
             "en": "meat",
             "zh": "肉",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1800,
+            "word_class": "content"
         },
         {
             "id": 64,
             "en": "blood",
             "zh": "血",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 850,
+            "word_class": "content"
         },
         {
             "id": 65,
             "en": "bone",
             "zh": "骨",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1900,
+            "word_class": "content"
         },
         {
             "id": 66,
             "en": "fat",
             "zh": "脂",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2200,
+            "word_class": "content"
         },
         {
             "id": 67,
             "en": "egg",
             "zh": "蛋",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1500,
+            "word_class": "content"
         },
         {
             "id": 68,
             "en": "horn",
             "zh": "角",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 4500,
+            "word_class": "content"
         },
         {
             "id": 69,
             "en": "tail",
             "zh": "尾",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2600,
+            "word_class": "content"
         },
         {
             "id": 70,
             "en": "feather",
             "zh": "羽",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3800,
+            "word_class": "content"
         },
         {
             "id": 71,
             "en": "hair",
             "zh": "发",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 750,
+            "word_class": "content"
         },
         {
             "id": 72,
             "en": "head",
             "zh": "头",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 460,
+            "word_class": "content"
         },
         {
             "id": 73,
             "en": "ear",
             "zh": "耳",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 900,
+            "word_class": "content"
         },
         {
             "id": 74,
             "en": "eye",
             "zh": "眼",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 560,
+            "word_class": "content"
         },
         {
             "id": 75,
             "en": "nose",
             "zh": "鼻",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1600,
+            "word_class": "content"
         },
         {
             "id": 76,
             "en": "mouth",
             "zh": "口",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1050,
+            "word_class": "content"
         },
         {
             "id": 77,
             "en": "tooth",
             "zh": "牙",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2100,
+            "word_class": "content"
         },
         {
             "id": 78,
             "en": "tongue",
             "zh": "舌",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2400,
+            "word_class": "content"
         },
         {
             "id": 79,
             "en": "fingernail",
             "zh": "指甲",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 9800,
+            "word_class": "content"
         },
         {
             "id": 80,
             "en": "foot",
             "zh": "脚",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1300,
+            "word_class": "content"
         },
         {
             "id": 81,
             "en": "leg",
             "zh": "腿",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1200,
+            "word_class": "content"
         },
         {
             "id": 82,
             "en": "knee",
             "zh": "膝",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3200,
+            "word_class": "content"
         },
         {
             "id": 83,
             "en": "hand",
             "zh": "手",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 520,
+            "word_class": "content"
         },
         {
             "id": 84,
             "en": "wing",
             "zh": "翅",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3500,
+            "word_class": "content"
         },
         {
             "id": 85,
             "en": "belly",
             "zh": "腹",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 4200,
+            "word_class": "content"
         },
         {
             "id": 86,
             "en": "gut",
             "zh": "肠",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 5500,
+            "word_class": "content"
         },
         {
             "id": 87,
             "en": "neck",
             "zh": "颈",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2800,
+            "word_class": "content"
         },
         {
             "id": 88,
             "en": "back",
             "zh": "背",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 480,
+            "word_class": "content"
         },
         {
             "id": 89,
             "en": "breast",
             "zh": "乳",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3600,
+            "word_class": "content"
         },
         {
             "id": 90,
             "en": "heart",
             "zh": "心",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 680,
+            "word_class": "content"
         },
         {
             "id": 91,
             "en": "liver",
             "zh": "肝",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 6500,
+            "word_class": "content"
         },
         {
             "id": 92,
             "en": "drink",
             "zh": "喝",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 950,
+            "word_class": "content"
         },
         {
             "id": 93,
             "en": "eat",
             "zh": "吃",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 470,
+            "word_class": "content"
         },
         {
             "id": 94,
             "en": "bite",
             "zh": "咬",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 3200,
+            "word_class": "content"
         },
         {
             "id": 95,
             "en": "suck",
             "zh": "吸",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 4800,
+            "word_class": "content"
         },
         {
             "id": 96,
             "en": "spit",
             "zh": "吐",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 5500,
+            "word_class": "content"
         },
         {
             "id": 97,
             "en": "vomit",
             "zh": "呕",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 6200,
+            "word_class": "content"
         },
         {
             "id": 98,
             "en": "blow",
             "zh": "吹",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2800,
+            "word_class": "content"
         },
         {
             "id": 99,
             "en": "breathe",
             "zh": "呼吸",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 4200,
+            "word_class": "content"
         },
         {
             "id": 100,
             "en": "laugh",
             "zh": "笑",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1800,
+            "word_class": "content"
         },
         {
             "id": 101,
             "en": "see",
             "zh": "看",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 68,
+            "word_class": "content"
         },
         {
             "id": 102,
             "en": "hear",
             "zh": "听",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 420,
+            "word_class": "content"
         },
         {
             "id": 103,
             "en": "know",
             "zh": "知",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 95,
+            "word_class": "content"
         },
         {
             "id": 104,
             "en": "think",
             "zh": "想",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 105,
+            "word_class": "content"
         },
         {
             "id": 105,
             "en": "smell",
             "zh": "嗅",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 3400,
+            "word_class": "content"
         },
         {
             "id": 106,
             "en": "fear",
             "zh": "怕",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2600,
+            "word_class": "content"
         },
         {
             "id": 107,
             "en": "sleep",
             "zh": "睡",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1100,
+            "word_class": "content"
         },
         {
             "id": 108,
             "en": "live",
             "zh": "住",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 540,
+            "word_class": "content"
         },
         {
             "id": 109,
             "en": "die",
             "zh": "死",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 780,
+            "word_class": "content"
         },
         {
             "id": 110,
             "en": "kill",
             "zh": "杀",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 870,
+            "word_class": "content"
         },
         {
             "id": 111,
             "en": "fight",
             "zh": "斗",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1350,
+            "word_class": "content"
         },
         {
             "id": 112,
             "en": "hunt",
             "zh": "猎",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 3800,
+            "word_class": "content"
         },
         {
             "id": 113,
             "en": "hit",
             "zh": "击",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1250,
+            "word_class": "content"
         },
         {
             "id": 114,
             "en": "cut",
             "zh": "切",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1600,
+            "word_class": "content"
         },
         {
             "id": 115,
             "en": "split",
             "zh": "分",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 5200,
+            "word_class": "content"
         },
         {
             "id": 116,
             "en": "stab",
             "zh": "刺",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 7500,
+            "word_class": "content"
         },
         {
             "id": 117,
             "en": "scratch",
             "zh": "挠",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 6800,
+            "word_class": "content"
         },
         {
             "id": 118,
             "en": "dig",
             "zh": "挖",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 4500,
+            "word_class": "content"
         },
         {
             "id": 119,
             "en": "swim",
             "zh": "游",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2900,
+            "word_class": "content"
         },
         {
             "id": 120,
             "en": "fly",
             "zh": "飞",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1450,
+            "word_class": "content"
         },
         {
             "id": 121,
             "en": "walk",
             "zh": "走",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1200,
+            "word_class": "content"
         },
         {
             "id": 122,
             "en": "come",
             "zh": "来",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 65,
+            "word_class": "content"
         },
         {
             "id": 123,
             "en": "lie",
             "zh": "躺",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1700,
+            "word_class": "content"
         },
         {
             "id": 124,
             "en": "sit",
             "zh": "坐",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1900,
+            "word_class": "content"
         },
         {
             "id": 125,
             "en": "stand",
             "zh": "站",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1400,
+            "word_class": "content"
         },
         {
             "id": 126,
             "en": "turn",
             "zh": "转",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1050,
+            "word_class": "content"
         },
         {
             "id": 127,
             "en": "fall",
             "zh": "落",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 820,
+            "word_class": "content"
         },
         {
             "id": 128,
             "en": "give",
             "zh": "给",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 135,
+            "word_class": "content"
         },
         {
             "id": 129,
             "en": "hold",
             "zh": "拿",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 1150,
+            "word_class": "content"
         },
         {
             "id": 130,
             "en": "squeeze",
             "zh": "挤",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 7200,
+            "word_class": "content"
         },
         {
             "id": 131,
             "en": "rub",
             "zh": "磨",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 5800,
+            "word_class": "content"
         },
         {
             "id": 132,
             "en": "wash",
             "zh": "洗",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 3200,
+            "word_class": "content"
         },
         {
             "id": 133,
             "en": "wipe",
             "zh": "擦",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 6500,
+            "word_class": "content"
         },
         {
             "id": 134,
             "en": "pull",
             "zh": "拉",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2200,
+            "word_class": "content"
         },
         {
             "id": 135,
             "en": "push",
             "zh": "推",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2800,
+            "word_class": "content"
         },
         {
             "id": 136,
             "en": "throw",
             "zh": "扔",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2500,
+            "word_class": "content"
         },
         {
             "id": 137,
             "en": "tie",
             "zh": "系",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 4200,
+            "word_class": "content"
         },
         {
             "id": 138,
             "en": "sew",
             "zh": "缝",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 8500,
+            "word_class": "content"
         },
         {
             "id": 139,
             "en": "count",
             "zh": "计",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2600,
+            "word_class": "content"
         },
         {
             "id": 140,
             "en": "say",
             "zh": "说",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 82,
+            "word_class": "content"
         },
         {
             "id": 141,
             "en": "sing",
             "zh": "唱",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2100,
+            "word_class": "content"
         },
         {
             "id": 142,
             "en": "play",
             "zh": "玩",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 620,
+            "word_class": "content"
         },
         {
             "id": 143,
             "en": "float",
             "zh": "浮",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 5500,
+            "word_class": "content"
         },
         {
             "id": 144,
             "en": "flow",
             "zh": "流",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 4800,
+            "word_class": "content"
         },
         {
             "id": 145,
             "en": "freeze",
             "zh": "冻",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 5200,
+            "word_class": "content"
         },
         {
             "id": 146,
             "en": "swell",
             "zh": "肿",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 7800,
+            "word_class": "content"
         },
         {
             "id": 147,
             "en": "sun",
             "zh": "日",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 650,
+            "word_class": "content"
         },
         {
             "id": 148,
             "en": "moon",
             "zh": "月",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1500,
+            "word_class": "content"
         },
         {
             "id": 149,
             "en": "star",
             "zh": "星",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1800,
+            "word_class": "content"
         },
         {
             "id": 150,
             "en": "water",
             "zh": "水",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 360,
+            "word_class": "content"
         },
         {
             "id": 151,
             "en": "rain",
             "zh": "雨",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2200,
+            "word_class": "content"
         },
         {
             "id": 152,
             "en": "river",
             "zh": "河",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2800,
+            "word_class": "content"
         },
         {
             "id": 153,
             "en": "lake",
             "zh": "湖",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3500,
+            "word_class": "content"
         },
         {
             "id": 154,
             "en": "sea",
             "zh": "海",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2400,
+            "word_class": "content"
         },
         {
             "id": 155,
             "en": "salt",
             "zh": "盐",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3200,
+            "word_class": "content"
         },
         {
             "id": 156,
             "en": "stone",
             "zh": "石",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2600,
+            "word_class": "content"
         },
         {
             "id": 157,
             "en": "sand",
             "zh": "沙",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3000,
+            "word_class": "content"
         },
         {
             "id": 158,
             "en": "dust",
             "zh": "尘",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 4200,
+            "word_class": "content"
         },
         {
             "id": 159,
             "en": "earth",
             "zh": "地",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1600,
+            "word_class": "content"
         },
         {
             "id": 160,
             "en": "cloud",
             "zh": "云",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3500,
+            "word_class": "content"
         },
         {
             "id": 161,
             "en": "fog",
             "zh": "雾",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 6800,
+            "word_class": "content"
         },
         {
             "id": 162,
             "en": "sky",
             "zh": "天",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1800,
+            "word_class": "content"
         },
         {
             "id": 163,
             "en": "wind",
             "zh": "风",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2200,
+            "word_class": "content"
         },
         {
             "id": 164,
             "en": "snow",
             "zh": "雪",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2800,
+            "word_class": "content"
         },
         {
             "id": 165,
             "en": "ice",
             "zh": "冰",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3200,
+            "word_class": "content"
         },
         {
             "id": 166,
             "en": "smoke",
             "zh": "烟",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 3800,
+            "word_class": "content"
         },
         {
             "id": 167,
             "en": "fire",
             "zh": "火",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 720,
+            "word_class": "content"
         },
         {
             "id": 168,
             "en": "ashes",
             "zh": "灰",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 8200,
+            "word_class": "content"
         },
         {
             "id": 169,
             "en": "burn",
             "zh": "烧",
-            "pos": "verb"
+            "pos": "verb",
+            "true_freq_rank": 2100,
+            "word_class": "content"
         },
         {
             "id": 170,
             "en": "road",
             "zh": "路",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2100,
+            "word_class": "content"
         },
         {
             "id": 171,
             "en": "mountain",
             "zh": "山",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 2600,
+            "word_class": "content"
         },
         {
             "id": 172,
             "en": "red",
             "zh": "红",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1400,
+            "word_class": "content"
         },
         {
             "id": 173,
             "en": "green",
             "zh": "绿",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1600,
+            "word_class": "content"
         },
         {
             "id": 174,
             "en": "yellow",
             "zh": "黄",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 2200,
+            "word_class": "content"
         },
         {
             "id": 175,
             "en": "white",
             "zh": "白",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1200,
+            "word_class": "content"
         },
         {
             "id": 176,
             "en": "black",
             "zh": "黑",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1100,
+            "word_class": "content"
         },
         {
             "id": 177,
             "en": "night",
             "zh": "夜",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 1350,
+            "word_class": "content"
         },
         {
             "id": 178,
             "en": "day",
             "zh": "昼",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 255,
+            "word_class": "content"
         },
         {
             "id": 179,
             "en": "year",
             "zh": "年",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 270,
+            "word_class": "content"
         },
         {
             "id": 180,
             "en": "warm",
             "zh": "暖",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 2600,
+            "word_class": "content"
         },
         {
             "id": 181,
             "en": "cold",
             "zh": "冷",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1800,
+            "word_class": "content"
         },
         {
             "id": 182,
             "en": "full",
             "zh": "满",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1500,
+            "word_class": "content"
         },
         {
             "id": 183,
             "en": "new",
             "zh": "新",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 175,
+            "word_class": "content"
         },
         {
             "id": 184,
             "en": "old",
             "zh": "旧",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 200,
+            "word_class": "content"
         },
         {
             "id": 185,
             "en": "good",
             "zh": "好",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 130,
+            "word_class": "content"
         },
         {
             "id": 186,
             "en": "bad",
             "zh": "坏",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 950,
+            "word_class": "content"
         },
         {
             "id": 187,
             "en": "rotten",
             "zh": "腐",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 9500,
+            "word_class": "content"
         },
         {
             "id": 188,
             "en": "dirty",
             "zh": "脏",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 4800,
+            "word_class": "content"
         },
         {
             "id": 189,
             "en": "straight",
             "zh": "直",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 4200,
+            "word_class": "content"
         },
         {
             "id": 190,
             "en": "round",
             "zh": "圆",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 5200,
+            "word_class": "content"
         },
         {
             "id": 191,
             "en": "sharp",
             "zh": "尖",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 3800,
+            "word_class": "content"
         },
         {
             "id": 192,
             "en": "dull",
             "zh": "钝",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 5500,
+            "word_class": "content"
         },
         {
             "id": 193,
             "en": "smooth",
             "zh": "滑",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 4500,
+            "word_class": "content"
         },
         {
             "id": 194,
             "en": "wet",
             "zh": "湿",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 3600,
+            "word_class": "content"
         },
         {
             "id": 195,
             "en": "dry",
             "zh": "干",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 3200,
+            "word_class": "content"
         },
         {
             "id": 196,
             "en": "correct",
             "zh": "对",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 2200,
+            "word_class": "content"
         },
         {
             "id": 197,
             "en": "near",
             "zh": "近",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1800,
+            "word_class": "content"
         },
         {
             "id": 198,
             "en": "far",
             "zh": "远",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 1600,
+            "word_class": "content"
         },
         {
             "id": 199,
             "en": "right",
             "zh": "右",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 200,
+            "word_class": "content"
         },
         {
             "id": 200,
             "en": "left",
             "zh": "左",
-            "pos": "adjective"
+            "pos": "adjective",
+            "true_freq_rank": 550,
+            "word_class": "content"
         },
         {
             "id": 201,
             "en": "at",
             "zh": "在",
-            "pos": "preposition"
+            "pos": "preposition",
+            "true_freq_rank": 12,
+            "word_class": "function"
         },
         {
             "id": 202,
             "en": "in",
             "zh": "里",
-            "pos": "preposition"
+            "pos": "preposition",
+            "true_freq_rank": 8,
+            "word_class": "function"
         },
         {
             "id": 203,
             "en": "with",
             "zh": "与",
-            "pos": "preposition"
+            "pos": "preposition",
+            "true_freq_rank": 18,
+            "word_class": "function"
         },
         {
             "id": 204,
             "en": "and",
             "zh": "和",
-            "pos": "conjunction"
+            "pos": "conjunction",
+            "true_freq_rank": 4,
+            "word_class": "function"
         },
         {
             "id": 205,
             "en": "if",
             "zh": "若",
-            "pos": "conjunction"
+            "pos": "conjunction",
+            "true_freq_rank": 85,
+            "word_class": "function"
         },
         {
             "id": 206,
             "en": "because",
             "zh": "因",
-            "pos": "conjunction"
+            "pos": "conjunction",
+            "true_freq_rank": 250,
+            "word_class": "function"
         },
         {
             "id": 207,
             "en": "name",
             "zh": "名",
-            "pos": "noun"
+            "pos": "noun",
+            "true_freq_rank": 520,
+            "word_class": "content"
         }
     ]
 }

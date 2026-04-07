@@ -1,0 +1,57 @@
+# Basic sound change rules for Phase 0/1 baseline
+# Format: target/change/environment encoded as feature dicts.
+# Rule Compiler expands these into SoundChangeRule IR objects.
+# env_before/env_after: null means "any context"
+# env_flags: word_initial, word_final position constraints
+
+rules:
+
+  - name: final_vowel_drop
+    priority: 10
+    op: delete
+    target:
+      syllabic: true
+    env_before: null
+    env_after: null
+    env_flags:
+      word_final: true
+    description: >
+      Word-final vowels are deleted (unstressed final vowel erosion).
+      Applies to all vowels in word-final position.
+
+  - name: intervocalic_voicing
+    priority: 20
+    op: change
+    target:
+      voiced: false
+      consonantal: true
+      continuant: false
+    change:
+      voiced: true
+    env_before:
+      syllabic: true
+    env_after:
+      syllabic: true
+    env_flags:
+      word_initial: false
+      word_final: false
+    description: >
+      Voiceless stops become voiced between vowels (intervocalic voicing).
+      Classic lenition: p→b, t→d, k→g in V_V environment.
+
+  - name: nasal_place_assimilation
+    priority: 30
+    op: change
+    target:
+      nasal: true
+      coronal: true
+    change:
+      coronal: false
+      labial: true
+    env_before: null
+    env_after:
+      labial: true
+    env_flags: {}
+    description: >
+      Coronal nasals assimilate to labial place before labial consonants.
+      n → m / _ [labial]  (e.g., /n/ before /p/, /b/, /m/ → /m/)

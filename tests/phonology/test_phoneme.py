@@ -109,5 +109,7 @@ def test_inventory_from_preset_elven():
 
 def test_inventory_from_preset_orcish():
     inv = PhonemeInventory.from_preset("orcish_heavy")
-    vowels = inv.get_natural_class({"syllabic": True})
-    assert len(vowels) == 3, "Orcish preset should have exactly 3 vowels"
+    short_vowels = inv.get_natural_class({"syllabic": True, "long": False})
+    long_vowels = inv.get_natural_class({"syllabic": True, "long": True})
+    assert len(short_vowels) == 3, "Orcish preset should have exactly 3 short vowels"
+    assert len(long_vowels) == 3, "Orcish preset should have exactly 3 long vowels (aː, uː, ɔː)"

@@ -1,0 +1,29 @@
+{
+  "description": "Default phonotactic constraints for TelystaLexisEngine",
+  "epenthetic_vowel": "ə",
+  "epenthetic_vowel_fallback": "a",
+  "max_onset_consonants": 2,
+  "max_coda_consonants": 1,
+  "allowed_onset_clusters": [
+    "pr", "br", "tr", "dr", "kr", "gr",
+    "fr", "θr",
+    "pl", "bl", "kl", "gl", "fl",
+    "st", "sp", "sk", "sm", "sn", "sl",
+    "str", "spr", "skr"
+  ],
+  "allowed_codas": [
+    "n", "m", "ŋ",
+    "l", "r",
+    "s", "z",
+    "t", "d", "k", "g",
+    "f", "v",
+    "tʃ", "dʒ",
+    "nt", "nd", "nk", "ŋk",
+    "lt", "ld", "lk",
+    "st", "sk", "sp"
+  ],
+  "illegal_coda_finals": [
+    "dʒ", "ʒ", "tʃ"
+  ],
+  "notes": "illegal_coda_finals: coda clusters that trigger vowel preservation in FinalVowelDropOperator blocking condition"
+}

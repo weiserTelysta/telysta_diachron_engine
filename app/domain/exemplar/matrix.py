@@ -231,23 +231,76 @@ class ExemplarMatrix:
         return bits
 
     def _apply_env_filter(self, target_rows: np.ndarray, rule: "SoundChangeRule") -> np.ndarray:
-        """Filter target_rows by environmental constraints (before/after)."""
-        return target_rows
+        """Filter target_rows by env_before / env_after constraints. Fully vectorized.
+
+        For each target phoneme at (word_idx, phoneme_pos), look up the neighbor
+        at (word_idx, phoneme_pos + offset) via a sorted compound-key array and
+        compare its feature bits against the allowed env phoneme set.
+
+        compound_key = word_idx * _POS_STRIDE + phoneme_pos
+        _POS_STRIDE = 1000 supports sequences up to 999 phonemes — far beyond any
+        real IPA word. Cross-word boundary false matches cannot occur because
+        phoneme_pos is always < 1000, so adjacent words' keys never overlap.
+        """
+        if rule.env_before is None and rule.env_after is None:
+            return target_rows
+
+        _POS_STRIDE = 1_000
+        word_col = self.matrix[:, COL_WORD_IDX]
+        phoneme_col = self.matrix[:, COL_PHONEME_IDX]
+        feature_col = self.matrix[:, COL_FEATURE_BITS].astype(np.uint32)
+
+        compound_keys = (word_col * _POS_STRIDE + phoneme_col).astype(np.int64)
+        sort_order = np.argsort(compound_keys, kind="stable")
+        sorted_keys = compound_keys[sort_order]
+        sorted_features = feature_col[sort_order]
+
+        def check_neighbor(indices: np.ndarray, offset: int, env_class: list) -> np.ndarray:
+            env_bits = np.array(
+                [build_feature_mask(p.features, self.feature_names) for p in env_class],
+                dtype=np.uint32,
+            )
+            neighbor_keys = compound_keys[indices] + offset
+            positions = np.searchsorted(sorted_keys, neighbor_keys)
+            clipped = positions.clip(0, len(sorted_keys) - 1)
+            valid = (positions < len(sorted_keys)) & (sorted_keys[clipped] == neighbor_keys)
+            neighbor_bits = np.where(valid, sorted_features[clipped], np.uint32(0xFFFF))
+            matches = np.any(neighbor_bits[:, None] == env_bits[None, :], axis=1)
+            return valid & matches
+
+        result = target_rows.copy()
+        target_indices = np.where(target_rows)[0]
+        if len(target_indices) == 0:
+            return result
+
+        if rule.env_before is not None:
+            if len(rule.env_before) == 0:
+                result[target_indices] = False
+            else:
+                ok = check_neighbor(target_indices, -1, rule.env_before)
+                result[target_indices[~ok]] = False
+
+        valid_after = target_indices[result[target_indices]]
+        if rule.env_after is not None and len(valid_after) > 0:
+            if len(rule.env_after) == 0:
+                result[valid_after] = False
+            else:
+                ok = check_neighbor(valid_after, +1, rule.env_after)
+                result[valid_after[~ok]] = False
+
+        return result
 
     def _filter_word_final(self, target_rows: np.ndarray) -> np.ndarray:
-        """Keep only rows that are the last phoneme of their word."""
-        result = np.zeros_like(target_rows, dtype=bool)
+        """Keep only rows that are the last phoneme of their word. Fully vectorized."""
         word_col = self.matrix[:, COL_WORD_IDX]
         phoneme_col = self.matrix[:, COL_PHONEME_IDX]
 
-        for i in np.where(target_rows)[0]:
-            w_idx = word_col[i]
-            same_word = word_col == w_idx
-            max_pos = phoneme_col[same_word].max()
-            if phoneme_col[i] == max_pos:
-                result[i] = True
+        unique_words, inverse = np.unique(word_col, return_inverse=True)
+        max_positions = np.zeros(len(unique_words), dtype=np.float64)
+        np.maximum.at(max_positions, inverse, phoneme_col)
 
-        return result
+        is_word_final = phoneme_col == max_positions[inverse]
+        return target_rows & is_word_final
 
     def __len__(self) -> int:
         return len(self.matrix)
