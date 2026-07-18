@@ -254,7 +254,7 @@ def test_negative_cases_cover_every_adr_011_stop_condition() -> None:
     assert all(case["expectedCode"].strip() for case in negative.values())
 
 
-def test_g0a_evidence_cannot_misreport_a_dirty_unreviewed_gate_as_passed() -> None:
+def test_g0a_evidence_cannot_misreport_an_unreviewed_gate_as_passed() -> None:
     evidence = _load(G0A_EVIDENCE_PATH)
     fingerprint = fingerprint_workspace(ROOT)
 
@@ -278,7 +278,10 @@ def test_g0a_evidence_cannot_misreport_a_dirty_unreviewed_gate_as_passed() -> No
     assert requirement_status["R0A-02-ADR011"] == "blocked"
     assert requirement_status["R0A-03"] == "ready_for_independent_review"
     assert requirement_status["R0A-04"] == "ready_for_independent_review"
-    assert requirement_status["R0A-05"] == "failed"
+    expected_clean_subject_status = (
+        "failed" if fingerprint.dirty else "ready_for_independent_review"
+    )
+    assert requirement_status["R0A-05"] == expected_clean_subject_status
     assert requirement_status["R0A-07"] == "incomplete"
 
     forbidden_claims = set(evidence["claims"]["forbidden"])
