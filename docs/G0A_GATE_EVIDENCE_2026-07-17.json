@@ -6,8 +6,8 @@
   "decision": "blocked",
   "decisionDate": "2026-07-18",
   "source": {
-    "subjectCommit": "fcfda31acf03ff73a987cb6b5f6e303395eb4a47",
-    "subjectTree": "e009b80fe4b63a79d1df5d9c612e893aae93a52d",
+    "subjectCommit": "050683f5ecc6f5f5c058f9acbae07ab40b3d6664",
+    "subjectTree": "886f709b7d54ca1945ee73ff8c1dd09cc62c35f9",
     "worktreeDirty": false,
     "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
@@ -16,10 +16,87 @@
       "docs/G0A_GATE_EVIDENCE_2026-07-17.json",
       "docs/STATUS.md"
     ],
-    "environment": "Windows; Asia/Shanghai; local workspace"
+    "environment": "Windows; Asia/Shanghai; local workspace",
+    "verificationRuns": [
+      {
+        "runId": "gate-run:69a76da3d4f34ad562dc5a251550340d",
+        "subjectCommit": "050683f5ecc6f5f5c058f9acbae07ab40b3d6664",
+        "subjectTree": "886f709b7d54ca1945ee73ff8c1dd09cc62c35f9",
+        "startedAt": "2026-07-18T22:19:15Z",
+        "finishedAt": "2026-07-18T22:19:39Z",
+        "result": "pass",
+        "protocols": [
+          ".\\.venv\\Scripts\\python.exe scripts\\check.py",
+          ".\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q",
+          "cargo fmt --all --check",
+          "cargo test --workspace --locked",
+          "cargo test -p telysta-core --test adr_011_schema_records --locked",
+          "cargo test -p telysta-core --test rng_known_answers --locked",
+          "cargo clippy --workspace --all-targets --locked -- -D warnings",
+          "node --check apps/desktop/web/app.js"
+        ],
+        "environment": {
+          "platform": "Windows-11-10.0.26200-SP0",
+          "pythonExecutable": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe",
+          "pythonVersion": "3.14.5",
+          "rustcVersion": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+          "cargoVersion": "cargo 1.96.0 (30a34c682 2026-05-25)",
+          "requiredRustVersion": "1.77.2",
+          "rustVersionMeetsWorkspace": true,
+          "nodeVersion": "v24.16.0",
+          "lockFileSha256": {
+            "Cargo.lock": "fab920b9408aa28210ce846d167618d793aca2db194c040c6bd5264f46cc59c0",
+            "poetry.lock": "633156df7b6afe0bbe54e2c0ae7163f6600166e83db03f75bc3fed128fd8a6b4"
+          },
+          "pythonInstalledDistributionsSha256": "7cbe731edb3ec438cb18d66c74c20a833dd5407b27f8352de7c504fba4c7dc34",
+          "pythonLockStatus": "match",
+          "pythonLockMismatches": []
+        }
+      },
+      {
+        "runId": "gate-run:0cff28d18daa988125d17a3db7d1035e",
+        "subjectCommit": "050683f5ecc6f5f5c058f9acbae07ab40b3d6664",
+        "subjectTree": "886f709b7d54ca1945ee73ff8c1dd09cc62c35f9",
+        "startedAt": "2026-07-18T22:23:16Z",
+        "finishedAt": "2026-07-18T22:23:58Z",
+        "result": "pass",
+        "protocols": [
+          ".\\.venv\\Scripts\\python.exe scripts\\check.py",
+          ".\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q",
+          "cargo fmt --all --check",
+          "cargo test --workspace --locked",
+          "cargo test -p telysta-core --test adr_011_schema_records --locked",
+          "cargo test -p telysta-core --test rng_known_answers --locked",
+          "cargo clippy --workspace --all-targets --locked -- -D warnings",
+          "node --check apps/desktop/web/app.js"
+        ],
+        "environment": {
+          "platform": "Windows-11-10.0.26200-SP0",
+          "pythonExecutable": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe",
+          "pythonVersion": "3.14.5",
+          "rustcVersion": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+          "cargoVersion": "cargo 1.96.0 (30a34c682 2026-05-25)",
+          "requiredRustVersion": "1.77.2",
+          "rustVersionMeetsWorkspace": true,
+          "nodeVersion": "v24.16.0",
+          "lockFileSha256": {
+            "Cargo.lock": "fab920b9408aa28210ce846d167618d793aca2db194c040c6bd5264f46cc59c0",
+            "poetry.lock": "633156df7b6afe0bbe54e2c0ae7163f6600166e83db03f75bc3fed128fd8a6b4"
+          },
+          "pythonInstalledDistributionsSha256": "b9c4390eec2b3e81826cea0aa0287ec8270d34994e864493c0c0a0945f08c503",
+          "pythonLockStatus": "match",
+          "pythonLockMismatches": []
+        }
+      }
+    ]
   },
   "claims": {
-    "allowed": [],
+    "allowed": [
+      "ADR-011 planning evidence is executable and ready for independent review",
+      "R0A-03 platform and R0A-04 RNG compatibility evidence are ready for independent review",
+      "the current Rust RNG behavior matches the recorded v1 known-answer vectors",
+      "the recorded clean worktree passes the recorded Python and Rust verification commands"
+    ],
     "forbidden": [
       "G0A has passed",
       "ADR-011 is Accepted",
@@ -34,9 +111,10 @@
       "kind": "SoftwareVerificationEvidence",
       "path": "scripts/check.py",
       "protocol": ".\\.venv\\Scripts\\python.exe scripts\\check.py",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "required Python and documentation gate passed",
+      "verificationMode": "direct",
+      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe scripts/check.py"
     },
     {
       "kind": "ArchitectureContractEvidence",
@@ -95,11 +173,12 @@
     {
       "kind": "SoftwareVerificationEvidence",
       "path": "tests/core/test_adr_011_contract.py",
-      "sha256": "f0df07c1629d363716dbd1dbdaa9512e80b9efe8ae2f8fda758aa76940f363ec",
+      "sha256": "74e68e3ef2be6b16d6472798337a1c346bfa1f38fbb8bb509f234975d11f1bbc",
       "protocol": ".\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "targeted ADR-011 Python contract passed directly",
+      "verificationMode": "direct",
+      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q"
     },
     {
       "kind": "ArchitectureContractEvidence",
@@ -129,49 +208,55 @@
       "kind": "SoftwareVerificationEvidence",
       "path": "apps/desktop/web/app.js",
       "protocol": "node --check apps/desktop/web/app.js",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "desktop JavaScript syntax passed",
+      "verificationMode": "direct",
+      "executedCommand": "node --check apps/desktop/web/app.js"
     },
     {
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
       "protocol": "cargo fmt --all --check",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "no formatting differences",
+      "verificationMode": "direct",
+      "executedCommand": "cargo fmt --all --check"
     },
     {
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
       "protocol": "cargo test --workspace --locked",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "Rust workspace tests passed",
+      "verificationMode": "direct",
+      "executedCommand": "cargo test --workspace --locked"
     },
     {
       "kind": "SoftwareVerificationEvidence",
       "path": "crates/telysta-core/tests/adr_011_schema_records.rs",
       "protocol": "cargo test -p telysta-core --test adr_011_schema_records --locked",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "targeted ADR-011 Rust contract passed directly",
+      "verificationMode": "direct",
+      "executedCommand": "cargo test -p telysta-core --test adr_011_schema_records --locked"
     },
     {
       "kind": "SoftwareVerificationEvidence",
       "path": "crates/telysta-core/tests/rng_known_answers.rs",
       "protocol": "cargo test -p telysta-core --test rng_known_answers --locked",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "targeted Rust RNG known answers passed directly",
+      "verificationMode": "direct",
+      "executedCommand": "cargo test -p telysta-core --test rng_known_answers --locked"
     },
     {
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
       "protocol": "cargo clippy --workspace --all-targets --locked -- -D warnings",
-      "result": "not_run_for_fingerprint",
-      "details": "verification must be rerun for the recorded worktree fingerprint",
-      "verificationMode": "not_run"
+      "result": "pass",
+      "details": "zero warnings",
+      "verificationMode": "direct",
+      "executedCommand": "cargo clippy --workspace --all-targets --locked -- -D warnings"
     }
   ],
   "requirements": [

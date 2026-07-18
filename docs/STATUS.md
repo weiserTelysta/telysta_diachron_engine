@@ -3,8 +3,8 @@ document_type: operational-status
 decision_status: not-applicable
 implementation_status: generated
 normative_scope: current
-last_verified: not-verified
-base_commit: fcfda31acf03ff73a987cb6b5f6e303395eb4a47
+last_verified: 2026-07-18T22:23:58Z
+base_commit: 050683f5ecc6f5f5c058f9acbae07ab40b3d6664
 worktree_fingerprint: 4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13
 generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
@@ -17,10 +17,10 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 
 | Gate | Decision | Worktree | Verified |
 |---|---|---|---|
-| G0A | `blocked` | clean (0 entries) | not-verified |
+| G0A | `blocked` | clean (0 entries) | 2026-07-18T22:23:58Z |
 
-- Subject commit: `fcfda31acf03ff73a987cb6b5f6e303395eb4a47`
-- Subject tree: `e009b80fe4b63a79d1df5d9c612e893aae93a52d`
+- Subject commit: `050683f5ecc6f5f5c058f9acbae07ab40b3d6664`
+- Subject tree: `886f709b7d54ca1945ee73ff8c1dd09cc62c35f9`
 - Fingerprint: `4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13`
 - Fingerprint schema: `telysta-git-worktree-fingerprint.v2`
 - 当前实现能力见 [Current Architecture](./architecture/CURRENT.md)。
@@ -40,6 +40,10 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 
 ## 当前允许声明
 
+- ADR-011 planning evidence is executable and ready for independent review
+- R0A-03 platform and R0A-04 RNG compatibility evidence are ready for independent review
+- the current Rust RNG behavior matches the recorded v1 known-answer vectors
+- the recorded clean worktree passes the recorded Python and Rust verification commands
 
 ## 当前禁止声明
 
