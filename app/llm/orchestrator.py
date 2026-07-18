@@ -10,11 +10,11 @@ When ``is_llm=False`` the orchestrator is a complete no-op.
 
 from __future__ import annotations
 
-import random
 from dataclasses import asdict
 from typing import Any
 
 from app.core.logging import get_logger
+from app.core.rng import RngTree
 from app.core.settings import GlobalSettings
 from app.llm.base import LLMBackend
 from app.llm.callbacks import CallbackVerdict, generate_and_validate_proposal
@@ -44,6 +44,7 @@ class Phase5Orchestrator:
         self._settings = settings
         self._lore = lore_sidecar
         self._proposal_counter: dict[int, int] = {}
+        self._rng_tree = RngTree(settings.seed).child("llm", "orchestrator")
 
     def on_era_end(
         self,
@@ -127,7 +128,7 @@ class Phase5Orchestrator:
         self, era: int, hot_state: Any, known_primes: set[str],
     ) -> list[dict[str, Any]]:
         results: list[dict[str, Any]] = []
-        rng = random.Random(self._settings.seed + era * 1000)
+        rng = self._rng_tree.python("era", era, "semantic_proposals")
         alive = [e for e in hot_state.lexicon.values() if not e.is_dead]
         if not alive:
             return results
@@ -195,7 +196,7 @@ class Phase5Orchestrator:
     # ------------------------------------------------------------------
 
     def _run_rag(self, era: int, hot_state: Any) -> dict[str, Any]:
-        rng = random.Random(self._settings.seed + era * 2000)
+        rng = self._rng_tree.python("era", era, "rag")
         concepts = ["telescope", "compass", "ink", "wheel", "bridge"]
         target = rng.choice(concepts)
         target_pos = "noun"
@@ -223,7 +224,7 @@ class Phase5Orchestrator:
     # ------------------------------------------------------------------
 
     def _run_etymology(self, hot_state: Any) -> dict[str, Any]:
-        rng = random.Random(self._settings.seed + 9999)
+        rng = self._rng_tree.python("reverse_etymology")
         alive = [e for e in hot_state.lexicon.values() if not e.is_dead and e.ipa_history]
         if not alive:
             return {"status": "no_candidates"}

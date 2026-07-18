@@ -37,8 +37,31 @@ _era_counter: int = 0
 _t0: float = 0.0
 
 
+def _ensure_utf8_stream(stream: object) -> None:
+    """Use UTF-8 when the host stream supports runtime reconfiguration.
+
+    Windows commonly starts Python with a legacy console encoding such as
+    GBK. IPA symbols outside that code page would otherwise crash the CLI at
+    the final summary even though the evolution itself completed.
+    """
+    reconfigure = getattr(stream, "reconfigure", None)
+    if not callable(reconfigure):
+        return
+    encoding = str(getattr(stream, "encoding", "") or "").lower().replace("-", "")
+    if encoding == "utf8":
+        return
+    try:
+        reconfigure(encoding="utf-8")
+    except (OSError, ValueError):
+        # Redirected and test streams may reject reconfiguration. They usually
+        # accept Unicode strings directly, so console reporting can continue.
+        return
+
+
 def session_start(seed: int, preset: str) -> None:
     global _t0
+    _ensure_utf8_stream(sys.stdout)
+    _ensure_utf8_stream(sys.stderr)
     _t0 = time.monotonic()
     print(f"{_BOLD}[SEED: {seed}]{_RESET} Evolution Started — preset={preset}")
 

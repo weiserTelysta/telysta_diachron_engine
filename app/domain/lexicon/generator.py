@@ -1,11 +1,12 @@
 import json
-import random
 from dataclasses import asdict
 
 from app.core.config import configs
 from app.core.logging import get_logger
+from app.core.rng import RngTree
 from app.domain.lexicon.models import LexicalEntity
 from app.domain.phonology.phoneme import PhonemeInventory
+from app.domain.storage.canonical import canonical_id
 
 logger = get_logger(__name__)
 
@@ -20,7 +21,7 @@ class BasicLexiconGenerator:
         self.seed = seed
         self.inventory = inventory
         self.lexicolist_filepath = lexicolist_filepath
-        self.rng = random.Random(self.seed)
+        self.rng = RngTree(self.seed).python("genesis", "lexicon")
 
     def _json_get(self, filepath: str) -> list:
         with open(filepath, encoding="UTF-8") as f:
@@ -130,7 +131,10 @@ class BasicLexiconGenerator:
             concept_en = item.get("en", item.get("word", "unknown"))
             pos = item.get("pos", "n.")
             word_class = item.get("word_class", "content")
-            jid = item.get("id", f"era_0_{index + 1}")
+            jid = canonical_id(
+                item.get("id", f"era_0_{index + 1}"),
+                namespace="lexeme",
+            )
             ipa_sound = self._ipa_generate()
             weight = weights[index]
 

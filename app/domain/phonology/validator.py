@@ -101,6 +101,10 @@ class WellFormednessValidator:
             message=f"illegal sequence cannot be repaired: {sequence}",
         )
 
+    def is_legal(self, sequence: list[str]) -> bool:
+        """Return whether *sequence* is legal without applying repair."""
+        return self._is_legal(sequence)
+
     def validate_or_rollback(
         self,
         sequence: list[str],

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import logging
+import secrets
 from dataclasses import dataclass, field
-from random import randint
 from typing import TYPE_CHECKING, Any
 
 from app.core.config import configs
@@ -62,7 +62,7 @@ class GlobalSettings:
                 setattr(self, key, settings_dict[key])
 
         if self.seed == 0:
-            self.seed = randint(configs.SEED_MIN, configs.SEED_MAX)
+            self.seed = secrets.randbits(64)
             _logger.info("自动生成全局种子: %d", self.seed)
 
     @property

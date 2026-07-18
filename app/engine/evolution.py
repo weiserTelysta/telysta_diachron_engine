@@ -17,6 +17,7 @@ import app.core.console as console
 from app.core.config import configs
 from app.core.event_bus import get_event_bus
 from app.core.logging import get_logger
+from app.core.rng import RngTree
 from app.core.settings import GlobalSettings
 from app.domain.lexicon.analogy import AnalogyPropagator
 from app.domain.lexicon.fossil import FossilPrefixExtractor
@@ -54,6 +55,7 @@ class EvolutionEngine:
 
     def __init__(self, settings: GlobalSettings) -> None:
         self._settings = settings
+        self._rng_tree = RngTree(settings.seed)
         self._inv: PhonemeInventory = settings.inventory
         self._backend = NativeBackend()
         self._registry = self._build_registry()
@@ -136,18 +138,20 @@ class EvolutionEngine:
         _prev_morph = current_typology.morph_type
         for era in range(era_offset + 1, era_offset + era_steps + 1):
             _era_start = time.monotonic()
-            rng = random.Random(self._settings.seed + era + era_offset)
+            sound_rng = self._rng_tree.python("evolution", "era", era, "sound")
+            homophone_rng = self._rng_tree.python("evolution", "era", era, "homophone")
+            drift_rng = self._rng_tree.python("evolution", "era", era, "typology")
             active_ops = self._registry.active_operators_for_era(era)
 
             gram_op.prepare_era(hot.all_alive())
 
             changed_count = self._evolve_entities(
-                era, hot, current_typology, rng, km,
+                era, hot, current_typology, sound_rng, km,
                 active_ops, erosion, scar_mgr, gram_op, analogy_prop,
             )
 
             resolved_count = self._resolve_homophones(
-                era, hot, rng, km,
+                era, hot, homophone_rng, km,
                 homophone_resolver, fossil_extractor,
                 current_typology=current_typology,
             )
@@ -167,6 +171,7 @@ class EvolutionEngine:
                 current_typology,
                 drift_stats,
                 era,
+                rng=drift_rng,
                 bias_profile=current_typology.bias_profile,
             )
             _typology_changed = current_typology.morph_type != _morph_before

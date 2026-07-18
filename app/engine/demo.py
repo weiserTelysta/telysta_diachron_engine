@@ -6,12 +6,12 @@ points use the same logic without duplication.
 
 from __future__ import annotations
 
-import random
 from typing import TYPE_CHECKING
 
 import app.core.console as console
 from app.core.config import configs
 from app.core.logging import get_logger
+from app.core.rng import RngTree
 from app.core.settings import global_settings
 from app.domain.language.branch import BranchConfig, BranchLanguage
 from app.domain.syntax.csg import CSGEdge, CSGNode, ControlledSemanticGraph
@@ -149,8 +149,9 @@ def run_branch_comparison(
         era0_hot, svo_typology, prime_graph, registry, inventory,
     )
 
-    rng_a = random.Random(seed + 100)
-    rng_b = random.Random(seed + 200)
+    rng_tree = RngTree(seed).child("demo", "branches")
+    rng_a = rng_tree.python(branch_a_name)
+    rng_b = rng_tree.python(branch_b_name)
     for _ in range(branch_eras):
         branch_a.evolve_one_era(rng=rng_a)
         branch_b.evolve_one_era(rng=rng_b)
@@ -176,7 +177,7 @@ def run_cli_demo(result: RunResult) -> None:
     # Proto-sentences
     alive = list(result.final_hot.all_alive())
     assembler = SentenceAssembler(alive)
-    rng = random.Random(result.seed)
+    rng = RngTree(result.seed).python("demo", "sentence_assembler")
     proto_sentences = assembler.assemble(n=10, rng=rng)
     console.demo_line("Proto-sentence assembly（10 句，纯 IPA 拼接，无形态变化）：")
     for i, s in enumerate(proto_sentences, 1):

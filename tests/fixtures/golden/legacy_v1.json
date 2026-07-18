@@ -1,0 +1,63 @@
+{
+  "canonical_schema": "telysta.legacy-state.v1",
+  "rng_version": "legacy-rng-tree-v1",
+  "scenario_version": "legacy-golden-v1",
+  "seed": 888,
+  "scenarios": {
+    "genesis": {
+      "counts": {"alive_words": 207, "dead_words": 0, "events": 0, "total_words": 207},
+      "domains": {
+        "dag": "060857f4e89d0aff28912a423101545742aeb3810615476ca3c719f7949510ce",
+        "events": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "lexicon": "f2c8b5dbbdfa0b17b20846312dc7fdfa990f27a6325c66f0469eac654c144311",
+        "typology": "81fed1b66f427f30804ff39a903526fb77bc0c70c9416ecaf5ac0dd3a6ad0f36"
+      },
+      "full": "5d1e02524c59f485dd0bc61ba1020feac1dd4d3ed3a6fa1371923f55a610661f",
+      "hard_errors": ["phonotactically illegal alive forms: 22"]
+    },
+    "flat_10": {
+      "counts": {"alive_words": 199, "dead_words": 9, "events": 105, "total_words": 208},
+      "domains": {
+        "dag": "6ca5d302f0613d039ab565986586880e08c76030f8755fb5e22ca01891c3cadb",
+        "events": "c92c741fea06dcadc41c3a82bf5e7e40cddc59b83ef58a74140118eafc69fea5",
+        "lexicon": "96caac3c6343e9d908f18a518a3bcffa13d90435d56642fdcfe7603b1541e2a5",
+        "typology": "03322f6496b968b9d1666b274b1bdf5f15e591645eeccc3f3b5d7033d52fac3f"
+      },
+      "full": "5f19fedcd2feb3977a99db829b533ced97ac5d5656fb411a98b0de0e4539e6a7",
+      "hard_errors": ["phonotactically illegal alive forms: 26"]
+    },
+    "epoch_injection": {
+      "counts": {"alive_words": 273, "dead_words": 11, "events": 75, "total_words": 284},
+      "domains": {
+        "dag": "72c503f7cc064d3248e12dd2a1b52dd20590b4323514b91a8cf92cfc6fb59c07",
+        "events": "63d27f37afb3eca3473ea41bd05da3a3a435eb87e30e1c9323399c5b429408ac",
+        "lexicon": "77e35671dca4aa51a505849e45571486d578789b6b316118b88ce115085ac962",
+        "typology": "81fed1b66f427f30804ff39a903526fb77bc0c70c9416ecaf5ac0dd3a6ad0f36"
+      },
+      "full": "b639df3e49e75c1a18482d48a178be9139ba0644a6517c7b2e0f919114e513db",
+      "hard_errors": ["phonotactically illegal alive forms: 31"]
+    },
+    "branch": {
+      "counts": {"alive_words": 207, "dead_words": 0, "events": 0, "total_words": 207},
+      "domains": {
+        "dag": "060857f4e89d0aff28912a423101545742aeb3810615476ca3c719f7949510ce",
+        "events": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "lexicon": "07bab38dee69cf7730bb1764bb766d31f631eabd18d0533de913fa2cc1957e5e",
+        "typology": "81fed1b66f427f30804ff39a903526fb77bc0c70c9416ecaf5ac0dd3a6ad0f36"
+      },
+      "full": "c907732b83d9058cb297941b1dfb610767cd0d72764a89ef23c97ee43b3d716d",
+      "hard_errors": ["phonotactically illegal alive forms: 22"]
+    },
+    "mock_llm": {
+      "counts": {"alive_words": 202, "dead_words": 6, "events": 34, "total_words": 208},
+      "domains": {
+        "dag": "2d44d46acd97eeee49100a0407fd9e4ebfe0a43a886bc0c7e4115b533c64ba05",
+        "events": "f09ec656ba11bd92ac92eba6daa857b582fc43ad4373a512514207cc72668357",
+        "lexicon": "9cf582367cfd03f3e53cb31ed4ef0e7f1249637a2057dd6774ecccdf3ecbe48b",
+        "typology": "81fed1b66f427f30804ff39a903526fb77bc0c70c9416ecaf5ac0dd3a6ad0f36"
+      },
+      "full": "3624104b6c38155c750828854ec628e546d1348b526c8e42cf978c7213e10f79",
+      "hard_errors": ["phonotactically illegal alive forms: 24"]
+    }
+  }
+}

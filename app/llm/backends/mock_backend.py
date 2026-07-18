@@ -12,6 +12,7 @@ import random
 from typing import Any
 
 from app.core.logging import get_logger
+from app.core.rng import RngTree
 from app.llm.base import LLMBackend, LLMCallResult
 
 logger = get_logger(__name__)
@@ -25,7 +26,7 @@ class MockBackend(LLMBackend):
 
     def __init__(self, seed: int = 42) -> None:
         self._seed = seed
-        self._rng = random.Random(seed)
+        self._rng_tree = RngTree(seed).child("llm", "mock_backend")
         self._call_count = 0
 
     @property
@@ -38,7 +39,7 @@ class MockBackend(LLMBackend):
 
     def call(self, prompt: str, *, schema_hint: dict[str, Any] | None = None) -> LLMCallResult:
         self._call_count += 1
-        rng = random.Random(self._seed + self._call_count)
+        rng = self._rng_tree.python("call", self._call_count)
 
         if "lore" in prompt.lower() or "narrative" in prompt.lower():
             payload = self._lore_fixture(prompt, rng)

@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from app.domain.language.evolution_profile import EvolutionProfile
+from app.core.rng import RngTree
 from app.domain.lexicon.typology_drift import TypologyDriftEngine
 from app.domain.syntax.pipeline import CSGPipeline, GenerationResult
 from app.domain.syntax.typology import TypologyMatrix
@@ -28,6 +29,7 @@ class BranchConfig:
     fork_era: int
     typology_override: TypologyMatrix | None = None
     evolution_profile: EvolutionProfile | None = None
+    seed: int = 0
 
 
 class BranchLanguage:
@@ -74,6 +76,7 @@ class BranchLanguage:
         self._portmanteau = portmanteau_registry
         self._drift_engine = TypologyDriftEngine()
         self._gram_op: "GrammaticalizationOperator | None" = grammaticalization_operator
+        self._rng_tree = RngTree(config.seed).child("branch", config.name)
         self._pipeline = CSGPipeline(
             prime_graph=prime_graph,
             typology=self.typology,
@@ -106,8 +109,8 @@ class BranchLanguage:
         from app.domain.phonology.erosion import ErosionModel
         from app.domain.storage.event_log import DeltaEvent, DeltaEventType
 
-        rng = rng or random.Random()
         next_era = self.hot_state.current_era + 1
+        rng = rng or self._rng_tree.python("era", next_era)
         active_ops = self._registry.active_operators_for_era(next_era)
         erosion = ErosionModel()
         profile = self.config.evolution_profile

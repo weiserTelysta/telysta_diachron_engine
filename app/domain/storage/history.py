@@ -5,7 +5,7 @@ from dataclasses import fields
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.domain.storage.event_log import KeyframeManager
+    from app.domain.storage.event_log import DeltaEvent, KeyframeManager
     from app.domain.storage.hot_state import EngineHotState
 
 logger = logging.getLogger(__name__)

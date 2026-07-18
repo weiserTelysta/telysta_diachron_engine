@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from app.domain.syntax.typology import AGGLUTINATIVE, ANALYTIC, FUSIONAL
+from app.core.rng import RngTree
 
 if TYPE_CHECKING:
     from app.domain.storage.hot_state import EngineHotState
@@ -113,7 +114,7 @@ class TypologyDriftEngine:
             return typology
 
         effective_bias = bias_profile or (typology.bias_profile if typology else None)
-        rng = rng or random.Random()
+        rng = rng or RngTree(0).python("typology_drift", "era", era)
         ms = typology.morph_state
         changed = False
 

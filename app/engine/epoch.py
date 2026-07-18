@@ -21,6 +21,7 @@ import yaml
 import app.core.console as console
 from app.core.event_bus import get_event_bus
 from app.core.logging import get_logger
+from app.core.rng import RngTree
 
 if TYPE_CHECKING:
     from app.domain.lexicon.models import LexicalEntity
@@ -115,6 +116,7 @@ class EpochManager:
         self._compounding_engine = compounding_engine
         self._renewal_engine = renewal_engine
         self._seed = seed
+        self._rng_tree = RngTree(seed).child("epoch")
 
     def run(
         self,
@@ -152,12 +154,16 @@ class EpochManager:
                 inject=epoch.domain_inject or "none",
             )
 
-            typology = self._apply_bias(epoch, typology)
+            typology = self._apply_bias(
+                epoch,
+                typology,
+                self._rng_tree.python(epoch_idx, "bias"),
+            )
 
             injected: list[LexicalEntity] = []
             if epoch.domain_inject and self._domain_injector_factory:
                 injector = self._domain_injector_factory(epoch.domain_inject)
-                rng = random.Random(self._seed + era_cursor)
+                rng = self._rng_tree.python(epoch_idx, "domain_injection")
                 injected = injector.inject(hot, era_cursor, engine.inventory, rng)
                 logger.debug("Epoch [%s] injected %d domain words.", epoch.name, len(injected))
                 get_event_bus().emit(
@@ -169,7 +175,7 @@ class EpochManager:
 
             compounds: list[LexicalEntity] = []
             if epoch.compound_enabled and self._compounding_engine:
-                rng = random.Random(self._seed + era_cursor + 1)
+                rng = self._rng_tree.python(epoch_idx, "compounding")
                 compounds = self._compounding_engine.generate(hot, era_cursor, rng, epoch_idx=epoch_idx)
                 logger.debug("Epoch [%s] generated %d compound words.", epoch.name, len(compounds))
                 if compounds:
@@ -198,7 +204,7 @@ class EpochManager:
 
             replaced: list[str] = []
             if self._renewal_engine and swadesh_concepts:
-                rng = random.Random(self._seed + era_cursor + 2)
+                rng = self._rng_tree.python(epoch_idx, "renewal")
                 replaced = self._renewal_engine.renew(
                     hot, era_cursor + epoch.era_count, swadesh_concepts, engine.inventory, rng
                 )
@@ -250,10 +256,11 @@ class EpochManager:
     # Helpers
     # ------------------------------------------------------------------
 
-    @staticmethod
     def _apply_bias(
+        self,
         epoch: EpochConfig,
         typology: "TypologyMatrix",
+        rng: random.Random,
     ) -> "TypologyMatrix":
         """Adjust typology based on epoch's morph_type_bias.
 
@@ -269,7 +276,7 @@ class EpochManager:
             typology.bias_profile = BiasProfile.neutral()
             return typology
         if bias == "random":
-            bias = random.choice(_MORPH_CYCLE)
+            bias = rng.choice(_MORPH_CYCLE)
 
         level_map = {"isolating": ANALYTIC, "agglutinative": AGGLUTINATIVE, "fusional": FUSIONAL}
         preset_map = {

@@ -4,6 +4,7 @@ import random
 from collections import defaultdict
 
 from app.domain.lexicon.models import LexicalEntity
+from app.core.rng import RngTree
 
 _POS_GROUPS: dict[str, list[str]] = {
     "noun": ["n.", "n"],
@@ -62,7 +63,7 @@ class SentenceAssembler:
     def assemble(self, n: int = 10, rng: random.Random | None = None) -> list[str]:
         """Return `n` proto-sentences as IPA strings."""
         if rng is None:
-            rng = random.Random()
+            rng = RngTree(0).python("syntax", "assembler")
 
         templates = [t for t in _TEMPLATES if all(
             self._groups.get(role) for role in t
