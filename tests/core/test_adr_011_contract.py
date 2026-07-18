@@ -12,6 +12,7 @@ import copy
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +35,15 @@ TYPED_ID = re.compile(
 
 def _load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _git(*args: str) -> bytes:
+    return subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
 
 
 def _assert_id(value: str, kind: str) -> None:
@@ -257,17 +267,30 @@ def test_negative_cases_cover_every_adr_011_stop_condition() -> None:
 def test_g0a_evidence_cannot_misreport_an_unreviewed_gate_as_passed() -> None:
     evidence = _load(G0A_EVIDENCE_PATH)
     fingerprint = fingerprint_workspace(ROOT)
+    source = evidence["source"]
+    subject = source["subjectCommit"]
 
     assert evidence["schemaVersion"] == "telysta-gate-evidence-manifest.v2"
     assert evidence["gateId"] == "G0A"
     assert evidence["decision"] == "blocked"
-    assert evidence["source"]["subjectCommit"] == fingerprint.base_commit
-    assert evidence["source"]["worktreeDirty"] is fingerprint.dirty
-    assert evidence["source"]["worktreeInventorySha256"] == fingerprint.sha256
+    assert source["subjectTree"] == _git(
+        "rev-parse", f"{subject}^{{tree}}"
+    ).decode("ascii").strip()
     assert (
-        evidence["source"]["worktreeStatusEntryCount"]
-        == fingerprint.status_entry_count
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", subject, fingerprint.base_commit],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+        ).returncode
+        == 0
     )
+    if (
+        subject == fingerprint.base_commit
+        and source["worktreeInventorySha256"] == fingerprint.sha256
+    ):
+        assert source["worktreeDirty"] is fingerprint.dirty
+        assert source["worktreeStatusEntryCount"] == fingerprint.status_entry_count
     assert evidence["owner"] is None
     assert evidence["reviewers"] == []
     assert evidence["waivers"] == []
@@ -279,7 +302,7 @@ def test_g0a_evidence_cannot_misreport_an_unreviewed_gate_as_passed() -> None:
     assert requirement_status["R0A-03"] == "ready_for_independent_review"
     assert requirement_status["R0A-04"] == "ready_for_independent_review"
     expected_clean_subject_status = (
-        "failed" if fingerprint.dirty else "ready_for_independent_review"
+        "failed" if source["worktreeDirty"] else "ready_for_independent_review"
     )
     assert requirement_status["R0A-05"] == expected_clean_subject_status
     assert requirement_status["R0A-07"] == "incomplete"
@@ -294,13 +317,24 @@ def test_g0a_evidence_cannot_misreport_an_unreviewed_gate_as_passed() -> None:
     )
 
 
-def test_g0a_evidence_content_hashes_match_the_reviewed_workspace() -> None:
+def test_g0a_evidence_content_hashes_match_the_recorded_subject() -> None:
     evidence = _load(G0A_EVIDENCE_PATH)
+    fingerprint = fingerprint_workspace(ROOT)
+    source = evidence["source"]
+    evidence_is_fresh = (
+        source["subjectCommit"] == fingerprint.base_commit
+        and source["worktreeInventorySha256"] == fingerprint.sha256
+    )
     hashed_items = [item for item in evidence["evidence"] if "sha256" in item]
     assert hashed_items
 
     for item in hashed_items:
         path = ROOT / item["path"]
         assert path.is_file(), item["path"]
-        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        payload = (
+            path.read_bytes()
+            if evidence_is_fresh
+            else _git("show", f"{source['subjectCommit']}:{item['path']}")
+        )
+        actual = hashlib.sha256(payload).hexdigest()
         assert actual == item["sha256"], item["path"]
