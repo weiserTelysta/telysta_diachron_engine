@@ -1,0 +1,284 @@
+{
+  "$schema": "GATE_EVIDENCE_MANIFEST_V2.schema.json",
+  "schemaVersion": "telysta-gate-evidence-manifest.v2",
+  "gateId": "G0A",
+  "gateName": "Platform Contract Ready",
+  "decision": "blocked",
+  "decisionDate": "2026-07-18",
+  "source": {
+    "subjectCommit": "fcfda31acf03ff73a987cb6b5f6e303395eb4a47",
+    "subjectTree": "e009b80fe4b63a79d1df5d9c612e893aae93a52d",
+    "worktreeDirty": false,
+    "worktreeStatusEntryCount": 0,
+    "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
+    "worktreeInventorySha256": "4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13",
+    "excludedGeneratedPaths": [
+      "docs/G0A_GATE_EVIDENCE_2026-07-17.json",
+      "docs/STATUS.md"
+    ],
+    "environment": "Windows; Asia/Shanghai; local workspace"
+  },
+  "claims": {
+    "allowed": [],
+    "forbidden": [
+      "G0A has passed",
+      "ADR-011 is Accepted",
+      "ADR-012 or ADR-013 is Accepted",
+      "R1 persistent Project/Operation/Run/Job implementation may start",
+      "the repository has a reproducible clean-checkout baseline",
+      "LanguageState v3 or Genesis production implementation may start"
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "scripts/check.py",
+      "protocol": ".\\.venv\\Scripts\\python.exe scripts\\check.py",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/GATE_EVIDENCE_MANIFEST_V1.schema.json",
+      "sha256": "e0294cbeb31f4015f2c4ecd77b0159b57f209ce0ae48828a5cedb4bfdb9a4e01",
+      "result": "draft_2020_12_validated"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json",
+      "sha256": "5abd0c3ccc6d41e3839a79493a3344332c9df369004faa4d1971ef9c5ab3e6c0",
+      "result": "draft_2020_12_validated"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/G0A_POLICY_V1.json",
+      "sha256": "f6a2db62af0fed1215955d32300f8fd4200a2a844c0329a876a515406e053a99",
+      "result": "proposed"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/governance/GATE_EVIDENCE_MODEL_V2.md",
+      "sha256": "e05366f018d6a9448a5444d1e3b3962d66c2ed74da5005a29a74091a7b3b44e1",
+      "result": "proposed"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
+      "sha256": "cadbfa4425126724bfc57078e1de27646b9163860239ecefb26f94bf17809507",
+      "result": "proposed_ready_for_independent_review"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/ADR_011_SCHEMA_DRAFT_V1.json",
+      "sha256": "0ae74b95de361eb49b9c996b2a57c86c86ab2c0574a07739eb52a522cb794435",
+      "result": "draft_2020_12_validated"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
+      "sha256": "2e2fae10abb5b923ce5ff7d42e3639f401ce049fcde3c47e9bec33e2007fa799",
+      "result": "self_review_complete"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "tests/fixtures/adr_011_sequences_v1.json",
+      "sha256": "bc52f3c6ad0af41d006488d5c3ae603710127be973e435e36aaa0336ae295629",
+      "result": "pass"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "tests/fixtures/adr_011_schema_records_v1.json",
+      "sha256": "b7d5d23a9e6144608cc531ff802a058e1f8305dd23009f4f1bfacb765fb400b5",
+      "result": "pass"
+    },
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "tests/core/test_adr_011_contract.py",
+      "sha256": "f0df07c1629d363716dbd1dbdaa9512e80b9efe8ae2f8fda758aa76940f363ec",
+      "protocol": ".\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    },
+    {
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/PLATFORM_CONTRACT_PACK_V1.md",
+      "sha256": "73c4f5e900011f33ee837329336a2e48e135888ab2d21ed475b80e6664dbc7c8",
+      "result": "ready_for_independent_review"
+    },
+    {
+      "kind": "ArchitectureDecisionEvidence",
+      "path": "docs/adr/ADR-012-project-package-commit-authority.md",
+      "sha256": "263f51694a6c3da4b0c297bf6d41ef9e2c72bab23ae7c8d7402fb07fdea96d05",
+      "result": "proposed"
+    },
+    {
+      "kind": "ArchitectureDecisionEvidence",
+      "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
+      "sha256": "956c61f96d6d44dd470c680f2dc77839a2e0cc37fe0ccec4e1195eeae5e9244a",
+      "result": "proposed"
+    },
+    {
+      "kind": "DeterminismEvidence",
+      "path": "tests/fixtures/rng_known_answers_v1.json",
+      "sha256": "2a25dca59c4b8367f2f79bbd81228668f377efb86dd07ac289eb13c2877c8851",
+      "result": "pass"
+    },
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "apps/desktop/web/app.js",
+      "protocol": "node --check apps/desktop/web/app.js",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    },
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "Cargo.toml",
+      "protocol": "cargo fmt --all --check",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    },
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "Cargo.toml",
+      "protocol": "cargo test --workspace --locked",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    },
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "crates/telysta-core/tests/adr_011_schema_records.rs",
+      "protocol": "cargo test -p telysta-core --test adr_011_schema_records --locked",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    },
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "crates/telysta-core/tests/rng_known_answers.rs",
+      "protocol": "cargo test -p telysta-core --test rng_known_answers --locked",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    },
+    {
+      "kind": "SoftwareVerificationEvidence",
+      "path": "Cargo.toml",
+      "protocol": "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "result": "not_run_for_fingerprint",
+      "details": "verification must be rerun for the recorded worktree fingerprint",
+      "verificationMode": "not_run"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R0A-01",
+      "name": "testable product wedge and allowed claims",
+      "status": "ready_for_review",
+      "evidencePaths": [
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md"
+      ]
+    },
+    {
+      "id": "R0A-02-ADR011",
+      "name": "Project/Operation/Run/Job identity decision",
+      "status": "blocked",
+      "evidencePaths": [
+        "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
+        "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
+        "docs/ADR_011_SCHEMA_DRAFT_V1.json",
+        "tests/fixtures/adr_011_schema_records_v1.json",
+        "tests/fixtures/adr_011_sequences_v1.json",
+        "tests/core/test_adr_011_contract.py",
+        "crates/telysta-core/tests/adr_011_schema_records.rs"
+      ],
+      "reason": "ADR-011 remains Proposed pending named code-owner, independent architecture and migration review"
+    },
+    {
+      "id": "R0A-03",
+      "name": "application, staging, query, dependency bundle and replay contract pack",
+      "status": "ready_for_independent_review",
+      "evidencePaths": [
+        "docs/PLATFORM_CONTRACT_PACK_V1.md",
+        "docs/adr/ADR-012-project-package-commit-authority.md"
+      ],
+      "reason": "contract boundaries and fake-task acceptance are specified; ADR-011/012 remain Proposed pending independent review"
+    },
+    {
+      "id": "R0A-04",
+      "name": "RNG decision record and compatibility policy",
+      "status": "ready_for_independent_review",
+      "evidencePaths": [
+        "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
+        "tests/fixtures/rng_known_answers_v1.json",
+        "crates/telysta-core/tests/rng_known_answers.rs"
+      ],
+      "reason": "legacy behavior, distribution versions, overflow and replay policy are explicit; ADR-013 remains Proposed pending independent review"
+    },
+    {
+      "id": "R0A-05",
+      "name": "reviewed clean-checkout repository baseline",
+      "status": "ready_for_independent_review",
+      "evidencePaths": [],
+      "reason": "the worktree is clean; independent clean-checkout reproduction is still required"
+    },
+    {
+      "id": "R0A-06",
+      "name": "GateEvidenceManifest v2",
+      "status": "ready_for_independent_review",
+      "evidencePaths": [
+        "docs/GATE_EVIDENCE_MANIFEST_V1.schema.json",
+        "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json",
+        "docs/G0A_POLICY_V1.json",
+        "docs/governance/GATE_EVIDENCE_MODEL_V2.md",
+        "scripts/generate_gate_evidence.py",
+        "tests/core/test_gate_evidence_generator.py",
+        "docs/G0A_GATE_EVIDENCE_2026-07-17.json"
+      ],
+      "reason": "Draft 2020-12 schema, exact G0A requirement/protocol checks, runtime binding and adversarial tests are implemented; independent review remains required"
+    },
+    {
+      "id": "R0A-07",
+      "name": "named owners, independent reviewers, capacity, estimate, WIP and timebox",
+      "status": "incomplete",
+      "evidencePaths": [],
+      "reason": "no verifiable human owner, reviewer or team-capacity record exists in the repository"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "blocking",
+      "id": "G0A-B01",
+      "summary": "ADR-011 independent approval is absent"
+    },
+    {
+      "severity": "blocking",
+      "id": "G0A-B02",
+      "summary": "clean-checkout repository baseline is absent"
+    },
+    {
+      "severity": "blocking",
+      "id": "G0A-B03",
+      "summary": "ADR-012 platform authority and ADR-013 RNG compatibility lack independent approval"
+    },
+    {
+      "severity": "blocking",
+      "id": "G0A-B04",
+      "summary": "named ownership, independent reviewers and capacity are unassigned"
+    }
+  ],
+  "owner": null,
+  "reviewers": [],
+  "waivers": [],
+  "expiresWhen": [
+    "ADR-011 or its schema evidence changes",
+    "the source commit or worktree baseline changes",
+    "RNG known answers, storage authority, application or replay contracts change",
+    "any recorded verification command stops passing"
+  ],
+  "nextDecision": "obtain independent ADR-011/012/013 and GateEvidence v2 review, establish a reviewed clean-checkout subject/attestation baseline, and assign accountable owners/capacity before re-evaluating G0A"
+}
