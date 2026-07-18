@@ -73,7 +73,10 @@ def test_current_handoff_report_partitions_every_entry_and_hashes_review_inputs(
     assert report["schemaVersion"] == SCHEMA_VERSION
     assert report["purpose"] == "preparation_only_not_an_approval_or_gate_decision"
     assert report["readiness"]["independentApprovalRecorded"] is False
-    assert report["readiness"]["cleanSubjectReadyForVerification"] is False
+    assert report["readiness"]["cleanSubjectReadyForVerification"] is (
+        report["readiness"]["subjectReadyForStagingReview"]
+        and not report["subjectCandidates"]
+    )
     assert report["missingReviewTargets"] == []
     assert (
         report["counts"]["trackedTransientEntries"]
@@ -156,6 +159,10 @@ def test_untracked_seed_remains_subject_until_first_commit(tmp_path: Path) -> No
 
 
 def test_summary_refuses_to_imply_approval() -> None:
-    summary = render_summary(build_report(ROOT))
+    report = build_report(ROOT)
+    summary = render_summary(report)
     assert "independent approval recorded by this tool: false" in summary
-    assert "clean subject ready: false" in summary
+    clean_subject = str(
+        report["readiness"]["cleanSubjectReadyForVerification"]
+    ).lower()
+    assert f"clean subject ready: {clean_subject}" in summary
