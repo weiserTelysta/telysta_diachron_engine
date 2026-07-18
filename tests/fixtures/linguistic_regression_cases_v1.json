@@ -1,0 +1,1085 @@
+{
+  "schemaVersion": "telysta-linguistic-regression-cases.v1",
+  "status": "planning_only_not_a_production_persistence_format",
+  "sourcePlan": {
+    "path": "docs/AUDIT_CORRECTION_PLAN_2026-07-18.md",
+    "section": 8
+  },
+  "fixtureIdPolicy": "immutable_once_merged",
+  "fixtureProtocol": {
+    "identifierPolicy": "telysta_entity_ids_or_fixture_local_refs",
+    "generatedObservationPolicy": "runner_only",
+    "runnerStatus": "future_not_bound",
+    "classificationAxes": [
+      "assumptionClass",
+      "contractKind",
+      "claimScope"
+    ],
+    "bindingRequirements": [
+      "versioned_adapter_schema",
+      "accepted_baseline_before_negative_mutation",
+      "explicit_single_fault_or_batch_case_mode",
+      "runner_generated_diagnostics_only"
+    ]
+  },
+  "resources": {
+    "segmentRegistry": {
+      "schemaVersion": "telysta-fixture-segment-registry.v1",
+      "segments": [
+        {
+          "segmentId": "telysta:phoneme:a",
+          "displayIpa": "a",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": false}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": true}}
+          ]
+        },
+        {
+          "segmentId": "telysta:phoneme:o",
+          "displayIpa": "o",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": false}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": true}}
+          ]
+        },
+        {
+          "segmentId": "telysta:phoneme:d",
+          "displayIpa": "d",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": true}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": false}}
+          ]
+        },
+        {
+          "segmentId": "telysta:phoneme:g",
+          "displayIpa": "g",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": true}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": false}}
+          ]
+        },
+        {
+          "segmentId": "telysta:phoneme:k",
+          "displayIpa": "k",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": true}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": false}}
+          ]
+        },
+        {
+          "segmentId": "telysta:phoneme:n",
+          "displayIpa": "n",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": true}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": false}}
+          ]
+        },
+        {
+          "segmentId": "telysta:phoneme:n-syllabic",
+          "displayIpa": "n̩",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": true}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": true}}
+          ]
+        },
+        {
+          "segmentId": "telysta:phoneme:t",
+          "displayIpa": "t",
+          "features": [
+            {"featureId": "telysta:feature:consonantal", "value": {"kind": "boolean", "value": true}},
+            {"featureId": "telysta:feature:syllabic", "value": {"kind": "boolean", "value": false}}
+          ]
+        }
+      ]
+    },
+    "phonotacticProfiles": [
+      {
+        "profileRef": "fixture:phonotactics:vowel-nucleus",
+        "nucleusPredicate": {
+          "kind": "feature_equals",
+          "featureId": "telysta:feature:syllabic",
+          "value": {"kind": "boolean", "value": true}
+        },
+        "syllabicConsonantAllowed": false,
+        "maxOnsetSegments": 1,
+        "maxCodaSegments": 1
+      },
+      {
+        "profileRef": "fixture:phonotactics:overlap-isolation",
+        "nucleusPredicate": {
+          "kind": "feature_equals",
+          "featureId": "telysta:feature:syllabic",
+          "value": {"kind": "boolean", "value": true}
+        },
+        "syllabicConsonantAllowed": false,
+        "maxOnsetSegments": 2,
+        "maxCodaSegments": 2,
+        "licensedOnsetClusters": [
+          ["telysta:phoneme:t"],
+          ["telysta:phoneme:n", "telysta:phoneme:t"]
+        ],
+        "licensedCodaClusters": [
+          ["telysta:phoneme:n", "telysta:phoneme:t"]
+        ]
+      },
+      {
+        "profileRef": "fixture:phonotactics:syllabic-consonant-nucleus",
+        "nucleusPredicate": {
+          "kind": "feature_equals",
+          "featureId": "telysta:feature:syllabic",
+          "value": {"kind": "boolean", "value": true}
+        },
+        "syllabicConsonantAllowed": true,
+        "maxOnsetSegments": 1,
+        "maxCodaSegments": 1
+      }
+    ],
+    "languageProfiles": [
+      {
+        "profileRef": "fixture:language-profile:a",
+        "alignment": "nominative_accusative",
+        "wordOrder": "VSO",
+        "marking": "predicate_head"
+      },
+      {
+        "profileRef": "fixture:language-profile:b",
+        "alignment": "ergative_absolutive",
+        "wordOrder": "SOV",
+        "marking": "dependent",
+        "nominalCaseCoding": {
+          "domain": "independent_nominal_arguments",
+          "splitConditions": [],
+          "realizationPolicy": "overt_or_zero_exponent_as_declared_by_paradigm",
+          "roleMappings": [
+            {"role": "A", "case": "ergative"},
+            {"role": "S", "case": "absolutive"},
+            {"role": "P", "case": "absolutive"}
+          ]
+        }
+      }
+    ]
+  },
+  "cases": [
+    {
+      "fixtureId": "PH-N01",
+      "domain": "phonology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "language_profile",
+      "targetWorkPackage": "COR-L02",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_surface_form.v1", "caseMode": "single_fault_negative"},
+      "setup": {"profileRef": "fixture:phonotactics:vowel-nucleus"},
+      "request": {
+        "form": {
+          "kind": "ordered_segment_occurrences",
+          "occurrences": [
+            {"occurrenceId": "fixture:occurrence:ph-n01-001", "segmentId": "telysta:phoneme:unknown-x"},
+            {"occurrenceId": "fixture:occurrence:ph-n01-002", "segmentId": "telysta:phoneme:a"}
+          ],
+          "display": {"ipa": "xa", "displayOnly": true}
+        }
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "unknown_segment", "subjectRef": "telysta:phoneme:unknown-x"}],
+        "invariants": ["no_authoritative_state_written"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "PH-N02",
+      "domain": "phonology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L02",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_surface_form.v1", "caseMode": "single_fault_negative"},
+      "setup": {"profileRef": "fixture:phonotactics:vowel-nucleus"},
+      "request": {
+        "form": {
+          "kind": "ordered_segment_occurrences",
+          "occurrences": [],
+          "display": {"ipa": "", "displayOnly": true}
+        }
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "empty_surface_form"}],
+        "invariants": ["no_authoritative_state_written"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "PH-N03",
+      "domain": "phonology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "language_profile",
+      "targetWorkPackage": "COR-L02",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_surface_form.v1", "caseMode": "single_fault_negative"},
+      "setup": {"profileRef": "fixture:phonotactics:vowel-nucleus"},
+      "request": {
+        "form": {
+          "kind": "ordered_segment_occurrences",
+          "occurrences": [
+            {"occurrenceId": "fixture:occurrence:ph-n03-001", "segmentId": "telysta:phoneme:g"}
+          ],
+          "display": {"ipa": "g", "displayOnly": true}
+        }
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "missing_licensed_nucleus"}],
+        "invariants": ["nucleus_license_is_profile_specific"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "PH-N04",
+      "domain": "phonology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L02",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_syllabification.v1", "caseMode": "single_fault_negative"},
+      "setup": {"profileRef": "fixture:phonotactics:overlap-isolation"},
+      "request": {
+        "form": {
+          "kind": "ordered_segment_occurrences",
+          "occurrences": [
+            {"occurrenceId": "fixture:occurrence:ph-n04-001", "segmentId": "telysta:phoneme:a"},
+            {"occurrenceId": "fixture:occurrence:ph-n04-002", "segmentId": "telysta:phoneme:n"},
+            {"occurrenceId": "fixture:occurrence:ph-n04-003", "segmentId": "telysta:phoneme:t"},
+            {"occurrenceId": "fixture:occurrence:ph-n04-004", "segmentId": "telysta:phoneme:a"}
+          ],
+          "display": {"ipa": "anta", "displayOnly": true}
+        },
+        "proposedSyllables": [
+          {
+            "onset": [],
+            "nucleus": ["fixture:occurrence:ph-n04-001"],
+            "coda": ["fixture:occurrence:ph-n04-002", "fixture:occurrence:ph-n04-003"]
+          },
+          {
+            "onset": ["fixture:occurrence:ph-n04-003"],
+            "nucleus": ["fixture:occurrence:ph-n04-004"],
+            "coda": []
+          }
+        ]
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [
+          {"code": "segment_occurrence_reused", "subjectRef": "fixture:occurrence:ph-n04-003"}
+        ],
+        "invariants": ["all_other_profile_constraints_satisfied"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "PH-N05",
+      "domain": "phonology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "language_profile",
+      "targetWorkPackage": "ARC-22",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_structural_change_proposal.v1", "caseMode": "single_fault_negative"},
+      "setup": {
+        "profileRef": "fixture:phonotactics:vowel-nucleus",
+        "authoritativeState": {
+          "lexemeId": "telysta:lexeme:go",
+          "form": {
+            "kind": "ordered_segment_occurrences",
+            "occurrences": [
+              {"occurrenceId": "fixture:occurrence:ph-n05-001", "segmentId": "telysta:phoneme:g"},
+              {"occurrenceId": "fixture:occurrence:ph-n05-002", "segmentId": "telysta:phoneme:o"}
+            ],
+            "display": {"ipa": "go", "displayOnly": true}
+          }
+        }
+      },
+      "request": {
+        "effect": {
+          "kind": "delete_segment_occurrence",
+          "targetOccurrenceId": "fixture:occurrence:ph-n05-002"
+        }
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [
+          {"code": "change_set_postcondition_invalid", "causeCode": "missing_licensed_nucleus"}
+        ],
+        "invariants": [
+          "history_head_unchanged",
+          "semantic_hash_unchanged",
+          "event_count_unchanged",
+          "proposal_atomic"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "PH-N06",
+      "domain": "phonology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L02",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_phonotactic_profile.v1", "caseMode": "single_fault_negative"},
+      "setup": {},
+      "request": {
+        "candidateProfile": {
+          "profileRef": "fixture:phonotactics:contradictory-onset-candidate",
+          "nucleusPredicate": {
+            "kind": "feature_equals",
+            "featureId": "telysta:feature:syllabic",
+            "value": {"kind": "boolean", "value": true}
+          },
+          "syllabicConsonantAllowed": false,
+          "maxOnsetSegments": 1,
+          "maxCodaSegments": 1,
+          "licensedOnsetClusters": [
+            ["telysta:phoneme:n", "telysta:phoneme:t"]
+          ],
+          "licensedCodaClusters": []
+        }
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "licensed_cluster_exceeds_maximum_onset"}],
+        "invariants": ["candidate_profile_not_registered"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "PH-P01",
+      "domain": "phonology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "language_profile",
+      "targetWorkPackage": "COR-L02",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_surface_form.v1", "caseMode": "positive_contract"},
+      "setup": {"profileRef": "fixture:phonotactics:syllabic-consonant-nucleus"},
+      "request": {
+        "form": {
+          "kind": "ordered_segment_occurrences",
+          "occurrences": [
+            {"occurrenceId": "fixture:occurrence:ph-p01-001", "segmentId": "telysta:phoneme:n-syllabic"}
+          ],
+          "display": {"ipa": "n̩", "displayOnly": true}
+        }
+      },
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "invariants": [
+          "syllabic_consonant_is_explicitly_licensed",
+          "vowel_nucleus_is_not_a_universal_law"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "CAP-N01",
+      "domain": "capability",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "software_invariant",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "R0B-03",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "compile_rule.v1", "caseMode": "single_fault_negative"},
+      "setup": {
+        "capabilityCatalog": [
+          {"capabilityId": "sound_change_insert", "status": "planned"}
+        ]
+      },
+      "request": {
+        "capabilityId": "sound_change_insert",
+        "ruleSpec": {
+          "ruleRef": "fixture:rule:insert-a-before-syllabic",
+          "domain": {"kind": "language_structure", "lectRef": "fixture:lect:cap-n01"},
+          "environment": {
+            "kind": "adjacent_feature_context",
+            "right": {
+              "featureId": "telysta:feature:syllabic",
+              "value": {"kind": "boolean", "value": true}
+            }
+          },
+          "effect": {
+            "kind": "insert_segment",
+            "segmentId": "telysta:phoneme:a",
+            "position": "before_right_context"
+          },
+          "provenanceRef": "fixture:provenance:cap-n01"
+        }
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "compiler_capability_not_supported"}],
+        "invariants": ["no_silent_noop", "no_authoritative_state_written"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "CAT-N01",
+      "domain": "grammar",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L03",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "evaluate_completeness_diagnostic.v1", "caseMode": "single_fault_negative"},
+      "setup": {
+        "declaredLexicalClasses": ["nominal", "stative_predicate"],
+        "functionalStrategies": {
+          "reference": ["demonstrative_construction", "zero_anaphora"],
+          "modification": ["relative_stative_construction"]
+        }
+      },
+      "request": {
+        "candidateDiagnostic": {
+          "code": "missing_required_english_pos",
+          "claimedMissingClasses": ["pronoun", "adjective"]
+        }
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "invalid_completeness_diagnostic"}],
+        "invariants": ["functional_capability_not_english_pos_inventory"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "LEX-N01",
+      "domain": "lexicon",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L03",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_lexeme_sense_identity.v1", "caseMode": "positive_contract"},
+      "setup": {
+        "comparativeConcepts": [
+          {"conceptRef": "fixture:comparative-concept:fire"},
+          {"conceptRef": "fixture:comparative-concept:passion"}
+        ],
+        "senses": [
+          {"senseId": "telysta:sense:fire-flame", "conceptRef": "fixture:comparative-concept:fire"},
+          {"senseId": "telysta:sense:fire-passion", "conceptRef": "fixture:comparative-concept:passion"},
+          {"senseId": "telysta:sense:fire-ritual", "conceptRef": "fixture:comparative-concept:fire"}
+        ],
+        "lexemes": [
+          {
+            "lexemeId": "telysta:lexeme:fire-basic",
+            "senseIds": ["telysta:sense:fire-flame", "telysta:sense:fire-passion"]
+          },
+          {
+            "lexemeId": "telysta:lexeme:ritual-fire",
+            "senseIds": ["telysta:sense:fire-ritual"]
+          }
+        ]
+      },
+      "request": {"kind": "validate_identity_graph"},
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "result": {
+          "lexemeCountForConcept": 2,
+          "senseCountForLexeme": {"telysta:lexeme:fire-basic": 2}
+        },
+        "invariants": [
+          "one_lexeme_can_own_multiple_senses",
+          "multiple_lexemes_can_align_to_one_comparative_concept"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "HOM-N01",
+      "domain": "lexicon",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L03",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "analyze_surface_form.v1", "caseMode": "positive_contract"},
+      "setup": {
+        "surfaceForms": [
+          {
+            "surfaceFormRef": "fixture:surface-form:ta",
+            "form": {
+              "kind": "ordered_segment_occurrences",
+              "occurrences": [
+                {"occurrenceId": "fixture:occurrence:hom-n01-001", "segmentId": "telysta:phoneme:t"},
+                {"occurrenceId": "fixture:occurrence:hom-n01-002", "segmentId": "telysta:phoneme:a"}
+              ],
+              "display": {"ipa": "ta", "displayOnly": true}
+            }
+          }
+        ],
+        "wordForms": [
+          {
+            "wordFormRef": "fixture:word-form:river-basic",
+            "lexemeId": "telysta:lexeme:river",
+            "surfaceFormRef": "fixture:surface-form:ta"
+          },
+          {
+            "wordFormRef": "fixture:word-form:see-imperative",
+            "lexemeId": "telysta:lexeme:see",
+            "surfaceFormRef": "fixture:surface-form:ta"
+          }
+        ]
+      },
+      "request": {"surfaceFormRef": "fixture:surface-form:ta"},
+      "oracle": {
+        "decision": "accept_with_ambiguity",
+        "diagnostics": [],
+        "result": {
+          "analysisLexemeIds": ["telysta:lexeme:river", "telysta:lexeme:see"]
+        },
+        "invariants": [
+          "both_lexeme_identities_preserved",
+          "no_automatic_reduplication_or_affix",
+          "no_entity_marked_dead"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "HOM-N02",
+      "domain": "diachrony",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "ARC-22",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "apply_sound_change_and_analyze.v1", "caseMode": "positive_contract"},
+      "setup": {
+        "lexemeForms": [
+          {"lexemeId": "telysta:lexeme:river", "segments": ["telysta:phoneme:t", "telysta:phoneme:a"]},
+          {"lexemeId": "telysta:lexeme:see", "segments": ["telysta:phoneme:d", "telysta:phoneme:a"]},
+          {"lexemeId": "telysta:lexeme:day", "segments": ["telysta:phoneme:d", "telysta:phoneme:o"]}
+        ],
+        "functionalLoadModel": null
+      },
+      "request": {
+        "soundChange": {
+          "kind": "segment_replacement",
+          "scope": {
+            "kind": "language_structure",
+            "languageRef": "fixture:language:hom-n02"
+          },
+          "target": {
+            "kind": "segment_id",
+            "segmentId": "telysta:phoneme:d"
+          },
+          "environment": {"kind": "all_positions"},
+          "replacementSegmentId": "telysta:phoneme:t",
+          "applicationMode": "simultaneous_all_matches",
+          "ruleRef": "fixture:rule:hom-n02-d-to-t",
+          "proposalRef": "fixture:proposal:hom-n02",
+          "provenanceRef": "fixture:provenance:hom-n02"
+        }
+      },
+      "oracle": {
+        "decision": "accept_with_ambiguity",
+        "diagnostics": [],
+        "result": {
+          "homophonousLexemeIds": ["telysta:lexeme:river", "telysta:lexeme:see"],
+          "changedLexemeIds": ["telysta:lexeme:see", "telysta:lexeme:day"]
+        },
+        "invariants": [
+          "homophony_is_not_a_hard_failure",
+          "functional_load_requires_explicit_theory_profile"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "MOR-N01",
+      "domain": "morphology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L03",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "analyze_morphology.v1", "caseMode": "positive_contract"},
+      "setup": {
+        "surfaceForms": [
+          {
+            "surfaceFormRef": "fixture:surface-form:tak",
+            "form": {
+              "kind": "ordered_segment_occurrences",
+              "occurrences": [
+                {"occurrenceId": "fixture:occurrence:mor-n01-001", "segmentId": "telysta:phoneme:t"},
+                {"occurrenceId": "fixture:occurrence:mor-n01-002", "segmentId": "telysta:phoneme:a"},
+                {"occurrenceId": "fixture:occurrence:mor-n01-003", "segmentId": "telysta:phoneme:k"}
+              ],
+              "display": {"ipa": "tak", "displayOnly": true}
+            }
+          }
+        ],
+        "paradigmCells": [
+          {
+            "cellRef": "fixture:paradigm-cell:tak-nominative",
+            "lexemeId": "telysta:lexeme:tak",
+            "surfaceFormRef": "fixture:surface-form:tak",
+            "featureBundle": [
+              {"featureId": "telysta:feature:case", "value": {"kind": "category", "value": "nominative"}},
+              {"featureId": "telysta:feature:number", "value": {"kind": "category", "value": "singular"}}
+            ],
+            "morphOccurrences": [
+              {
+                "occurrenceId": "fixture:morph-occurrence:nominative-zero",
+                "morphemeId": "telysta:morpheme:nominative",
+                "realization": {
+                  "kind": "zero_exponent",
+                  "contributions": [
+                    {"featureId": "telysta:feature:case", "value": {"kind": "category", "value": "nominative"}}
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "cellRef": "fixture:paradigm-cell:tak-accusative",
+            "lexemeId": "telysta:lexeme:tak",
+            "surfaceFormRef": "fixture:surface-form:tak",
+            "featureBundle": [
+              {"featureId": "telysta:feature:case", "value": {"kind": "category", "value": "accusative"}},
+              {"featureId": "telysta:feature:number", "value": {"kind": "category", "value": "singular"}}
+            ],
+            "morphOccurrences": [
+              {
+                "occurrenceId": "fixture:morph-occurrence:accusative-zero",
+                "morphemeId": "telysta:morpheme:accusative",
+                "realization": {
+                  "kind": "zero_exponent",
+                  "contributions": [
+                    {"featureId": "telysta:feature:case", "value": {"kind": "category", "value": "accusative"}}
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "request": {"surfaceFormRef": "fixture:surface-form:tak"},
+      "oracle": {
+        "decision": "accept_with_ambiguity",
+        "diagnostics": [],
+        "result": {
+          "analysisCellRefs": [
+            "fixture:paradigm-cell:tak-nominative",
+            "fixture:paradigm-cell:tak-accusative"
+          ]
+        },
+        "invariants": [
+          "feature_contributions_preserved",
+          "zero_exponent_contribution_not_dropped"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "MOR-N02",
+      "domain": "morphology",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L03",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_compound_identity.v1", "caseMode": "positive_contract"},
+      "setup": {
+        "lexemes": [
+          {"lexemeId": "telysta:lexeme:fire"},
+          {"lexemeId": "telysta:lexeme:water"}
+        ]
+      },
+      "request": {
+        "compoundLexemeId": "telysta:lexeme:fire-water",
+        "parentOccurrences": [
+          {
+            "occurrenceId": "fixture:morph-occurrence:fire-modifier",
+            "lexemeId": "telysta:lexeme:fire",
+            "role": "modifier",
+            "boundaryAfter": {"kind": "compound"}
+          },
+          {
+            "occurrenceId": "fixture:morph-occurrence:water-head",
+            "lexemeId": "telysta:lexeme:water",
+            "role": "head",
+            "boundaryAfter": {"kind": "word"}
+          }
+        ]
+      },
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "result": {
+          "orderedParentLexemeIds": ["telysta:lexeme:fire", "telysta:lexeme:water"],
+          "orderedRoles": ["modifier", "head"]
+        },
+        "invariants": [
+          "parent_order_preserved",
+          "parent_roles_preserved",
+          "morpheme_boundaries_preserved",
+          "no_ipa_string_bisection"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "SEM-N01",
+      "domain": "meaning",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L04",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_candidate_readings.v1", "caseMode": "batch_diagnostic_coverage"},
+      "setup": {},
+      "request": {
+        "contrasts": [
+          {
+            "contrastId": "bad-good",
+            "requiredReading": "fixture:reading:quality-bad",
+            "candidateReading": "fixture:reading:quality-good"
+          },
+          {
+            "contrastId": "below-above",
+            "requiredReading": "fixture:reading:spatial-below",
+            "candidateReading": "fixture:reading:spatial-above"
+          }
+        ]
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [
+          {"code": "forbidden_reading", "subjectRef": "bad-good"},
+          {"code": "forbidden_reading", "subjectRef": "below-above"}
+        ],
+        "invariants": ["no_antonym_or_inverse_fallback"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "SEM-N02",
+      "domain": "meaning",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L04",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_reference_feature_bundle.v1", "caseMode": "single_fault_negative"},
+      "setup": {},
+      "request": {
+        "intended": [
+          {"featureId": "telysta:feature:person", "value": {"kind": "category", "value": "first"}},
+          {"featureId": "telysta:feature:number", "value": {"kind": "category", "value": "singular"}}
+        ],
+        "candidate": [
+          {"featureId": "telysta:feature:person", "value": {"kind": "category", "value": "first"}},
+          {"featureId": "telysta:feature:number", "value": {"kind": "category", "value": "plural"}}
+        ]
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "feature_bundle_conflation", "subjectRef": "telysta:feature:number"}],
+        "invariants": ["first_singular_not_equivalent_to_first_plural"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "VAL-N01",
+      "domain": "valency",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "language_profile",
+      "targetWorkPackage": "COR-L05",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "realize_alignment_roles.v1", "caseMode": "positive_contract"},
+      "setup": {"profileRef": "fixture:language-profile:b"},
+      "request": {"argumentRoles": ["A", "S", "P"]},
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "result": {
+          "roleMappings": [
+            {"role": "A", "case": "ergative"},
+            {"role": "S", "case": "absolutive"},
+            {"role": "P", "case": "absolutive"}
+          ]
+        },
+        "invariants": ["no_universal_nominative_subject"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "VAL-N02",
+      "domain": "valency",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L05",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "roundtrip_predicate_frames.v1", "caseMode": "positive_contract"},
+      "setup": {
+        "predicateFrames": [
+          {"predicateRef": "fixture:predicate:perceive", "roles": ["experiencer", "stimulus"]},
+          {"predicateRef": "fixture:predicate:give", "roles": ["donor", "theme", "recipient"]}
+        ]
+      },
+      "request": {
+        "kind": "realize_then_analyze",
+        "predicateRefs": ["fixture:predicate:perceive", "fixture:predicate:give"]
+      },
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "result": {
+          "preservedRoles": {
+            "fixture:predicate:perceive": ["experiencer", "stimulus"],
+            "fixture:predicate:give": ["donor", "theme", "recipient"]
+          }
+        },
+        "invariants": ["no_first_agent_patient_truncation"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "QRY-N01",
+      "domain": "application",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "software_invariant",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L04",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "query_purity_probe.v1", "caseMode": "metamorphic_contract"},
+      "setup": {
+        "stateFixtureRef": "fixture:state:query-purity",
+        "usageCorpusFixtureRef": "fixture:usage-corpus:query-purity"
+      },
+      "request": {
+        "queries": ["realize", "analyze", "evaluate"],
+        "repeatCount": 2
+      },
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "observationsRequiredFromRunner": [
+          "semantic_hash",
+          "history_head",
+          "usage_corpus_hash",
+          "event_count"
+        ],
+        "invariants": [
+          "semantic_hash_unchanged",
+          "history_head_unchanged",
+          "usage_corpus_hash_unchanged",
+          "event_count_unchanged"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "DET-N01",
+      "domain": "determinism",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "software_invariant",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "WS1-05",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "cross_process_determinism_probe.v1", "caseMode": "metamorphic_contract"},
+      "setup": {
+        "compilationFixtureRef": "fixture:compilation:det-n01",
+        "lockMaterialStatus": "fixture_sentinel_pending_real_payload_binding",
+        "hashContract": {
+          "hashKind": "StateSemanticHash",
+          "schema": "telysta-semantic-hash.v1",
+          "coverageManifestSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "locks": {
+          "registrySha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "dataSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "ruleSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+          "entityIdSchemaSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+          "meaningContractSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+          "grammarContractSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+          "theoryProfileSha256": "9999999999999999999999999999999999999999999999999999999999999999",
+          "compilerSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "rngSchema": "telysta-rng-tree.v1",
+          "rngRootSeed": 42,
+          "rngPath": "fixture.det-n01"
+        }
+      },
+      "request": {
+        "baseline": {"replicateCount": 3, "executionIsolation": "fresh_process"},
+        "semanticMutation": {
+          "kind": "replace_semantic_field",
+          "jsonPointer": "/authoritativeState/testSemanticValue",
+          "value": "mutant"
+        },
+        "nonSemanticMutation": {
+          "kind": "replace_nonsemantic_field",
+          "jsonPointer": "/runMetadata/uiLabel",
+          "value": "mutant"
+        }
+      },
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "observationsRequiredFromRunner": [
+          "baseline_output_semantic_hashes",
+          "semantic_mutant_output_semantic_hash",
+          "nonsemantic_mutant_output_semantic_hash",
+          "output_hash_kind",
+          "output_hash_schema",
+          "output_hash_coverage_manifest_sha256"
+        ],
+        "relations": [
+          "all_baseline_output_semantic_hashes_equal",
+          "semantic_mutant_hash_differs_from_baseline",
+          "nonsemantic_mutant_hash_equals_baseline",
+          "hash_contract_matches_locked_schema_and_coverage"
+        ]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "DATA-N01",
+      "domain": "data",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "data_contract",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "COR-L05A",
+      "contractGate": "G0B",
+      "executionGate": "G0B",
+      "runnerBinding": {"status": "future", "adapter": "validate_data_sampling_unit.v1", "caseMode": "single_fault_negative"},
+      "setup": {
+        "dataReference": {
+          "datasetRef": "fixture:dataset:concept-list",
+          "recordRef": "fixture:concept-record:swadesh-12",
+          "samplingUnit": "concept_entry",
+          "field": "list_position"
+        }
+      },
+      "request": {"proposedUse": "token_usage_frequency"},
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "sampling_unit_mismatch"}],
+        "invariants": ["concept_list_position_is_not_token_frequency"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "EVT-N01",
+      "domain": "diachrony",
+      "assumptionClass": "hard_constraint",
+      "contractKind": "domain_well_formedness",
+      "claimScope": "system_wide",
+      "targetWorkPackage": "ARC-22",
+      "contractGate": "G0B",
+      "executionGate": "G2",
+      "runnerBinding": {"status": "future", "adapter": "validate_change_event_kind.v1", "caseMode": "batch_diagnostic_coverage"},
+      "setup": {},
+      "request": {
+        "proposedMappings": [
+          {"mappingId": "grammaticalization", "mechanism": "grammaticalization", "eventKind": "sound_change"},
+          {"mappingId": "analogy", "mechanism": "analogy", "eventKind": "sound_change"},
+          {
+            "mappingId": "analogical-homophone-repair",
+            "mechanism": "analogical_homophone_repair",
+            "eventKind": "sound_change"
+          }
+        ]
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [
+          {"code": "invalid_change_event_kind", "subjectRef": "grammaticalization"},
+          {"code": "invalid_change_event_kind", "subjectRef": "analogy"},
+          {"code": "invalid_change_event_kind", "subjectRef": "analogical-homophone-repair"}
+        ],
+        "invariants": ["non_sound_mechanisms_not_collapsed_into_sound_change"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "GRA-N01",
+      "domain": "diachrony",
+      "assumptionClass": "research_hypothesis",
+      "contractKind": "scientific_claim_boundary",
+      "claimScope": "theory_profile",
+      "targetWorkPackage": "WS2",
+      "contractGate": "G0B",
+      "executionGate": "G4",
+      "runnerBinding": {"status": "future", "adapter": "validate_grammaticalization_claim.v1", "caseMode": "insufficient_evidence_bundle"},
+      "setup": {},
+      "request": {
+        "sourceConstruction": null,
+        "bridgingContexts": [],
+        "oldAnalysis": null,
+        "newAnalysis": null,
+        "availableSignals": ["english_gloss", "frequency", "erosion_count"]
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "insufficient_reanalysis_evidence"}],
+        "invariants": ["gloss_frequency_erosion_do_not_prove_grammaticalization"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    },
+    {
+      "fixtureId": "ANA-N01",
+      "domain": "diachrony",
+      "assumptionClass": "research_hypothesis",
+      "contractKind": "scientific_claim_boundary",
+      "claimScope": "theory_profile",
+      "targetWorkPackage": "WS2",
+      "contractGate": "G0B",
+      "executionGate": "G4",
+      "runnerBinding": {"status": "future", "adapter": "validate_analogy_claim.v1", "caseMode": "insufficient_evidence_bundle"},
+      "setup": {},
+      "request": {
+        "sharedParadigm": null,
+        "sharedConstruction": null,
+        "schemaProductivityEvidence": [],
+        "onlyEvidence": "surface_phonological_similarity"
+      },
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "insufficient_analogy_evidence"}],
+        "invariants": ["surface_similarity_alone_does_not_prove_analogy"]
+      },
+      "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
+    }
+  ]
+}

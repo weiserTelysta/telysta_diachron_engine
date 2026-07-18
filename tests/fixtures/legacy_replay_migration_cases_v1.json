@@ -1,0 +1,813 @@
+{
+  "schemaVersion": "telysta-legacy-replay-migration-cases.v1",
+  "status": "legacy_reference_not_a_production_persistence_format",
+  "sourcePlan": {
+    "path": "docs/AUDIT_CORRECTION_PLAN_2026-07-18.md",
+    "section": 9
+  },
+  "evidenceProtocol": {
+    "caseMaterial": "synthetic_minimal_reproduction_unless_rawArchiveRef_is_present",
+    "executionEvidenceStatus": "not_attached",
+    "requiredBeforeFixtureFreeze": [
+      "reviewedSubjectCommit",
+      "sourceRevision",
+      "sourceTestRunId",
+      "runnerEnvironment",
+      "timestamp",
+      "resultFingerprint"
+    ],
+    "rawArchiveRequiredBeforeMigrationGate": true
+  },
+  "wireContract": {
+    "snapshotProducer": "app.domain.storage.hot_state.EngineHotState.snapshot",
+    "eventProducer": "app.domain.storage.event_log.DeltaEvent.to_dict",
+    "byteWriter": "app.domain.storage.event_log.KeyframeManager",
+    "fieldNaming": "python_snake_case",
+    "artifactBytes": {
+      "encoding": "utf-8",
+      "ensureAscii": false,
+      "indent": 2,
+      "lineEnding": "platform_native",
+      "payloadSha256Normalization": "platform_native_to_lf",
+      "trailingNewline": false
+    },
+    "sourceEnvelopeHash": {
+      "algorithm": "sha256",
+      "canonicalizer": "app.domain.storage.canonical.canonical_json_bytes",
+      "encoding": "utf-8",
+      "ensureAscii": false,
+      "sortObjectKeys": true,
+      "separators": [",", ":"],
+      "allowNonFiniteNumbers": false,
+      "excludedRootFields": ["sourceEnvelopeSha256"],
+      "scope": "planning_fixture_integrity_only_not_archive_or_semantic_hash"
+    },
+    "targetBoundaryContract": {
+      "targetStatus": "planned_not_executed",
+      "replayRootKind": "LegacyHistoryBoundary",
+      "checkpointRole": "ImportedCheckpoint_payload_not_second_root",
+      "cardinalityByDisposition": {
+        "state_only_boundary": {
+          "roots": 1,
+          "checkpoints": 1,
+          "legacyDerivedChangeSets": 0
+        },
+        "state_only_boundary_with_loss": {
+          "roots": 1,
+          "checkpoints": 1,
+          "legacyDerivedChangeSets": 0
+        },
+        "needs_resolution_before_boundary": {
+          "roots": 0,
+          "checkpoints": 0,
+          "legacyDerivedChangeSets": 0
+        },
+        "decoder_contract_only": {
+          "roots": 0,
+          "checkpoints": 0,
+          "legacyDerivedChangeSets": 0
+        }
+      },
+      "requiredEvidenceWhenBoundaryCreated": [
+        "source_archive_raw_sha256",
+        "state_only_mapping",
+        "loss_report",
+        "provenance_discontinuity"
+      ],
+      "forbiddenInference": "legacy_event_as_v3_changeset"
+    }
+  },
+  "cases": [
+    {
+      "fixtureId": "LEGACY-REPLAY-001",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_replay_restores_full_state_after_sound_change",
+      "sourceEnvelope": {
+        "vectorKind": "synthetic_minimal_reproduction_of_source_test_contract",
+        "artifacts": [
+          {
+            "relativePath": "keyframe_era_0000.json",
+            "kind": "keyframe",
+            "payload": {
+              "era": 0,
+              "lexicon": {
+                "root_a": {
+                  "id": "root_a",
+                  "concept": "fire",
+                  "pos": "noun",
+                  "ipa_current": "taka",
+                  "ipa_history": [],
+                  "frequency_weight": 0.2,
+                  "word_class": "content",
+                  "is_dead": false,
+                  "ipa_exemplars": [{"form": "taka", "weight": 1.0}],
+                  "stress_pattern": "",
+                  "era_born": 0,
+                  "source_language": "",
+                  "morpheme_type": "root",
+                  "dag_parent_ids": [],
+                  "scar_log": [],
+                  "semantic_primes": [],
+                  "semantic_era_log": [],
+                  "grammaticalization_stage": 0,
+                  "grammaticalized_from_id": "",
+                  "grammatical_function": "",
+                  "stasis_counter": 0,
+                  "_GRAM_STAGE_MAX": 3
+                },
+                "root_b": {
+                  "id": "root_b",
+                  "concept": "water",
+                  "pos": "noun",
+                  "ipa_current": "mibo",
+                  "ipa_history": [],
+                  "frequency_weight": 0.2,
+                  "word_class": "content",
+                  "is_dead": false,
+                  "ipa_exemplars": [{"form": "mibo", "weight": 1.0}],
+                  "stress_pattern": "",
+                  "era_born": 0,
+                  "source_language": "",
+                  "morpheme_type": "root",
+                  "dag_parent_ids": [],
+                  "scar_log": [],
+                  "semantic_primes": [],
+                  "semantic_era_log": [],
+                  "grammaticalization_stage": 0,
+                  "grammaticalized_from_id": "",
+                  "grammatical_function": "",
+                  "stasis_counter": 0,
+                  "_GRAM_STAGE_MAX": 3
+                }
+              },
+              "dag": {"nodes": ["root_a", "root_b"], "edges": []},
+              "typology": {
+                "word_order": "SOV",
+                "tense_system": "tenseless",
+                "morph_type": "agglutinative",
+                "case_system": "ergative_absolutive",
+                "agreement_features": ["person"],
+                "morpheme_table": {"ERG": "ka"},
+                "morph_state": {
+                  "verb_tam": 1,
+                  "verb_agreement": 1,
+                  "noun_case": 1,
+                  "noun_definiteness": 0
+                },
+                "feature_presence": {
+                  "tense": true,
+                  "aspect": true,
+                  "agreement": true,
+                  "case": true,
+                  "definiteness": false
+                }
+              }
+            },
+            "payloadSha256": "3d87cda498545bcd980e28f814434ec968c314eeef46e99931d2f7a17f8655bb"
+          },
+          {
+            "relativePath": "delta_era_0001.json",
+            "kind": "event_batch",
+            "payload": [
+              {
+                "event_type": "sound_change",
+                "era": 1,
+                "word_id": "root_a",
+                "new_ipa": "taga",
+                "old_ipa": "taka",
+                "new_entity": null,
+                "rule_name": "",
+                "dag_parent_id": "",
+                "source_language": "",
+                "edge_type": "",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              },
+              {
+                "event_type": "era_advance",
+                "era": 1,
+                "word_id": "",
+                "new_ipa": null,
+                "old_ipa": null,
+                "new_entity": null,
+                "rule_name": "",
+                "dag_parent_id": "",
+                "source_language": "",
+                "edge_type": "",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              }
+            ],
+            "payloadSha256": "beead8f9af736a1de30cf2c41c564b5608184c82847a0cc20d9167477f6ad4bf"
+          }
+        ],
+        "sourceEnvelopeSha256": "9effed60e946f42f2d62f16b19d88753c45fc67aee7b717144211cf6c26744d4"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["dag", "full_semantic_state"]
+      },
+      "migrationDisposition": "state_only_boundary",
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "preservedDomains": ["dag", "lexicon", "era"],
+        "lossReportCodes": [],
+        "relations": ["online_and_replayed_full_semantic_hash_equal"],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_001_restores_full_semantic_state",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    },
+    {
+      "fixtureId": "LEGACY-REPLAY-002",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_replay_restores_swadesh_protection_set",
+      "sourceEnvelope": {
+        "vectorKind": "synthetic_minimal_reproduction_of_source_test_contract",
+        "onlineOnlyEvidence": {
+          "swadesh_concepts": ["fire", "water"],
+          "notPresentInPersistedSnapshot": true
+        },
+        "artifacts": [
+          {
+            "relativePath": "keyframe_era_0000.json",
+            "kind": "keyframe",
+            "payload": {
+              "era": 0,
+              "lexicon": {},
+              "dag": {"nodes": [], "edges": []}
+            },
+            "payloadSha256": "56b810d2a4936c8d38b6895cee4ff83c8ca4da95e3a3660b282df70e00b87250"
+          },
+          {
+            "relativePath": "delta_era_0001.json",
+            "kind": "event_batch",
+            "payload": [
+              {
+                "event_type": "era_advance",
+                "era": 1,
+                "word_id": "",
+                "new_ipa": null,
+                "old_ipa": null,
+                "new_entity": null,
+                "rule_name": "",
+                "dag_parent_id": "",
+                "source_language": "",
+                "edge_type": "",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              }
+            ],
+            "payloadSha256": "8930d786d755bc9d1efb4eed9d2690cc7d00d19ac58db442d47137862ae9fdda"
+          }
+        ],
+        "sourceEnvelopeSha256": "2af18512ff4644db296ff32800f7a42463af50d30b8ceef1b4f429570a94d077"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["protection_policy", "writer_omission"]
+      },
+      "migrationDisposition": "needs_resolution_before_boundary",
+      "oracle": {
+        "decision": "reject",
+        "diagnostics": [{"code": "migration_policy_undecided"}],
+        "preservedDomains": [],
+        "lossReportCodes": ["authority_locus_unresolved", "source_field_not_persisted"],
+        "relations": [],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "protection_set_defaults_to_language_state",
+          "protection_set_defaults_to_operation_policy",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_002_resolves_protection_policy_locus",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    },
+    {
+      "fixtureId": "LEGACY-REPLAY-003",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_replay_restores_typology_snapshot",
+      "sourceEnvelope": {
+        "vectorKind": "synthetic_minimal_reproduction_of_source_test_contract",
+        "artifacts": [
+          {
+            "relativePath": "keyframe_era_0000.json",
+            "kind": "keyframe",
+            "payload": {
+              "era": 0,
+              "lexicon": {},
+              "dag": {"nodes": [], "edges": []},
+              "typology": {
+                "word_order": "SOV",
+                "tense_system": "tenseless",
+                "morph_type": "agglutinative",
+                "case_system": "ergative_absolutive",
+                "agreement_features": ["person"],
+                "morpheme_table": {"ERG": "ka"},
+                "morph_state": {
+                  "verb_tam": 1,
+                  "verb_agreement": 1,
+                  "noun_case": 1,
+                  "noun_definiteness": 0
+                },
+                "feature_presence": {
+                  "tense": true,
+                  "aspect": true,
+                  "agreement": true,
+                  "case": true,
+                  "definiteness": false
+                }
+              }
+            },
+            "payloadSha256": "ea4a27ffd5387c412ac7f3d08515a84b8e7250c7f2e969bb9e8bc38e4c06b49e"
+          },
+          {
+            "relativePath": "delta_era_0001.json",
+            "kind": "event_batch",
+            "payload": [
+              {
+                "event_type": "era_advance",
+                "era": 1,
+                "word_id": "",
+                "new_ipa": null,
+                "old_ipa": null,
+                "new_entity": null,
+                "rule_name": "",
+                "dag_parent_id": "",
+                "source_language": "",
+                "edge_type": "",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              }
+            ],
+            "payloadSha256": "8930d786d755bc9d1efb4eed9d2690cc7d00d19ac58db442d47137862ae9fdda"
+          }
+        ],
+        "sourceEnvelopeSha256": "5c0faf74928235e46764826b40b6272ff4d803804de357afc308b0947302d7c0"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["typology_snapshot"]
+      },
+      "migrationDisposition": "state_only_boundary",
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "preservedDomains": ["author_asserted_typology"],
+        "lossReportCodes": ["derived_diagnostic_recomputed"],
+        "relations": ["typed_assertions_derive_from_persisted_typology_fields"],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "derived_diagnostic_as_authority",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_003_migrates_typed_typology_assertions",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    },
+    {
+      "fixtureId": "LEGACY-REPLAY-004",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_event_decoder_preserves_all_replay_relevant_fields",
+      "sourceEnvelope": {
+        "vectorKind": "synthetic_event_record_with_fixed_fixture_timestamp",
+        "artifacts": [
+          {
+            "relativePath": "delta_event.json",
+            "kind": "event_record",
+            "payload": {
+              "event_type": "borrow_word",
+              "era": 3,
+              "word_id": "loan",
+              "new_ipa": null,
+              "old_ipa": null,
+              "new_entity": null,
+              "rule_name": "",
+              "dag_parent_id": "source_root",
+              "source_language": "South",
+              "edge_type": "borrowing",
+              "concept": "trade",
+              "timestamp": "2000-01-01T00:00:00+00:00"
+            },
+            "payloadSha256": "b7bf2ef35452f42d7e172ffddc86271616d9fb6422d5fe6f5e98569a291a610b"
+          }
+        ],
+        "sourceEnvelopeSha256": "b01454e876c018844a738a178f3b56c06d5047fe54f6d6a486a392704b644ef8"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["concept", "lineage_parent", "lineage_type", "source_language"]
+      },
+      "migrationDisposition": "decoder_contract_only",
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "preservedDomains": ["concept", "lineage_parent", "lineage_type", "source_language"],
+        "lossReportCodes": [],
+        "relations": ["decoded_event_equals_complete_source_event"],
+        "mutations": [
+          {
+            "kind": "remove_required_field",
+            "jsonPointer": "/dag_parent_id",
+            "decision": "reject",
+            "code": "required_field_missing"
+          },
+          {
+            "kind": "add_unknown_field",
+            "jsonPointer": "/guessed_meaning",
+            "value": "trade",
+            "decision": "reject",
+            "code": "unknown_authoritative_field"
+          }
+        ],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "missing_field_default",
+          "unknown_field_ignore",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_004_strictly_decodes_all_event_fields",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    },
+    {
+      "fixtureId": "LEGACY-REPLAY-005",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_replay_restores_single_parent_lineage_events[borrow_word-borrowing]",
+      "sourceEnvelope": {
+        "vectorKind": "synthetic_minimal_reproduction_of_source_test_contract",
+        "artifacts": [
+          {
+            "relativePath": "keyframe_era_0000.json",
+            "kind": "keyframe",
+            "payload": {"era": 0, "lexicon": {}, "dag": {"nodes": [], "edges": []}},
+            "payloadSha256": "56b810d2a4936c8d38b6895cee4ff83c8ca4da95e3a3660b282df70e00b87250"
+          },
+          {
+            "relativePath": "delta_era_0001.json",
+            "kind": "event_batch",
+            "payload": [
+              {
+                "event_type": "borrow_word",
+                "era": 1,
+                "word_id": "child",
+                "new_ipa": null,
+                "old_ipa": null,
+                "new_entity": {
+                  "id": "child",
+                  "concept": "loan",
+                  "pos": "noun",
+                  "ipa_current": "kapi",
+                  "ipa_history": [],
+                  "frequency_weight": 0.2,
+                  "word_class": "content",
+                  "is_dead": false,
+                  "ipa_exemplars": [{"form": "kapi", "weight": 1.0}],
+                  "stress_pattern": "",
+                  "era_born": 0,
+                  "source_language": "",
+                  "morpheme_type": "root",
+                  "dag_parent_ids": [],
+                  "scar_log": [],
+                  "semantic_primes": [],
+                  "semantic_era_log": [],
+                  "grammaticalization_stage": 0,
+                  "grammaticalized_from_id": "",
+                  "grammatical_function": "",
+                  "stasis_counter": 0,
+                  "_GRAM_STAGE_MAX": 3
+                },
+                "rule_name": "",
+                "dag_parent_id": "root_a",
+                "source_language": "",
+                "edge_type": "borrowing",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              }
+            ],
+            "payloadSha256": "abd3c357135bd550bece017b03d43eee9ac1fa3e2ec9c09e6f358e67252ea216"
+          }
+        ],
+        "sourceEnvelopeSha256": "1e8dc7a607f91a55268062557832b7f523f87def297121f5f56138f6d9009a26"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["borrowing_lineage"]
+      },
+      "migrationDisposition": "state_only_boundary",
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "preservedDomains": ["single_parent", "borrowing_edge", "provenance"],
+        "lossReportCodes": [],
+        "relations": ["child_has_exactly_source_parent"],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "parent_from_surface_similarity",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_005_restores_borrowing_lineage",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    },
+    {
+      "fixtureId": "LEGACY-REPLAY-006",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_replay_restores_single_parent_lineage_events[fossil_spawn-fossil_prefix]",
+      "sourceEnvelope": {
+        "vectorKind": "synthetic_minimal_reproduction_of_source_test_contract",
+        "artifacts": [
+          {
+            "relativePath": "keyframe_era_0000.json",
+            "kind": "keyframe",
+            "payload": {"era": 0, "lexicon": {}, "dag": {"nodes": [], "edges": []}},
+            "payloadSha256": "56b810d2a4936c8d38b6895cee4ff83c8ca4da95e3a3660b282df70e00b87250"
+          },
+          {
+            "relativePath": "delta_era_0001.json",
+            "kind": "event_batch",
+            "payload": [
+              {
+                "event_type": "fossil_spawn",
+                "era": 1,
+                "word_id": "child",
+                "new_ipa": null,
+                "old_ipa": null,
+                "new_entity": {
+                  "id": "child",
+                  "concept": "loan",
+                  "pos": "noun",
+                  "ipa_current": "kapi",
+                  "ipa_history": [],
+                  "frequency_weight": 0.2,
+                  "word_class": "content",
+                  "is_dead": false,
+                  "ipa_exemplars": [{"form": "kapi", "weight": 1.0}],
+                  "stress_pattern": "",
+                  "era_born": 0,
+                  "source_language": "",
+                  "morpheme_type": "root",
+                  "dag_parent_ids": [],
+                  "scar_log": [],
+                  "semantic_primes": [],
+                  "semantic_era_log": [],
+                  "grammaticalization_stage": 0,
+                  "grammaticalized_from_id": "",
+                  "grammatical_function": "",
+                  "stasis_counter": 0,
+                  "_GRAM_STAGE_MAX": 3
+                },
+                "rule_name": "",
+                "dag_parent_id": "root_a",
+                "source_language": "",
+                "edge_type": "fossil_prefix",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              }
+            ],
+            "payloadSha256": "2a90db96636cb9b5fa2ff3d9e66a2c5f5b00e4b5b07b0c87fa8c2538b8de1135"
+          }
+        ],
+        "sourceEnvelopeSha256": "d2bb54cd392e7fd5492aa670c9b5391e794d29e1bdf7b2c042638f48e78c9dab"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["fossil_lineage"]
+      },
+      "migrationDisposition": "state_only_boundary",
+      "oracle": {
+        "decision": "accept",
+        "diagnostics": [],
+        "preservedDomains": ["single_parent", "fossil_edge", "provenance"],
+        "lossReportCodes": [],
+        "relations": ["child_has_exactly_source_parent"],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "fossil_as_borrowing",
+          "parent_from_surface_similarity",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_006_restores_fossil_lineage",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    },
+    {
+      "fixtureId": "LEGACY-REPLAY-007",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_replay_restores_compound_two_parent_lineage",
+      "sourceEnvelope": {
+        "vectorKind": "synthetic_minimal_reproduction_of_source_test_contract",
+        "artifacts": [
+          {
+            "relativePath": "keyframe_era_0000.json",
+            "kind": "keyframe",
+            "payload": {"era": 0, "lexicon": {}, "dag": {"nodes": [], "edges": []}},
+            "payloadSha256": "56b810d2a4936c8d38b6895cee4ff83c8ca4da95e3a3660b282df70e00b87250"
+          },
+          {
+            "relativePath": "delta_era_0001.json",
+            "kind": "event_batch",
+            "payload": [
+              {
+                "event_type": "compound_spawn",
+                "era": 1,
+                "word_id": "compound_fire_water",
+                "new_ipa": null,
+                "old_ipa": null,
+                "new_entity": {
+                  "id": "compound_fire_water",
+                  "concept": "fire_water",
+                  "pos": "noun",
+                  "ipa_current": "tamibo",
+                  "ipa_history": [],
+                  "frequency_weight": 0.2,
+                  "word_class": "content",
+                  "is_dead": false,
+                  "ipa_exemplars": [{"form": "tamibo", "weight": 1.0}],
+                  "stress_pattern": "",
+                  "era_born": 0,
+                  "source_language": "",
+                  "morpheme_type": "root",
+                  "dag_parent_ids": [],
+                  "scar_log": [],
+                  "semantic_primes": [],
+                  "semantic_era_log": [],
+                  "grammaticalization_stage": 0,
+                  "grammaticalized_from_id": "",
+                  "grammatical_function": "",
+                  "stasis_counter": 0,
+                  "_GRAM_STAGE_MAX": 3
+                },
+                "rule_name": "",
+                "dag_parent_id": "root_a",
+                "source_language": "",
+                "edge_type": "compound",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              },
+              {
+                "event_type": "dag_edge_add",
+                "era": 1,
+                "word_id": "compound_fire_water",
+                "new_ipa": null,
+                "old_ipa": null,
+                "new_entity": null,
+                "rule_name": "",
+                "dag_parent_id": "root_b",
+                "source_language": "",
+                "edge_type": "compound",
+                "concept": "",
+                "timestamp": "2000-01-01T00:00:00+00:00"
+              }
+            ],
+            "payloadSha256": "b0b197692874c880601d2c094d6ce22b8e3b274bb338615f4d6d0636ca285c80"
+          }
+        ],
+        "sourceEnvelopeSha256": "7230804e2c625c2c77b6a64334a8b2534ebaec7cdf668ebae4926c57fe2c63bc"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["compound_parent_edges", "compound_parent_roles_not_recorded"]
+      },
+      "migrationDisposition": "state_only_boundary_with_loss",
+      "oracle": {
+        "decision": "accept_with_loss",
+        "diagnostics": [{"code": "compound_parent_roles_unrecorded"}],
+        "preservedDomains": ["source_event_order", "source_parent_ids"],
+        "lossReportCodes": ["compound_parent_roles_unrecorded"],
+        "relations": ["two_source_events_remain_distinct"],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "synthesize_parent_roles",
+          "collapse_two_events_into_typed_compound_event",
+          "parents_from_ipa_bisection",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_007_reports_compound_role_loss",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    },
+    {
+      "fixtureId": "LEGACY-REPLAY-008",
+      "sourceTestNodeId": "tests/storage/test_history_replay_features.py::test_epoch_injection_is_present_in_persisted_event_log",
+      "sourceEnvelope": {
+        "vectorKind": "declared_absence_claim_not_execution_evidence",
+        "onlineOnlyEvidence": {
+          "preEpochState": {"era": 0, "injectedLexemeIds": []},
+          "postEpochState": {"era": 1, "injectedLexemeIds": ["domain_wheat_1"]}
+        },
+        "absenceEvidence": {
+          "glob": "events/delta_era_*.json",
+          "matchingInjectWordEvents": []
+        },
+        "artifacts": [],
+        "sourceEnvelopeSha256": "0a2a41db2cbbdc842cf4b2491c71d36a3b49935b727635fbbd5e05b5a96d4ede"
+      },
+      "declaredLegacyFailure": {
+        "outcome": "strict_xfail",
+        "lostDomains": ["injection_event", "mutation_provenance", "writer_omission"]
+      },
+      "migrationDisposition": "state_only_boundary_with_loss",
+      "oracle": {
+        "decision": "accept_with_loss",
+        "diagnostics": [{"code": "provenance_discontinuity"}],
+        "preservedDomains": ["post_boundary_checkpoint"],
+        "lossReportCodes": ["unrecorded_legacy_mutation"],
+        "relations": ["no_inject_word_event_is_synthesized"],
+        "forbiddenInferences": [
+          "legacy_event_as_v3_changeset",
+          "synthetic_inject_word_event",
+          "state_diff_as_history",
+          "silent_default",
+          "broad_skip"
+        ]
+      },
+      "retirement": {
+        "rustTargetStatus": "planned_not_implemented",
+        "plannedRustTargetTest": "crates/telysta-core/tests/legacy_replay_migration.rs::legacy_replay_008_reports_unrecorded_epoch_injection",
+        "requiredEvidenceBeforeXfailRemoval": [
+          "rust_target_contract_passing",
+          "source_artifact_archived",
+          "migration_report_recorded",
+          "module_migration_matrix_updated",
+          "migration_reviewer_approved"
+        ]
+      }
+    }
+  ]
+}
