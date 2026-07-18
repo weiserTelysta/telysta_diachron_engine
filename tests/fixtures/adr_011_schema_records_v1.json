@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "telysta-adr-011-review-record-bundle-draft.v1",
+  "projectManifests": [
+    {
+      "schemaVersion": "telysta-project-manifest.v1",
+      "projectId": "telysta:project:adr011-project",
+      "historyHeads": {
+        "main": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "eventStoreRootSha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "runLedgerHeadSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "usageCorpusRootSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "migrationMetadata": {
+        "kind": "native",
+        "sourceSchema": null,
+        "sourceArtifactSha256": null,
+        "migrationId": null
+      },
+      "projectAuthorityHash": "4444444444444444444444444444444444444444444444444444444444444444"
+    }
+  ],
+  "operationSpecs": [
+    {
+      "schemaVersion": "telysta-operation-spec.v1",
+      "operationId": "telysta:operation:genesis-0001",
+      "projectId": "telysta:project:adr011-project",
+      "kind": "genesis",
+      "targetHistory": "main",
+      "expectedHistorySha256": null,
+      "commandSchema": "telysta-command-create-project.v1",
+      "commandPayloadSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "engineVersion": "0.1.0",
+      "registryLocks": [
+        {
+          "id": "registry-bundle-v1",
+          "schemaVersion": "telysta-registry-bundle.v1",
+          "contentSha256": "6666666666666666666666666666666666666666666666666666666666666666"
+        }
+      ],
+      "dataLocks": [],
+      "ruleLocks": [],
+      "modelLocks": [],
+      "rngLock": {
+        "kind": "rng_tree",
+        "schemaVersion": "telysta-rng-tree.v1",
+        "rootSeed": 18446744073709551615,
+        "pathRoot": "genesis.phonology_core",
+        "distributionVersion": "telysta-rng-uniform-u64.v1"
+      },
+      "actorProvenance": {
+        "kind": "user",
+        "actorId": "local-user",
+        "source": "tauri-command"
+      },
+      "idempotencyKey": "genesis-request-0001",
+      "operationSpecSha256": "7777777777777777777777777777777777777777777777777777777777777777"
+    },
+    {
+      "schemaVersion": "telysta-operation-spec.v1",
+      "operationId": "telysta:operation:authoring-0001",
+      "projectId": "telysta:project:adr011-project",
+      "kind": "authoring",
+      "targetHistory": "main",
+      "expectedHistorySha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "commandSchema": "telysta-command-authoring.v1",
+      "commandPayloadSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "engineVersion": "0.1.0",
+      "registryLocks": [],
+      "dataLocks": [],
+      "ruleLocks": [],
+      "modelLocks": [],
+      "rngLock": {
+        "kind": "no_rng"
+      },
+      "actorProvenance": {
+        "kind": "user",
+        "actorId": "local-user",
+        "source": "tauri-command"
+      },
+      "idempotencyKey": "authoring-request-0001",
+      "operationSpecSha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    }
+  ],
+  "runSpecs": [
+    {
+      "schemaVersion": "telysta-run-spec.v1",
+      "runId": "telysta:run:genesis-candidate-0001",
+      "operationId": "telysta:operation:genesis-0001",
+      "operationSpecSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "role": "candidate",
+      "parameterSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rngLock": {
+        "kind": "rng_tree",
+        "schemaVersion": "telysta-rng-tree.v1",
+        "rootSeed": 18446744073709551615,
+        "pathRoot": "genesis.phonology_core",
+        "distributionVersion": "telysta-rng-uniform-u64.v1"
+      },
+      "inputSemanticSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "outputSchema": "telysta-genesis-staging-result.v1",
+      "runSpecSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "runLedgerEntries": [
+    {
+      "schemaVersion": "telysta-run-ledger-entry.v1",
+      "sequence": 1,
+      "operationId": "telysta:operation:genesis-0001",
+      "runId": null,
+      "kind": "operation_declared",
+      "payloadSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "entrySha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  ],
+  "jobRecords": [
+    {
+      "schemaVersion": "telysta-job-record.v1",
+      "jobId": "telysta:job:genesis-job-0001",
+      "projectId": "telysta:project:adr011-project",
+      "runId": "telysta:run:genesis-candidate-0001",
+      "state": "completed",
+      "attemptIds": ["telysta:attempt:genesis-attempt-0001"],
+      "eventCursor": 4,
+      "stagingSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "attemptRecords": [
+    {
+      "schemaVersion": "telysta-attempt-record.v1",
+      "attemptId": "telysta:attempt:genesis-attempt-0001",
+      "jobId": "telysta:job:genesis-job-0001",
+      "kind": "initial",
+      "state": "completed",
+      "workerLeaseId": "local-worker-lease-0001",
+      "resultSha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "checkpointRecords": [
+    {
+      "schemaVersion": "telysta-job-checkpoint.v1",
+      "attemptId": "telysta:attempt:genesis-attempt-0001",
+      "operationSpecSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "runSpecSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "baseHistorySha256": null,
+      "dependencyBundleSha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "rngFrontierSha256": "123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+      "stagingPrefixSha256": "23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
+      "checkpointSha256": "3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012"
+    }
+  ]
+}

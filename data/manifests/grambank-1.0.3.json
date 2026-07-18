@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "telysta-data-manifest.v1",
+  "id": "telysta:data-set:grambank-1-0-3",
+  "title": "Grambank 1.0.3",
+  "version": "1.0.3",
+  "license": "CC-BY-4.0",
+  "citation": "The Grambank Consortium. 2023. Grambank 1.0.3.",
+  "pinnedUri": "https://doi.org/10.5281/zenodo.7740139",
+  "format": "cldfStructureDataset",
+  "contentSha256": null,
+  "coverage": {
+    "samplingUnit": "featureValue",
+    "description": "Versioned grammatical feature values with language-family and source metadata.",
+    "recordCount": null
+  },
+  "limitations": [
+    "Feature coverage is incomplete and depends on available descriptions.",
+    "Typological feature values are evidence for priors, not deterministic causal rules for generated languages.",
+    "This manifest does not pin a local payload; a downloaded payload must add its SHA-256 before use in a release build."
+  ]
+}

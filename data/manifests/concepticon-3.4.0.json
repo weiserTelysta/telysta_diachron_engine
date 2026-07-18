@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "telysta-data-manifest.v1",
+  "id": "telysta:data-set:concepticon-3-4-0",
+  "title": "Concepticon 3.4.0",
+  "version": "3.4.0",
+  "license": "CC-BY-4.0",
+  "citation": "List, Johann-Mattis et al. (eds.). 2025. CLLD Concepticon 3.4.0.",
+  "pinnedUri": "https://doi.org/10.5281/zenodo.14923561",
+  "format": "json",
+  "contentSha256": null,
+  "coverage": {
+    "samplingUnit": "conceptSet",
+    "description": "Linked concept sets, definitions, source-list judgments and semantic relations for lexical comparison.",
+    "recordCount": null
+  },
+  "limitations": [
+    "A short gloss is a convenience label and must not be treated as a complete semantic definition.",
+    "Concept mappings are curated judgments and may be revised between releases.",
+    "This manifest does not pin a local payload; a downloaded payload must add its SHA-256 before use in a release build."
+  ]
+}

@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "crates/telysta-core",
+    "crates/telysta-storage",
+    "apps/desktop/src-tauri",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.77.2"
+license = "MIT"
+authors = ["Telysta"]
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+rusqlite = { version = "0.31", features = ["bundled"] }
+fs2 = "0.4"

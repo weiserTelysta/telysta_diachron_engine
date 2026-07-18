@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://telysta.local/contracts/adr-011-project-operation-job-draft.v1.json",
+  "title": "ADR-011 Project, Operation, Run, Job and Attempt planning schema",
+  "description": "Planning-only schema draft for ADR-011 review. It is not an accepted persistence schema and must not be used by production readers or writers.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-telysta-status": "planning_only_not_a_production_persistence_format",
+  "x-telysta-projectAuthorityHashOwner": "ADR-012",
+  "x-telysta-projectAuthorityHashFixtureStatus": "format_sentinel_only_missing_canonicalizer_coverage_and_known_answer",
+  "x-telysta-entityIdSchema": "telysta-entity-id.v1",
+  "x-telysta-proposedEntityKinds": ["operation", "job", "attempt"],
+  "required": [
+    "schemaVersion",
+    "projectManifests",
+    "operationSpecs",
+    "runSpecs",
+    "runLedgerEntries",
+    "jobRecords",
+    "attemptRecords",
+    "checkpointRecords"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "telysta-adr-011-review-record-bundle-draft.v1"},
+    "projectManifests": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/projectManifest"}
+    },
+    "operationSpecs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/operationSpec"}
+    },
+    "runSpecs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/runSpec"}
+    },
+    "runLedgerEntries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/runLedgerEntry"}
+    },
+    "jobRecords": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/jobRecord"}
+    },
+    "attemptRecords": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/attemptRecord"}
+    },
+    "checkpointRecords": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/checkpointRecord"}
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "projectId": {
+      "type": "string",
+      "pattern": "^telysta:project:[a-z0-9](?:[a-z0-9-]{0,94}[a-z0-9])?$"
+    },
+    "operationId": {
+      "type": "string",
+      "pattern": "^telysta:operation:[a-z0-9](?:[a-z0-9-]{0,94}[a-z0-9])?$"
+    },
+    "runId": {
+      "type": "string",
+      "pattern": "^telysta:run:[a-z0-9](?:[a-z0-9-]{0,94}[a-z0-9])?$"
+    },
+    "jobId": {
+      "type": "string",
+      "pattern": "^telysta:job:[a-z0-9](?:[a-z0-9-]{0,94}[a-z0-9])?$"
+    },
+    "attemptId": {
+      "type": "string",
+      "pattern": "^telysta:attempt:[a-z0-9](?:[a-z0-9-]{0,94}[a-z0-9])?$"
+    },
+    "contentLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "schemaVersion", "contentSha256"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "schemaVersion": {"type": "string", "pattern": "^telysta-[a-z0-9-]+\\.v[0-9]+$"},
+        "contentSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "rngLock": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {"kind": {"const": "no_rng"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "schemaVersion", "rootSeed", "pathRoot", "distributionVersion"],
+          "properties": {
+            "kind": {"const": "rng_tree"},
+            "schemaVersion": {"type": "string", "pattern": "^telysta-rng-tree\\.v[0-9]+$"},
+            "rootSeed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "pathRoot": {
+              "type": "string",
+              "pattern": "^[a-z0-9_-]{1,64}(?:\\.[a-z0-9_-]{1,64})*$"
+            },
+            "distributionVersion": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "migrationMetadata": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "sourceSchema", "sourceArtifactSha256", "migrationId"],
+          "properties": {
+            "kind": {"const": "native"},
+            "sourceSchema": {"type": "null"},
+            "sourceArtifactSha256": {"type": "null"},
+            "migrationId": {"type": "null"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "sourceSchema", "sourceArtifactSha256", "migrationId"],
+          "properties": {
+            "kind": {"const": "legacy_import"},
+            "sourceSchema": {"type": "string", "minLength": 1},
+            "sourceArtifactSha256": {"$ref": "#/$defs/sha256"},
+            "migrationId": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "projectManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "projectId",
+        "historyHeads",
+        "eventStoreRootSha256",
+        "runLedgerHeadSha256",
+        "usageCorpusRootSha256",
+        "migrationMetadata",
+        "projectAuthorityHash"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "telysta-project-manifest.v1"},
+        "projectId": {"$ref": "#/$defs/projectId"},
+        "historyHeads": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        },
+        "eventStoreRootSha256": {"$ref": "#/$defs/sha256"},
+        "runLedgerHeadSha256": {"$ref": "#/$defs/sha256"},
+        "usageCorpusRootSha256": {"$ref": "#/$defs/sha256"},
+        "migrationMetadata": {"$ref": "#/$defs/migrationMetadata"},
+        "projectAuthorityHash": {
+          "description": "ADR-012 ProjectAuthorityHash over the complete candidate manifest and reachable authoritative roots, excluding this field itself.",
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "operationSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "operationId",
+        "projectId",
+        "kind",
+        "targetHistory",
+        "expectedHistorySha256",
+        "commandSchema",
+        "commandPayloadSha256",
+        "engineVersion",
+        "registryLocks",
+        "dataLocks",
+        "ruleLocks",
+        "modelLocks",
+        "rngLock",
+        "actorProvenance",
+        "idempotencyKey",
+        "operationSpecSha256"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "telysta-operation-spec.v1"},
+        "operationId": {"$ref": "#/$defs/operationId"},
+        "projectId": {"$ref": "#/$defs/projectId"},
+        "kind": {"enum": ["genesis", "authoring", "simulation", "migration", "retcon", "import"]},
+        "targetHistory": {"type": "string", "minLength": 1},
+        "expectedHistorySha256": {
+          "oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]
+        },
+        "commandSchema": {"type": "string", "minLength": 1},
+        "commandPayloadSha256": {"$ref": "#/$defs/sha256"},
+        "engineVersion": {"type": "string", "minLength": 1},
+        "registryLocks": {"type": "array", "items": {"$ref": "#/$defs/contentLock"}},
+        "dataLocks": {"type": "array", "items": {"$ref": "#/$defs/contentLock"}},
+        "ruleLocks": {"type": "array", "items": {"$ref": "#/$defs/contentLock"}},
+        "modelLocks": {"type": "array", "items": {"$ref": "#/$defs/contentLock"}},
+        "rngLock": {"$ref": "#/$defs/rngLock"},
+        "actorProvenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "actorId", "source"],
+          "properties": {
+            "kind": {"enum": ["user", "migration", "system"]},
+            "actorId": {"type": "string", "minLength": 1},
+            "source": {"type": "string", "minLength": 1}
+          }
+        },
+        "idempotencyKey": {"type": "string", "minLength": 1},
+        "operationSpecSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "runSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "runId",
+        "operationId",
+        "operationSpecSha256",
+        "role",
+        "parameterSha256",
+        "rngLock",
+        "inputSemanticSha256",
+        "outputSchema",
+        "runSpecSha256"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "telysta-run-spec.v1"},
+        "runId": {"$ref": "#/$defs/runId"},
+        "operationId": {"$ref": "#/$defs/operationId"},
+        "operationSpecSha256": {"$ref": "#/$defs/sha256"},
+        "role": {"enum": ["candidate", "replicate", "counterfactual", "migration", "single"]},
+        "parameterSha256": {"$ref": "#/$defs/sha256"},
+        "rngLock": {"$ref": "#/$defs/rngLock"},
+        "inputSemanticSha256": {"$ref": "#/$defs/sha256"},
+        "outputSchema": {"type": "string", "minLength": 1},
+        "runSpecSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "runLedgerEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "sequence",
+        "operationId",
+        "runId",
+        "kind",
+        "payloadSha256",
+        "entrySha256"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "telysta-run-ledger-entry.v1"},
+        "sequence": {"type": "integer", "minimum": 1},
+        "operationId": {"$ref": "#/$defs/operationId"},
+        "runId": {
+          "oneOf": [{"$ref": "#/$defs/runId"}, {"type": "null"}]
+        },
+        "kind": {
+          "enum": [
+            "operation_declared",
+            "run_registered",
+            "staging_recorded",
+            "operation_committed",
+            "operation_abandoned",
+            "operation_rejected",
+            "operation_invalidated"
+          ]
+        },
+        "payloadSha256": {"$ref": "#/$defs/sha256"},
+        "entrySha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "jobRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "jobId", "projectId", "runId", "state", "attemptIds", "eventCursor"],
+      "properties": {
+        "schemaVersion": {"const": "telysta-job-record.v1"},
+        "jobId": {"$ref": "#/$defs/jobId"},
+        "projectId": {"$ref": "#/$defs/projectId"},
+        "runId": {"$ref": "#/$defs/runId"},
+        "state": {"enum": ["queued", "running", "cancel_requested", "cancelled", "failed", "interrupted", "completed"]},
+        "attemptIds": {"type": "array", "items": {"$ref": "#/$defs/attemptId"}, "uniqueItems": true},
+        "eventCursor": {"type": "integer", "minimum": 0},
+        "stagingSha256": {
+          "oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]
+        }
+      }
+    },
+    "attemptRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "attemptId", "jobId", "kind", "state", "workerLeaseId"],
+      "properties": {
+        "schemaVersion": {"const": "telysta-attempt-record.v1"},
+        "attemptId": {"$ref": "#/$defs/attemptId"},
+        "jobId": {"$ref": "#/$defs/jobId"},
+        "kind": {"enum": ["initial", "restart", "resume"]},
+        "state": {"enum": ["running", "cancelled", "failed", "interrupted", "completed"]},
+        "workerLeaseId": {"type": "string", "minLength": 1},
+        "resultSha256": {
+          "oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]
+        }
+      }
+    },
+    "checkpointRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "attemptId",
+        "operationSpecSha256",
+        "runSpecSha256",
+        "baseHistorySha256",
+        "dependencyBundleSha256",
+        "rngFrontierSha256",
+        "stagingPrefixSha256",
+        "checkpointSha256"
+      ],
+      "properties": {
+        "schemaVersion": {"const": "telysta-job-checkpoint.v1"},
+        "attemptId": {"$ref": "#/$defs/attemptId"},
+        "operationSpecSha256": {"$ref": "#/$defs/sha256"},
+        "runSpecSha256": {"$ref": "#/$defs/sha256"},
+        "baseHistorySha256": {
+          "oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]
+        },
+        "dependencyBundleSha256": {"$ref": "#/$defs/sha256"},
+        "rngFrontierSha256": {"$ref": "#/$defs/sha256"},
+        "stagingPrefixSha256": {"$ref": "#/$defs/sha256"},
+        "checkpointSha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

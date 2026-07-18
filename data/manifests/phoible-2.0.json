@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "telysta-data-manifest.v1",
+  "id": "telysta:data-set:phoible-2-0",
+  "title": "PHOIBLE 2.0",
+  "version": "2.0",
+  "license": "CC-BY-SA-3.0",
+  "citation": "Moran, Steven & McCloy, Daniel (eds.). 2019. PHOIBLE 2.0.",
+  "pinnedUri": "https://doi.org/10.5281/zenodo.2562766",
+  "format": "cldfStructureDataset",
+  "contentSha256": null,
+  "coverage": {
+    "samplingUnit": "inventory",
+    "description": "Curated phonological inventories with segment features, allophone, tone, source and marginality metadata.",
+    "recordCount": null
+  },
+  "limitations": [
+    "An inventory is a source-specific doculect record; inventories must not be merged merely by ISO or Glottocode.",
+    "Coverage and analysis conventions vary by contributing source.",
+    "This manifest does not pin a local payload; a downloaded payload must add its SHA-256 before use in a release build."
+  ]
+}

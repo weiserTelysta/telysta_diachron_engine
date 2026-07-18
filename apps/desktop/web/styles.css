@@ -1,0 +1,161 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  background: #101317;
+  color: #edf1f4;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  box-sizing: border-box;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 48px 32px 72px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  letter-spacing: -0.04em;
+}
+
+.lede,
+.muted {
+  color: #aeb9c2;
+}
+
+.lede {
+  max-width: 48rem;
+  font-size: 1.1rem;
+  line-height: 1.55;
+}
+
+section {
+  margin-top: 32px;
+  padding: 24px;
+  border: 1px solid #2d3841;
+  border-radius: 14px;
+  background: #171d23;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 650;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+input,
+textarea {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #485764;
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: #0f1419;
+  color: inherit;
+  font: inherit;
+}
+
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+button {
+  border: 1px solid #70899c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #d7ebf7;
+  color: #10202b;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  color: #d7ebf7;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+#status {
+  min-height: 1.5em;
+  margin: 18px 0 0;
+}
+
+#status[data-kind="error"] {
+  color: #ffafaa;
+}
+
+#status[data-kind="success"] {
+  color: #a8e8bd;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 12px 20px;
+  margin: 0;
+}
+
+dt {
+  color: #aeb9c2;
+}
+
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.counts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.count {
+  padding: 14px;
+  border-radius: 10px;
+  background: #202a32;
+}
+
+.count strong {
+  display: block;
+  font-size: 1.45rem;
+}
+
+.action-row {
+  margin-top: 24px;
+}
+
+code {
+  color: #c9e6f7;
+}
+
+pre {
+  overflow: auto;
+  margin: 20px 0 0;
+  padding: 16px;
+  border-radius: 10px;
+  background: #0f1419;
+  color: #c9e6f7;
+}
+
+[hidden] {
+  display: none;
+}

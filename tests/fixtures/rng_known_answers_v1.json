@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "telysta-rng-known-answers.v1",
+  "rngTreeSchema": "telysta-rng-tree.v1",
+  "nextU64Distribution": "telysta-rng-next-u64.v1",
+  "uniformU64Distribution": "telysta-rng-uniform-u64.v1",
+  "byteOrder": "little-endian",
+  "source": "independent algorithm transcription, verified against the public Rust API",
+  "nextVectors": [
+    {
+      "rootSeed": 0,
+      "path": "genesis.phonology",
+      "outputs": [
+        16696077129281662381,
+        16936269422794791567,
+        10743111578963116004,
+        10610129935819216934
+      ]
+    },
+    {
+      "rootSeed": 888,
+      "path": "genesis.phonology",
+      "outputs": [
+        11839737902786026924,
+        16591750444951539050,
+        11906662643033642421,
+        16485869259101438012,
+        190109099968637343,
+        11278371499781157184,
+        10793614971153741715,
+        5591122069511647107
+      ]
+    },
+    {
+      "rootSeed": 18446744073709551615,
+      "path": "branch.northern.contact",
+      "outputs": [
+        3400788252689508245,
+        3756675463480855148,
+        7433683630026996818,
+        11955643007502138852
+      ]
+    }
+  ],
+  "uniformVectors": [
+    {
+      "rootSeed": 888,
+      "path": "genesis.lexicon",
+      "upperExclusive": 7,
+      "outputs": [1, 1, 3, 0, 2, 6, 6, 2]
+    },
+    {
+      "rootSeed": 888,
+      "path": "genesis.lexicon",
+      "upperExclusive": 9223372036854775809,
+      "outputs": [
+        6233526356571020543,
+        1889786865568004959,
+        7860895583958088504,
+        2361214761914611560,
+        6057963895818689507,
+        4717562290530034994
+      ]
+    }
+  ]
+}

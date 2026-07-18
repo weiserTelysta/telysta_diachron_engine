@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telysta Diachron Engine</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <p class="muted">Telysta / official project runtime</p>
+      <h1>Project Workspace</h1>
+      <p class="lede">
+        Open a validated <code>project.json</code> directory to inspect its
+        reproducible language state. Project creation remains unavailable until
+        the Genesis compiler can produce a complete language state.
+      </p>
+
+      <section aria-labelledby="open-title">
+        <h2 id="open-title">Open an existing project</h2>
+        <label for="project-root">Project directory</label>
+        <div class="row">
+          <input
+            id="project-root"
+            type="text"
+            autocomplete="off"
+            placeholder="C:\\Languages\\proto-telysta"
+          />
+          <button id="open-project" type="button">Open project</button>
+        </div>
+        <p id="status" class="muted" aria-live="polite">
+          No project is open.
+        </p>
+      </section>
+
+      <section aria-labelledby="blueprint-title">
+        <h2 id="blueprint-title">Blueprint contract inspector</h2>
+        <p class="muted">
+          Validate a versioned intent document before any language state is generated.
+        </p>
+        <label for="blueprint-json">LanguageBlueprint JSON</label>
+        <textarea id="blueprint-json" rows="16" spellcheck="false"></textarea>
+        <div class="row action-row">
+          <button id="validate-blueprint" type="button">Validate blueprint</button>
+        </div>
+        <pre id="blueprint-report" hidden aria-live="polite"></pre>
+      </section>
+
+      <section id="session" hidden aria-labelledby="session-title">
+        <h2 id="session-title">Validated session</h2>
+        <dl>
+          <dt>Project</dt>
+          <dd id="project-id"></dd>
+          <dt>Language</dt>
+          <dd id="language-id"></dd>
+          <dt>As of</dt>
+          <dd id="as-of"></dd>
+          <dt>History digest</dt>
+          <dd id="history-hash"></dd>
+          <dt>State digest</dt>
+          <dd id="state-hash"></dd>
+          <dt>Storage</dt>
+          <dd id="storage-status"></dd>
+        </dl>
+        <div class="counts" aria-label="Language state counts">
+          <div class="count"><strong id="phoneme-count"></strong>phonemes</div>
+          <div class="count"><strong id="lexeme-count"></strong>lexemes</div>
+          <div class="count"><strong id="morpheme-count"></strong>morphemes</div>
+          <div class="count"><strong id="construction-count"></strong>constructions</div>
+          <div class="count"><strong id="event-count"></strong>history events</div>
+        </div>
+        <div class="row action-row">
+          <button id="refresh-project" class="secondary" type="button">Refresh</button>
+          <button id="close-project" class="secondary" type="button">Close</button>
+        </div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
