@@ -4,14 +4,14 @@ decision_status: not-applicable
 implementation_status: verified
 normative_scope: current
 last_verified: 2026-07-18
-base_commit: fa7468b68ba60984ad7c416560dccb8f19a60aa7
 verification_source: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
 
 # Current Architecture
 
-本文描述基于上述 subject commit 的当前 dirty worktree；完整输入 fingerprint、subject tree
-和历史验证运行由 `verification_source` 指向的 GateEvidence 提供。本文不授权 target 架构。
+本文描述当前实现。完整的 subject commit、subject tree、输入 fingerprint
+和历史验证运行仅由 `verification_source` 指向的 GateEvidence 提供，避免在本文中复制会失效的动态哈希。
+本文不授权 target 架构。
 
 ## 1. 组件图
 

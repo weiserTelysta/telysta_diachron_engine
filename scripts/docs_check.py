@@ -416,12 +416,16 @@ class DocumentationRepository:
             _read(self.docs / "architecture" / "CURRENT.md")
         )
         if current_metadata is not None:
-            if (
-                current_metadata.get("base_commit")
-                != evidence["source"]["subjectCommit"]
-            ):
+            expected_source = evidence_path.relative_to(self.root).as_posix()
+            if current_metadata.get("verification_source") != expected_source:
                 errors.append(
-                    "docs/architecture/CURRENT.md: base_commit differs from GateEvidence"
+                    "docs/architecture/CURRENT.md: verification_source must point "
+                    "to the authoritative GateEvidence"
+                )
+            if "base_commit" in current_metadata:
+                errors.append(
+                    "docs/architecture/CURRENT.md: base_commit must not duplicate "
+                    "the dynamic GateEvidence subject"
                 )
 
     def check_schema_contracts(self, errors: list[str]) -> None:

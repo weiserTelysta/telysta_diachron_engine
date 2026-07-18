@@ -240,7 +240,9 @@ def test_docs_gate_rejects_manually_forged_passed_decision(
     _write(
         tmp_path,
         "docs/architecture/CURRENT.md",
-        f"---\nbase_commit: {'a' * 40}\n---\n",
+        "---\n"
+        "verification_source: docs/G0A_GATE_EVIDENCE_2026-07-17.json\n"
+        "---\n",
     )
     repository = DocumentationRepository(
         tmp_path,
