@@ -1,0 +1,20 @@
+* text=auto
+
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.python-version text eol=lf
+*.c text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.lock text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.rs text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+*.ico binary
+*.png binary

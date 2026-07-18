@@ -1,5 +1,15 @@
 **/__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.cursor/*.log
+apps/desktop/src-tauri/gen/
+node_modules/
+dist/
 *.py[cod]
 *$py.class
 era_snapshots/
 logs/
+target/
