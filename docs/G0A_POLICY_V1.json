@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "telysta-g0a-policy.v1",
+  "gateId": "G0A",
+  "nonWaivableRequirementIds": [
+    "R0A-02-ADR011",
+    "R0A-03",
+    "R0A-04",
+    "R0A-05",
+    "R0A-06"
+  ],
+  "requirements": {
+    "R0A-01": {
+      "requiredPaths": [
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md"
+      ]
+    },
+    "R0A-02-ADR011": {
+      "requiredDecisions": [
+        {
+          "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
+          "status": "accepted"
+        }
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        }
+      ]
+    },
+    "R0A-03": {
+      "requiredDecisions": [
+        {
+          "path": "docs/adr/ADR-012-project-package-commit-authority.md",
+          "status": "accepted"
+        }
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/PLATFORM_CONTRACT_PACK_V1.md",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "docs/adr/ADR-012-project-package-commit-authority.md",
+          "kind": "ArchitectureDecisionEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        }
+      ]
+    },
+    "R0A-04": {
+      "requiredDecisions": [
+        {
+          "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
+          "status": "accepted"
+        }
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
+          "kind": "ArchitectureDecisionEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "tests/fixtures/rng_known_answers_v1.json",
+          "kind": "DeterminismEvidence",
+          "acceptedResults": [
+            "pass"
+          ]
+        }
+      ]
+    },
+    "R0A-05": {
+      "requiresCleanCommittedSubject": true
+    },
+    "R0A-06": {
+      "requiredPaths": [
+        "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json",
+        "docs/governance/GATE_EVIDENCE_MODEL_V2.md",
+        "scripts/generate_gate_evidence.py"
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "docs/G0A_POLICY_V1.json",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "docs/governance/GATE_EVIDENCE_MODEL_V2.md",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        }
+      ]
+    },
+    "R0A-07": {
+      "requiresAssignedOwner": true,
+      "requiresIndependentReviewer": true
+    }
+  }
+}

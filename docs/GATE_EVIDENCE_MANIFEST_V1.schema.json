@@ -1,0 +1,557 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://telysta.example/schemas/gate-evidence-manifest-v1.schema.json",
+  "title": "Telysta GateEvidenceManifest v1",
+  "description": "CI and review evidence for one Telysta delivery gate. This artifact is not authoritative language state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "gateId",
+    "gateName",
+    "decision",
+    "decisionDate",
+    "source",
+    "claims",
+    "evidence",
+    "requirements",
+    "blockers",
+    "owner",
+    "reviewers",
+    "waivers",
+    "expiresWhen",
+    "nextDecision"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "GATE_EVIDENCE_MANIFEST_V1.schema.json"
+    },
+    "schemaVersion": {
+      "const": "telysta-gate-evidence-manifest.v1"
+    },
+    "gateId": {
+      "const": "G0A"
+    },
+    "gateName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision": {
+      "enum": [
+        "blocked",
+        "passed"
+      ]
+    },
+    "decisionDate": {
+      "$ref": "#/$defs/isoDate"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "claims": {
+      "$ref": "#/$defs/claims"
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidenceItem"
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "$ref": "#/$defs/requirement"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    },
+    "owner": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/identity"
+        }
+      ]
+    },
+    "reviewers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/identity"
+      }
+    },
+    "waivers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/waiver"
+      }
+    },
+    "expiresWhen": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "nextDecision": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "passed"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "required": [
+              "verifiedAt",
+              "verificationEnvironment"
+            ]
+          },
+          "blockers": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "isoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "utcDateTime": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$"
+    },
+    "identity": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "role"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "role": {
+              "type": "string",
+              "minLength": 1
+            },
+            "affiliation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "conflictOfInterest": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseCommit",
+        "worktreeDirty",
+        "worktreeStatusEntryCount",
+        "worktreeFingerprintSchema",
+        "worktreeInventorySha256",
+        "excludedGeneratedPaths",
+        "environment"
+      ],
+      "properties": {
+        "baseCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "worktreeDirty": {
+          "type": "boolean"
+        },
+        "worktreeStatusEntryCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "worktreeFingerprintSchema": {
+          "const": "telysta-git-worktree-fingerprint.v1"
+        },
+        "worktreeInventorySha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "excludedGeneratedPaths": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verifiedAt": {
+          "$ref": "#/$defs/utcDateTime"
+        },
+        "verificationEnvironment": {
+          "$ref": "#/$defs/verificationEnvironment"
+        }
+      }
+    },
+    "verificationEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platform",
+        "pythonExecutable",
+        "pythonVersion",
+        "pythonInstalledDistributionsSha256",
+        "pythonLockStatus",
+        "pythonLockMismatches",
+        "rustcVersion",
+        "cargoVersion",
+        "requiredRustVersion",
+        "rustVersionMatchesWorkspace",
+        "nodeVersion",
+        "lockFileSha256"
+      ],
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pythonExecutable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pythonVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pythonInstalledDistributionsSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "pythonLockStatus": {
+          "enum": [
+            "match",
+            "mismatch"
+          ]
+        },
+        "pythonLockMismatches": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rustcVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cargoVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requiredRustVersion": {
+          "const": "1.77.2"
+        },
+        "rustVersionMatchesWorkspace": {
+          "type": "boolean"
+        },
+        "nodeVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lockFileSha256": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "Cargo.lock",
+            "poetry.lock"
+          ],
+          "properties": {
+            "Cargo.lock": {
+              "$ref": "#/$defs/sha256"
+            },
+            "poetry.lock": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed",
+        "forbidden"
+      ],
+      "properties": {
+        "allowed": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "forbidden": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "path",
+        "result"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "SoftwareVerificationEvidence",
+            "ArchitectureContractEvidence",
+            "ArchitectureDecisionEvidence",
+            "DeterminismEvidence",
+            "LinguisticCapabilityEvidence",
+            "ScientificModelEvidence",
+            "ProductUsabilityEvidence",
+            "ExpertOrCreativeReviewEvidence"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "protocol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verificationMode": {
+          "enum": [
+            "direct",
+            "not_run"
+          ]
+        },
+        "executedCommand": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "SoftwareVerificationEvidence"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "protocol",
+              "details"
+            ]
+          },
+          "else": {
+            "required": [
+              "sha256"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "result": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "result"
+            ]
+          },
+          "then": {
+            "properties": {
+              "verificationMode": {
+                "const": "direct"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "status",
+        "evidencePaths"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "R0A-01",
+            "R0A-02-ADR011",
+            "R0A-03",
+            "R0A-04",
+            "R0A-05",
+            "R0A-06",
+            "R0A-07"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "blocked",
+            "draft_ready",
+            "failed",
+            "incomplete",
+            "passed",
+            "ready_for_independent_review",
+            "ready_for_review",
+            "waived"
+          ]
+        },
+        "evidencePaths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "id",
+        "summary"
+      ],
+      "properties": {
+        "severity": {
+          "const": "blocking"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^G0A-B[0-9]{2}$"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "waiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId",
+        "approvedBy",
+        "reason",
+        "expiresAt"
+      ],
+      "properties": {
+        "requirementId": {
+          "enum": [
+            "R0A-01",
+            "R0A-02-ADR011",
+            "R0A-03",
+            "R0A-04",
+            "R0A-05",
+            "R0A-06",
+            "R0A-07"
+          ]
+        },
+        "approvedBy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiresAt": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/isoDate"
+            },
+            {
+              "$ref": "#/$defs/utcDateTime"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

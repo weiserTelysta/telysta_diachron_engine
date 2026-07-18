@@ -1,0 +1,251 @@
+{
+  "schemaVersion": "telysta-adr-011-sequence-fixtures.v1",
+  "contractSchema": "docs/ADR_011_SCHEMA_DRAFT_V1.json",
+  "status": "planning_only_not_a_production_persistence_format",
+  "cases": [
+    {
+      "caseId": "genesis_create",
+      "kind": "genesis",
+      "projectId": "telysta:project:adr011-project",
+      "baseHistorySha256": null,
+      "operation": {
+        "operationId": "telysta:operation:genesis-0001",
+        "requestSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "idempotencyKey": "genesis-request-0001",
+        "disposition": "committed"
+      },
+      "runs": [
+        {
+          "runId": "telysta:run:genesis-candidate-0001",
+          "operationId": "telysta:operation:genesis-0001",
+          "role": "candidate",
+          "resultSha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      ],
+      "jobs": [
+        {
+          "jobId": "telysta:job:genesis-job-0001",
+          "runId": "telysta:run:genesis-candidate-0001",
+          "state": "completed",
+          "attempts": [
+            {
+              "attemptId": "telysta:attempt:genesis-attempt-0001",
+              "jobId": "telysta:job:genesis-job-0001",
+              "kind": "initial",
+              "state": "completed",
+              "resultSha256": "2222222222222222222222222222222222222222222222222222222222222222"
+            }
+          ]
+        }
+      ],
+      "ledger": [
+        {"sequence": 1, "kind": "operation_declared", "operationId": "telysta:operation:genesis-0001", "runId": null},
+        {"sequence": 2, "kind": "run_registered", "operationId": "telysta:operation:genesis-0001", "runId": "telysta:run:genesis-candidate-0001"},
+        {"sequence": 3, "kind": "staging_recorded", "operationId": "telysta:operation:genesis-0001", "runId": "telysta:run:genesis-candidate-0001"},
+        {"sequence": 4, "kind": "operation_committed", "operationId": "telysta:operation:genesis-0001", "runId": "telysta:run:genesis-candidate-0001"}
+      ],
+      "semanticIdentityRefs": [
+        "telysta:project:adr011-project",
+        "telysta:operation:genesis-0001",
+        "telysta:run:genesis-candidate-0001",
+        "telysta:event:genesis-event-0001"
+      ],
+      "forbiddenSemanticRefs": [
+        "telysta:job:genesis-job-0001",
+        "telysta:attempt:genesis-attempt-0001"
+      ]
+    },
+    {
+      "caseId": "authoring_without_background_run",
+      "kind": "authoring",
+      "projectId": "telysta:project:adr011-project",
+      "baseHistorySha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "operation": {
+        "operationId": "telysta:operation:authoring-0001",
+        "requestSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "idempotencyKey": "authoring-request-0001",
+        "disposition": "committed"
+      },
+      "runs": [],
+      "jobs": [],
+      "ledger": [
+        {"sequence": 1, "kind": "operation_declared", "operationId": "telysta:operation:authoring-0001", "runId": null},
+        {"sequence": 2, "kind": "operation_committed", "operationId": "telysta:operation:authoring-0001", "runId": null}
+      ],
+      "semanticIdentityRefs": [
+        "telysta:project:adr011-project",
+        "telysta:operation:authoring-0001",
+        "telysta:event:authoring-change-set-0001"
+      ],
+      "forbiddenSemanticRefs": []
+    },
+    {
+      "caseId": "simulation_multiple_runs_one_commit",
+      "kind": "simulation",
+      "projectId": "telysta:project:adr011-project",
+      "baseHistorySha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "operation": {
+        "operationId": "telysta:operation:simulation-0001",
+        "requestSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+        "idempotencyKey": "simulation-request-0001",
+        "disposition": "committed",
+        "selectedRunId": "telysta:run:simulation-replicate-0001"
+      },
+      "runs": [
+        {
+          "runId": "telysta:run:simulation-replicate-0001",
+          "operationId": "telysta:operation:simulation-0001",
+          "role": "replicate",
+          "resultSha256": "7777777777777777777777777777777777777777777777777777777777777777"
+        },
+        {
+          "runId": "telysta:run:simulation-counterfactual-0001",
+          "operationId": "telysta:operation:simulation-0001",
+          "role": "counterfactual",
+          "resultSha256": "8888888888888888888888888888888888888888888888888888888888888888"
+        }
+      ],
+      "jobs": [
+        {
+          "jobId": "telysta:job:simulation-job-0001",
+          "runId": "telysta:run:simulation-replicate-0001",
+          "state": "completed",
+          "attempts": [
+            {
+              "attemptId": "telysta:attempt:simulation-attempt-0001",
+              "jobId": "telysta:job:simulation-job-0001",
+              "kind": "initial",
+              "state": "completed",
+              "resultSha256": "7777777777777777777777777777777777777777777777777777777777777777"
+            }
+          ]
+        },
+        {
+          "jobId": "telysta:job:simulation-job-0002",
+          "runId": "telysta:run:simulation-counterfactual-0001",
+          "state": "completed",
+          "attempts": [
+            {
+              "attemptId": "telysta:attempt:simulation-attempt-0002",
+              "jobId": "telysta:job:simulation-job-0002",
+              "kind": "initial",
+              "state": "completed",
+              "resultSha256": "8888888888888888888888888888888888888888888888888888888888888888"
+            }
+          ]
+        }
+      ],
+      "ledger": [
+        {"sequence": 1, "kind": "operation_declared", "operationId": "telysta:operation:simulation-0001", "runId": null},
+        {"sequence": 2, "kind": "run_registered", "operationId": "telysta:operation:simulation-0001", "runId": "telysta:run:simulation-replicate-0001"},
+        {"sequence": 3, "kind": "run_registered", "operationId": "telysta:operation:simulation-0001", "runId": "telysta:run:simulation-counterfactual-0001"},
+        {"sequence": 4, "kind": "staging_recorded", "operationId": "telysta:operation:simulation-0001", "runId": "telysta:run:simulation-replicate-0001"},
+        {"sequence": 5, "kind": "staging_recorded", "operationId": "telysta:operation:simulation-0001", "runId": "telysta:run:simulation-counterfactual-0001"},
+        {"sequence": 6, "kind": "operation_committed", "operationId": "telysta:operation:simulation-0001", "runId": "telysta:run:simulation-replicate-0001"}
+      ],
+      "semanticIdentityRefs": [
+        "telysta:project:adr011-project",
+        "telysta:operation:simulation-0001",
+        "telysta:run:simulation-replicate-0001",
+        "telysta:event:simulation-change-set-0001"
+      ],
+      "forbiddenSemanticRefs": [
+        "telysta:job:simulation-job-0001",
+        "telysta:job:simulation-job-0002",
+        "telysta:attempt:simulation-attempt-0001",
+        "telysta:attempt:simulation-attempt-0002"
+      ]
+    },
+    {
+      "caseId": "legacy_v1_import_boundary",
+      "kind": "legacy_import",
+      "projectId": "telysta:project:legacy-project",
+      "baseHistorySha256": null,
+      "operation": {
+        "operationId": "telysta:operation:legacy-import-0001",
+        "requestSha256": "9999999999999999999999999999999999999999999999999999999999999999",
+        "idempotencyKey": "legacy-import-request-0001",
+        "disposition": "committed"
+      },
+      "runs": [
+        {
+          "runId": "telysta:run:legacy-migration-0001",
+          "operationId": "telysta:operation:legacy-import-0001",
+          "role": "migration",
+          "resultSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "jobs": [
+        {
+          "jobId": "telysta:job:legacy-migration-job-0001",
+          "runId": "telysta:run:legacy-migration-0001",
+          "state": "completed",
+          "attempts": [
+            {
+              "attemptId": "telysta:attempt:legacy-migration-attempt-0001",
+              "jobId": "telysta:job:legacy-migration-job-0001",
+              "kind": "initial",
+              "state": "completed",
+              "resultSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ]
+        }
+      ],
+      "legacyBoundary": {
+        "sourceSchema": "telysta-project-history.v1",
+        "sourceArtifactSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "archiveRequired": true,
+        "noInferredOperations": true,
+        "boundaryEventId": "telysta:event:legacy-history-boundary-0001"
+      },
+      "ledger": [
+        {"sequence": 1, "kind": "operation_declared", "operationId": "telysta:operation:legacy-import-0001", "runId": null},
+        {"sequence": 2, "kind": "run_registered", "operationId": "telysta:operation:legacy-import-0001", "runId": "telysta:run:legacy-migration-0001"},
+        {"sequence": 3, "kind": "staging_recorded", "operationId": "telysta:operation:legacy-import-0001", "runId": "telysta:run:legacy-migration-0001"},
+        {"sequence": 4, "kind": "operation_committed", "operationId": "telysta:operation:legacy-import-0001", "runId": "telysta:run:legacy-migration-0001"}
+      ],
+      "semanticIdentityRefs": [
+        "telysta:project:legacy-project",
+        "telysta:operation:legacy-import-0001",
+        "telysta:run:legacy-migration-0001",
+        "telysta:event:legacy-history-boundary-0001"
+      ],
+      "forbiddenSemanticRefs": [
+        "telysta:job:legacy-migration-job-0001",
+        "telysta:attempt:legacy-migration-attempt-0001"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "idempotency_key_reused_with_different_request",
+      "kind": "idempotency_conflict",
+      "expectedDecision": "reject",
+      "expectedCode": "idempotency_request_hash_conflict"
+    },
+    {
+      "caseId": "staging_base_is_not_current_head",
+      "kind": "stale_commit",
+      "expectedDecision": "retain_staging_without_commit",
+      "expectedCode": "expected_history_hash_mismatch"
+    },
+    {
+      "caseId": "resume_checkpoint_missing_rng_frontier",
+      "kind": "resume_missing_lock",
+      "expectedDecision": "restart_only",
+      "expectedCode": "checkpoint_rng_frontier_missing"
+    },
+    {
+      "caseId": "same_run_complete_attempts_disagree",
+      "kind": "determinism_failure",
+      "expectedDecision": "reject_all_results",
+      "expectedCode": "run_result_hash_mismatch"
+    },
+    {
+      "caseId": "crash_between_history_ledger_and_manifest",
+      "kind": "commit_crash",
+      "expectedDecision": "recover_pre_or_post_commit_only",
+      "expectedCode": "atomic_commit_recovery_required"
+    }
+  ]
+}
