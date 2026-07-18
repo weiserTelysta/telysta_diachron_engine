@@ -1,6 +1,10 @@
 # Telysta Diachron Engine — 开发文档
 
 > 本文档为内部开发参考文档，记录项目目的、技术路线与阶段性目标。项目尚未完成，不对外发布。
+>
+> **规划说明（2026-07-12）：** 本文保留完整语言学设计、历史阶段规划与 ADR-001 至 ADR-003，内部关于“Python 长期主线”“Rust 仅作性能退路”和“Python sidecar”的表述均为历史记录，不再作为当前执行依据。当前执行顺序以[项目路线图](./ROADMAP.md)为准，完整工作分解见[专业语言模拟器实施总计划](./LANGUAGE_SIMULATOR_PLAN.md)；Rust 原生生产核心决策见 [ADR-006](./adr/ADR-006-rust-native-core-python-research-bridge.md)，下一代语言学架构提案见 [ADR-005](./adr/ADR-005-community-driven-language-simulation.md)。
+>
+> **LEGACY / NON-AUTHORITATIVE：** 本文正文中的“当前”“必须”“已完成”、Phase 状态、Python/NumPy/Pynini 路径、IPA 字符串、Hot State 与 Delta 等措辞只描述旧 Python 研究原型或当时的设计判断，不是 Rust 生产核心的实施命令。不得依据本文创建工作包、扩展持久化 schema、复制旧事件语义或绕过 typed feature、RngTree、StateTransaction、迁移和验证边界。若与仓库 `AGENTS.md`、Accepted ADR 或三份主计划冲突，以后者为准。
 
 ---
 
@@ -27,6 +31,8 @@ Telysta Diachron Engine 是一个高度自动化的架空语言（Conlang）生�
 
 ### ADR-001：计算核心的技术栈选择
 
+> **历史决策，已被替代：** 当前生产核心技术栈以 [ADR-006](./adr/ADR-006-rust-native-core-python-research-bridge.md) 为准。本节保留用于解释早期 Python/NumPy/PyO3 方案，不再提供实施优先级。
+
 **决策触发点**：Phase 1 的范例层批量计算、特征矩阵运算、DAG 遍历在纯 Python OOP 下存在严重性能瓶颈。
 
 **三个选项**：
@@ -39,9 +45,9 @@ Telysta Diachron Engine 是一个高度自动化的架空语言（Conlang）生�
 
 **当前倾向**：
 
-- **当前主线**：计算层继续采用 Python + NumPy 路线。范例层批量计算已迁移至 NumPy 矩阵，音素特征已从 `dict[str, bool]` 压缩为 `uint16` 位掩码；在 1000+ 词量级的当前目标下，优先保证工作台功能成形、服务边界稳定与可观测性，而非提前支付全面 Rust 迁移成本
-- **Rust 触发条件**：Rust 核心不是当前阶段的默认主线，而是 Phase 2+ 的热路径退路。只有当 DAG 遍历、Hot State 深拷贝、跨纪元重建、分支对比或 CSG 交互在压测中出现明确瓶颈时，才启动方案 C，通过 PyO3 向 Python 层暴露接口，Python 继续负责 LLM 调用、配置读取与 Web/API 胶水层
-- **迁移原则**：即使未来引入 Rust，也只迁移已被证实的计算热路径，不推翻现有 IR、配置格式与上层服务边界
+- **历史主线（已替代）**：本节最初选择 Python + NumPy 作为长期计算层；该结论已由 ADR-006 替代。NumPy 实现现在用于旧引擎基线和研究对照。
+- **当前主线**：Rust 原生生产核心 + Tauri；Python 用于数据、实验和 legacy reference，不直接写正式项目状态。
+- **迁移原则**：允许领域级大规模重构，不维持现有 Python 类边界；使用黄金场景、目标不变量、迁移 manifest 和限时双轨控制风险。
 
 **方案 C 的分工边界（若采用）**：
 
@@ -1418,7 +1424,7 @@ Callback 分层策略：
 - [ ] TTS 后端最终选型与集成（eSpeak NG 精确音素 + Edge-TTS 长句韵律）
 - [ ] G2P 正字法系统（IPA ↔ 奇幻字符拼写映射，前端可自定义）
 - [ ] FastAPI 封装（CSG 作为 JSON-over-HTTP API，WebSocket 实时推送）
-- [ ] Tauri 桌面打包（共享 React 前端 + Python sidecar）
+- [~] 历史方案取消：Tauri + Python sidecar 已由 Rust 原生核心方案替代，见 ADR-006
 
 ---
 
@@ -1426,12 +1432,12 @@ Callback 分层策略：
 
 | 技术/库 | 用途 | 状态 |
 |---|---|---|
-| Python 3.10+ | 胶水层与 LLM 接口（始终存在）| ✅ 已确定 |
+| Python 3.10+ | 旧引擎基线、数据处理与研究桥接（非正式发行依赖）| 🔁 迁移期保留 |
 | Poetry | 依赖管理与环境隔离 | ✅ 已确定 |
 | NumPy | 范例层批量矩阵计算、特征位掩码运算 | 🔧 Phase 1 末引入 |
 | `re`（标准库） | RegexBackend 实现（Phase 0–2，由 IR 驱动） | ✅ 当前使用 |
 | `pynini`（OpenFST） | FSTBackend 实现（ADR-002 决策后引入） | 🔜 按需引入 |
-| Rust + PyO3 | 计算核心热路径（ADR-001 Phase 2 决策点） | 🔜 待评估 |
+| Rust + Tauri | 正式生产核心、应用服务、存储与桌面宿主 | ✅ ADR-006 已确定 |
 | IPA 音素预设 JSON | 标准特征矩阵数据文件（`data/phoneme_presets/`） | 🔧 Phase 0 末完成 |
 | JSON | 敏捷期 Delta 日志与关键帧存储 | ✅ 已确定 |
 | Neo4j | 成熟期 DAG 词源图数据库 | 🔜 Phase 2+ |
