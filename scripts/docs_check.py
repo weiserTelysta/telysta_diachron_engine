@@ -12,16 +12,15 @@ from urllib.parse import unquote
 
 import yaml
 
-try:
-    from scripts.generate_gate_evidence import (
-        render_status,
-        validate_passed_decision,
-    )
-except ModuleNotFoundError:  # Direct `python scripts/docs_check.py` execution.
-    from generate_gate_evidence import render_status, validate_passed_decision
-
-
 ROOT = Path(__file__).resolve().parents[1]
+root_text = str(ROOT)
+if root_text not in sys.path:
+    sys.path.insert(0, root_text)
+
+from scripts.generate_gate_evidence import (  # noqa: E402
+    render_status,
+    validate_passed_decision,
+)
 
 RUST_STRING_CONSTANT = re.compile(
     r'(?:pub\s+)?const\s+(?P<name>[A-Z0-9_]+)\s*:\s*&str\s*=\s*"(?P<value>[^"]+)"'
