@@ -49,7 +49,7 @@ product capabilities:
 
 ### Requirements
 
-- Rust 1.77.2 for the production core and desktop checks
+- Rust 1.88.0 for the production core and desktop checks
 - Python 3.10–3.14 (Python 3.13 recommended) for legacy/research checks
 
 ### Install
@@ -66,7 +66,7 @@ Poetry runs in an isolated tool environment so that the project `.venv` remains 
 Install the pinned Rust toolchain:
 
 ```bash
-rustup toolchain install 1.77.2 --component rustfmt --component clippy
+rustup toolchain install 1.88.0 --component rustfmt --component clippy
 ```
 
 ### Run CLI
@@ -78,15 +78,21 @@ python main.py
 ### Run tests
 
 ```bash
-python scripts/check.py
-cargo +1.77.2 fmt --all --check
-cargo +1.77.2 test --workspace --locked
-cargo +1.77.2 clippy --workspace --all-targets --locked -- -D warnings
+python -I scripts/check.py
+cargo +1.88.0 fmt --all --check
+cargo +1.88.0 test --workspace --locked
+cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings
+cargo +1.88.0 build -p telysta-desktop --locked
 node --check apps/desktop/web/app.js
 ```
 
 The Python command covers the legacy/research baseline and documentation governance. It is
 not a replacement for the Rust and desktop gates.
+
+Linux desktop builds also require the Tauri system packages documented in
+[the development setup guide](./docs/DEVELOPMENT_SETUP.md). The exact 1.88.0
+Windows checks pass locally; Linux and fresh-checkout CI evidence is still
+pending, so this does not mean G0A has passed.
 
 ### Run Streamlit UI
 

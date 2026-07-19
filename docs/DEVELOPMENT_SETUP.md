@@ -3,7 +3,7 @@ document_type: runbook
 decision_status: not-applicable
 implementation_status: implemented
 normative_scope: current
-last_verified: 2026-07-18
+last_verified: 2026-07-19
 ---
 
 # 开发环境与质量检查
@@ -14,7 +14,7 @@ last_verified: 2026-07-18
 > 仓库根目录 [AGENTS.md](../AGENTS.md) 和 CI 为准。
 
 - 状态：`Current local quality runbook`
-- 基线日期：2026-07-12；最后核验：2026-07-17
+- 基线日期：2026-07-12；最后核验：2026-07-19
 - 默认开发版本：Python 3.13
 - 支持范围：Python 3.10–3.14
 
@@ -44,18 +44,61 @@ python3.13 -m venv .venv
 uvx --from poetry==2.4.1 poetry sync --no-interaction
 ```
 
-## 3. 一键质量检查
+## 3. Rust 与 Tauri 工具链
+
+当前 workspace 的 MSRV 与精确验证工具链均为 Rust `1.88.0`：
+
+```text
+Cargo.toml [workspace.package].rust-version = 1.88.0
+rust-toolchain.toml channel = 1.88.0
+```
+
+当前 `Cargo.lock` 中经 Tauri 进入 workspace 的 `time`、`plist`、`darling` 和
+`serde_with` 等依赖声明的最高 `rust-version` 为 1.88.0。metadata 只确定候选下限；
+必须使用精确 1.88.0 完成 locked build/test/clippy 才构成 MSRV 实现检查。依赖图改变时
+必须重新计算并验证，不能把这一版本当成永久不变的产品规律。
+`.cargo/config.toml` 的 `incompatible-rust-versions = "fallback"` 约束以后重新解析依赖时
+优先选择兼容版本，但它不替代已提交 lock graph 的精确工具链验证。
+
+所有平台先安装精确工具链：
+
+```text
+rustup toolchain install 1.88.0 --profile minimal --component rustfmt,clippy
+```
+
+Windows 还需要 Microsoft C++ Build Tools 与 WebView2 开发/运行环境。Debian/Ubuntu
+开发机与 CI 使用 [Tauri v2 官方前置要求](https://v2.tauri.app/start/prerequisites/)
+列出的原生依赖：
+
+```bash
+sudo apt update
+sudo apt install -y \
+  libwebkit2gtk-4.1-dev \
+  build-essential \
+  curl \
+  wget \
+  file \
+  libxdo-dev \
+  libssl-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev
+```
+
+这些包只说明 Debian/Ubuntu 的构建前置；`ubuntu-24.04` 通过不能推导所有 Linux
+发行版、macOS、安装包或运行时兼容性已经得到证明。
+
+## 4. 一键质量检查
 
 Windows：
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/check.py
+.\.venv\Scripts\python.exe -I scripts/check.py
 ```
 
 macOS/Linux：
 
 ```bash
-.venv/bin/python scripts/check.py
+.venv/bin/python -I scripts/check.py
 ```
 
 该脚本依次执行：
@@ -102,20 +145,29 @@ GateEvidence v2 的 `subjectCommit`/`subjectTree` 指向被验证提交；证据
 祖先和 diff 关系，但不会要求 Linux、Windows 或不同 Python 矩阵复制证据生产机器的绝对
 路径。普通开发循环仍可只运行相关子门，但不能据此刷新 GateEvidence。
 
-## 4. 单独运行
+## 5. 单独运行
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/docs_check.py
-.\.venv\Scripts\python.exe -m pytest tests -q
+.\.venv\Scripts\python.exe -I scripts/docs_check.py
+.\.venv\Scripts\python.exe -I scripts\pytest_runner.py tests -q
 .\.venv\Scripts\python.exe -m ruff check app ui tests main.py streamlit_app.py
 .\.venv\Scripts\python.exe -m compileall -q app ui tests main.py streamlit_app.py
-cargo fmt --all --check
-cargo test --workspace --locked
-cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo +1.88.0 fmt --all --check
+cargo +1.88.0 test --workspace --locked
+cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings
+cargo +1.88.0 build -p telysta-desktop --locked
 node --check apps/desktop/web/app.js
 ```
 
-## 5. 依赖管理
+2026-07-19 的 Windows 本地实现检查点中，精确 1.88.0 workspace tests 为
+`62 passed`，fmt、Clippy `-D warnings`、desktop locked build 与 `node --check`
+均通过。Linux/fresh-checkout 远程 CI、run identity、artifact digest 和跨平台聚合
+尚未完成；该记录不是 GateEvidence，也不关闭 R0A-08 或 G0A。
+
+CI 的 `ubuntu-24.04`/`windows-2025` MSRV lanes 才验证最低版本；附加 stable lanes
+用于发现向前兼容漂移，不能替代 1.88.0 证明。workflow 文件存在也不是远端通过证据。
+
+## 6. 依赖管理
 
 - `pyproject.toml` 是直接依赖和工具配置来源；
 - `poetry.lock` 必须提交，用于锁定完整依赖图；
@@ -131,14 +183,14 @@ uvx --from poetry==2.4.1 poetry lock
 uvx --from poetry==2.4.1 poetry sync --no-interaction
 ```
 
-## 6. Python 支持策略
+## 7. Python 支持策略
 
 - 3.13 是旧引擎基线、研究桥接和迁移期对照的默认版本；
 - CI 在 Linux 验证最低版本 3.10、中间版本 3.12 和最高版本 3.14；
 - CI 额外在 Windows + Python 3.13 验证主要桌面开发平台；
 - 新 Python 次版本先加入 CI，验证通过后再扩大 `requires-python` 范围。
 
-## 7. 静态检查策略
+## 8. 静态检查策略
 
 当前 Ruff 只启用影响正确性的规则：语法错误、无效控制流和未定义名称。更广泛的导入排序、风格和格式统一将在清理阶段独立进行，避免一次产生大量与行为修改混杂的差异。
 

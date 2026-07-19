@@ -40,8 +40,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
-          cache: poetry
-          cache-dependency-path: poetry.lock
 
       - name: Install Poetry
         run: python -m pip install poetry==2.4.1
@@ -52,18 +50,35 @@ jobs:
           poetry install --no-interaction
 
       - name: Run required checks
-        run: poetry run python scripts/check.py
+        run: poetry run python -I scripts/check.py
 
   rust:
-    name: Rust 1.77.2 / ${{ matrix.os }}
+    name: Rust ${{ matrix.lane }} (${{ matrix.toolchain }}) / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    timeout-minutes: 60
+    env:
+      RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
+      CARGO_INCREMENTAL: "0"
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
+        include:
+          - os: ubuntu-24.04
+            lane: msrv
+            toolchain: "1.88.0"
+            run_fmt: true
+          - os: windows-2025
+            lane: msrv
+            toolchain: "1.88.0"
+            run_fmt: true
+          - os: ubuntu-24.04
+            lane: stable
+            toolchain: stable
+            run_fmt: false
+          - os: windows-2025
+            lane: stable
+            toolchain: stable
+            run_fmt: false
 
     steps:
       - name: Check out repository
@@ -71,20 +86,63 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install pinned Rust toolchain
-        run: rustup toolchain install 1.77.2 --profile minimal --component rustfmt,clippy
+      - name: Install Linux Tauri prerequisites
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
 
-      - name: Check formatting
-        run: cargo +1.77.2 fmt --all --check
+      - name: Install selected Rust toolchain
+        run: rustup toolchain install ${{ matrix.toolchain }} --profile minimal --component rustfmt,clippy
+
+      - name: Report active Rust toolchain
+        run: |
+          rustup show active-toolchain
+          rustc --version --verbose
+          cargo --version --verbose
+
+      - name: Assert exact MSRV toolchain
+        if: matrix.lane == 'msrv'
+        shell: pwsh
+        run: |
+          $actualRustc = (rustc --version).Split()[1]
+          $actualCargo = (cargo --version).Split()[1]
+          if ($actualRustc -ne "1.88.0") {
+            throw "Expected rustc 1.88.0, got $actualRustc"
+          }
+          if ($actualCargo -ne "1.88.0") {
+            throw "Expected cargo 1.88.0, got $actualCargo"
+          }
+
+      - name: Check formatting with MSRV toolchain
+        if: matrix.run_fmt
+        run: cargo fmt --all --check
 
       - name: Run workspace tests
-        run: cargo +1.77.2 test --workspace --locked
+        run: cargo test --workspace --locked
 
       - name: Run Clippy
-        run: cargo +1.77.2 clippy --workspace --all-targets --locked -- -D warnings
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: Build desktop shell
+        run: cargo build -p telysta-desktop --locked
 
       - name: Check desktop JavaScript
+        if: matrix.lane == 'stable' && runner.os == 'Linux'
         run: node --check apps/desktop/web/app.js
+
+      - name: Assert Rust gates did not modify tracked inputs
+        run: git diff --exit-code
 
   gate-evidence:
     name: G0A diagnostic evidence

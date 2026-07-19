@@ -46,7 +46,7 @@ LanguageState v3 尚未实现。详见 [Current Architecture](./docs/architectur
 
 ### 环境要求
 
-- Rust 1.77.2，用于生产核心和桌面质量检查
+- Rust 1.88.0，用于生产核心和桌面质量检查
 - Python 3.10–3.14（推荐 Python 3.13），用于 legacy/research 检查
 
 ### 安装依赖
@@ -62,7 +62,7 @@ Poetry 在隔离的工具环境中运行，以保证项目 `.venv` 与 `poetry.l
 安装锁定的 Rust 工具链：
 
 ```bash
-rustup toolchain install 1.77.2 --component rustfmt --component clippy
+rustup toolchain install 1.88.0 --component rustfmt --component clippy
 ```
 
 ### 运行 CLI
@@ -74,14 +74,19 @@ python main.py
 ### 运行测试
 
 ```bash
-python scripts/check.py
-cargo +1.77.2 fmt --all --check
-cargo +1.77.2 test --workspace --locked
-cargo +1.77.2 clippy --workspace --all-targets --locked -- -D warnings
+python -I scripts/check.py
+cargo +1.88.0 fmt --all --check
+cargo +1.88.0 test --workspace --locked
+cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings
+cargo +1.88.0 build -p telysta-desktop --locked
 node --check apps/desktop/web/app.js
 ```
 
 Python 命令只覆盖 legacy/research 基线和文档治理，不能替代 Rust 与桌面质量门。
+
+Linux 桌面构建还需要[开发环境指南](./docs/DEVELOPMENT_SETUP.md)列出的 Tauri 系统依赖。
+Windows 上的精确 1.88.0 检查已在本地通过；Linux 与 fresh-checkout CI 证据仍待完成，
+因此这不表示 G0A 已通过。
 
 ### 运行 Streamlit 界面
 

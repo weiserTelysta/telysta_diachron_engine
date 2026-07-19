@@ -52,15 +52,16 @@ Read these documents before changing a core domain:
 Python baseline:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\check.py
+.\.venv\Scripts\python.exe -I scripts\check.py
 ```
 
 Rust core and desktop:
 
 ```powershell
-cargo fmt --all --check
-cargo test --workspace --locked
-cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo +1.88.0 fmt --all --check
+cargo +1.88.0 test --workspace --locked
+cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings
+cargo +1.88.0 build -p telysta-desktop --locked
 ```
 
 Targeted work may run a smaller command while iterating, but the relevant full gate must pass before handoff. Expected failures must use strict `xfail` with a documented migration target; do not add broad skips.

@@ -33,15 +33,23 @@ Tauri command
 
 ## 本地验证
 
-需要 Rust 1.77.2 或更高版本、Node.js（仅在后续正式前端构建时需要）和 Windows Tauri/WebView2 构建前置条件。当前静态壳不依赖 Python，也不需要 Node 包安装。
+本 Spike 在 2026-07-13 验收时声明 Rust 1.77.2 或更高版本、Node.js（仅在后续正式
+前端构建时需要）和 Windows Tauri/WebView2 构建前置条件。该版本声明作为历史记录保留，
+不能继续作为当前 workspace 的 MSRV 证据。2026-07-19 的 COR-07 修正根据 locked graph
+将当前候选 MSRV 与精确验证工具链统一为 Rust 1.88.0；当前命令与 Linux Tauri 系统依赖
+以[开发环境指南](./DEVELOPMENT_SETUP.md)为准。当前静态壳不依赖 Python，也不需要 Node
+包安装。
 
 ```powershell
-cargo fmt --all --check
-cargo test -p telysta-core
-cargo check -p telysta-desktop
+cargo +1.88.0 fmt --all --check
+cargo +1.88.0 test -p telysta-core --locked
+cargo +1.88.0 build -p telysta-desktop --locked
 ```
 
 本工作包的证据：核心 crate 中 A-005 的 6 项测试覆盖 Rust runtime 声明、确定性 run ID、进度顺序、取消、checkpoint 恢复与版本化 envelope；Windows 上的 `cargo check -p telysta-desktop` 已通过。CI 以 Linux 验证核心和格式，以 Windows 编译 Tauri 壳。
+
+上一句只描述 Spike 验收时的历史证据。COR-07 的 Windows exact-1.88.0 本地门已通过，
+但 Linux/fresh-checkout CI 与受信 provenance 仍待远端执行，不得据此宣称跨平台关闭。
 
 ## 非目标与验收时的下一步（历史）
 
