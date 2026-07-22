@@ -3,7 +3,7 @@ document_type: governance-policy
 decision_status: proposed
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-07-18
+last_verified: 2026-07-19
 owner: unassigned
 reviewers: []
 ---
@@ -66,6 +66,13 @@ owner/reviewers（需要批准的决定必需）
 - 外部研究结论必须区分 hard constraint、empirical prior、research hypothesis
   和 creative preference。
 
+当前 G0A 的治理合同指针是 Proposed [G0A policy v2](../G0A_POLICY_V2.json) 及其
+[schema](../G0A_POLICY_V2.schema.json)，以及 Proposed
+[GateEvidence v3 model](./GATE_EVIDENCE_MODEL_V3.md) 和
+[manifest schema](../GATE_EVIDENCE_MANIFEST_V3.schema.json)。这些文件定义当前决定
+必须满足的闭合结构，但在独立评审、有效 v3 evidence 与 attestation 形成前不构成
+`accepted` 或 `passed`。v1 policy 与 v1/v2 evidence schema 仅保留为迁移输入。
+
 ## 5. 变更规则
 
 - 不通过静默改文档掩盖实现偏差。
@@ -78,5 +85,7 @@ owner/reviewers（需要批准的决定必需）
 `scripts/docs_check.py` 至少检查本地链接、索引覆盖、必需元数据、Gate 放行守卫、
 schema 常量和 desktop command 文档一致性。工作树 fingerprint 改变时，所有
 `SoftwareVerificationEvidence` 必须失效；只有实际执行的协议可以恢复 `pass`。
-GateEvidence v2 必须区分 subject revision 与承载证据的 attestation revision，并拒绝
-attestation-only 范围之外的后续变更。检查进入 `scripts/check.py` 和 CI。
+GateEvidence v3 必须锁定 G0A policy v2，区分 subject revision 与承载证据的
+attestation revision，验证完整 delivery readiness 和远端 provenance，并拒绝
+attestation-only 范围之外的后续变更。当前实现候选或 schema 通过本身不能恢复
+`passed`；检查进入 `scripts/check.py` 和 CI。

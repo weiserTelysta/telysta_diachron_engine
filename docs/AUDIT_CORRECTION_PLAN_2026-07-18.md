@@ -3,8 +3,8 @@ document_type: plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-07-18
-source_revision: fa7468b68ba60984ad7c416560dccb8f19a60aa7
+last_verified: 2026-07-19
+source_revision: 599f50d3b952178bcb841afa86edd3886cef1024
 owner: unassigned
 reviewers: []
 ---
@@ -26,6 +26,10 @@ reviewers: []
 当前判断：
 
 - G0A = `blocked`；
+- 2026-07-19 对 `599f50d3b952178bcb841afa86edd3886cef1024` 的执行后复审重新打开了
+  Gate/CI、当前 Rust v1 authority writer、migration archive/index 与 legacy
+  evidence 边界；现有 GateEvidence 中的成功运行不得解释为 MSRV、fresh checkout
+  或不可伪造人工评审已经成立；
 - R0B evidence preparation = `in progress`，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`；G0B = `not evaluated`，当前尚无 G0B GateEvidence；
 - R1 = `blocked by G0A`；
 - WS-1 = `blocked by G1 + G0B`；
@@ -92,15 +96,178 @@ G3 + G3B → WS-2 机制性变化 → G4
 | COR-02B G0B 领域 ADR 收口 | R0B-01/03/04 | 校正并独立评审 ADR-008 → ADR-014 → ADR-009 → ADR-010 → ADR-007；ADR-009 以前置 ADR-011 为界，ADR-010 以前置 ADR-011/012/013 为界 | 五个领域节点由指定 ADR 或 ADR Index 规则下的 Accepted replacement 按无环顺序闭合；不把 G0B 接受工作伪装成 G0A 前置 | M |
 | COR-03 回归 fixture 起草与合同测试 | R0B-03/04、A-003 | 本文第 8、9 节的 planning-only fixture ID、输入、期望结果/错误和证据路径 | reviewed subject merge 前状态仅为 drafted + contract-tested；合并、登记 hash/reviewer 并满足 bundle evidence protocol 后才可称 frozen | M |
 | COR-04 交付治理 | R0A-07 | owner、architecture/domain/migration reviewer、容量、S/M/L、WIP、timebox、降范围规则 | 缺任一字段的工作包不得进入 Ready | S |
+| COR-05 Gate runner 与失败落盘修复 | R0A-05/06、审计 P0 | hermetic subprocess environment、实际执行计数、失败 run 原子落盘、旧 passed 降级 | `PYTEST_ADDOPTS=--collect-only`、插件/路径注入和中途失败均不能产生或保留 passed；evidence 为 blocked 时，STATUS 必须匹配或被删除后重建 | M |
+| COR-06 Gate policy 与 attestation 生命周期 | R0A-06/07 | milestone attestation、普通后续提交规则、DeliveryReadinessEvidence、身份/时间/URI 验证与受信 provenance | 普通 R1 提交不被旧 milestone 永久阻断；capacity/estimate/WIP/timebox 不能靠手填 status 绕过；若不能兼容 v2 则先版本化 v3 | M |
+| COR-07 MSRV 与跨平台 CI 复真 | A-001、B-001.1、R0A-05 | 真实 MSRV 决定、兼容 lock graph、精确工具链 gate、Linux Tauri prerequisites、Windows/Linux fresh-checkout | 声明的最低版本在两平台运行完整门；GateEvidence 绑定精确工具链和 CI provenance | M |
+| COR-08 当前 v1 authority writer 修复 | B-004、FND-008/008.1、审计 P0 | lease 内 `create_if_absent`、无副作用 ProjectId 冲突、append-only history commit、限制 unconditional save | 双进程创建不能覆盖；任意截断/fork/rewrite 被拒绝；合法前缀扩展仍可保存；不改变 v1 schema | M |
+| COR-09 当前 v1 migration/index 修复 | FND-008/008.1、R1-07 | archive 重读/hash 校验、清 journal 前复验、index authority-token/retry | 同名损坏/缺失 archive 和 save/query race 被 fault-injection 检出；当前热修不伪造新 journal 语义 | M |
+| COR-10 Legacy evidence 与产品边界 | A-002/003、PLT-003/004 | raw replay/golden failure archive、failure fingerprint、Legacy Lab 入口/输出隔离、RNG/Mock LLM/golden workspace characterization | Python 不写 Rust project；8 个缺陷可独立复现；非法语言输出只作 negative evidence；不在 Python 建第二套修复核心 | M |
+
+### 4.1 2026-07-19 复审后的前置链
+
+这些包修复已经存在的基础实现和验证器，不授权 R1、v3、Genesis 或新的生产 writer。
+当前 v1 热修只允许收紧已接受不变量；若修复需要改变持久化字段、实体意义、journal
+schema、history identity 或 replay 语义，立即停止并先修订/接受对应 ADR。
+
+```text
+COR-05 hermetic gate + failure persistence
+→ COR-07 honest MSRV / cross-platform CI
+→ COR-06 Gate policy / milestone lifecycle
+                         ┐
+ADR-011/012/013 review ──┼→ COR-08 v1 writer safety → COR-09 archive/index
+                         │
+COR-10 legacy evidence ──┘
+→ clean subject + independent review
+→ regenerate blocked/passed evidence from the exact subject
+→ re-evaluate G0A
+```
+
+`COR-08` 的最小修复不新增 schema：存在性检查与写入必须在同一 lease 内，提交候选必须
+包含当前 history 的字节等价前缀。`COR-09` 的当前 journal 修复从内容寻址文件名重算并
+验证 source hash；显式增加 source checksum、migrator identity/version 属于后续版本化
+schema/ADR 工作，不得偷偷塞入 v1。
+
+### 4.2 新增工作包的实施合同
+
+#### COR-05：Gate runner 与失败落盘
+
+- 唯一 Python test runner 必须净化 `PYTEST_ADDOPTS`、`PYTEST_PLUGINS`、注入式
+  `PYTHONPATH`/coverage 配置，并证明 `collected > 0`、`executed > 0`、exit code 为零；
+- `scripts/check.py`、完整 gate 与 targeted pytest 必须共用该 runner，不能保留直接
+  pytest 旁路；
+- 开始复验时旧 passed 必须先失效；preflight、command、final docs check 或异常失败都
+  必须原子写入 blocked/failure run，再返回非零；
+- evidence 是源，STATUS 是可重建派生物；写入采用同目录临时文件、flush/fsync 和
+  replace；
+- 必测 hostile cases：`--collect-only`、`-k nonexistent`、旧 passed + 中途失败、
+  evidence 写成但 STATUS 写失败、subject/lock 改变。
+- v2 只有在本次 attempt 能诚实捕获完整 environment、subject 和 lock hash 时才追加
+  formal `verificationRun`；捕获不完整时仍必须把 decision 和软件明细落为 blocked，但
+  不得复制历史环境或伪造 formal run。需要表达 partial attempt 的 schema 演进属于 COR-06。
+
+2026-07-19 本地实施检查点：
+
+- hermetic runner、非零 collected/executed 守卫、复验前 blocked checkpoint、失败明细保留
+  及 evidence-first 输出恢复已经实现；这只是当前工作树上的实现结果，不是 GateEvidence；
+- `python -I scripts/pytest_runner.py tests/core/test_pytest_runner.py
+  tests/core/test_gate_evidence_generator.py -q` 得到 `33 passed`，runner 报告
+  `collected=33, executed=33`；
+- hostile `PYTEST_ADDOPTS=--collect-only` 的最终完整 `scripts/check.py` 检查实际执行
+  `588` 项，得到 `580 passed, 8 xfailed`，没有退化为 collect-only；
+- Windows 上精确 1.88.0 的 `cargo fmt --all --check`、`cargo test --workspace --locked`
+  （62 项）、`cargo clippy --workspace --all-targets --locked -- -D warnings`、desktop
+  locked build 与 `node --check` 已通过；这是 COR-07 的本地实现候选，不是 Linux、
+  fresh-checkout 或跨平台 attestation；
+- 已建立覆盖整个验证与发布窗口的跨进程单 verifier lease，并以锁竞争负例证明第二个
+  publisher 不得修改 evidence/STATUS；两个文件仍不存在通用文件系统意义上的事务性
+  crash 原子性。当前合同因此以 GateEvidence 为唯一权威，撕裂时 STATUS 必须被重写或
+  删除并由 evidence 重建；
+- Proposed G0A policy v2、GateEvidence v3、十项 requirement、完整 DeliveryReadiness
+  结构与 v2→v3 强制降级已经形成本地实现候选；当前持久化候选明确为 `blocked`，没有
+  继承旧 pass、reviewer 或远端 provenance；
+- COR-05 仍等待独立复核、clean subject 与最终全门证据，不能单独标记 Closed；G0A 保持
+  `blocked`，R0A-08 还必须取得 COR-07 的 Linux/fresh-checkout CI 与受信 provenance。
+
+#### COR-06：Gate policy 与人类治理
+
+- 已确认 pass 条件与 reviewer 意义改变，因而创建 Proposed GateEvidence v3 与 policy
+  v2；v2→v3 强制降为 blocked 并清除旧 pass/review；
+- 普通后续代码提交只验证历史 milestone 内部完整性；只有受保护合同/fixture/lock
+  改变才触发重审，`require-current-subject` 仅用于 gate/release workflow；
+- 新增结构化 DeliveryReadinessEvidence，覆盖 owner、independent reviewer、capacity、
+  estimate、WIP、UTC timebox、降范围规则、有效期和审批引用；
+- reviewer evidence 必须启用 URI/UTC 语义校验，并绑定签名 statement 或受信 provider
+  的 account/review/subject/decision；自由字符串不能满足 pass；
+- Agent 可以实现 schema/validator，但不得虚构人员、容量、日期或批准。
+
+#### COR-07：MSRV 与 CI
+
+- 先以当前 lock graph 的真实最低要求验证候选 MSRV；若选择提升，统一
+  `Cargo.toml`、`rust-toolchain.toml`、CI 和 evidence；若坚持 1.77.2，另做受审查的
+  dependency downgrade/re-lock；
+- generator 必须调用并记录精确工具链，不接受“更高版本也通过”代替 MSRV；
+- Ubuntu desktop job 安装 Tauri 原生依赖；Windows/Linux 都运行 locked
+  fmt/test/clippy 和 desktop build/check；
+- Python CI 先采用无缓存可靠安装顺序，Poetry cache 优化不得阻塞正确性；
+- 旧 Rust verificationRuns 全部失效，最终 evidence 记录 workflow run/check identity
+  和 artifact digest。
+
+2026-07-19 COR-07 本地实现候选：
+
+- `cargo metadata --locked` 显示 locked graph 的最高依赖 `rust-version` 为 1.88.0；
+  选择提升当前 MSRV，而不是把 Tauri 依赖图降级到未经评审的旧版本；
+- workspace `rust-version`、`rust-toolchain.toml`、generator 的当前协议/validator 和
+  CI 已统一到精确 1.88.0；Cargo resolver 使用 MSRV-compatible fallback，
+  v1 schema 的 1.77.2 继续作为历史迁移输入保留；
+- Windows 上 exact-1.88.0 fmt、62 项 workspace tests、Clippy `-D warnings`、desktop
+  locked build 和 JavaScript syntax check 已通过；
+- 新增 10 项工具链/CI 合同负例，拒绝较新 Rust/Cargo 冒充 MSRV、
+  workspace/toolchain 漂移、缺失/损坏 toolchain 的旧 pass 残留、job-level context
+  越界、平台矩阵缺口与过早 Poetry cache；与 COR-05 runner/evidence 测试合并后为
+  `43 passed, collected=43, executed=43`；
+- 最终 exact-1.88.0 GateEvidence 本地验证实际执行完整 Python 套件 `598` 项，得到
+  `590 passed, 8 xfailed`，随后 9 个登记协议全部直接通过；decision 仍因治理与远端
+  证据阻断保持 `blocked`；
+- Linux job 已按 Tauri 官方 Debian/Ubuntu 前置安装原生包并使用相同 locked commands，
+  但本地修改尚未形成 reviewed clean subject，也没有远端 run/check identity 或 artifact
+  digest。因此 COR-07/P1-19 只能标为 locally mitigated，不能 Closed；
+- 本地合同测试会拒绝当前 workflow 使用过的 job-level context 越界；另以 MIT 许可的
+  `actionlint 1.7.12` 对当前 workflow 通过一次性复核，Windows amd64 release archive
+  SHA-256 为 `6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9`。
+  它尚未纳入必需门，GitHub 服务端解析与真实调度仍是远端验收的一部分；
+- Windows/Linux provenance 如何进入 GateEvidence 的正式语义属于 COR-06/v3；在该决定
+  前不向 v2 填造 provider、run ID 或 artifact digest。
+- v2 的 `rustVersionMeetsWorkspace` 当前 validator 由“版本不低于”收紧为“Rust 与
+  Cargo 都精确等于 workspace MSRV”；schema 的版本字符串约束保持向后可表达历史 run，
+  当前旧 run 因协议/fingerprint 改变全部失效。该 policy amendment 不增加跨平台
+  provenance；若以后需要独立 exact-match 字段，由 v3 版本化。
+
+#### COR-08：当前 v1 writer
+
+- 在 core 增加 `candidate.validate_extension_of(base)`：context 相同、旧事件逐项完全
+  相同、只能追加合法尾部；等长完全相同可以幂等，其余截断/重排/fork/rewrite 拒绝；
+- storage 提供 lease 内 `create_if_absent` 和 `append_if_current`；公共 unconditional
+  replacement 降为迁移/恢复私有实现；
+- create 同时拒绝现有 authority、recovery artifact 或 pending migration；失败不得在
+  磁盘留下新项目，ProjectId 冲突在写入前处理；
+- runtime 的 expected hash 同时匹配打开 session 和 lease 内权威文件；
+- 必测同进程/跨进程/路径别名双创建，以及截断、旧事件修改、重排、fork、外部 run、
+  合法多事件追加和幂等重复。
+
+#### COR-09：当前 v1 migration 与 projection
+
+- archive 存在时重读并验证内容 hash 与 `<sha256>.source.json` 文件名；拒绝越出
+  migrations 目录的链接/重解析；
+- completed target 清 journal 前，archive、source schema、唯一 migrator、重演 target
+  hash 和当前 target 必须闭合；任何证据缺失都保留材料并返回人工恢复错误；
+- index publish 绑定读取时 authority hash；重建前取得 lease 并重读 authority，查询
+  返回 `as_of_history_sha256`，竞争时有限重试或 `projection_stale`；
+- 必测 archive 缺失/损坏/链接、各 crash point、多 reader + writer、SQLite 删除/损坏；
+  任何失败不得改变 authority bytes。
+
+#### COR-10：Legacy evidence
+
+- 冻结被测 commit、环境、命令、seed/clock、原始未归一化字节、目录 manifest、
+  SHA-256 和准确 failure fingerprint；
+- 记录 8 个 replay loss、22–31 个非法 golden、RNG 顺序敏感性、query mutation、
+  `uuid4` 借词 ID、Mock LLM 实际 disabled 和非空 workspace 污染；
+- Python 只修测试工具、入口警告、输出隔离、Mock/golden characterization 和未受控
+  随机源守卫；不修旧音系、语义 fallback、形态 query、DAG/replay 或新增语言模型；
+- README/CLI/Streamlit 统一标为 Legacy/Research Lab，输出不得落入 Rust project root；
+  对应 Rust replacement 与 migration reviewer 关闭前不得删除模块或 xfail。
 
 G0A 的实际执行顺序：
 
-1. 使用 `scripts/g0a_handoff.py --check --json` 审查工作树，不以 `git add -A` 代替判断。
-2. 将语义修改、fixture/baseline、移动/删除分成不同提交。
-3. 由具名 owner、独立架构 reviewer 和 migration reviewer 处理 ADR-011/012/013；这一步属于 COR-02A，不等待领域 ADR 全部接受。
-4. 创建 clean subject commit，并运行 `scripts/g0a_handoff.py --check --require-clean-subject`。
-5. 在 fresh checkout 运行 `scripts/generate_gate_evidence.py --verify`。
-6. 将生成的 GateEvidence/STATUS 作为独立 attestation 提交；subject 与 attestation 之间不得混入语义修改。
+1. 先为 COR-05～10 与 COR-02A/04 分配 owner、独立 reviewer、容量、WIP 和 timebox；未分配前保持 `Planned`。
+2. 将 COR-05/07 的本地实现检查点经独立复核与 clean subject 收口，并在 Windows/Linux
+   远端门产生受信运行证据；旧 GateEvidence 继续保持 blocked，不在修复中手工改成 passed。
+3. 评审 Gate milestone 生命周期和 DeliveryReadinessEvidence；若需要改变 manifest 含义，先版本化 schema，再实施 COR-06。
+4. 由具名 owner、独立架构 reviewer 和 migration reviewer 处理 ADR-011/012/013；随后按当前/目标语义边界实施 COR-08/09。
+5. 并行完成 COR-10 的原始证据冻结和 Python 产品边界，不修复 Python 语言模型。
+6. 使用 `scripts/g0a_handoff.py --check --json` 审查工作树，不以 `git add -A` 代替判断；语义修改、fixture/baseline、移动/删除必须分成不同提交。
+7. 创建 clean subject commit，并运行 `scripts/g0a_handoff.py --check --require-clean-subject`。
+8. 在 Windows 与 Linux fresh checkout 使用精确声明工具链运行完整门；Gate evidence job 聚合受信运行身份与 artifact hash。
+9. 将 GateEvidence/STATUS 作为独立 attestation 提交，并重新评估 G0A；失败必须将磁盘状态原子保持为 blocked。
 
 不得为了让当前脏工作树通过而刷新 inventory hash。GateEvidence 因输入改变而失效是正确行为。
 
@@ -113,10 +280,10 @@ G0A 的实际执行顺序：
 | ID | 对应现有包 | 主要交付物 | 最低验收 | 规模 |
 |---|---|---|---|---|
 | COR-L00 缺陷反例化 | R0B-03/04 | P0/P1、fixture、Gate、owner/reviewer 映射 | 所有 legacy 缺陷都有 Rust negative/migration target；不复制 Python 缺陷 | S |
-| COR-L01 ADR-014 | R0A-02、R0B-01 | Meaning–Grammar–Lexical Class–Realization 权威决定 | 冻结身份、所有权、ordered occurrence、query purity、migration/hash/replay；Accepted 前不实现持久化语义 | M |
+| COR-L01 ADR-014 | R0A-02、R0B-01、R0B-01A-D/01A、R0B-04B-D | Meaning–Grammar–Lexical Class–Realization–Orthography 权威决定 | 先起草 ADR，再用 review vectors 攻击，随后才 Accepted；冻结稳定 `OrthographicForm/SpellingRealization` 身份、所有权、ordered occurrence、query purity、migration/hash/replay；裸 IPA/音系串不作为拼写身份键；Accepted 前不实现持久化语义 | M |
 | COR-L02 类型化音系合同 | R0B-03、WS1-01/04/09 | Segment/Feature、韵律、音系配列、typed SoundChange IR | unknown/empty/no licensed nucleus/illegal cluster/unanchored suprasegmental 均 typed reject | M |
 | COR-L03 词汇—形态身份合同 | R0B-01/03、WS1-01/03/04 | Lexeme、Sense、WordForm、Morpheme、Paradigm、Construction、SurfaceForm | 序列不用 set；同音、多义、零实现和 syncretism 可表达、可分析 | M |
-| COR-L04 双向实现合同 | R0B-01/04、WS1-02/03/08 | Meaning → realization → analysis 管线、IGT、trace、typed gap | `analyse(realize(M))` 包含等价读法；不丢论元/极性/方向；query 不改 hash | L |
+| COR-L04 双向实现合同 | R0B-01/04/04B-D/04B、WS1-02/03/04A/08 | Meaning → realization → analysis、typed analysis ↔ orthography、同图 IGT、trace、typed gap | `analyse(realize(M))` 与 `parse(spell(A, O), O)` 包含等价分析且拒绝 forbidden analysis；同音异写、precision/ambiguity、非双射 IGT span 通过；query 不改 hash | L |
 | COR-L05 配价与对齐合同 | R0B-01/03/04 | PredicateFrame、S/A/P、语义角色、编码与 alternation | 覆盖不及物、及物、心理/感知、三价转移、处所；不将英语 subject/NOM 普遍化 | M |
 | COR-L05A Evidence/Data Execution Slice | R0B-05/07 | 精确 payload/hash/license/sampling unit/transform、数据到 Registry/PriorPack/TaskCase 的可执行小切片 | payload-aware reference 通过；概念表、类型频率和 usage frequency 不可互换 | M |
 | COR-L06 双 profile fixture | R0B-03/04/05、WS1-04/06 | 两个结构非同构的微型语言 specification | 相同任务由不同构式/形态机制完成，不能只换词序或标签 | L |
@@ -206,7 +373,7 @@ G1 的证据必须覆盖 unit、schema compatibility、fault injection、migrati
 |---|---|---|---|
 | ARC-20 v2 Freeze & Migration Boundary | G1、G0B（其中已包含 Accepted ADR-009） | v2 bytes/schema/hash/golden corpus、source archive、loss fixture | 同一 source bytes 产生相同 target hash/loss report；不从 state diff 伪造历史；G0B 前只可在 COR-03 中准备 planning evidence |
 | ARC-21 Minimal State v3 + Provenance | ARC-20、Accepted ADR-007/008/014 | strict aggregate、RegistryBundle、typed values、ordered occurrences、ProvenanceGraph、ExecutableDataSliceRef | hostile deserialize、悬空引用、错误值域和无序序列拒绝；每个 Genesis entity 可追溯 |
-| COR-L08 Executable Linguistic Slice | ARC-21、COR-L02/03/04/05/05A/06/07 | in-memory Meaning/Grammar、phonology、morphology、realize/analyze roundtrip、IGT/explain | 两个 profile 完成本计划阈值；零 silent fallback；尚不绕过 Genesis seal 创建项目 |
+| COR-L08 Executable Linguistic Slice | ARC-21、COR-L02/03/04/05/05A/06/07、R0B-04B | in-memory Meaning/Grammar、phonology、morphology、stable orthographic realization、realize/analyze/parse/spell roundtrip、IGT/explain | 两个 profile 完成本计划阈值；同音异写与保守拼写可保持；音变不静默重拼写；零 silent fallback；尚不绕过 Genesis seal 创建项目 |
 | ARC-22 Typed ChangeSet + Reducer | ARC-21、COR-L08、Accepted ADR-009 | `Proposal → ValidatedChangeSet` capability、typed effect/environment/lock、atomic reducer | 多 effect 全成全败；wrong locus/stale base/tampered lock 拒绝；online=replay hash |
 | ARC-23 Append-only Domain History | ARC-22、ARC-13 | history node、Legacy/test root + parent-linked committed ChangeSet | 非前缀、换序、删改、同 Operation 异结果拒绝；删除 projection 后可完整 replay；不得构造生产 GenesisRoot |
 | ARC-24 Genesis Compile/Evaluate | ARC-21、COR-L07/08 | deterministic CandidateSet、独立 evaluator、hard-error report | compiler 与 evaluator 不共享私有评分；缺依赖或 planned capability 不能 seal |
@@ -263,6 +430,25 @@ bundle。DET-N01 的 planning locks 是显式 sentinel，真实 payload 绑定�
 | ANA-N01 | 无共享范式/构式时，不得仅凭音形相似声称类推 |
 
 类型化音系必须把 categorical validator 与可选 gradient ranker 分开；梯度高分不能救活违反硬约束的候选。Genesis、借词、复合、形态音系和变化必须共享同一最终 validator。
+
+### 8.1 Orthography / IGT / PCU 扩展包（尚未起草）
+
+当前 24-case v1 不覆盖正字法权威与同图 IGT，不能用于接受新增 authority。执行顺序
+必须是 `R0B-01A-D Proposed ADR → R0B-04B-D review vectors → R0B-01A Accepted
+ADR → R0B-04B reviewed/frozen fixture → G2 real adapter evidence`。review vectors
+可以随 Proposed ADR 修订，不是 frozen evidence；ADR 接受后的 fixture 必须重新登记
+schema/version、content hash、reviewer 和 expected diagnostics。
+
+| Planned vector | 必须证明 |
+|---|---|
+| ORT-N01 | 未映射 typed analysis 返回诊断，不回退 raw IPA |
+| ORT-N02 | NFC/NFD、非法字素和边界冲突不会产生静默不同结果 |
+| ORT-N03 | 同音但词汇化/保守拼写不同的 WordForm 可保持不同 `SpellingRealization` |
+| ORT-N04 | 万能 analyzer 因 forbidden analysis、precision 或 ambiguity budget 失败 |
+| ORT-P01 | `parse(spell(A, O), O)` 保留等价 typed analysis，许可 variant 可稳定往返 |
+| IGT-N01 | zero、syncretism、fusion 的 span/contribution 从同一分析图投影 |
+| PCU-N01 | 手改 orthographic/gloss line 会使 ProofCarryingUtterance integrity 失败 |
+| CHG-N01 | `SoundChange` 不静默改写 spelling；只有独立 `OrthographicChange` 可重拼写 |
 
 ## 9. Legacy replay 缺陷迁移
 
@@ -407,14 +593,15 @@ WS-2 必须将“规则适用”“个体变体”“群体采用”“结构常
 
 在没有人为越权接受 ADR 或伪造 Gate 之前，下一批按以下顺序推进：
 
-1. 为 COR-00、COR-01、COR-02A、COR-02B、COR-03、COR-04 与 COR-L00～L07 填写具名 owner、独立 reviewer、容量和 timebox。
-2. 逐项审查当前 subject candidates，形成 clean subject candidate；不使用 `git add -A`，不进行大规模移动或删除。
-3. 独立评审 ADR-011/012/013、ADR-014 和对应 fixture；根据异议修订，不由编写者自行接受。
-4. 冻结 Meaning/Grammar/Realization、typed phonology、lexical identity/morphology、valency 四份 G0B 合同。
-5. 冻结两个非同构 profile、Capability Matrix、四类 TaskPack 与真实数据小切片。
-6. 关闭 G0A 后，仅启动 ARC-10～14 的 fake-operation 平台纵切。
-7. 关闭 G1 + G0B 后，再启动 ARC-20/21 与 COR-L08。
-8. 以 ARC-22/23/24/25 完成 ChangeSet、历史、Genesis seal 和原子创建。
-9. G2 通过后才进入 canon-safe authoring、逐域 legacy 清理和 R3；G3 + G3B 后才进入 WS-2。
+1. 为 COR-00～10、COR-02B 与 COR-L00～L07 填写具名 owner、独立 reviewer、容量和 timebox。
+2. 复核并收口 COR-05 → 为 COR-07 取得 Linux/fresh-checkout CI 证据 → COR-06，使测试执行、工具链和 Gate 生命周期本身先可信；当前 COR-05/07 仅达到本地实现检查点。
+3. 独立评审 ADR-011/012/013；随后完成 COR-08/09 的 v1 writer、archive 和 index 修复，并执行并发/故障注入测试。
+4. 完成 COR-10：冻结 8 个 replay 缺陷、非法 golden、RNG 顺序敏感性与 query mutation 的原始证据；将 Python 入口明确为 Legacy Lab。
+5. 逐项审查 subject candidates，形成 Windows/Linux 可复核的 clean subject；不使用 `git add -A`，不进行大规模移动或删除。
+6. 独立评审 ADR-014 和对应 fixture；冻结 Meaning/Grammar/Realization、typed phonology、lexical identity/morphology、valency四份 G0B 合同。
+7. 冻结两个非同构 profile、Capability Matrix、四类 TaskPack、runner adapter 和真实数据小切片；`DATA-N01` 在 G0B 执行，21 个语言生成 case 在 G2 执行，`GRA-N01/ANA-N01` 在 G4 执行。
+8. 重新生成 GateEvidence 并关闭 G0A 后，仅启动 ARC-10～14 的 fake-operation 平台纵切。
+9. 关闭 G1 + G0B 后，再启动 ARC-20/21 与 COR-L08；随后以 ARC-22/23/24/25 完成 ChangeSet、历史、Genesis seal 和原子创建。
+10. G2 通过后才进入 canon-safe authoring、逐域 legacy 清理和 R3；G3 + G3B 后才进入 WS-2。
 
 下一段生产领域代码仍然不是“更多音变规则”，而是 Gate 放行后的 Rust 最小 v3 纵切。

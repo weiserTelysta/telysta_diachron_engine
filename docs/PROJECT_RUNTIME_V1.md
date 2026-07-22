@@ -1,9 +1,9 @@
 ---
 document_type: contract
 decision_status: accepted
-implementation_status: implemented
+implementation_status: partial
 normative_scope: current
-last_verified: 2026-07-17
+last_verified: 2026-07-19
 implementation_schema: telysta-project-history.v1
 implementation_path: crates/telysta-core/src/project.rs
 implementation_constant: PROJECT_HISTORY_SCHEMA
@@ -11,10 +11,15 @@ implementation_constant: PROJECT_HISTORY_SCHEMA
 
 # Project Runtime and Transactions v1
 
-- 状态：`Accepted`
+- 状态：`Accepted contract / implementation reopened`
 
 当前项目历史 schema 为 `telysta-project-history.v1`；本合同描述它的运行时、事务和
 回放边界，不把它扩展为长期 Project/Operation/Run/Job 目标。
+
+> **2026-07-19 实现复审：** `ProjectHistory` 与 `StateTransaction` 的 schema/replay
+> 合同保持 Accepted，但 storage session 的 `commit_history` 目前只检查 candidate
+> 可 replay，没有证明它是已打开 history 的前缀扩展。修复前该集成实现保持
+> `partial`，不得把“expected hash 已检查”描述为 append-only history 已成立。
 - 完成日期：2026-07-13
 - 对应工作：`B-004`、`FND-005`、`FND-006`（`FND-007` 的事件信封基础）
 - 实现：`crates/telysta-core/src/project.rs`

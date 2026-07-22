@@ -115,13 +115,21 @@ pytest 使用系统为当前进程分配的独立临时目录；不得在共享�
 需要刷新 G0A 证据时，不手工编辑测试数量或工作区计数。执行：
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/generate_gate_evidence.py --verify
+.\.venv\Scripts\python.exe -I scripts/generate_gate_evidence.py --verify
 ```
+
+当前应审查的 G0A 合同指针是 Proposed
+[G0A policy v2](./G0A_POLICY_V2.json) 及其
+[schema](./G0A_POLICY_V2.schema.json)，以及 Proposed
+[GateEvidence v3 model](./governance/GATE_EVIDENCE_MODEL_V3.md) 和
+[manifest schema](./GATE_EVIDENCE_MANIFEST_V3.schema.json)。生成器与测试已有本地
+迁移实现候选，不等于这些治理合同已被独立接受；现有 GateEvidence/STATUS 尚未形成
+有效 v3 attestation，G0A 必须保持 `blocked`。
 
 准备独立评审与 clean subject 前，先运行：
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/g0a_handoff.py --check --json
+.\.venv\Scripts\python.exe -I scripts/g0a_handoff.py --check --json
 ```
 
 它会列出全部 subject candidate、两份 attestation-only 生成文件、待审合同哈希以及被拒绝的
@@ -131,19 +139,22 @@ pytest 使用系统为当前进程分配的独立临时目录；不得在共享�
 
 该命令必须由仓库 `.venv` 的解释器启动。它先生成排除自身输出的 worktree fingerprint，
 将**全部**旧 `SoftwareVerificationEvidence` 标记为未运行，再依次执行 Python/docs、
-Rustfmt、Rust test、Clippy 和 desktop JavaScript 检查。所有登记协议，包括定向测试，
+Rustfmt、Rust test、Clippy、desktop locked build 和 JavaScript 检查。所有登记协议，包括定向测试，
 都必须直接执行才能恢复 `pass`，不得依赖手工声明的父门禁覆盖关系。
 
 全部通过后才创建带 UTC 开始/结束时间的 `verificationRuns`，记录真实 Python 可执行路径、
 已安装分发集合摘要、Python/Rust/Cargo/Node 版本、锁文件摘要和实际命令。验证前会拒绝与
-`poetry.lock` 不一致的 `.venv`，并要求本机 Rust 不低于 workspace 的 1.77.2 MSRV。
-CI 另有固定 1.77.2 的最低版本兼容 job；本地较新工具链不伪装成 MSRV 证明。任一命令
+`poetry.lock` 不一致的 `.venv`，并要求本次正式验证使用 workspace 锁定的精确
+Rust 1.88.0 工具链。CI 的 Windows/Linux MSRV job 也必须使用同一版本；本地较新
+工具链不伪装成 MSRV 证明。任一命令
 失败会清除当前成功标记，尚未执行的后续协议继续保持 `not_run_for_fingerprint`。
 
-GateEvidence v2 的 `subjectCommit`/`subjectTree` 指向被验证提交；证据和 `STATUS.md` 可以在
-后续只包含这两个生成文件的 attestation commit 中提交。CI 验证 subject 与 attestation 的
-祖先和 diff 关系，但不会要求 Linux、Windows 或不同 Python 矩阵复制证据生产机器的绝对
-路径。普通开发循环仍可只运行相关子门，但不能据此刷新 GateEvidence。
+GateEvidence v3 的 `subjectCommit`/`subjectTree` 仍指向被验证提交；证据和
+`STATUS.md` 只能在后续 attestation 范围内发布。v3 还要求 policy hash、完整
+delivery readiness，以及绑定同一 subject 的 Windows/Linux provider、workflow、run/job
+identity 和 artifact digest。当前 workflow 或本地实现候选存在不等于这些远端证据已经
+产生；现有 v1/v2 evidence 只能作为强制降为 `blocked` 的迁移输入。普通开发循环仍可只运行
+相关子门，但不能据此签发 GateEvidence pass。
 
 ## 5. 单独运行
 

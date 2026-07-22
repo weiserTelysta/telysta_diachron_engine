@@ -1,92 +1,56 @@
 {
-  "$schema": "GATE_EVIDENCE_MANIFEST_V2.schema.json",
-  "schemaVersion": "telysta-gate-evidence-manifest.v2",
+  "$schema": "GATE_EVIDENCE_MANIFEST_V3.schema.json",
+  "schemaVersion": "telysta-gate-evidence-manifest.v3",
   "gateId": "G0A",
   "gateName": "Platform Contract Ready",
   "decision": "blocked",
-  "decisionDate": "2026-07-18",
+  "decisionDate": "2026-07-19",
   "source": {
-    "subjectCommit": "050683f5ecc6f5f5c058f9acbae07ab40b3d6664",
-    "subjectTree": "886f709b7d54ca1945ee73ff8c1dd09cc62c35f9",
-    "worktreeDirty": false,
-    "worktreeStatusEntryCount": 0,
+    "subjectCommit": "599f50d3b952178bcb841afa86edd3886cef1024",
+    "subjectTree": "2a3e1bd4fd33e21edf36fcd6e75d33f0635fd02c",
+    "worktreeDirty": true,
+    "worktreeStatusEntryCount": 35,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
-    "worktreeInventorySha256": "4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13",
+    "worktreeInventorySha256": "8745e30bad3153de0f1fa4bc184c30d1ab0bd5a1578e6cde05ec5816fdcf100c",
     "excludedGeneratedPaths": [
       "docs/G0A_GATE_EVIDENCE_2026-07-17.json",
       "docs/STATUS.md"
     ],
-    "environment": "Windows; Asia/Shanghai; local workspace",
     "verificationRuns": [
       {
-        "runId": "gate-run:69a76da3d4f34ad562dc5a251550340d",
-        "subjectCommit": "050683f5ecc6f5f5c058f9acbae07ab40b3d6664",
-        "subjectTree": "886f709b7d54ca1945ee73ff8c1dd09cc62c35f9",
-        "startedAt": "2026-07-18T22:19:15Z",
-        "finishedAt": "2026-07-18T22:19:39Z",
+        "runId": "gate-run:e7f36f74d9d8e9652b14e1b9cc42c2d8",
+        "subjectCommit": "599f50d3b952178bcb841afa86edd3886cef1024",
+        "subjectTree": "2a3e1bd4fd33e21edf36fcd6e75d33f0635fd02c",
+        "platformFamily": "windows",
+        "startedAt": "2026-07-19T05:21:11Z",
+        "finishedAt": "2026-07-19T05:22:10Z",
         "result": "pass",
         "protocols": [
-          ".\\.venv\\Scripts\\python.exe scripts\\check.py",
-          ".\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q",
-          "cargo fmt --all --check",
-          "cargo test --workspace --locked",
-          "cargo test -p telysta-core --test adr_011_schema_records --locked",
-          "cargo test -p telysta-core --test rng_known_answers --locked",
-          "cargo clippy --workspace --all-targets --locked -- -D warnings",
+          ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
+          ".\\.venv\\Scripts\\python.exe -I scripts\\pytest_runner.py tests\\core\\test_adr_011_contract.py -q",
+          "cargo +1.88.0 fmt --all --check",
+          "cargo +1.88.0 test --workspace --locked",
+          "cargo +1.88.0 test -p telysta-core --test adr_011_schema_records --locked",
+          "cargo +1.88.0 test -p telysta-core --test rng_known_answers --locked",
+          "cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings",
+          "cargo +1.88.0 build -p telysta-desktop --locked",
           "node --check apps/desktop/web/app.js"
         ],
         "environment": {
-          "platform": "Windows-11-10.0.26200-SP0",
-          "pythonExecutable": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe",
-          "pythonVersion": "3.14.5",
-          "rustcVersion": "rustc 1.96.0 (ac68faa20 2026-05-25)",
-          "cargoVersion": "cargo 1.96.0 (30a34c682 2026-05-25)",
-          "requiredRustVersion": "1.77.2",
-          "rustVersionMeetsWorkspace": true,
-          "nodeVersion": "v24.16.0",
+          "os": "Windows-11-10.0.26200-SP0",
+          "architecture": "AMD64",
+          "toolchain": {
+            "python": "3.14.5",
+            "rustc": "rustc 1.88.0 (6b00bc388 2025-06-23)",
+            "cargo": "cargo 1.88.0 (873a06493 2025-05-10)",
+            "node": "v24.16.0"
+          },
           "lockFileSha256": {
             "Cargo.lock": "fab920b9408aa28210ce846d167618d793aca2db194c040c6bd5264f46cc59c0",
             "poetry.lock": "633156df7b6afe0bbe54e2c0ae7163f6600166e83db03f75bc3fed128fd8a6b4"
-          },
-          "pythonInstalledDistributionsSha256": "7cbe731edb3ec438cb18d66c74c20a833dd5407b27f8352de7c504fba4c7dc34",
-          "pythonLockStatus": "match",
-          "pythonLockMismatches": []
-        }
-      },
-      {
-        "runId": "gate-run:0cff28d18daa988125d17a3db7d1035e",
-        "subjectCommit": "050683f5ecc6f5f5c058f9acbae07ab40b3d6664",
-        "subjectTree": "886f709b7d54ca1945ee73ff8c1dd09cc62c35f9",
-        "startedAt": "2026-07-18T22:23:16Z",
-        "finishedAt": "2026-07-18T22:23:58Z",
-        "result": "pass",
-        "protocols": [
-          ".\\.venv\\Scripts\\python.exe scripts\\check.py",
-          ".\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q",
-          "cargo fmt --all --check",
-          "cargo test --workspace --locked",
-          "cargo test -p telysta-core --test adr_011_schema_records --locked",
-          "cargo test -p telysta-core --test rng_known_answers --locked",
-          "cargo clippy --workspace --all-targets --locked -- -D warnings",
-          "node --check apps/desktop/web/app.js"
-        ],
-        "environment": {
-          "platform": "Windows-11-10.0.26200-SP0",
-          "pythonExecutable": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe",
-          "pythonVersion": "3.14.5",
-          "rustcVersion": "rustc 1.96.0 (ac68faa20 2026-05-25)",
-          "cargoVersion": "cargo 1.96.0 (30a34c682 2026-05-25)",
-          "requiredRustVersion": "1.77.2",
-          "rustVersionMeetsWorkspace": true,
-          "nodeVersion": "v24.16.0",
-          "lockFileSha256": {
-            "Cargo.lock": "fab920b9408aa28210ce846d167618d793aca2db194c040c6bd5264f46cc59c0",
-            "poetry.lock": "633156df7b6afe0bbe54e2c0ae7163f6600166e83db03f75bc3fed128fd8a6b4"
-          },
-          "pythonInstalledDistributionsSha256": "b9c4390eec2b3e81826cea0aa0287ec8270d34994e864493c0c0a0945f08c503",
-          "pythonLockStatus": "match",
-          "pythonLockMismatches": []
-        }
+          }
+        },
+        "remoteProvenance": null
       }
     ]
   },
@@ -95,7 +59,7 @@
       "ADR-011 planning evidence is executable and ready for independent review",
       "R0A-03 platform and R0A-04 RNG compatibility evidence are ready for independent review",
       "the current Rust RNG behavior matches the recorded v1 known-answer vectors",
-      "the recorded clean worktree passes the recorded Python and Rust verification commands"
+      "the recorded dirty worktree passes the recorded Python and Rust verification commands"
     ],
     "forbidden": [
       "G0A has passed",
@@ -108,155 +72,222 @@
   },
   "evidence": [
     {
-      "kind": "SoftwareVerificationEvidence",
-      "path": "scripts/check.py",
-      "protocol": ".\\.venv\\Scripts\\python.exe scripts\\check.py",
-      "result": "pass",
-      "details": "required Python and documentation gate passed",
-      "verificationMode": "direct",
-      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe scripts/check.py"
-    },
-    {
+      "evidenceId": "evidence:bfa8c26884068b11ffe4e52f67c4da3a",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/GATE_EVIDENCE_MANIFEST_V1.schema.json",
       "sha256": "e0294cbeb31f4015f2c4ecd77b0159b57f209ce0ae48828a5cedb4bfdb9a4e01",
-      "result": "draft_2020_12_validated"
+      "result": "pass"
     },
     {
+      "evidenceId": "evidence:cbc1156e1326a5e25e9d57da9d3a3570",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json",
-      "sha256": "5abd0c3ccc6d41e3839a79493a3344332c9df369004faa4d1971ef9c5ab3e6c0",
-      "result": "draft_2020_12_validated"
+      "sha256": "0a4f19bf4d074648dbb3ba0ae28ea04c143c99a94ef9b5584720552d31d1661f",
+      "result": "pass"
     },
     {
+      "evidenceId": "evidence:1058648372bf725decb2df32381a2a7c",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/G0A_POLICY_V1.json",
       "sha256": "f6a2db62af0fed1215955d32300f8fd4200a2a844c0329a876a515406e053a99",
-      "result": "proposed"
+      "result": "pending"
     },
     {
+      "evidenceId": "evidence:57fcbcd1e459ed4e6dc4241ed201ad29",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/governance/GATE_EVIDENCE_MODEL_V2.md",
-      "sha256": "e05366f018d6a9448a5444d1e3b3962d66c2ed74da5005a29a74091a7b3b44e1",
-      "result": "proposed"
+      "sha256": "9414fde7f8d9a5ba9be968cc76f5ebc271db1f97ebb945230269a771215cefc8",
+      "result": "pending"
     },
     {
-      "kind": "ArchitectureContractEvidence",
+      "evidenceId": "evidence:1e9a85b06cd2183f3901b9027db03abf",
+      "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
       "sha256": "cadbfa4425126724bfc57078e1de27646b9163860239ecefb26f94bf17809507",
-      "result": "proposed_ready_for_independent_review"
+      "result": "pending"
     },
     {
+      "evidenceId": "evidence:de364c83837d9be329d9c6fac6c839be",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/ADR_011_SCHEMA_DRAFT_V1.json",
       "sha256": "0ae74b95de361eb49b9c996b2a57c86c86ab2c0574a07739eb52a522cb794435",
-      "result": "draft_2020_12_validated"
+      "result": "pass"
     },
     {
+      "evidenceId": "evidence:de1b0d630d716722a6ccb653e3ecb826",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
       "sha256": "2e2fae10abb5b923ce5ff7d42e3639f401ce049fcde3c47e9bec33e2007fa799",
-      "result": "self_review_complete"
+      "result": "pending"
     },
     {
+      "evidenceId": "evidence:acfd4e7c53bc15ff751fa170ef58f57c",
       "kind": "ArchitectureContractEvidence",
       "path": "tests/fixtures/adr_011_sequences_v1.json",
       "sha256": "bc52f3c6ad0af41d006488d5c3ae603710127be973e435e36aaa0336ae295629",
       "result": "pass"
     },
     {
+      "evidenceId": "evidence:d9d22c2431808c38fb12502f736457f7",
       "kind": "ArchitectureContractEvidence",
       "path": "tests/fixtures/adr_011_schema_records_v1.json",
       "sha256": "b7d5d23a9e6144608cc531ff802a058e1f8305dd23009f4f1bfacb765fb400b5",
       "result": "pass"
     },
     {
-      "kind": "SoftwareVerificationEvidence",
-      "path": "tests/core/test_adr_011_contract.py",
-      "sha256": "74e68e3ef2be6b16d6472798337a1c346bfa1f38fbb8bb509f234975d11f1bbc",
-      "protocol": ".\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q",
-      "result": "pass",
-      "details": "targeted ADR-011 Python contract passed directly",
-      "verificationMode": "direct",
-      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe -m pytest tests\\core\\test_adr_011_contract.py -q"
-    },
-    {
+      "evidenceId": "evidence:6ac60e19a14c9d6d0aa528a6222c4f2e",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PLATFORM_CONTRACT_PACK_V1.md",
       "sha256": "73c4f5e900011f33ee837329336a2e48e135888ab2d21ed475b80e6664dbc7c8",
-      "result": "ready_for_independent_review"
+      "result": "pending"
     },
     {
+      "evidenceId": "evidence:9dea6d4574d0b93f52fa11ee7ba09e54",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-012-project-package-commit-authority.md",
       "sha256": "263f51694a6c3da4b0c297bf6d41ef9e2c72bab23ae7c8d7402fb07fdea96d05",
-      "result": "proposed"
+      "result": "pending"
     },
     {
+      "evidenceId": "evidence:9fd37d0af47316e5d25f6b2d5af416c6",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
       "sha256": "956c61f96d6d44dd470c680f2dc77839a2e0cc37fe0ccec4e1195eeae5e9244a",
-      "result": "proposed"
+      "result": "pending"
     },
     {
+      "evidenceId": "evidence:1cfb8c36697c224cdd53bd8af04857da",
       "kind": "DeterminismEvidence",
       "path": "tests/fixtures/rng_known_answers_v1.json",
       "sha256": "2a25dca59c4b8367f2f79bbd81228668f377efb86dd07ac289eb13c2877c8851",
       "result": "pass"
     },
     {
+      "evidenceId": "evidence:c7b6d2f5d7510942293f58cf103ea9bf",
       "kind": "SoftwareVerificationEvidence",
       "path": "apps/desktop/web/app.js",
-      "protocol": "node --check apps/desktop/web/app.js",
+      "sha256": "957f288df4d69abbdd02c2b15eb0620bc7d41874612c309dd7859560bf9bbaf2",
       "result": "pass",
+      "protocol": "node --check apps/desktop/web/app.js",
       "details": "desktop JavaScript syntax passed",
       "verificationMode": "direct",
       "executedCommand": "node --check apps/desktop/web/app.js"
     },
     {
+      "evidenceId": "evidence:865c474e749ca573ef0965bd7fccde2d",
+      "kind": "SoftwareVerificationEvidence",
+      "path": "scripts/check.py",
+      "sha256": "dab9d59229d02df6f2a48edc792d513693a67d6f1a38b6f30dae1287be30875f",
+      "result": "pass",
+      "protocol": ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
+      "details": "required Python and documentation gate passed",
+      "verificationMode": "direct",
+      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe -I scripts/check.py"
+    },
+    {
+      "evidenceId": "evidence:4f6ba705e33852e273a7dcb83b5bf37e",
+      "kind": "SoftwareVerificationEvidence",
+      "path": "tests/core/test_adr_011_contract.py",
+      "sha256": "5d22ecd343e86556645f532143714785ee5d0b746259b491544bb9b529b9e8bc",
+      "result": "pass",
+      "protocol": ".\\.venv\\Scripts\\python.exe -I scripts\\pytest_runner.py tests\\core\\test_adr_011_contract.py -q",
+      "details": "targeted ADR-011 Python contract passed through the hermetic runner",
+      "verificationMode": "direct",
+      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe -I scripts/pytest_runner.py tests\\core\\test_adr_011_contract.py -q"
+    },
+    {
+      "evidenceId": "evidence:068d43468da41b57daad5a5b64543fb9",
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
-      "protocol": "cargo fmt --all --check",
+      "sha256": "c4e770c7c71994b04597fbb7d2b47cfbd14e7e5f5e27fb2e76473137ca74d60d",
       "result": "pass",
+      "protocol": "cargo +1.88.0 fmt --all --check",
       "details": "no formatting differences",
       "verificationMode": "direct",
-      "executedCommand": "cargo fmt --all --check"
+      "executedCommand": "cargo +1.88.0 fmt --all --check"
     },
     {
+      "evidenceId": "evidence:cf06cb178c887bf8c178671a86e7895b",
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
-      "protocol": "cargo test --workspace --locked",
+      "sha256": "c4e770c7c71994b04597fbb7d2b47cfbd14e7e5f5e27fb2e76473137ca74d60d",
       "result": "pass",
+      "protocol": "cargo +1.88.0 test --workspace --locked",
       "details": "Rust workspace tests passed",
       "verificationMode": "direct",
-      "executedCommand": "cargo test --workspace --locked"
+      "executedCommand": "cargo +1.88.0 test --workspace --locked"
     },
     {
+      "evidenceId": "evidence:3be156baa440e0dcc978804a2731a08d",
       "kind": "SoftwareVerificationEvidence",
       "path": "crates/telysta-core/tests/adr_011_schema_records.rs",
-      "protocol": "cargo test -p telysta-core --test adr_011_schema_records --locked",
+      "sha256": "f904cef2358458d4d03562ed93ddaa7fb8d5dae47160856786ad04ade6e8fc08",
       "result": "pass",
+      "protocol": "cargo +1.88.0 test -p telysta-core --test adr_011_schema_records --locked",
       "details": "targeted ADR-011 Rust contract passed directly",
       "verificationMode": "direct",
-      "executedCommand": "cargo test -p telysta-core --test adr_011_schema_records --locked"
+      "executedCommand": "cargo +1.88.0 test -p telysta-core --test adr_011_schema_records --locked"
     },
     {
+      "evidenceId": "evidence:43b009dcdfc99785433f2a449eaf2c68",
       "kind": "SoftwareVerificationEvidence",
       "path": "crates/telysta-core/tests/rng_known_answers.rs",
-      "protocol": "cargo test -p telysta-core --test rng_known_answers --locked",
+      "sha256": "c8fb60d29b5ed65866a1b14360b3e96f971101c975a98f9dac25830b7d002c49",
       "result": "pass",
+      "protocol": "cargo +1.88.0 test -p telysta-core --test rng_known_answers --locked",
       "details": "targeted Rust RNG known answers passed directly",
       "verificationMode": "direct",
-      "executedCommand": "cargo test -p telysta-core --test rng_known_answers --locked"
+      "executedCommand": "cargo +1.88.0 test -p telysta-core --test rng_known_answers --locked"
     },
     {
+      "evidenceId": "evidence:bbeb19192b1d2f6d56756b1b50f9a9ef",
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
-      "protocol": "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "sha256": "c4e770c7c71994b04597fbb7d2b47cfbd14e7e5f5e27fb2e76473137ca74d60d",
       "result": "pass",
+      "protocol": "cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings",
       "details": "zero warnings",
       "verificationMode": "direct",
-      "executedCommand": "cargo clippy --workspace --all-targets --locked -- -D warnings"
+      "executedCommand": "cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings"
+    },
+    {
+      "evidenceId": "evidence:78c601865f5c07d2115ad640e195df1f",
+      "kind": "SoftwareVerificationEvidence",
+      "path": "apps/desktop/src-tauri/Cargo.toml",
+      "sha256": "6e1ada2e88aa95ad227552107ccf000ea3734fa872d9485d743f7c23346b98d3",
+      "result": "pass",
+      "protocol": "cargo +1.88.0 build -p telysta-desktop --locked",
+      "details": "desktop application compiled with the exact workspace MSRV",
+      "verificationMode": "direct",
+      "executedCommand": "cargo +1.88.0 build -p telysta-desktop --locked"
+    },
+    {
+      "evidenceId": "evidence:a70a6cf2e4b41a464e57fd48eec12474",
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/GATE_EVIDENCE_MANIFEST_V3.schema.json",
+      "sha256": "0e6ebb16b2eee74e8d40fd0424d4160423219d0f898afa72d46208ad06891e6a",
+      "result": "pass"
+    },
+    {
+      "evidenceId": "evidence:54ac74103f6b57e20f3cf51173738859",
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/G0A_POLICY_V2.schema.json",
+      "sha256": "89597e61e12dacb868eeba85eacc9afae8c8212abd2dcda83d72326378747ed4",
+      "result": "pass"
+    },
+    {
+      "evidenceId": "evidence:c52db9356142bde3e77c7f98583d8166",
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/G0A_POLICY_V2.json",
+      "sha256": "0181114273d797ff6b51e8bf092a9902cd7e01f853b4db395dbe29c65023ad49",
+      "result": "pending"
+    },
+    {
+      "evidenceId": "evidence:b85d8c01a502f3ea2f00f9a030e0cdbf",
+      "kind": "ArchitectureContractEvidence",
+      "path": "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
+      "sha256": "8a5c5e8f2446c07222b0b3eb6c60e3355c8ce890c08079fad797ae2652b9d7c6",
+      "result": "pending"
     }
   ],
   "requirements": [
@@ -264,74 +295,134 @@
       "id": "R0A-01",
       "name": "testable product wedge and allowed claims",
       "status": "ready_for_review",
-      "evidencePaths": [
-        "docs/PRODUCT_DEVELOPMENT_PLAN.md"
-      ]
+      "evidenceRefs": [],
+      "terminalEvidence": null
     },
     {
       "id": "R0A-02-ADR011",
       "name": "Project/Operation/Run/Job identity decision",
       "status": "blocked",
-      "evidencePaths": [
-        "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
-        "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
-        "docs/ADR_011_SCHEMA_DRAFT_V1.json",
-        "tests/fixtures/adr_011_schema_records_v1.json",
-        "tests/fixtures/adr_011_sequences_v1.json",
-        "tests/core/test_adr_011_contract.py",
-        "crates/telysta-core/tests/adr_011_schema_records.rs"
+      "reason": "ADR-011 remains Proposed pending named code-owner, independent architecture and migration review",
+      "evidenceRefs": [
+        "evidence:1e9a85b06cd2183f3901b9027db03abf",
+        "evidence:de1b0d630d716722a6ccb653e3ecb826",
+        "evidence:de364c83837d9be329d9c6fac6c839be",
+        "evidence:d9d22c2431808c38fb12502f736457f7",
+        "evidence:acfd4e7c53bc15ff751fa170ef58f57c",
+        "evidence:4f6ba705e33852e273a7dcb83b5bf37e",
+        "evidence:3be156baa440e0dcc978804a2731a08d"
       ],
-      "reason": "ADR-011 remains Proposed pending named code-owner, independent architecture and migration review"
+      "terminalEvidence": null
     },
     {
       "id": "R0A-03",
       "name": "application, staging, query, dependency bundle and replay contract pack",
       "status": "ready_for_independent_review",
-      "evidencePaths": [
-        "docs/PLATFORM_CONTRACT_PACK_V1.md",
-        "docs/adr/ADR-012-project-package-commit-authority.md"
+      "reason": "contract boundaries and fake-task acceptance are specified; ADR-011/012 remain Proposed pending independent review",
+      "evidenceRefs": [
+        "evidence:6ac60e19a14c9d6d0aa528a6222c4f2e",
+        "evidence:9dea6d4574d0b93f52fa11ee7ba09e54"
       ],
-      "reason": "contract boundaries and fake-task acceptance are specified; ADR-011/012 remain Proposed pending independent review"
+      "terminalEvidence": null
     },
     {
       "id": "R0A-04",
       "name": "RNG decision record and compatibility policy",
       "status": "ready_for_independent_review",
-      "evidencePaths": [
-        "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
-        "tests/fixtures/rng_known_answers_v1.json",
-        "crates/telysta-core/tests/rng_known_answers.rs"
+      "reason": "legacy behavior, distribution versions, overflow and replay policy are explicit; ADR-013 remains Proposed pending independent review",
+      "evidenceRefs": [
+        "evidence:9fd37d0af47316e5d25f6b2d5af416c6",
+        "evidence:1cfb8c36697c224cdd53bd8af04857da",
+        "evidence:43b009dcdfc99785433f2a449eaf2c68"
       ],
-      "reason": "legacy behavior, distribution versions, overflow and replay policy are explicit; ADR-013 remains Proposed pending independent review"
+      "terminalEvidence": null
     },
     {
       "id": "R0A-05",
       "name": "reviewed clean-checkout repository baseline",
-      "status": "ready_for_independent_review",
-      "evidencePaths": [],
-      "reason": "the worktree is clean; independent clean-checkout reproduction is still required"
+      "status": "failed",
+      "reason": "the generated-evidence inputs contain 35 modified or untracked entries; HEAD does not contain the reviewed Rust/Tauri/doc baseline",
+      "evidenceRefs": [],
+      "terminalEvidence": {
+        "evidenceId": "evidence:5a31af4f67019c72b69c3c5a8d17bfe2",
+        "path": "docs/evidence/R0A_05_CLEAN_BASELINE_TERMINAL_V1.json",
+        "kind": "RepositoryBaselineEvidence",
+        "result": "pending",
+        "sha256": null
+      }
     },
     {
       "id": "R0A-06",
       "name": "GateEvidenceManifest v2",
       "status": "ready_for_independent_review",
-      "evidencePaths": [
-        "docs/GATE_EVIDENCE_MANIFEST_V1.schema.json",
-        "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json",
-        "docs/G0A_POLICY_V1.json",
-        "docs/governance/GATE_EVIDENCE_MODEL_V2.md",
-        "scripts/generate_gate_evidence.py",
-        "tests/core/test_gate_evidence_generator.py",
-        "docs/G0A_GATE_EVIDENCE_2026-07-17.json"
+      "reason": "GateEvidence v3 and policy v2 implementation candidate requires independent review",
+      "evidenceRefs": [
+        "evidence:bfa8c26884068b11ffe4e52f67c4da3a",
+        "evidence:cbc1156e1326a5e25e9d57da9d3a3570",
+        "evidence:1058648372bf725decb2df32381a2a7c",
+        "evidence:57fcbcd1e459ed4e6dc4241ed201ad29",
+        "evidence:a70a6cf2e4b41a464e57fd48eec12474",
+        "evidence:54ac74103f6b57e20f3cf51173738859",
+        "evidence:c52db9356142bde3e77c7f98583d8166",
+        "evidence:b85d8c01a502f3ea2f00f9a030e0cdbf"
       ],
-      "reason": "Draft 2020-12 schema, exact G0A requirement/protocol checks, runtime binding and adversarial tests are implemented; independent review remains required"
+      "terminalEvidence": null
     },
     {
       "id": "R0A-07",
       "name": "named owners, independent reviewers, capacity, estimate, WIP and timebox",
       "status": "incomplete",
-      "evidencePaths": [],
-      "reason": "no verifiable human owner, reviewer or team-capacity record exists in the repository"
+      "reason": "DeliveryReadiness v1 has no complete R0A/R1 work-package records",
+      "evidenceRefs": [],
+      "terminalEvidence": {
+        "evidenceId": "evidence:642642b54a17be2b80eaa5748edc393b",
+        "path": "docs/evidence/R0A_07_DELIVERY_READINESS_TERMINAL_V1.json",
+        "kind": "DeliveryReadinessEvidence",
+        "result": "pending",
+        "sha256": null
+      }
+    },
+    {
+      "id": "R0A-08",
+      "name": "verification trust, cross-platform provenance and verifier lease",
+      "status": "incomplete",
+      "evidenceRefs": [],
+      "terminalEvidence": {
+        "evidenceId": "evidence:32e0fb32c52222f1841e593e0140362c",
+        "path": "docs/evidence/R0A_08_VERIFICATION_TRUST_TERMINAL_V1.json",
+        "kind": "SoftwareVerificationEvidence",
+        "result": "pending",
+        "sha256": null
+      },
+      "reason": "hermetic local candidates exist, but independent review, verifier lease and trusted Windows/Linux fresh-checkout provenance are incomplete"
+    },
+    {
+      "id": "R0A-09",
+      "name": "current v1 authority repair",
+      "status": "incomplete",
+      "evidenceRefs": [],
+      "terminalEvidence": {
+        "evidenceId": "evidence:a42edaf7950c2d25d1b31aec51f985eb",
+        "path": "docs/evidence/R0A_09_CURRENT_V1_AUTHORITY_TERMINAL_V1.json",
+        "kind": "AuthorityIntegrityEvidence",
+        "result": "pending",
+        "sha256": null
+      },
+      "reason": "create-if-absent, append-only extension, migration archive and as-of projection fault evidence are incomplete"
+    },
+    {
+      "id": "R0A-10",
+      "name": "legacy evidence containment",
+      "status": "incomplete",
+      "evidenceRefs": [],
+      "terminalEvidence": {
+        "evidenceId": "evidence:c8fb1e50a9bb0f99c294eb9415a27b21",
+        "path": "docs/evidence/R0A_10_LEGACY_CONTAINMENT_TERMINAL_V1.json",
+        "kind": "LegacyContainmentEvidence",
+        "result": "pending",
+        "sha256": null
+      },
+      "reason": "raw legacy bytes, manifests and exact failure fingerprints are not frozen under independent review"
     }
   ],
   "blockers": [
@@ -342,18 +433,38 @@
     },
     {
       "severity": "blocking",
-      "id": "G0A-B02",
-      "summary": "clean-checkout repository baseline is absent"
-    },
-    {
-      "severity": "blocking",
       "id": "G0A-B03",
       "summary": "ADR-012 platform authority and ADR-013 RNG compatibility lack independent approval"
     },
     {
       "severity": "blocking",
+      "id": "G0A-B97",
+      "summary": "the v2-to-v3 migration candidate requires independent review under GateEvidence v3 and G0A policy v2"
+    },
+    {
+      "severity": "blocking",
+      "id": "G0A-B02",
+      "summary": "clean-checkout repository baseline terminal evidence is absent"
+    },
+    {
+      "severity": "blocking",
       "id": "G0A-B04",
-      "summary": "named ownership, independent reviewers and capacity are unassigned"
+      "summary": "complete delivery readiness and independent approval are absent"
+    },
+    {
+      "severity": "blocking",
+      "id": "G0A-B05",
+      "summary": "verification trust terminal evidence and Windows/Linux provenance are absent"
+    },
+    {
+      "severity": "blocking",
+      "id": "G0A-B06",
+      "summary": "current v1 authority fault-matrix terminal evidence is absent"
+    },
+    {
+      "severity": "blocking",
+      "id": "G0A-B07",
+      "summary": "legacy containment terminal evidence is absent"
     }
   ],
   "owner": null,
@@ -365,5 +476,14 @@
     "RNG known answers, storage authority, application or replay contracts change",
     "any recorded verification command stops passing"
   ],
-  "nextDecision": "obtain independent ADR-011/012/013 and GateEvidence v2 review, establish a reviewed clean-checkout subject/attestation baseline, and assign accountable owners/capacity before re-evaluating G0A"
+  "nextDecision": "obtain independent ADR-011/012/013 and GateEvidence v2 review, establish a reviewed clean-checkout subject/attestation baseline, and assign accountable owners/capacity before re-evaluating G0A",
+  "deliveryReadiness": {
+    "schemaVersion": "telysta-delivery-readiness.v1",
+    "workPackages": []
+  },
+  "gatePolicy": {
+    "path": "docs/G0A_POLICY_V2.json",
+    "schemaVersion": "telysta-g0a-policy.v2",
+    "sha256": "0181114273d797ff6b51e8bf092a9902cd7e01f853b4db395dbe29c65023ad49"
+  }
 }

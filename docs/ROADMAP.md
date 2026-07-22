@@ -3,7 +3,7 @@ document_type: roadmap
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-07-18
+last_verified: 2026-07-19
 owner: unassigned
 reviewers: []
 ---
@@ -12,7 +12,7 @@ reviewers: []
 
 - 状态：`Active planning baseline / pending reviewed subject`
 - 基线日期：2026-07-12
-- 最近路线修订：2026-07-18
+- 最近路线修订：2026-07-19
 - 适用范围：引擎、桌面客户端、规则系统、项目存储与质量体系
 - 维护方式：每个阶段结束时更新状态和证据，不以功能数量代替完成度
 
@@ -122,9 +122,9 @@ Python Research Lab
 | 里程碑 | 必须证明的结果 | 主要映射阶段 |
 |---|---|---|
 | R0A 计划/平台合同修复 | 首发 wedge、ADR 拓扑、Project/Run/Job、Gate 证据和 clean baseline | A–B–F |
-| R0B WS-1 领域证据 | Grammar/Meaning、Canon/TaskPack、evaluator、模型/数据证据与 Meaning Workbench | C–F–G |
+| R0B WS-1 领域证据 | Grammar/Meaning、Canon/TaskPack、execution manifest/runner contract、evaluator、模型/数据证据与 Meaning Workbench | C–F–G |
 | R1 平台收口 | application service、Project/Operation/Run ledger shell、JobStore/journal、版本化 API/query、staging、取消/恢复和存储基准 | A–B–F |
-| R2 / WS-1 可执行微型语言 | Blueprint → 多候选 Genesis → 最小双向语法/任务 → seal/create/reopen → 一个结构 ChangeSet → replay/explain | B–C–F–G |
+| R2 / WS-1 可执行微型语言 | Blueprint → 多候选 Genesis → 最小双向语法/任务 → Orthography/IGT round trip → ChangeSet → history/seal/create/reopen → replay/explain | B–C–F–G |
 | R3 Story Language Kit | Canon-first、Onomasticon、生产性构词、Scene Lab、Canon impact、RulePack v1 | C–E–F–G |
 | R3B WS-2 模型就绪 | SpeechCommunity/Variation/Process ADR、ExperimentRunner、参数辨识与 storage Go/No-Go | D–G |
 | R4 / WS-2 Mechanistic Change v1 | innovation、competing variants、typed usage observation、传播失败、常规化、替代模型与消融 | D–G |
@@ -132,7 +132,7 @@ Python Research Lab
 | R6 Production Conlang | R3 后并行单语言篇章/文学轨；R5 后集成历史、审计与 Language Bible | F–G–H |
 | R7 Core Release + Optional Trains | core 安装迁移/恢复；Speech、LLM、Extension 分列发布 | H |
 
-WS-1 不等待所有领域模型完成。其主轮廓固定为一个小型音系与韵律系统、一个名词范式、一个动词范式、三类核心构式、30–50 个锁定概念、3–5 个候选、最小 CanonSeed 和一条 typed sound change；另有一个结构非同构的紧凑对照 fixture，防止 IR 被单一类型锁死。它必须包含 Meaning Workbench、四类 TaskPack、双向语义 probes、IGT、独立 evaluator、Tauri 创建/查看和 typed `ExpressionGap`。这一阶段只证明“可执行语言与可审计结构变换”，不得宣称真实传播。
+WS-1 不等待所有领域模型完成。其主轮廓固定为一个小型音系与韵律系统、一个名词范式、一个动词范式、三类核心构式、30–50 个锁定概念、3–5 个候选、最小 CanonSeed、一套规则化 Orthography v0 和一条 typed sound change；另有一个结构非同构的紧凑对照 fixture，防止 IR 被单一类型锁死。它必须包含 Meaning Workbench、四类 TaskPack、Linguistic Execution Manifest、双向语义与拼写 probes、由同一分析图投影的 IGT、独立 evaluator、Tauri 创建/查看和 typed `ExpressionGap`。R2 的 canon impact 仅为 CanonSeed compatibility preview，不创建 AuthorCanonCorpus/CanonRelease；这一阶段只证明“可执行语言与可审计结构变换”，不得宣称产品易用或真实传播。
 
 执行门不可跳级：G0A 关闭后允许 R1 平台 walking skeleton 与 R0B 并行；只有 G1 与 G0B 同时关闭后才进入 WS-1 权威 schema 和生产纵切。G3 与 G3B 同时关闭后才进入 WS-2。fixture、反例与不写正式状态的测试材料可提前准备。
 
@@ -303,8 +303,8 @@ Story Language Kit 必须先于 WS-2：它提供可执行 Grammar、真实作者
 |---|---|---|
 | 0.2 Deterministic Baseline | 旧引擎黄金场景、分域哈希和已知缺陷报告 | A |
 | 0.3 Platform Baseline | G0A/G1、application/JobStore、版本化 API/query、取消/恢复与存储基准 | A–B–F |
-| 0.4 Executable Micro-language | WS-1 多候选 Genesis、双向语法、IGT、结构 ChangeSet 与 explain | B–C–F–G |
-| 0.5 Story Language Kit | Canon、命名、Scene Lab、生产性构词、RulePack 与创作者 Alpha | C–E–F–G |
+| 0.4 Executable Language Preview | WS-1 多候选 Genesis、双向语法、Orthography/IGT、结构 ChangeSet 与 explain；不得称 Alpha/canon-safe | B–C–F–G |
+| 0.5 Canon-first Alpha | AuthorCanonCorpus、命名、Scene Lab、生产性构词、Canon impact、release/export 与创作者验证 | C–E–F–G |
 | 0.6 Mechanistic Change Simulator v1 | WS-2 变体、传播失败/成功/稳定、参数恢复、常规化与消融 | D–G |
 | 0.7 Language Family Forge | 两分支、接触、借词适应、规律对应和重建挑战 | D–E–F |
 | 0.8 Production Conlang Beta | 多语体、复杂场景、文学任务、Quality Lab 和专家审计 | F–G–H |
@@ -314,7 +314,7 @@ Story Language Kit 必须先于 WS-2：它提供可执行 Grammar、真实作者
 
 当前从 R0A 平台/仓库决策与 R0B 领域/产品证据并行继续；后续实现严格按下列 Next/Blocked 状态推进：
 
-### A-001：开发环境与 CI ✅
+### A-001：开发环境与 CI ⚠ Reopened by 2026-07-19 review
 
 完成日期：2026-07-12
 
@@ -326,6 +326,18 @@ Story Language Kit 必须先于 WS-2：它提供可执行 Grammar、真实作者
 - 本地基线为 474 项测试全部通过；
 - CI 验证 Linux 3.10/3.12/3.14 与 Windows 3.13；
 - Windows、macOS 和 Linux 安装流程记录于 `docs/DEVELOPMENT_SETUP.md`。
+
+复审修正：原完成记录保留为历史，但不再作为当前关闭证据。pytest 可在
+`--collect-only` 下零执行成功；Gate 失败可能保留旧 passed；声明的 Rust 1.77.2
+与 lock graph/实际 1.96 evidence 不一致，Linux desktop job 也未证明 Tauri 原生依赖。
+COR-05 已在当前工作树完成 hermetic runner 与 fail-closed evidence 的本地实现检查点：
+33 项定向测试通过并证明 `collected=33, executed=33`，hostile addopts 下的最终完整门
+实际执行 588 项，结果为 `580 passed, 8 xfailed`。但这不是通过性 GateEvidence；独立
+复核、clean subject 与受信远端 provenance 仍未完成。单 verifier lease 及锁竞争负例
+已经形成后续本地实现候选。COR-07 已将 locked graph、workspace、toolchain、generator 与 CI 的
+候选 MSRV 统一到 1.88.0，Windows exact gate 本地通过；Linux/fresh-checkout CI 与
+provenance 仍待远端。当前关闭包仍为
+`R0A-08 Verification Trust Repair`，状态保持 `In progress`。
 
 ### A-002：黄金场景与状态哈希 ✅
 
@@ -392,6 +404,12 @@ Story Language Kit 必须先于 WS-2：它提供可执行 Grammar、真实作者
 - desktop checkpoint 增加 checksum、临时文件替换和双槽恢复，Tauri CSP 不再关闭；
 - CI 固定 Rust 1.77.2、使用 lockfile，并验证 workspace、desktop 链接与 Clippy。
 
+复审修正：最后一项只描述 CI 命令意图，不能再表述为已证明的 MSRV。真实 MSRV
+必须由兼容的 locked dependency graph 和 Windows/Linux 精确工具链运行共同证明。
+COR-07 的本地修正选择 1.88.0：Windows exact gate 已通过，Linux workflow 已准备，
+但 reviewed subject 上的远端运行与 provenance 尚不存在，因此 B-001.1 的该项仍在
+重新验证中。原 1.77.2 记录只保留为历史，不再是当前兼容声明。
+
 ### B-002：Canonical LanguageState Schema ✅
 
 完成日期：2026-07-13
@@ -445,13 +463,18 @@ Story Language Kit 必须先于 WS-2：它提供可执行 Grammar、真实作者
 - 正常加载只接受当前项目格式；旧的独立 history 必须经显式、版本化迁移器升级，源文件会先归档；
 - 覆盖中断恢复、checksum 篡改、迁移和派生索引重建测试；详见 [Project Storage v1](./PROJECT_STORAGE_V1.md)。
 
-### FND-008.1：存储完整性与并发收口 ✅
+### FND-008.1：存储完整性与并发收口 ⚠ Reopened by 2026-07-19 review
 
 完成日期：2026-07-14
 
 - SQLite 索引必须逐事件与权威 history 对照；元数据未变但行被篡改时也会重建；
 - 全部写入与迁移路径使用进程内/跨进程写 lease；`save_if_current` 以 history hash 拒绝陈旧编辑器覆盖；
 - 迁移 journal 使发布中断可续跑，重复迁移器注册不再污染 registry。
+
+复审发现剩余阻断：create 的存在性检查不在同一 lease 内；`commit_history` 未验证
+候选是当前 history 的前缀扩展；archive/journal 和 SQLite projection 存在完整性/
+TOCTOU 缺口。当前关闭包为 `R0A-09 Current v1 Authority Repair`；修复前不得向
+Tauri 暴露 create/commit。
 
 ### PLT-002：桌面项目持久化契约 ← Paused；剩余范围归入 R1
 
@@ -484,18 +507,28 @@ Story Language Kit 必须先于 WS-2：它提供可执行 Grammar、真实作者
 - 冻结首发 Story Language Kit wedge、1.0 范围、非目标和允许声明；
 - 修复 ADR 依赖图，并先接受 ProjectManifest/RunLedger/Operation/Job、RNG、application/staging/query/dependency bundle 与 storage authority 中影响持久化/回放的决定；R0A-03 [平台合同包](./PLATFORM_CONTRACT_PACK_V1.md)、[ADR-012](./adr/ADR-012-project-package-commit-authority.md) 与 R0A-04 [ADR-013](./adr/ADR-013-rng-compatibility-and-distribution-versioning.md) 的评审材料及 RNG known-answer 已就绪，但仍为 Proposed；
 - ADR-011 的 schema 草案、四条序列 fixture、负例、责任矩阵和迁移自审已经就绪；当前等待具名 code owner、独立架构 reviewer 与 migration reviewer 批准，仍不得实施持久化身份；
-- 已生成 [G0A GateEvidence](./G0A_GATE_EVIDENCE_2026-07-17.json)；当前决策为 `blocked`，因为 ADR-011/012/013 独立批准、clean-checkout 与具名 owner/reviewer 仍未完成；
+- 已将 [G0A GateEvidence](./G0A_GATE_EVIDENCE_2026-07-17.json) 强制迁移为 v3 候选；当前决策为 `blocked`；ADR-011/012/013 独立批准、clean-checkout、具名 owner/reviewer、完整 DeliveryReadiness、Windows/Linux provenance 与 R0A-05/07/08/09/10 terminal evidence 仍未完成；
 - 已提供 [G0A 独立评审与 Clean Baseline 交接](./governance/G0A_REVIEW_AND_BASELINE_HANDOFF.md)和可执行 worktree 清单；它冻结待审对象哈希、区分 subject/attestation，并拦截瞬态产物与危险文件操作，但不替代人工批准或 Git 提交；
 - 继续补齐 owner/reviewer、容量、估算、WIP 与 timebox；
+- Proposed G0A policy v2 已精确要求 `R0A-01`、`R0A-02-ADR011`、`R0A-03`、`R0A-04`、`R0A-05`、`R0A-06`、`R0A-07`、`R0A-08`、`R0A-09`、`R0A-10`，并机器验证 R0A-07 的完整 DeliveryReadiness；旧 policy 下的 passed 不满足当前启动门，v2 仍待独立接受；
+- COR-05 已完成 hermetic test runner、fail-closed GateEvidence、单 verifier lease 与
+  锁竞争恶意负例的本地实现检查点，但仍待独立复核、clean subject 和受信远端复验；
+  GateEvidence 为权威源，STATUS 发生输出撕裂时必须被重写或删除后重建；
+- COR-07 已完成 1.88.0 MSRV 与 Windows gate 的本地实现候选；继续取得 Linux/
+  fresh-checkout CI 和受信 provenance。旧 software pass 不再证明 MSRV；
+- 完成 `R0A-09`：在不改变 v1 schema/hash/replay 的范围内修复
+  create-if-absent、append-only history、archive/journal 复验和 index as-of binding；
+- 完成 `R0A-10`：冻结 raw legacy replay/非法 golden/RNG 与 query-mutation 证据，
+  将 Python CLI/Streamlit 明确隔离为 Legacy Lab；
 - 审查并纳入当前 Rust/Tauri/CI/合同/fixture，形成 clean-checkout 证据；
 - 关闭 G0A 后，R1 平台 walking skeleton 可与 R0B 并行。
 
 ### R0B-EVIDENCE：WS-1 领域与产品证据 ← Parallel Next
 
 - 当前 R0B evidence preparation 为 `in progress`，具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`；G0B=`not evaluated` 且没有通过性 GateEvidence；
-- 按 `ADR-008 → ADR-014 → ADR-009 → ADR-010 → ADR-007 umbrella` 接受领域决定，或在对应节点接受 ADR Index 所定义的显式 replacement ADR，冻结 Meaning/Grammar/Lexical Class/Realization/Task/Canon/evaluator 的边界；ADR-009 的跨 Gate 前置是 ADR-011，ADR-010 的跨 Gate 前置是 ADR-011/012/013；
-- 冻结主 profile、结构非同构对照、Capability Matrix、四类 evaluator pack、CorpusRole、反例与数据 execution slice；
-- 制作 `Brief → Meaning Workbench → Candidate Audition → Scene Lab → Word Time Machine → Export` 低保真原型，并用目标作者真实 canon 验证；
+- 按 `ADR-008 → ADR-014 → ADR-009 → ADR-010 → ADR-007 umbrella` 接受领域决定，或在对应节点接受 ADR Index 所定义的显式 replacement ADR，冻结 Meaning/Grammar/Lexical Class/Realization/Task/Canon/evaluator 的边界；ADR-014/replacement 必须补齐稳定 `OrthographicForm/SpellingRealization` 身份键、owner、semantic hash、migration/replay、保守拼写与独立拼写改革语义；其内部顺序固定为 `R0B-01A-D ADR draft → R0B-04B-D review vectors → R0B-01A Accepted → R0B-04B frozen pack`，避免 ADR 与 fixture 循环；ADR-009 的跨 Gate 前置是 ADR-011，ADR-010 的跨 Gate 前置是 ADR-011/012/013；
+- 冻结主 profile、结构非同构对照、Capability Matrix、四类 evaluator pack、CorpusRole、Orthography/IGT/PCU hostile fixtures、数据 execution slice，以及不自称通过结果的 Linguistic Execution Manifest/adapter contract；拼写 round trip 以 typed WordForm/analysis occurrence + OrthographyRevision（或 ADR 接受的等价 identity）为键，不以裸音系串为键；G0B 只验 contract/harness/registry 与当下可执行命令，G-LANG/G-CHANGE 的真实 Rust adapter 在 G2 才成为硬门；
+- 先执行无领域 schema 依赖的 `R0B-06P`，制作 `FormativeJourney.r0b` 的 `Brief → Meaning Workbench → Candidate Audition → Scene/History Preview → Export` 低保真原型，并用目标作者真实 canon 验证；原型不得写正式状态；待 R0B-01/02 完成后，再由 R0B-06 把发现编译为正式产品 evidence contract；
 - 固定 Genesis TheoryProfile、ODD/TRACE、ModelEvidence 与 parameter recovery/identifiability 模板；
 - 关闭 G0B 后仍须等待 G1，二者共同放行 WS-1。
 
@@ -505,7 +538,7 @@ Story Language Kit 必须先于 WS-2：它提供可执行 Grammar、真实作者
 
 - 将下一持久化领域模型明确为 `telysta-language-state.v3`，不与现有 v2 时间迁移版本混淆；
 - Blueprint、LanguageState、Genesis 编译器和 UI 共用 ADR-008 的 RegistryBundle/typed FeatureValue 合同；
-- 补齐音段特征、异音与分布、音系配列/韵律、形态形式/异形/范式、typed constructions 与语义角色；
+- 在 Orthography authority ADR Accepted 后，补齐音段特征、异音与分布、音系配列/韵律、形态形式/异形/范式、typed constructions、语义角色、Orthography v0 与同图 IGT projection；音变不得静默重写拼写；
 - 用 ADR-009 的原子 ChangeSet 取代生产历史中的完整状态替换，并定义 deterministic reducer；
 - 引入 ADR-010 的 `GenesisArtifact` capability，锁定 Blueprint、Registry、数据、规则、RNG、能力和质量报告；
 - 以 [ADR-007](./adr/ADR-007-language-state-v3-change-event-ir.md) 为 umbrella 做一致性评审，并按 [ADR-008](./adr/ADR-008-registry-bundle-domain-registries.md) → [ADR-014](./adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md) → [ADR-009](./adr/ADR-009-atomic-change-set-and-usage-observations.md) → [ADR-010](./adr/ADR-010-genesis-artifact-trust-boundary.md) → ADR-007 最终接受的依赖顺序收口；全部 Accepted 后才按 WS-1 最小端到端纵切修改 Rust schema 与迁移。

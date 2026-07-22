@@ -1,0 +1,1882 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://telysta.example/schemas/gate-evidence-manifest-v3.schema.json",
+  "title": "Telysta GateEvidenceManifest v3",
+  "description": "Fail-closed G0A evidence with an explicit policy lock, ten closed requirements, remote verification provenance, and canonical R0A/R1 delivery readiness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "gateId",
+    "gateName",
+    "decision",
+    "decisionDate",
+    "gatePolicy",
+    "source",
+    "claims",
+    "evidence",
+    "requirements",
+    "deliveryReadiness",
+    "blockers",
+    "owner",
+    "reviewers",
+    "waivers",
+    "expiresWhen",
+    "nextDecision"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "GATE_EVIDENCE_MANIFEST_V3.schema.json"
+    },
+    "schemaVersion": {
+      "const": "telysta-gate-evidence-manifest.v3"
+    },
+    "gateId": {
+      "const": "G0A"
+    },
+    "gateName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision": {
+      "$ref": "#/$defs/decision"
+    },
+    "decisionDate": {
+      "$ref": "#/$defs/isoDate"
+    },
+    "gatePolicy": {
+      "$ref": "#/$defs/gatePolicy"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "claims": {
+      "$ref": "#/$defs/claims"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidenceItem"
+      }
+    },
+    "requirements": {
+      "$ref": "#/$defs/exactRequirements"
+    },
+    "deliveryReadiness": {
+      "$ref": "#/$defs/deliveryReadiness"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    },
+    "owner": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/accountIdentity"
+        }
+      ]
+    },
+    "reviewers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reviewerAttestation"
+      }
+    },
+    "waivers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/waiver"
+      }
+    },
+    "expiresWhen": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "nextDecision": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "passed"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/source"
+              },
+              {
+                "properties": {
+                  "worktreeDirty": {
+                    "const": false
+                  },
+                  "worktreeStatusEntryCount": {
+                    "const": 0
+                  },
+                  "verificationRuns": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "$ref": "#/$defs/verificationRun"
+                    },
+                    "allOf": [
+                      {
+                        "contains": {
+                          "allOf": [
+                            {
+                              "$ref": "#/$defs/completeVerificationRun"
+                            },
+                            {
+                              "properties": {
+                                "platformFamily": {
+                                  "const": "windows"
+                                }
+                              },
+                              "required": [
+                                "platformFamily"
+                              ]
+                            }
+                          ]
+                        },
+                        "minContains": 1
+                      },
+                      {
+                        "contains": {
+                          "allOf": [
+                            {
+                              "$ref": "#/$defs/completeVerificationRun"
+                            },
+                            {
+                              "properties": {
+                                "platformFamily": {
+                                  "const": "linux"
+                                }
+                              },
+                              "required": [
+                                "platformFamily"
+                              ]
+                            }
+                          ]
+                        },
+                        "minContains": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "evidence": {
+            "minItems": 1
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/requirement"
+                },
+                {
+                  "properties": {
+                    "status": {
+                      "const": "passed"
+                    },
+                    "evidenceRefs": {
+                      "minItems": 1
+                    }
+                  }
+                }
+              ]
+            },
+            "allOf": [
+              {
+                "contains": {
+                  "$ref": "#/$defs/acceptedTerminalR0A05"
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "$ref": "#/$defs/acceptedTerminalR0A07"
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "$ref": "#/$defs/acceptedTerminalR0A08"
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "$ref": "#/$defs/acceptedTerminalR0A09"
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "$ref": "#/$defs/acceptedTerminalR0A10"
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            ]
+          },
+          "deliveryReadiness": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/deliveryReadiness"
+              },
+              {
+                "properties": {
+                  "workPackages": {
+                    "$ref": "#/$defs/exactCompleteWorkPackages"
+                  }
+                }
+              }
+            ]
+          },
+          "blockers": {
+            "maxItems": 0
+          },
+          "owner": {
+            "$ref": "#/$defs/accountIdentity"
+          },
+          "reviewers": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "$ref": "#/$defs/reviewerAttestation"
+            },
+            "allOf": [
+              {
+                "contains": {
+                  "properties": {
+                    "roles": {
+                      "contains": {
+                        "const": "architecture"
+                      }
+                    }
+                  },
+                  "required": [
+                    "roles"
+                  ]
+                },
+                "minContains": 1
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "roles": {
+                      "contains": {
+                        "const": "migration"
+                      }
+                    }
+                  },
+                  "required": [
+                    "roles"
+                  ]
+                },
+                "minContains": 1
+              }
+            ]
+          },
+          "waivers": {
+            "maxItems": 0
+          },
+          "expiresWhen": {
+            "minItems": 1
+          },
+          "nextDecision": {
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "decision": {
+      "enum": [
+        "blocked",
+        "passed"
+      ]
+    },
+    "requirementId": {
+      "enum": [
+        "R0A-01",
+        "R0A-02-ADR011",
+        "R0A-03",
+        "R0A-04",
+        "R0A-05",
+        "R0A-06",
+        "R0A-07",
+        "R0A-08",
+        "R0A-09",
+        "R0A-10"
+      ]
+    },
+    "requirementStatus": {
+      "enum": [
+        "blocked",
+        "incomplete",
+        "ready_for_review",
+        "ready_for_independent_review",
+        "failed",
+        "passed",
+        "waived"
+      ]
+    },
+    "waiverStatus": {
+      "enum": [
+        "active",
+        "expired",
+        "revoked",
+        "rejected_non_waivable"
+      ]
+    },
+    "workPackageId": {
+      "enum": [
+        "R0A-01",
+        "R0A-02",
+        "R0A-03",
+        "R0A-04",
+        "R0A-05",
+        "R0A-06",
+        "R0A-07",
+        "R0A-08",
+        "R0A-09",
+        "R0A-10",
+        "R1-01",
+        "R1-01A",
+        "R1-02A",
+        "R1-02B",
+        "R1-02C",
+        "R1-02D",
+        "R1-02E",
+        "R1-03",
+        "R1-04",
+        "R1-05",
+        "R1-06",
+        "R1-07",
+        "R1-08",
+        "R1-09",
+        "R1-10"
+      ]
+    },
+    "isoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "utcDateTime": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "gitObjectId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "gatePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "schemaVersion",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "const": "docs/G0A_POLICY_V2.json"
+        },
+        "schemaVersion": {
+          "const": "telysta-g0a-policy.v2"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subjectCommit",
+        "subjectTree",
+        "worktreeDirty",
+        "worktreeStatusEntryCount",
+        "worktreeFingerprintSchema",
+        "worktreeInventorySha256",
+        "excludedGeneratedPaths",
+        "verificationRuns"
+      ],
+      "properties": {
+        "subjectCommit": {
+          "$ref": "#/$defs/gitObjectId"
+        },
+        "subjectTree": {
+          "$ref": "#/$defs/gitObjectId"
+        },
+        "worktreeDirty": {
+          "type": "boolean"
+        },
+        "worktreeStatusEntryCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "worktreeFingerprintSchema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "worktreeInventorySha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "excludedGeneratedPaths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "verificationRuns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/verificationRun"
+          }
+        }
+      }
+    },
+    "verificationRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "subjectCommit",
+        "subjectTree",
+        "platformFamily",
+        "startedAt",
+        "finishedAt",
+        "result",
+        "protocols",
+        "environment",
+        "remoteProvenance"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subjectCommit": {
+          "$ref": "#/$defs/gitObjectId"
+        },
+        "subjectTree": {
+          "$ref": "#/$defs/gitObjectId"
+        },
+        "platformFamily": {
+          "enum": [
+            "windows",
+            "linux",
+            "macos",
+            "other"
+          ]
+        },
+        "startedAt": {
+          "$ref": "#/$defs/utcDateTime"
+        },
+        "finishedAt": {
+          "$ref": "#/$defs/utcDateTime"
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "protocols": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "os",
+            "architecture",
+            "toolchain",
+            "lockFileSha256"
+          ],
+          "properties": {
+            "os": {
+              "type": "string",
+              "minLength": 1
+            },
+            "architecture": {
+              "type": "string",
+              "minLength": 1
+            },
+            "toolchain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "python",
+                "rustc",
+                "cargo",
+                "node"
+              ],
+              "properties": {
+                "python": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "rustc": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "cargo": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "node": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "lockFileSha256": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          }
+        },
+        "remoteProvenance": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/remoteProvenance"
+            }
+          ]
+        }
+      }
+    },
+    "completeVerificationRun": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/verificationRun"
+        },
+        {
+          "properties": {
+            "result": {
+              "const": "pass"
+            },
+            "protocols": {
+              "minItems": 1
+            },
+            "remoteProvenance": {
+              "$ref": "#/$defs/remoteProvenance"
+            }
+          }
+        }
+      ]
+    },
+    "remoteProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "repository",
+        "workflow",
+        "runId",
+        "jobId",
+        "url",
+        "artifactSha256"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflow": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "jobId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "artifactSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed",
+        "forbidden"
+      ],
+      "properties": {
+        "allowed": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "forbidden": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "kind",
+        "path",
+        "sha256",
+        "result"
+      ],
+      "properties": {
+        "evidenceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "SoftwareVerificationEvidence",
+            "ArchitectureContractEvidence",
+            "ArchitectureDecisionEvidence",
+            "DeterminismEvidence",
+            "RepositoryBaselineEvidence",
+            "DeliveryReadinessEvidence",
+            "AuthorityIntegrityEvidence",
+            "LegacyContainmentEvidence"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "result": {
+          "enum": [
+            "pending",
+            "pass",
+            "fail",
+            "accepted",
+            "rejected",
+            "accepted_terminal"
+          ]
+        },
+        "protocol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verificationMode": {
+          "enum": [
+            "direct",
+            "covered_by_parent",
+            "not_run"
+          ]
+        },
+        "executedCommand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coveredBy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "remoteProvenance": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/remoteProvenance"
+            }
+          ]
+        }
+      }
+    },
+    "terminalEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "path",
+        "kind",
+        "result",
+        "sha256"
+      ],
+      "properties": {
+        "evidenceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "SoftwareVerificationEvidence",
+            "RepositoryBaselineEvidence",
+            "DeliveryReadinessEvidence",
+            "AuthorityIntegrityEvidence",
+            "LegacyContainmentEvidence"
+          ]
+        },
+        "result": {
+          "enum": [
+            "pending",
+            "accepted_terminal",
+            "rejected_terminal"
+          ]
+        },
+        "sha256": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        },
+        "remoteProvenance": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/remoteProvenance"
+            }
+          ]
+        }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "status",
+        "evidenceRefs",
+        "terminalEvidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/requirementId"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/requirementStatus"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "terminalEvidence": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/terminalEvidence"
+            }
+          ]
+        }
+      }
+    },
+    "exactRequirements": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "$ref": "#/$defs/requirement"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-01"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-02-ADR011"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-03"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-04"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-05"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-06"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-07"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-08"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-09"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-10"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      ]
+    },
+    "acceptedTerminalR0A05": {
+      "properties": {
+        "id": {
+          "const": "R0A-05"
+        },
+        "terminalEvidence": {
+          "properties": {
+            "result": {
+              "const": "accepted_terminal"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "required": [
+            "result",
+            "sha256"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "terminalEvidence"
+      ]
+    },
+    "acceptedTerminalR0A07": {
+      "properties": {
+        "id": {
+          "const": "R0A-07"
+        },
+        "terminalEvidence": {
+          "properties": {
+            "result": {
+              "const": "accepted_terminal"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "required": [
+            "result",
+            "sha256"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "terminalEvidence"
+      ]
+    },
+    "acceptedTerminalR0A08": {
+      "properties": {
+        "id": {
+          "const": "R0A-08"
+        },
+        "terminalEvidence": {
+          "properties": {
+            "result": {
+              "const": "accepted_terminal"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "required": [
+            "result",
+            "sha256"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "terminalEvidence"
+      ]
+    },
+    "acceptedTerminalR0A09": {
+      "properties": {
+        "id": {
+          "const": "R0A-09"
+        },
+        "terminalEvidence": {
+          "properties": {
+            "result": {
+              "const": "accepted_terminal"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "required": [
+            "result",
+            "sha256"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "terminalEvidence"
+      ]
+    },
+    "acceptedTerminalR0A10": {
+      "properties": {
+        "id": {
+          "const": "R0A-10"
+        },
+        "terminalEvidence": {
+          "properties": {
+            "result": {
+              "const": "accepted_terminal"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "required": [
+            "result",
+            "sha256"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "terminalEvidence"
+      ]
+    },
+    "deliveryReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "workPackages"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "telysta-delivery-readiness.v1"
+        },
+        "workPackages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/workPackageReadiness"
+          }
+        }
+      }
+    },
+    "workPackageReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/workPackageId"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "ready",
+            "blocked"
+          ]
+        },
+        "owner": {
+          "$ref": "#/$defs/accountIdentity"
+        },
+        "reviewers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewerAttestation"
+          }
+        },
+        "capacity": {
+          "$ref": "#/$defs/capacity"
+        },
+        "estimate": {
+          "$ref": "#/$defs/estimate"
+        },
+        "wip": {
+          "$ref": "#/$defs/wip"
+        },
+        "timebox": {
+          "$ref": "#/$defs/timebox"
+        },
+        "scopeReductionRule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "approvalReference": {
+          "type": "string",
+          "format": "uri"
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/utcDateTime"
+        }
+      }
+    },
+    "completeWorkPackageReadiness": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/workPackageReadiness"
+        },
+        {
+          "required": [
+            "id",
+            "status",
+            "owner",
+            "reviewers",
+            "capacity",
+            "estimate",
+            "wip",
+            "timebox",
+            "scopeReductionRule",
+            "approvalReference",
+            "expiresAt"
+          ],
+          "properties": {
+            "status": {
+              "const": "ready"
+            },
+            "owner": {
+              "$ref": "#/$defs/accountIdentity"
+            },
+            "reviewers": {
+              "minItems": 1
+            },
+            "estimate": {
+              "$ref": "#/$defs/estimate"
+            },
+            "wip": {
+              "$ref": "#/$defs/wip"
+            },
+            "timebox": {
+              "$ref": "#/$defs/timebox"
+            }
+          }
+        }
+      ]
+    },
+    "exactCompleteWorkPackages": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "items": {
+        "$ref": "#/$defs/completeWorkPackageReadiness"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-01"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-02"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-03"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-04"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-05"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-06"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-07"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-08"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-09"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R0A-10"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-01"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-01A"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-02A"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-02B"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-02C"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-02D"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-02E"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-03"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-04"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-05"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-06"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-07"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-08"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-09"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "R1-10"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      ]
+    },
+    "accountIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "stableAccountId",
+        "login",
+        "displayName",
+        "role"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stableAccountId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "login": {
+          "type": "string",
+          "minLength": 1
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "reviewerAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "stableAccountId",
+        "login",
+        "displayName",
+        "roles",
+        "reviewedSubjectCommit",
+        "reviewedSubjectTree",
+        "reviewUrl",
+        "reviewId",
+        "decision",
+        "reviewedAt",
+        "conflictOfInterest"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stableAccountId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "login": {
+          "type": "string",
+          "minLength": 1
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "architecture",
+              "migration",
+              "storage",
+              "determinism",
+              "product",
+              "release"
+            ]
+          }
+        },
+        "reviewedSubjectCommit": {
+          "$ref": "#/$defs/gitObjectId"
+        },
+        "reviewedSubjectTree": {
+          "$ref": "#/$defs/gitObjectId"
+        },
+        "reviewUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "reviewId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision": {
+          "const": "accepted"
+        },
+        "reviewedAt": {
+          "$ref": "#/$defs/utcDateTime"
+        },
+        "conflictOfInterest": {
+          "const": false
+        }
+      }
+    },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availablePersonHours",
+        "periodStart",
+        "periodEnd"
+      ],
+      "properties": {
+        "availablePersonHours": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "periodStart": {
+          "$ref": "#/$defs/isoDate"
+        },
+        "periodEnd": {
+          "$ref": "#/$defs/isoDate"
+        }
+      }
+    },
+    "estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "unit",
+        "optimistic",
+        "mostLikely",
+        "pessimistic"
+      ],
+      "properties": {
+        "method": {
+          "const": "three-point"
+        },
+        "unit": {
+          "const": "person-hours"
+        },
+        "optimistic": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "mostLikely": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pessimistic": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "wip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "globalLimit",
+        "slot"
+      ],
+      "properties": {
+        "globalLimit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "slot": {
+          "enum": [
+            "WIP-GATE",
+            "WIP-PRODUCT",
+            "QUEUED-DOMAIN"
+          ]
+        }
+      }
+    },
+    "timebox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "startsAt",
+        "endsAt"
+      ],
+      "properties": {
+        "startsAt": {
+          "$ref": "#/$defs/utcDateTime"
+        },
+        "endsAt": {
+          "$ref": "#/$defs/utcDateTime"
+        }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "severity",
+        "summary"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "blocking",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "waiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId",
+        "status",
+        "requestedBy",
+        "approvedBy",
+        "reason",
+        "createdAt",
+        "expiresAt"
+      ],
+      "properties": {
+        "requirementId": {
+          "$ref": "#/$defs/requirementId"
+        },
+        "status": {
+          "$ref": "#/$defs/waiverStatus"
+        },
+        "requestedBy": {
+          "$ref": "#/$defs/accountIdentity"
+        },
+        "approvedBy": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/accountIdentity"
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "$ref": "#/$defs/utcDateTime"
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/utcDateTime"
+        }
+      }
+    }
+  }
+}

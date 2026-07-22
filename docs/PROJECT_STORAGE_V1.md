@@ -1,9 +1,9 @@
 ---
 document_type: contract
 decision_status: accepted
-implementation_status: implemented
+implementation_status: partial
 normative_scope: current
-last_verified: 2026-07-17
+last_verified: 2026-07-19
 implementation_schema: telysta-project-file.v1
 implementation_path: crates/telysta-storage/src/lib.rs
 implementation_constant: PROJECT_FILE_SCHEMA
@@ -11,9 +11,18 @@ implementation_constant: PROJECT_FILE_SCHEMA
 
 # Project Storage v1
 
-- Status: `Accepted`
+- Status: `Accepted contract / implementation reopened`
 - Completed: 2026-07-14 (`FND-008`, `FND-008.1`)
 - Implementation: `crates/telysta-storage`
+
+> **2026-07-19 implementation review:** the v1 schema and sole-authority
+> decision remain accepted, but implementation closure is reopened. Project
+> creation checks existence before taking the write lease, arbitrary
+> replay-valid history can replace the current history, migration recovery can
+> clear its journal without revalidating the source archive, and derived-index
+> publication/query has an authority-token race. These are tracked by
+> `R0A-09`; create/commit must not be exposed to Tauri until the repair matrix
+> passes.
 
 ## Authority boundary
 

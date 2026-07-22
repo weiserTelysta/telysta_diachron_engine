@@ -1,0 +1,522 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://telysta.example/schemas/g0a-policy-v2.schema.json",
+  "title": "Telysta G0A Policy v2",
+  "description": "Closed policy contract for the G0A Platform Contract Ready gate. The policy fixes the complete requirement set and the canonical R0A/R1 delivery-readiness inventory.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "gateId",
+    "supersedes",
+    "nonWaivableRequirementIds",
+    "requiredWorkPackageIds",
+    "requirements"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "G0A_POLICY_V2.schema.json"
+    },
+    "schemaVersion": {
+      "const": "telysta-g0a-policy.v2"
+    },
+    "gateId": {
+      "const": "G0A"
+    },
+    "supersedes": {
+      "$ref": "#/$defs/supersedes"
+    },
+    "nonWaivableRequirementIds": {
+      "$ref": "#/$defs/exactRequirementIds"
+    },
+    "requiredWorkPackageIds": {
+      "$ref": "#/$defs/exactWorkPackageIds"
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "R0A-01",
+        "R0A-02-ADR011",
+        "R0A-03",
+        "R0A-04",
+        "R0A-05",
+        "R0A-06",
+        "R0A-07",
+        "R0A-08",
+        "R0A-09",
+        "R0A-10"
+      ],
+      "properties": {
+        "R0A-01": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-01"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-02-ADR011": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-02"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-03": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-03"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-04": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-04"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-05": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-05"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-06": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-06"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-07": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-07"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-08": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-08"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-09": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-09"
+                }
+              }
+            }
+          ]
+        },
+        "R0A-10": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/requirementRule"
+            },
+            {
+              "properties": {
+                "workPackageId": {
+                  "const": "R0A-10"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "requirementId": {
+      "enum": [
+        "R0A-01",
+        "R0A-02-ADR011",
+        "R0A-03",
+        "R0A-04",
+        "R0A-05",
+        "R0A-06",
+        "R0A-07",
+        "R0A-08",
+        "R0A-09",
+        "R0A-10"
+      ]
+    },
+    "exactRequirementIds": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "prefixItems": [
+        {
+          "const": "R0A-01"
+        },
+        {
+          "const": "R0A-02-ADR011"
+        },
+        {
+          "const": "R0A-03"
+        },
+        {
+          "const": "R0A-04"
+        },
+        {
+          "const": "R0A-05"
+        },
+        {
+          "const": "R0A-06"
+        },
+        {
+          "const": "R0A-07"
+        },
+        {
+          "const": "R0A-08"
+        },
+        {
+          "const": "R0A-09"
+        },
+        {
+          "const": "R0A-10"
+        }
+      ],
+      "items": false
+    },
+    "workPackageId": {
+      "enum": [
+        "R0A-01",
+        "R0A-02",
+        "R0A-03",
+        "R0A-04",
+        "R0A-05",
+        "R0A-06",
+        "R0A-07",
+        "R0A-08",
+        "R0A-09",
+        "R0A-10",
+        "R1-01",
+        "R1-01A",
+        "R1-02A",
+        "R1-02B",
+        "R1-02C",
+        "R1-02D",
+        "R1-02E",
+        "R1-03",
+        "R1-04",
+        "R1-05",
+        "R1-06",
+        "R1-07",
+        "R1-08",
+        "R1-09",
+        "R1-10"
+      ]
+    },
+    "exactWorkPackageIds": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "uniqueItems": true,
+      "prefixItems": [
+        {
+          "const": "R0A-01"
+        },
+        {
+          "const": "R0A-02"
+        },
+        {
+          "const": "R0A-03"
+        },
+        {
+          "const": "R0A-04"
+        },
+        {
+          "const": "R0A-05"
+        },
+        {
+          "const": "R0A-06"
+        },
+        {
+          "const": "R0A-07"
+        },
+        {
+          "const": "R0A-08"
+        },
+        {
+          "const": "R0A-09"
+        },
+        {
+          "const": "R0A-10"
+        },
+        {
+          "const": "R1-01"
+        },
+        {
+          "const": "R1-01A"
+        },
+        {
+          "const": "R1-02A"
+        },
+        {
+          "const": "R1-02B"
+        },
+        {
+          "const": "R1-02C"
+        },
+        {
+          "const": "R1-02D"
+        },
+        {
+          "const": "R1-02E"
+        },
+        {
+          "const": "R1-03"
+        },
+        {
+          "const": "R1-04"
+        },
+        {
+          "const": "R1-05"
+        },
+        {
+          "const": "R1-06"
+        },
+        {
+          "const": "R1-07"
+        },
+        {
+          "const": "R1-08"
+        },
+        {
+          "const": "R1-09"
+        },
+        {
+          "const": "R1-10"
+        }
+      ],
+      "items": false
+    },
+    "supersedes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "schemaVersion",
+        "currentDecisionTreatment"
+      ],
+      "properties": {
+        "path": {
+          "const": "docs/G0A_POLICY_V1.json"
+        },
+        "schemaVersion": {
+          "const": "telysta-g0a-policy.v1"
+        },
+        "currentDecisionTreatment": {
+          "const": "reject_as_obsolete"
+        }
+      }
+    },
+    "requirementRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workPackageId"
+      ],
+      "properties": {
+        "workPackageId": {
+          "$ref": "#/$defs/workPackageId"
+        },
+        "requiredPaths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "requiredDecisions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/requiredDecision"
+          }
+        },
+        "requiredEvidence": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/requiredEvidence"
+          }
+        },
+        "requiresCleanCommittedSubject": {
+          "const": true
+        },
+        "requiresAssignedOwner": {
+          "const": true
+        },
+        "requiresIndependentReviewer": {
+          "const": true
+        },
+        "requiresDeliveryReadiness": {
+          "const": true
+        },
+        "terminalAcceptance": {
+          "$ref": "#/$defs/terminalAcceptance"
+        }
+      }
+    },
+    "requiredDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "status"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "accepted"
+        }
+      }
+    },
+    "requiredEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "kind",
+        "acceptedResults"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "SoftwareVerificationEvidence",
+            "ArchitectureContractEvidence",
+            "ArchitectureDecisionEvidence",
+            "DeterminismEvidence",
+            "RepositoryBaselineEvidence",
+            "DeliveryReadinessEvidence",
+            "AuthorityIntegrityEvidence",
+            "LegacyContainmentEvidence"
+          ]
+        },
+        "acceptedResults": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "accepted",
+              "pass",
+              "accepted_terminal"
+            ]
+          }
+        }
+      }
+    },
+    "terminalAcceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidencePath",
+        "kind",
+        "acceptedResult",
+        "requiresRemoteProvenance"
+      ],
+      "properties": {
+        "evidencePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "SoftwareVerificationEvidence",
+            "RepositoryBaselineEvidence",
+            "DeliveryReadinessEvidence",
+            "AuthorityIntegrityEvidence",
+            "LegacyContainmentEvidence"
+          ]
+        },
+        "acceptedResult": {
+          "const": "accepted_terminal"
+        },
+        "requiresRemoteProvenance": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

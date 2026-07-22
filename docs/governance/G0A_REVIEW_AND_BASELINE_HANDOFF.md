@@ -3,7 +3,7 @@ document_type: runbook
 decision_status: not-applicable
 implementation_status: implemented
 normative_scope: migration
-last_verified: 2026-07-18
+last_verified: 2026-07-19
 ---
 
 # G0A 独立评审与 Clean Baseline 交接
@@ -11,9 +11,10 @@ last_verified: 2026-07-18
 ## 目的与边界
 
 本交接包把 G0A 的待审合同、工作树纳入范围和提交顺序变成可复核流程。它不接受 ADR，
-不指定或冒充人员，不创建 Git 提交，也不改变 Gate 决定。当前 Gate 状态仍只由
-[G0A GateEvidence](../G0A_GATE_EVIDENCE_2026-07-17.json) 决定；在它明确为 `passed`
-之前，R1 持久化 walking skeleton 继续冻结。
+不指定或冒充人员，不创建 Git 提交，也不改变 Gate 决定。现存
+[G0A GateEvidence](../G0A_GATE_EVIDENCE_2026-07-17.json) 仍是 v1/v2 路径产生的
+`blocked` 迁移输入，尚不满足 Proposed v3 合同；在有效 v3 evidence 明确为 `passed`
+之前，G0A fail closed，R1 持久化 walking skeleton 继续冻结。
 
 ## 一次性生成交接清单
 
@@ -48,10 +49,13 @@ ADR 已接受或 Gate 已通过。`cleanSubjectReadyForVerification=true` 只有
    distribution version、overflow、checkpoint 和 replay 兼容规则是否足够精确。
 4. [Platform Contract Pack](../PLATFORM_CONTRACT_PACK_V1.md)：Tauri、application service、
    storage、job runtime 与 Rust domain authority 是否没有第二写入者。
-5. [GateEvidence v2 model](./GATE_EVIDENCE_MODEL_V2.md)、
-   [schema](../GATE_EVIDENCE_MANIFEST_V2.schema.json) 与
-   [G0A policy](../G0A_POLICY_V1.json)：subject/attestation 是否无自引用，passed 是否只能从
-   accepted 决定、完整直接门禁和具名独立评审推导。
+5. Proposed [GateEvidence v3 model](./GATE_EVIDENCE_MODEL_V3.md)、
+   [manifest schema](../GATE_EVIDENCE_MANIFEST_V3.schema.json)、
+   [G0A policy v2](../G0A_POLICY_V2.json) 与
+   [policy schema](../G0A_POLICY_V2.schema.json)：policy/subject/attestation 是否无自引用，
+   requirement 与 canonical WBS 是否闭合，passed 是否只能从 accepted terminal evidence、
+   完整直接门禁、delivery readiness、具名独立评审和受信远端 provenance 推导。v1 policy
+   与 v2 schema 只能作为 fail-closed 迁移输入。
 
 迁移 reviewer 必须额外核对 legacy v1 项目、RNG known answers、checkpoint 失配、
 stale writer、崩溃窗口和回滚路径。作者自审或自动化工具输出不能替代独立评审。
@@ -86,16 +90,17 @@ R0A/R1 rolling-wave 记录还必须给出实际可用容量、估算方式、WIP
 5. 从该 subject 的 fresh checkout 执行
    `.\.venv\Scripts\python.exe scripts\generate_gate_evidence.py --verify`。软件结果必须绑定
    subject commit/tree 和当次运行环境。
-6. 仓库首次采用本流程时，subject 必须已经包含一份明确为 `blocked` 的 GateEvidence seed
-   与派生 STATUS，使 fresh checkout 可以启动生成器。只有 policy evaluator 无错误时才允许
-   把 GateEvidence 改为 `passed`；随后单独提交
-   GateEvidence 与派生 `STATUS.md` 作为 attestation commit。
+6. 仓库首次采用 v3 流程时，subject 必须包含一份可由生成器读取并强制迁移为
+   `blocked` v3 candidate 的 GateEvidence seed 与派生 STATUS，使 fresh checkout 可以
+   fail closed 启动。v1/v2 seed 不继承旧 pass；只有 policy evaluator、terminal evidence、
+   delivery readiness、远端 provenance 和独立评审全部无错误时才允许生成 `passed`
+   candidate。随后单独提交 GateEvidence 与派生 `STATUS.md` 作为 attestation commit。
 7. attestation 后若任何非生成路径发生变化，证据自动失效，回到第 1 步。
 
 ## 当前仍需由人完成
 
 - 指定可追责 owner、独立 architecture reviewer 与 migration reviewer；
-- 对 ADR-011/012/013 和 GateEvidence v2 给出可审计结论；
+- 对 ADR-011/012/013、G0A policy v2 与 GateEvidence v3 给出可审计结论；
 - 给出真实容量、估算、WIP 与 timebox；
 - 审阅并创建 clean subject commit 与后续 attestation commit。
 

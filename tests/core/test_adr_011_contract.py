@@ -270,7 +270,7 @@ def test_g0a_evidence_cannot_misreport_an_unreviewed_gate_as_passed() -> None:
     source = evidence["source"]
     subject = source["subjectCommit"]
 
-    assert evidence["schemaVersion"] == "telysta-gate-evidence-manifest.v2"
+    assert evidence["schemaVersion"] == "telysta-gate-evidence-manifest.v3"
     assert evidence["gateId"] == "G0A"
     assert evidence["decision"] == "blocked"
     assert source["subjectTree"] == _git(
@@ -306,6 +306,11 @@ def test_g0a_evidence_cannot_misreport_an_unreviewed_gate_as_passed() -> None:
     )
     assert requirement_status["R0A-05"] == expected_clean_subject_status
     assert requirement_status["R0A-07"] == "incomplete"
+    assert requirement_status["R0A-08"] == "incomplete"
+    assert requirement_status["R0A-09"] == "incomplete"
+    assert requirement_status["R0A-10"] == "incomplete"
+    assert evidence["deliveryReadiness"]["workPackages"] == []
+    assert evidence["gatePolicy"]["schemaVersion"] == "telysta-g0a-policy.v2"
 
     forbidden_claims = set(evidence["claims"]["forbidden"])
     assert "G0A has passed" in forbidden_claims

@@ -3,7 +3,7 @@ document_type: product-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-07-18
+last_verified: 2026-07-19
 owner: unassigned
 reviewers: []
 ---
@@ -11,12 +11,12 @@ reviewers: []
 # Telysta 产品开发执行计划
 
 - 状态：`Active planning baseline / Domain Implementation Hold`
-- 最近修订：2026-07-18
+- 最近修订：2026-07-19
 - 适用范围：产品定义、Rust 核心、Tauri 工作台、语言生成、历时模拟、验证、数据、迁移与发布
 - 当前阶段：`R0A 计划/决策修复 + R0B WS-1 领域证据`
-- 当前阻断：G0A 为 `blocked`；R0B evidence preparation 正在进行，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`，G0B=`not evaluated` 且没有通过性 GateEvidence；当前仓库未形成 clean-checkout 基线；ADR-007～014 均未完成所需接受流程，ADR-014 已形成 Proposed 草案但 owner/reviewer 未分配；Project/Operation/Run/Job、Meaning/Grammar/Lexical Class/Realization、TheoryProfile、ChangeSet locus、聚合与 replay 边界尚未闭合。ADR-005 是分阶段研究背景，不是 WS-1 前置
+- 当前阻断：G0A 为 `blocked`；2026-07-19 复审又重新打开 Gate/CI hermeticity、真实 MSRV、当前 v1 create/append/migration/index authority 和 legacy evidence 边界；R0B evidence preparation 正在进行，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`，G0B=`not evaluated` 且没有通过性 GateEvidence；ADR-007～014 均未完成所需接受流程，ADR-014 已形成 Proposed 草案但 owner/reviewer 未分配；Project/Operation/Run/Job、Meaning/Grammar/Lexical Class/Realization、TheoryProfile、ChangeSet locus、聚合与 replay 边界尚未闭合。ADR-005 是分阶段研究背景，不是 WS-1 前置
 
-本文把 [项目路线图](./ROADMAP.md)、[专业语言模拟器实施总计划](./LANGUAGE_SIMULATOR_PLAN.md)、[路线严格评审](./RESEARCH_ROUTE_REVIEW_2026-07-14.md) 与 [计划优化记录](./PLAN_OPTIMIZATION_2026-07-16.md) 转换为可执行的关键路径和工作包。[审计修正执行计划](./AUDIT_CORRECTION_PLAN_2026-07-18.md)把 2026-07-18 的语言学/架构缺陷映射回本文工作包、Gate 与验收证据，不形成第二套 WBS。它们都不替代 Accepted ADR，也不直接决定持久化实体身份、事件回放或插件边界。
+本文把 [项目路线图](./ROADMAP.md)、[专业语言模拟器实施总计划](./LANGUAGE_SIMULATOR_PLAN.md)、[路线严格评审](./RESEARCH_ROUTE_REVIEW_2026-07-14.md) 与 [计划优化记录](./PLAN_OPTIMIZATION_2026-07-16.md) 转换为可执行的关键路径和工作包。[审计修正执行计划](./AUDIT_CORRECTION_PLAN_2026-07-18.md)把 2026-07-18 的语言学/架构缺陷和 2026-07-19 的执行后复审映射回本文工作包、Gate 与验收证据，不形成第二套 WBS。它们都不替代 Accepted ADR，也不直接决定持久化实体身份、事件回放或插件边界。
 
 权威边界按职责解释：仓库 `AGENTS.md`、Accepted ADR 与已接受领域合同决定不可变语义；本文决定当前执行顺序、WBS 与 Stop/Go；`ROADMAP.md` 汇总阶段状态和 Next；`LANGUAGE_SIMULATOR_PLAN.md` 维护长期能力地图。三份主计划若不一致，先停止相关工作并同步修订，不选择对实现最方便的一份。若本文建议会改变持久化实体意义、回放语义、权威写入者或插件执行边界，必须先新增或修订 ADR。
 
@@ -72,8 +72,8 @@ Telysta 不以“一键生成 Tolkien 级语言”为可验证承诺。产品目
 | 阶段 | 允许声明 | 禁止声明 |
 |---|---|---|
 | R0–R1 | 已建立合同、平台和可复现地基 | 已生成语言、已模拟变化 |
-| R2 / WS-1 | 可生成、分析和审计一个可执行微型语言；可回放一次结构变换 | 已模拟真实传播；已达到完整创作语言 |
-| R3 | 可用于规定的命名、对白与短场景；可安全持续扩充 | 可翻译任意文学文本 |
+| R2 / WS-1 | 可生成、分析和审计一个可执行微型语言；可回放一次结构变换；可对 CanonSeed 做兼容性与影响预览 | 已证明产品易用或可持续扩充；已发布或保护 AuthorCanonCorpus；已模拟真实传播；已达到完整创作语言 |
+| R3 | 可导入、协调和版本化 AuthorCanonCorpus；可用于规定的命名、对白与短场景；可在显式 canon impact 后安全持续扩充 | 可翻译任意文学文本；已模拟真实社群传播 |
 | R4 / WS-2 | 已具备 Mechanistic Change Simulator v1：创新—变体—传播—常规化闭环 | 模型代表唯一真实语言变化机制 |
 | R5 | 可生成受支持的分支、接触层和规律对应 | 支持所有历史过程或全部类型学 |
 | R6 | 通过版本化文学任务与外部创作者验证 | 自动达到 Tolkien 的艺术成就 |
@@ -86,7 +86,9 @@ Telysta 不以“一键生成 Tolkien 级语言”为可验证承诺。产品目
 ### 3.1 关键路径
 
 ```text
-R0A 计划/ADR/仓库修复 → G0A Platform Contract Ready
+R0A 计划/ADR/仓库修复
+→ Gate/CI 可信度 + 当前 v1 authority safety 修复
+→ G0A Platform Contract Ready
 → R1 application / JobStore / API / staging / query / benchmark → G1
 
 R0B WS-1 domain evidence → G0B WS-1 Domain Ready
@@ -187,7 +189,11 @@ ExperimentSpec
 
 ## 6. R0A / R0B：计划修复与领域证据
 
-R0A/R0B 只允许文档、fixture、数据锁、低保真原型和不写正式状态的研究实验。R0A 关闭后可以进入不依赖 v3 的 R1 平台实现；R0B 必须在正式 WS-1 schema 和生成器实现前关闭。
+R0A/R0B 不允许新增 target writer、v3 持久化语义、正式 Genesis/reducer 或把研究
+原型变成第二权威。为恢复已经声称存在的基础正确性，允许在独立评审后的合同范围内
+修复 Gate 工具和当前 v1 writer/index，但修复必须保持现有 schema、事件身份、replay 与
+semantic hash；一旦需要改变这些意义，立即回到 ADR。R0A 关闭后才可以进入不依赖 v3
+的 R1 平台实现；R0B 必须在正式 WS-1 schema 和生成器实现前关闭。
 
 | ID | 工作包 | 依赖 | 交付物 | 验收与 Go 条件 |
 |---|---|---|---|---|
@@ -196,24 +202,56 @@ R0A/R0B 只允许文档、fixture、数据锁、低保真原型和不写正式�
 | R0A-03 | Platform Contract Pack | R0A-02 | [application、JobStore/journal/cursor、staging、query、dependency bundle、ReplayCapability 边界](./PLATFORM_CONTRACT_PACK_V1.md)；[ADR-012 单发布点](./adr/ADR-012-project-package-commit-authority.md) | 评审材料已就绪；ADR-011/012 Accepted 后，R1 可用假任务实现而不冻结 v3；无第二权威事实源 |
 | R0A-04 | RNG Decision Record | 确定性合同 | [ADR-013](./adr/ADR-013-rng-compatibility-and-distribution-versioning.md)：保留算法、distribution 版本、known-answer、溢出与 replay 策略 | 评审材料与 Rust known-answer 已就绪；独立批准前不改变持久化；既有历史解释不变 |
 | R0A-05 | G0A Repository Baseline | 当前工作树 | 审查并纳入 Rust/Tauri/CI/合同/fixture；固定 clean-checkout 证据 | Python/Rust 全门可复现；无误纳临时产物或未登记语义漂移 |
-| R0A-06 | GateEvidenceManifest v2 | R0A-01/02 | subject/attestation 分离、claims、hashes、环境运行记录、阈值、reviewer、severity、waiver、结果 | 证据提交无自引用；Gate pass/fail 可 fresh-checkout 复核，不依赖会议印象 |
+| R0A-06 | GateEvidenceManifest v3 | R0A-01/02 | policy identity、subject/attestation 分离、claims、hashes、环境运行记录、terminal evidence、reviewer、severity、waiver、结果 | 证据提交无自引用；旧 policy/pass 强制降级；Gate pass/fail 可 fresh-checkout 复核，不依赖会议印象 |
 | R0A-07 | Rolling-wave Delivery Pack | R0A-01 | R0A/R0B/R1/R2 owner、reviewer、三点或 S/M/L 估算、容量、WIP、timebox | 无 owner/容量/降范围规则的包不得 Ready |
+| R0A-08 | Verification Trust Repair | R0A-05/06 | versioned G0A policy v2、hermetic pytest runner、非零执行证明、fail-closed/atomic evidence、verifier lease、真实 MSRV、Windows/Linux CI | policy 精确要求 `R0A-01`、`R0A-02-ADR011`、`R0A-03`、`R0A-04`、`R0A-05`、`R0A-06`、`R0A-07`、`R0A-08`、`R0A-09`、`R0A-10`；R0A-07 的 owner/reviewer/capacity/estimate/WIP/timebox 可机器验证；环境注入不能跳过测试；失败不保留 passed；精确 MSRV 与 lock graph 在 fresh checkout 通过 |
+| R0A-09 | Current v1 Authority Repair | R0A-02/03、Accepted current contracts | lease 内 create-if-absent、core append-only extension、archive/journal 复验、index as-of binding | 双创建/历史截断/损坏归档/陈旧 projection 均被测试拒绝；v1 schema/hash/replay 不变 |
+| R0A-10 | Legacy Evidence Containment | R0A-05、A-002/003 | raw bytes/hash/directory manifest/failure fingerprint；Legacy Lab 产品边界与确定性 characterization | 8 个缺陷和非法 golden 可独立复现；Python 不写 Rust project；不把旧缺陷修成第二生产核心 |
 | R0B-01 | Meaning/Task Contract | R0A-01 | SceneFacts → InteractionContext → CommunicativeIntent → PropositionGraph → LanguageSpecificObligations → Grammar Realization，PragmaticCommitments 并行；ComparativeConcept 仅作跨语言锚点 | 各层等价、歧义、scope、commitment 与 typed gap 有 provenance；不依赖中英文或英语范畴相等 |
-| R0B-01A | Meaning–Grammar–Lexical Identity–Realization Authority ADR | R0A-02、R0B-01 | ADR-014：Lexeme/Sense/WordForm/Morpheme/Paradigm/Construction 身份与所有权、ordered occurrence、双向实现、query purity、migration/hash/replay | ADR-014 Accepted，或 ADR Index 所定义的 replacement ADR Accepted；zero/syncretism/同音/多义/typed gap 的语义无歧义；不以完整状态替换掩盖效果 |
+| R0B-01A-D | Meaning–Grammar–Lexical Identity–Realization–Orthography Authority ADR Draft | R0A-02、R0B-01 | 修订 ADR-014 或起草 replacement ADR：提出稳定 `OrthographicForm/SpellingRealization` 身份键、grapheme inventory、mapping、词汇化拼写、CanonSeed spelling、保守拼写/拼写改革的 owner、hash、migration 与 replay | 保持 Proposed；明确待 R0B-04B-D 攻击的决策与替代方案，不实现持久化语义 |
+| R0B-01A | Authority ADR Acceptance | Accepted ADR-008/011、R0B-01A-D、R0B-04B-D | 结合 review vectors 修订并接受 ADR-014 或 replacement ADR | 拼写以 typed WordForm/analysis occurrence + OrthographyRevision（或 ADR 选定的独立 orthographic base）为键，不以裸 IPA/phonological string 推导；音变不静默触发拼写改革；v2 缺失映射时迁移不猜测；Accepted 前不实现 |
 | R0B-02 | Canon/Corpus/Author Contract | R0A-01、R0B-01 | CanonSeed、AuthorCanon、TaskFixture、SyntheticUsage、ExternalEmpiricalObservation、AuthorialException | corpus 来源不可互换；作者选择不伪装经验规律；修改触发重验 |
 | R0B-03 | Capability Matrix | R0A-02、R0B-01/01A | WS-1 支持/计划/拒绝的音系、形态、构式、意义、话语与历史能力 | UI/compiler 同源；两个结构非同构轮廓均可表达 |
 | R0B-04 | Four-way TaskPack v1 | R0B-01/03 | Development、CandidateSelection、SealedAudit、ExternalElicitation；正/负例与缺陷注入 | 参与同轮 compiler/candidate 调参者打开 sealed pack 即失去该轮 sealed 证据资格；隔离的独立 reviewer 可按审计协议检查；required/forbidden/equivalence 可执行 |
+| R0B-04A | Linguistic Execution Contract | R0B-03/04 | versioned execution manifest、runner harness、adapter schema/registry、case-to-Gate 映射，以及 `work package → ADR/schema → module → fixture → runner → evidence → owner/reviewer` 链 | G0B 只要求合同、harness、registry、映射及当下可执行的 G0B cases；G2 才要求 G-LANG/G-CHANGE adapter 绑定真实 Rust 命令、schema、输入锁和结果证据；`future` 不能计入通过能力 |
+| R0B-04B-D | Orthography / IGT / PCU ADR Review Vectors | R0B-01A-D、R0B-01/02 | normalization、未映射、同音异写、词汇化/保守拼写、禁 IPA fallback、正/负 typed-analysis round trip、非双射 IGT、PCU、音变与拼写改革分离的 planning vectors | 仅作为 ADR review test vectors；可随 Proposed ADR 一起修订，不称 frozen fixture、runner evidence 或 capability |
+| R0B-04B | Orthography / IGT / PCU Frozen Hostile Pack | Accepted R0B-01A ADR、R0B-04B-D | 按 Accepted authority 重写并 reviewed merge 的 versioned fixture、schema、hash、expected diagnostic 与 adapter binding plan | 与 Accepted ADR 同源且登记 reviewer/hash；G0B 可验证 schema/覆盖与 future binding，G2 必须由真实 adapter 执行且无万能 analyzer 通过路径 |
 | R0B-05 | Data Execution Slice | 数据治理合同 | 精确 DOI、payload SHA、license、sampling unit、transform 与输出 hash | payload-aware validation 和真实小切片可复现 |
-| R0B-06 | Product Evidence + Meaning Workbench | R0A-01、R0B-01/02 | 真实作者工作流/替代基线；`Brief → Meaning obligations → Candidates → Scene/History → Export` 原型 | 作者用自己的 canon，不编辑 JSON/形式语义即可确认 5–10 个意图；记录转向条件 |
+| R0B-06P | Formative Product Discovery Prototype | R0A-01 | `FormativeJourney.r0b`、真实作者工作流/替代基线、预注册协议与失败/转向记录；`Brief → Meaning obligations → Candidates → Scene/History → Export` 非权威原型 | 作者用自己的 canon 完成形成性任务；prototype 不写正式状态、不调用 create/commit 路径，且不伪装 supported 能力 |
+| R0B-06 | Product Evidence + Meaning Workbench Contract | R0B-01/02、R0B-06P | 将形成性发现映射为 versioned journey、obligation cards、typed gap/impact 和可执行产品证据合同 | 非专家不编辑 JSON/形式语义即可确认 5–10 个真实意图；所有正式读写权限与 CanonRole 同源且可机器验证 |
 | R0B-07 | Scientific Model Template | 路线评审 | ODD/TRACE、ExperimentSpec、ModelEvidenceBundle、parameter recovery/identifiability 模板 | verification/calibration/validation/sensitivity/ablation/identifiability 分开 |
+
+R0A-08 已形成 COR-05/COR-07 的本地实现候选：policy v2、GateEvidence v3、十项
+requirement、DeliveryReadiness、hermetic runner、fail-closed publication 与单 verifier
+lease 已进入当前 `blocked` 候选及恶意负例。本地测试数量只描述运行时检查点，不得长期
+复制到计划或作为 Gate decision；权威命令、环境、执行数量与结果只来自 GateEvidence。
+Linux/Windows fresh-checkout provenance、clean reviewed subject、独立复核与
+R0A-05/07/08/09/10 terminal evidence 仍未完成，因此 R0A-08 与 G0A 保持未关闭。
+STATUS 只可从 evidence 重建，输出撕裂时必须重写或删除。
+
+### G0A requirement policy contract
+
+当前 Proposed G0A policy v2 的 required requirement 集合精确等于：
+`R0A-01`、`R0A-02-ADR011`、`R0A-03`、`R0A-04`、`R0A-05`、`R0A-06`、
+`R0A-07`、`R0A-08`、`R0A-09`、`R0A-10`。
+
+该集合已经通过 policy/schema 版本提升实现，并显式拒绝或迁移旧 evidence，没有原地
+改变 v1 含义。当前生成器拒绝缺失、重复和未知 requirement；对 R0A-07 机器检查 owner、
+独立 reviewer、capacity、estimate、WIP 与 timebox；对 R0A-05/07/08/09/10 检查
+terminal predicate 与所需 provenance。在 policy、evidence 与本文集合不一致时一律
+fail closed。该实现仍待独立复核与真实终态证据，G0A 必须保持 `blocked`。
 
 G0B 的 ADR 关闭顺序固定为
 `ADR-008 → ADR-014 → ADR-009 → ADR-010 → ADR-007 umbrella`；各节点允许 ADR
 Index 规则下的 Accepted replacement。ADR-009 的跨 Gate 前置是 ADR-011，ADR-010
 的跨 Gate 前置是 ADR-011/012/013；R0B 证据准备不以完整 G0A clean-baseline 证明为
 前置，但相关平台 ADR 未 Accepted 时不得接受对应领域 ADR。G0B 只有在上述决定、
-R0B-01～07 验收和独立领域证据全部进入对应
-GateEvidence 后才能标记为 `passed`；“evidence preparation in progress”不是 Gate 决定。
+R0B-01～07（含 R0B-01A-D/01A、R0B-04A/04B-D/04B）的正式验收和独立领域证据全部进入对应
+GateEvidence 后才能标记为 `passed`。R0B-06P 只是 R0B-06 的形成性前置，其结果
+不得直接作为 G0B 通过证据。R0B-04A 在 G0B 关闭的是 execution
+contract、harness、registry 和可用 G0B adapter，不要求尚未允许实现的 G2
+realize/analyse/change 命令；这些命令的真实绑定是 G2 硬门。“evidence preparation
+in progress”不是 Gate 决定。
 
 ### R0A/R0B Stop 条件
 
@@ -226,6 +264,10 @@ GateEvidence 后才能标记为 `passed`；“evidence preparation in progress�
 - ADR 接受条件依赖只有 R4/R5 才能完成的经验结果，却又被作为 R1/R2 架构前置；
 - Canon/Task/simulated usage 被当作外部经验观察或 held-out 证据；
 - 工作包没有 owner、容量、估算、阈值或失败后的降范围规则。
+- gate 只依据退出码而不能证明测试实际执行，或失败后仍可能留下旧 passed；
+- 声明的 MSRV、lock graph、CI 工具链和 evidence environment 不一致；
+- current v1 create 检查发生在 lease 外、完整 history 可非前缀替换，或 migration
+  journal 可在 archive 未验证时清除；
 
 ## 7. R1：平台与仓库收口
 
@@ -245,7 +287,7 @@ GateEvidence 后才能标记为 `passed`；“evidence preparation in progress�
 | R1-07 | Query Projection Contract | R1-03/05 | cursor pagination、history-hash binding、rebuild/version/stale semantics | 不向 Webview 发送完整状态；派生 projection 可删除重建 |
 | R1-08 | Headless Experiment Harness v0 | R1-02A–E | 锁定输入、replicate、对照、manifest、取消/重启的假任务 runner | G4 的实验能力不再依赖 R7 UI；相同 manifest 可重演 |
 | R1-09 | Dependency Bundle / ReplayCapability | R0A-03、R1-05 | content-addressed registry/rule/data/TaskPack payload；Native/Legacy/ArchiveOnly | 离线重验不只依赖 URI；不支持执行时仍可只读审计 |
-| R1-10 | Verification Infrastructure | R1-01–09 | dependency-direction、schema compatibility、fault injection、migration corpus、IPC E2E、benchmark protocol | G1 验收不依赖散落的手工测试 |
+| R1-10 | Verification Infrastructure | R1-01–09 | dependency-direction、schema compatibility、fault injection、migration corpus、IPC E2E、benchmark protocol、`PlatformJourney.g1` 自动化与人工关键路径 | G1 验收不依赖散落的手工测试 |
 
 最小 Job 状态：
 
@@ -260,6 +302,11 @@ crash: Running → Interrupted → Restartable | Resumable
 
 WS-1 的验收叙事固定为：**one paragraph, one history**。它证明语言结构和软件闭环，不宣称真实社会传播。
 
+R2 只把 `CanonSeed` 作为 Genesis 候选的输入约束和 TaskFixture 锚点。“canon
+impact”在本阶段仅表示兼容性与变化预览，不建立 `AuthorCanonCorpus`、
+`CanonRelease`、retcon 或 branch 语义。作者在 R2 选择候选或测试 utterance
+不等于发布 canon；只有 R3 才能承诺 canon-safe 持续扩充。
+
 | ID | 工作包 | 依赖 | 交付物 | 验收与 Go 条件 |
 |---|---|---|---|---|
 | WS1-00 | Minimal Genesis TheoryProfile | G1、G0B、R0B-05/07 | Genesis 的模型/先验/参数、适用域、版本、semantic hash 与 ModelLock | 每个 candidate 锁定 profile；profile 或证据版本变化使验证过期 |
@@ -268,13 +315,14 @@ WS-1 的验收叙事固定为：**one paragraph, one history**。它证明语言
 | WS1-02A | InteractionContext + Meaning Workbench v0 | WS1-02、R0B-06 | scene template、speaker/addressee、deixis、speech act、obligation cards、ambiguity confirmation | 非专家不编辑 JSON/形式语义即可确认 5–10 个真实意图 |
 | WS1-03 | Minimal Grammar IR | WS1-02 | typed slots、selection、agreement、linearization、morphology realization、parse/realize | `analyse(realize(M))` 包含等价读法；非法形式被拒绝 |
 | WS1-04 | Phonology/Morphology Slice | WS1-01/03 | typed inventory/prosody/phonotactics；主轮廓的名词/动词范式、zero/syncretism；结构非同构对照 fixture | 所有表面形式可回到 segment、morpheme、slot 和 meaning；同一 IR 不只会换标签复制单一类型 |
-| WS1-05 | Genesis Candidate Compiler | WS1-00/01/02/03/04、R0A-04、R0B-05 | 3–5 个 deterministic candidates、trace、locks、Pareto diagnostics | 同输入跨进程一致；无生成器私有总自然度分数 |
-| WS1-06 | Independent Evaluator | R0B-04/07、WS1-03/04 | 四类 TaskPack、hard/negative probes、缺陷注入、coverage、false acceptance、ambiguity report | evaluator 检出人工缺陷和过生成；sealed audit 不参与候选选择 |
+| WS1-04A | Orthography v0 | WS1-01/03/04、Accepted R0B-01A authority ADR、R0B-04B | versioned `OrthographicForm/SpellingRealization`、grapheme inventory、Unicode normalization、词/形素边界、typed analysis↔orthography mapping、spelling analysis 与歧义策略 | 所有 supported TaskPack typed analyses 可拼写且不回退 raw IPA；同音异写、双向 round trip、forbidden analysis、ambiguity budget 与 hostile cases 跨进程稳定；音变不静默重拼写 |
+| WS1-05 | Genesis Candidate Compiler | WS1-00/01/02/03/04/04A、R0A-04、R0B-05 | 3–5 个 deterministic candidates、trace、locks、Pareto diagnostics | 同输入跨进程一致；无生成器私有总自然度分数 |
+| WS1-06 | Independent Evaluator | R0B-04/04A/07、WS1-03/04/04A | 四类 TaskPack、hard/negative probes、缺陷注入、coverage、false acceptance、ambiguity report | evaluator 检出人工缺陷和过生成；sealed audit 不参与候选选择；实际 runner 结果引用 execution manifest |
 | WS1-09 | Typed Structural ChangeSet | WS1-01/04、Accepted ADR-009 | `LanguageStructure { language_id, lect_id }` locus、一条 feature-based sound rule、Proposed/Validated ChangeSet、atomic reducer | 不需要伪造 community；pre/post hash、失败回滚和 effect ordering 通过；先在内存验证 reducer，不依赖尚未建立的领域 ledger |
 | WS1-01A | Language History + Ledger Integration | WS1-01/09、R1-01A、Accepted ADR-009 | Authoring/StructuralChange Operation、history node、validated ChangeSet 与 LegacyHistoryBoundary 集成；只允许 Legacy/test root | 多次 Authoring/Structural Operation 可回放；ChangeSet 引用 OperationId；不得在 seal 前构造生产 GenesisRoot；Job/Attempt 不进入语义 hash |
 | WS1-07 | Genesis Trust Boundary | WS1-01A、WS1-05/06、R1-04、Accepted ADR-010 | CandidateSet、Unverified/Verified artifact、revalidation、生产 GenesisRoot materialization、seal/create/reopen | 磁盘/IPC 候选重新验证；只有 VerifiedGenesisArtifact 能原子创建生产 GenesisRoot；客户端无法伪造创建 |
-| WS1-08 | Minimal Authoring Loop | WS1-02A/03/07 | scene → confirmed Meaning → utterance candidates → analysis/IGT/broad phonological form/explain → author accept | 5–10 句真实场景零随机 fallback；输出 ProofCarryingUtterance |
-| WS1-10 | Tauri Vertical Slice | G1、WS1-01A、WS1-05–09 | Blueprint 表单、候选比较、create/reopen、句子检查、变化 diff、Why inspector | 不编辑 JSON 完成纵切；取消或崩溃不产生半项目 |
+| WS1-08 | Minimal Authoring Loop | WS1-02A/03/04/04A/06/07 | scene → confirmed Meaning → utterance candidates → orthography/analysis/IGT/broad phonological form/explain → author selects test utterance | 5–10 句真实场景零随机 fallback；输出 ProofCarryingUtterance；选择结果不构成 AuthorCanonCorpus commit |
+| WS1-10 | Tauri Vertical Slice | G1、WS1-01A、WS1-04A/05/06/07/08/09 | Blueprint/CanonSeed 表单、候选比较、create/reopen、句子检查、变化 diff、Why inspector | 不编辑 JSON 完成 `ExecutableJourney.g2`；取消或崩溃不产生半项目；UI 明示该 build 不是 Canon-safe Alpha |
 
 ### R2 内部门与 WS-1 固定范围
 
@@ -287,9 +335,24 @@ R2 不等到最终 G2 才首次集成，按以下内部门交付可运行工件�
 5. R2E：Meaning Workbench + authoring round trip；
 6. R2F：Tauri vertical slice、cancel/crash/reopen 和 query projection。
 
+Canonical dependency assertions：
+
+- R2A depends on G1 + G0B；
+- R2B depends on R2A；
+- R2C depends on R2A + Accepted ADR-009；
+- R2B 与 R2C 可并行准备，但同一时刻最多一个包改变 schema/writer/replay；
+- R2D depends on R2B + R2C + Accepted ADR-010/011/012/013；
+- R2E depends on R2D 和 R2A 已通过的 realization/query-purity contract；
+- R2F depends on R2C + R2D + R2E；
+- G2 depends on R2A–R2F 的全部 acceptance protocols。
+
+任何镜像文档不得把 production seal/create/reopen 排到 R2C ChangeSet 与
+append-only domain history 之前。
+
 - 30–50 个锁定概念只作为 fixture 容量，不是语言丰富度指标；
 - 三类核心构式和七类交际 probes；
 - 一个小型音系/韵律系统；
+- 一个规则化 Orthography v0、Unicode 策略和 spelling analysis；
 - 主轮廓的一个名词范式和一个动词范式，以及一个结构非同构的对照 fixture；
 - 一个 typed 结构音变；
 - 一个 CanonSeed 名字/词语集合；
@@ -299,6 +362,8 @@ R2 不等到最终 G2 才首次集成，按以下内部门交付可运行工件�
 
 - G0B/G1、ADR、Registry、Grammar、Genesis、evaluator、storage、Tauri 全闭环；
 - 所有 hard TaskCase 通过，未支持能力返回 typed gap；
+- Linguistic Execution Manifest 绑定真实 runner；`future`、sentinel hash 或人工 pass 不计入能力；
+- `parse(spell(A, O), O)` 与 `analyse(realize(M))` 都包含等价 typed analysis，同时拒绝锁定的 forbidden analysis；其中 `A` 是稳定 WordForm/analysis occurrence，`O` 是 OrthographyRevision；对 `parse(S, O)` 返回的每个许可分析，`spell(A', O)` 只产生许可的 canonical/variant spelling；malformed spelling、precision、同音异写和 ambiguity budget 通过；IGT 从同一分析图投影；
 - 删除快照后可由 Genesis + ChangeSet 重建同一语义状态；
 - 外部语言学评审没有阻断性表示缺口；
 - 产品文案只称“可执行微型语言/可审计结构变换”。
@@ -307,21 +372,67 @@ R2 不等到最终 G2 才首次集成，按以下内部门交付可运行工件�
 
 R3 先证明单语言可持续使用，再扩大真实历时和家族规模。
 
+R3 首次引入可发布的 `AuthorCanonCorpus`、`CanonRelease` 和强制 canon impact。
+只有经作者显式接受并通过结构/意义账检查的输出才能进入 CanonCorpus。任何影响已
+发布名字、台词、词义、构式或历史解释的变化，必须在提交前列出影响，并要求
+accept、reject、retcon 或 branch。AuthorCanon 只证明作者选择与产品约束，不自动
+成为人口频率、传播 observation、经验先验或 held-out 科学证据。
+
 | ID | 工作包 | 依赖 | 交付物 | 验收与 Go 条件 |
 |---|---|---|---|---|
 | STORY-01 | CanonCorpus/Release | R0B-02、WS1 | CanonCommit、发布快照、影响索引、retcon/branch | 规则变化列出受影响姓名、句子、词源和诗行；不静默迁移 |
 | STORY-02 | Onomasticon v1 | WS1、STORY-01 | 人名、地名、族名、王号、本名/外名/旧名及命名构式 | 名字有词素、时代、lect、命名传统、语体和词源；完整 community 关联在 WS-2 建立 |
-| STORY-03 | Productive Morphology | WS1 | inflection classes、allomorphy、fusion、portmanteau、reduplication、defectiveness、derivation | 未见词根与 feature bundle 能生成/分析；缺口显式 |
+| STORY-03 | Productive Morphology Core | WS1 | TaskPack 所需的 inflection class、conditioned allomorphy、derivation/compounding；zero/syncretism 复用 WS-1；fusion、portmanteau、reduplication 与广泛 defectiveness 在有真实任务前保持 planned | 未见词根与 feature bundle 能生成/分析；缺口显式；高级机制不阻塞第一次 Alpha |
 | STORY-04 | Lexical Families/Senses | STORY-03 | root family、sense、colexification/derivation、collocation、register | 新概念不默认独立造根；每个扩充有任务和来源 |
 | STORY-05 | Scene Lab + Minimal Discourse | R0B-04、WS1-02A、STORY-01/03/04 | 场景、deixis、基本照应/信息结构、言语行为、Meaning obligations、candidate utterances、Lexical Debt Queue | 固定对白与短叙事不靠词汇堆叠；零 silent fallback |
 | STORY-05A | Corpus Source Typing | R0B-02、STORY-01/05 | AuthorCanon、TaskFixture、SyntheticUsage、ExternalEmpiricalObservation 的身份和允许用途 | Canon 只产生需求/场景，未经模型不得冒充人口频率 |
 | STORY-06 | Canon-first Reconciliation | R0B-02、STORY-02/05 | 导入已有名称/台词、冲突集、兼容方案和历史解释提案 | 不自动为所有例外编造历史；用户可保留显式创作异常 |
 | STORY-07 | Creative/Aesthetic Profile | WS1、STORY-05 | pairwise candidate audition、声音/节奏/文字偏好及解释 | 偏好不成为经验规律；相同语义内容用于候选比较 |
 | STORY-08 | Structural RulePack v1 | WS1-09、稳定 Grammar/Change IR | 声明式 validate → conflicts → dry-run → impact → authorial structural transform → explain | 无任意代码；R3 变换不在 UI 中伪装为社群传播历史 |
-| STORY-09 | Creator Workbench Alpha | R1、STORY-01–08 | Forge / Write / Inspect / Quality 核心工作流 | 目标叙事作者完成候选和短场景；expert 能追踪现代形式；中英文状态不变 |
+| STORY-09A | Creator Workbench Integration Shell | R1、G2 | Forge / Write / Inspect / Quality 导航、versioned API adapter、首个 Canon Intake 纵切 | 从 ALPHA-01 起持续集成；形成性构建明示非 G3，不等待 STORY-01～08 全部完成 |
+| STORY-09B | Creator Workbench Closed Alpha | STORY-01～08、STORY-10、STORY-09A、ALPHA-01～06 | 完整固定路径、错误恢复、claim projection 与确认性研究构建 | 目标叙事作者完成候选和短场景；expert 可追踪现代形式；中英文状态不变；只作为 G3 candidate，不提前生效 Alpha 声明 |
 | STORY-10 | Deterministic PronunciationPlan v1 | WS1-04、STORY-03/05 | morphology → phonology → typed allophony → utterance prosody → phones | 同一分析与锁跨进程结果一致；覆盖音段、边界、重音/声调；只承诺发音计划，不承诺音频自然性 |
 
 R3 不要求庞大词典。完成度由 TaskPack 覆盖、生产力、意义保真、canon 稳定性和第二人使用决定。
+
+### R3 Canon-first Alpha 内部门
+
+STORY-01～10 是 R3 epic。以下内部门提供可独立验收的最小纵切；它们通过不自动表示
+父 epic 或 G3 已完成。
+
+| ID | 内部门 | 依赖 | 最小可见结果 | 验收 |
+|---|---|---|---|---|
+| ALPHA-01 | Canon Intake | G2、STORY-01、STORY-09A | 导入 3–5 个名字、术语或台词，记录来源、锁定程度和 CorpusRole | 不编辑 JSON；提交前展示解析；不混淆 author、task 与 empirical corpus |
+| ALPHA-02 | One Conflict Reconciliation | ALPHA-01、STORY-06 | 一个真实冲突、至少两个兼容提案和一个 AuthorialException 路径 | 不自动编造历史；作者能解释最终选择 |
+| ALPHA-03 | One Naming Construction | ALPHA-01、STORY-02/03 | 用一个受支持命名构式生成并分析一个新名字 | 显示词素、语体、时代和词源；不靠随机合法字符串 |
+| ALPHA-04 | One Short Scene | ALPHA-01、STORY-03/04/05 | 2–3 话轮或一个短叙事、一个 typed gap 和一次最小 debt 解决 | 零 silent fallback；进入 canon 前结清意义与结构账 |
+| ALPHA-05 | Canon Impact | ALPHA-02/03/04、STORY-08 | dry-run 一条稳定结构规则并显示受影响名字和句子 | 取消不改 hash；提交前显式 accept/reject/branch |
+| ALPHA-06 | Canon Release + Export | ALPHA-05、STORY-01/05A、STORY-10 | 创建 release、关闭/重开并导出 grammar/lexicon/IGT/provenance/limitations | 重开与导出引用同一 release/hash；无半发布 |
+| ALPHA-07 | Closed Alpha Candidate | ALPHA-06、STORY-07/09B/10 | Forge/Write/Inspect/Quality 固定路径与 `CanonAlphaJourney.g3` | candidate manifest、JourneyPack 和预注册证据包齐全；通过 G3 后另发 immutable effective manifest |
+
+执行顺序为 `Protocol Ready → Canon Intake → Create and Explain → Safe Growth →
+Closed Alpha Candidate → G3`。任一内部门只能用于形成性测试，不扩大阶段允许声明。
+
+### R3 Alpha 初始预注册阈值
+
+以下是可修订的产品决策，不是语言学普遍规律；确认性测试开始后不得根据结果改阈值。
+
+- 形成性研究每轮计划 5 名目标作者，使用自己的 canon；不足 5 名完成者时只产生探索性发现，不宣布 4/5 阈值通过；至少 4/5 不编辑 JSON，并在不超过两次引导下确认 5–10 个意图；
+- G3 确认门至少 8 名未参与开发且未参与该构建形成性调试的目标作者；
+- 至少 80% 不编辑 JSON 完成 `CanonAlphaJourney.g3`；比例按 `ceil(n × threshold)` 计算，最小 n=8 时即至少 7 人；
+- canon 静默改变、错误接受冲突、silent fallback 和半项目必须为零；
+- 至少 75% 独立完成一个新名字和一句新台词；最小 n=8 时至少 6 人；
+- 至少 80% 能解释 candidate trade-off、typed gap 和 canon impact；最小 n=8 时至少 7 人；
+- 至少 50% 在七日内重开并完成第二次有效扩充，或完成预注册的等价持续使用任务；最小 n=8 时至少 4 人；
+- 阻断级产品、无障碍和语言表示缺陷必须为零。
+
+形成性参与者不得计入同一构建的确认性成功样本。硬安全门失败立即阻断 G3；比例门
+失败回到对应 ALPHA 内部门，不得用平均满意度或 CreativeEvaluationRecord 覆盖。
+确认性分母是通过招募条件并开始首个计分任务的全部参与者；dropout 和七日失联默认
+按失败计，只有在查看结果前预注册的外部技术故障/资格排除才可移出分母。招募前必须
+冻结 build/commit、platform、locale、辅助技术、JourneyPack、任务顺序和排除规则。
+“阻断级”按预注册 severity rubric 判定，并由未参与该缺陷实现的产品证据 reviewer
+裁决；任何事后改变阈值、分母或排除条件都使该轮确认性证据失效。
 
 ## 10. R3B / R4：WS-2 模型就绪与机制性变化 v1
 
@@ -402,7 +513,44 @@ R3 不要求庞大词典。完成度由 TaskPack 覆盖、生产力、意义保�
 
 `LanguageCapabilityCertificate` 必须锁定：language/revision、era、lect、Meaning/Grammar、TaskPack role、CanonCorpus、evaluator、数据/模型、支持能力、typed gaps 和已知限制。任何影响这些语义的变更都会使证书过期并触发重新验证。
 
-`ProductUsabilityEvidence` 独立锁定 app build、平台/locale、辅助技术、persona、招募条件、任务、完成率、误完成、耗时、求助、恢复、信心、满意度和研究限制。`CreativeEvaluationRecord` 单独保存作者/读者的审美与文学判断。三类证据不得互相替代，也不得压缩成一个自然度或可用性总分。
+证书声明分层复用现有 Gate，不创建平行调度门：
+
+- `G-LANG = G2 / LC1`：只声明可执行、可分析的微型语言；supported TaskCase 必须成功，typed gap 是诚实的未支持结果，不能计作覆盖通过；
+- `G-CHANGE = G2 / WS1-09`：只声明具有 typed environment/effect/order/provenance、原子回滚和 replay 的作者结构变换；变换后必须重跑 G-LANG；
+- `G-SIM = G4`：只有通过 population/variation、成功与失败、parameter recovery、held-out、sensitivity 和 ablation 后，才声明机制性语言变化模拟。
+
+`ProductUsabilityEvidence` 独立锁定 app build、平台/locale、辅助技术、persona、招募条件、JourneyPack version、ReleaseClaimManifest hash、完成率、误完成、耗时、求助、恢复、信心、满意度和研究限制。`CreativeEvaluationRecord` 单独保存作者/读者的审美与文学判断。三类证据不得互相替代，也不得压缩成一个自然度或可用性总分。
+
+每个可分发、可演示或进入用户研究的构建必须生成版本化
+`ReleaseClaimManifest`。它是 GateEvidence、Capability Matrix 与发布声明的只读
+投影，不进入 LanguageState、项目语义 hash 或历史。最小内容包括 build/commit/
+platform、manifest phase、`candidateForChannel`、`currentEffectiveChannel`、
+`claimsEffective`、passed/pending Gate 与 evidence hash、supported/planned/refused
+能力、allowed/forbidden claims、known limitations、数据/模型/规则锁和过期条件。
+
+候选研究构建与生效发布必须分离。`concept-prototype` 和 `gate-candidate` 的
+`claimsEffective=false`；后者记录目标 Gate 和 `candidateForChannel`，但不得提前
+显示目标 channel 的能力声明。Gate 通过后生成新的 immutable effective manifest，
+引用 candidate/evidence hash；不得原地改写候选 manifest，也不得让研究证据依赖一个
+尚未合法生效的 release。
+
+| Manifest channel/phase | 最低 Gate | 允许声明 |
+|---|---|---|
+| `concept-prototype` / candidate | 无 | 仅可用性概念验证；无权威写入、无 supported 产品声明 |
+| `gate-candidate` / candidate | 目标 Gate pending | 只用于预注册验证；`claimsEffective=false`，显式显示目标与当前 effective channel |
+| `foundation-inspector` / effective | 当前 verified foundation | 只读检查与合同验证；无正式创建 |
+| `platform-dev-preview` / effective | G1 | fake operation、Job、取消与恢复；不生成语言 |
+| `0.4-executable-preview` / effective | G2 | 可执行微型语言与一次可审计结构变换；不得称 Alpha 或 canon-safe |
+| `0.5-canon-alpha` / effective | G3 | 规定范围内的 Canon-first、安全扩充与 Creator Alpha |
+
+应用首页/About、README、Capability UI、导出包和发布说明必须从同一 manifest 投影
+或通过一致性测试；没有对应 GateEvidence 的手工文案不得扩大能力声明。
+
+Release truth 不新增平行 Gate：R0A-01 负责 channel/claim 合同，R0A-06 负责
+schema/version、candidate→effective generator 与 GateEvidence 绑定，R0B-04A 负责
+capability/claim hostile validation，R1-03 负责 desktop query/projection，R1-10
+负责 UI/README/export E2E 与漂移测试。R0A-07 必须为这条跨包链指定唯一
+`Release Truth Owner` 和独立 reviewer；在具名之前相关包不得 Ready。
 
 ### 14.1 TaskCase 最小结构
 
@@ -436,6 +584,9 @@ equivalence policy
 | 迁移伪造历史 | v2 checkpoint migration、source archive、显式机制断裂 |
 | 语法自我欺骗 | round trip、contrastive foils、negative parse、独立 semantic validator |
 | 生成器自我评分 | evaluator dependency boundary、defect injection、held-out tasks |
+| 正字法退回 IPA、以裸音系串丢失同音异写或悄悄消歧 | Orthography v0、稳定 analysis occurrence + OrthographyRevision、Unicode hostile cases、双向 typed-analysis round trip、analysis forest、禁止 raw IPA fallback |
+| IGT 与真实分析漂移 | 从同一 analysis graph 投影、逐层 span/contribution 对齐、ProofCarryingUtterance integrity |
+| fixture 只有规划标签却被计为通过 | Linguistic Execution Manifest、adapter registry、真实命令/result hash、`future` 不计入能力 |
 | 模型过拟合 | family/area-held-out、替代模型、全局 sensitivity、ablation |
 | 参数不可辨识 | synthetic parameter recovery、equifinality/profile analysis、uncertainty coverage、明确不可识别报告 |
 | evaluator 任务泄漏 | pack role、首次可见版本、sealed audit expiry、external elicitation |
@@ -466,20 +617,29 @@ Publish  Language Bible / IGT / actor and audit packs
 
 Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。切换不改变字段值、命令语义、默认模型或能力真实性。
 
-### 16.2 第一轮固定任务
+### 16.2 版本化 JourneyPack
 
-1. 不编辑 JSON，从真实项目简报或已有 canon 创建候选；
-2. 导入已有名字并解决最小冲突；
-3. 用相同名字、台词和诗句比较候选；
-4. 在 Meaning Workbench 中识别并解决一种真实歧义或目标语言义务；
-5. 生成短场景、识别 ExpressionGap，并接受一项最小扩充加入 CanonCorpus；
-6. 从现代词追踪到祖形和每个事件；
-7. dry-run 一条规则并理解 Canon 影响；
-8. 取消长任务，重启后恢复或确定性重跑；
-9. 只用键盘完成关键路径；
-10. 切换中英文，IPA、正字法、state/hash 不变化。
+产品任务按 Gate 与证据角色拆成四个 JourneyPack，不得再合并成一次“第一轮测试”。
+每个 pack 至少锁定 schema/version、目标 Gate、persona、app build、
+候选或生效 `ReleaseClaimManifest`、CorpusRole、输入、TaskCase/forbidden reading、是否允许权威
+写入、成功/误完成/耗时/求助/恢复定义、evidence kind、允许声明和过期条件。
+产生 Gate 证据的 pack 在开始时锁定 immutable candidate manifest；Gate 通过后才生成
+引用该 evidence 的 effective manifest，因而不形成证据循环。
 
-第一轮以已拥有姓名、台词或短场景的目标叙事作者验证首发 wedge；conlanger 验证 Expert 渐进披露，语言学家验证审计材料，三者不互相冒充主要用户。R0 同时记录用户当前表格、Wiki、词典和音变工具基线以及继续使用意愿。形成性研究与 Gate benchmark 使用不同参与者；每个 R 阶段持续迭代，不在 R0 后永久冻结用户理解。
+| JourneyPack | 阶段与证据 | 固定任务 | 权威写入 |
+|---|---|---|---|
+| `FormativeJourney.r0b` | R0B-06P；形成性 ProductUsabilityEvidence | 导入 3–5 个真实 canon item；确认 5–10 个意图；比较候选概念；理解 gap/impact/export；记录替代工具与转向条件 | 禁止；仅 prototype/fixture |
+| `PlatformJourney.g1` | G1；SoftwareVerification + UI task evidence | submit fake operation；查看进度；cancel；强制终止；restart/reclaim；reopen；删除缓存后得到同一结果 | 只写平台 Job/staging fixture；不写正式语言状态 |
+| `ExecutableJourney.g2` | G2；LanguageCapabilityEvidence | CanonSeed/Blueprint → candidates → evaluator → seal/create/reopen → paragraph/IGT/analyse → typed gap → structural change → replay/explain | 允许 verified Genesis/ChangeSet；禁止 AuthorCanonCorpus release |
+| `CanonAlphaJourney.g3` | G3；ProductUsabilityEvidence + CreativeEvaluationRecord | 导入并协调 AuthorCanon；创建新名字和短场景；解决一个 gap/debt；dry-run impact；accept/reject/branch；release/reopen/export；恢复一次错误 | 允许验证后且由作者显式接受的 CanonCommit/Release |
+
+目标叙事作者验证主要工作流；conlanger 只验证 Expert 渐进披露；语言学家验证分析、
+证据和表示边界。三类参与者不得互相冒充 primary persona。形成性研究与 Gate 确认
+样本隔离；每个阶段持续迭代，不在 R0 后永久冻结用户理解。
+
+低保真原型必须使用独立的 prototype/fixture adapter，持续显示
+`Concept Prototype / no authoritative state`，不得调用 create/commit、访问正式项目
+路径或把人工准备候选描述为“已生成、已验证、已保存”。
 
 正式 UI 视觉系统只有在 R0B-06 任务路径通过且 R1 API 稳定后启动。目标至少为 WCAG 2.2 AA；自动扫描不能替代键盘、屏幕阅读器、高对比和 200% 缩放测试，无障碍参与者从 R0B 开始进入关键任务。
 
@@ -528,6 +688,9 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 |---|---|---|---|
 | Grammar IR 范围爆炸 | WS-1 开始实现完整 HPSG/所有类型学 | 严格有限双向子集；第二对照轮廓揭露偏置 | WS1-02/03 |
 | 生成器自我认证或过生成 | evaluator 复用私有评分、只测目标读法存在 | 四类 TaskPack、negative precision、缺陷注入、sealed audit | WS1-06 |
+| 正字法/IGT 成为第二分析 | raw IPA fallback、裸音系串覆盖同音异写、手写 gloss、Unicode 形式改变结果 | stable SpellingRealization、同图投影、typed-analysis round trip、PCU integrity | WS1-04A/08 |
+| 全部返回 gap 造成空洞通过 | supported case 被计为“已正确拒绝” | supported coverage 与 gap correctness 分项；gap 不计成功 | WS1-06/G-LANG |
+| 规划 fixture 被误报为能力 | runnerStatus=future 但发布文案称通过 | Execution Manifest + 真实 runner/result evidence | R0B-04A/G2 |
 | “可用”出现太晚 | 只有状态/hash，没有真实句子 | WS1 minimal authoring loop；R3 Scene Lab | WS1-08 |
 | 文化刻板因果 | 世界标签直接改变语法/音系 | 只形成 communication/lexicon/register need | R0A-01/R0B-01 |
 | Canon 被随机重生成破坏 | 更新后姓名/台词漂移 | stable ID、Canon release、impact、branch/retcon | STORY-01 |
@@ -542,6 +705,9 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 | 双核心长期共存 | Python/Rust 都写项目 | 领域切换后停止 Python production | 每阶段 cleanup |
 | 数据关联变因果 | 频率直接成为硬规则 | prior/hypothesis/preferences 分层 | R0B-05/07 |
 | 计划因并行失控 | 多领域同时半完成 | 关键路径、WIP 限制、阶段 gate | 全阶段 |
+| Gate 假通过或旧 pass 残留 | pytest 只收集、验证失败但 STATUS 仍 passed | hermetic runner、执行计数、原子 fail-closed evidence | R0A-08 |
+| 当前 v1 权威历史被覆盖/改写 | 双创建成功、候选 history 不是旧历史前缀 | create-if-absent、core extension validator、无通用 replacement writer | R0A-09 |
+| 工具链声明漂移 | 新 Rust 通过但声明 MSRV 无法解析 lock | 单一 toolchain source、精确 MSRV CI 与 evidence | R0A-08 |
 
 ## 21. 工作包执行模板
 
@@ -562,7 +728,9 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 13. 文档、capability matrix 与用户文案更新；
 14. rollback、cleanup 和停止双写计划；
 15. 允许的产品声明和已知限制；
-16. Stop/Go 决策人及证据位置。
+16. Stop/Go 决策人及证据位置；
+17. execution manifest、runner/adapter、真实命令、输入/输出 hash 与过期条件；
+18. claim boundary、JourneyPack、ReleaseClaimManifest candidate/effective phase、channel 与禁止声明。
 
 工作包只能按 `Planned → Ready → In Progress → Review → Complete` 流转。依赖、ADR、数据或 fixture 未就绪时不得标为 Ready。Complete 必须记录提交/PR、测试、语义 hash/baseline 变化、迁移结果和剩余限制。
 
@@ -570,16 +738,23 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 
 ### 现在允许执行
 
-第一批并行但有边界的队列：
+初始全局 WIP limit 为 2；这里只声明 intended slots，不绕过 R0A-07 的 owner/capacity
+Ready 门：
 
-| Lane | 立即工作 | 输出 |
+| Slot | 当前顺序 | 输出 |
 |---|---|---|
-| A Repository | R0A-05 G0A repository baseline | 使用 [G0A 交接清单](./governance/G0A_REVIEW_AND_BASELINE_HANDOFF.md)审查纳入范围，形成版本基线与 clean-checkout 证据 |
-| B Platform Decisions | R0A-01～04/06/07 | 产品 wedge、ADR 依赖、Project/Run/Job、Gate/交付合同 |
-| C WS-1 Domain Evidence | R0B-01～05/07 | Meaning/Grammar/Corpus/TaskPack/Capability、反例与数据锁 |
-| D Product | R0B-06 | Product Evidence、Meaning Workbench 原型、失败/转向记录 |
+| `WIP-GATE` | R0A-05/06 candidate → R0A-08 → R0A-09 → R0A-10 → refresh R0A-05/06 → G0A | policy v2、可信 evidence、current authority fault-injection、legacy raw evidence、clean subject 与独立 attestation |
+| `WIP-PRODUCT` | R0B-06P / `FormativeJourney.r0b` | 不写权威状态的 Meaning Workbench 原型、真实 canon 形成性证据与失败/转向记录 |
+| `QUEUED-DOMAIN` | R0B-01～05（含 R0B-01A-D/01A/04A/04B-D/04B）、R0B-06 与 R0B-07 | Meaning/Grammar/Corpus/TaskPack/Capability、产品 evidence contract、execution contract、ADR review vectors、冻结反例与数据锁 |
 
-Lane A/B 中进入 R1 所需的决定 Accepted 并关闭 G0A 后，可以实施 R1；R0B 与 R1 继续并行。只有 G1 与 G0B 同时关闭后才进入 WS-1 正式 schema、compiler、reducer 和创建入口。R3 期间可以准备 G3B；只有 G3 与 G3B 同时关闭后才进入 WS-2。
+若只有一个具备实际容量的 owner，全局 WIP 自动降为 1。任一时刻最多一个包改变
+schema、writer 或 replay；R0A-09、R0A-10 和 R0B evidence 只在当前 Active 包进入
+Review、Blocked 或 Complete 后轮换。
+
+R1 所需决定 Accepted、R0A-08/09/10 关闭并通过 G0A 后才可以实施 R1；R0B 与 R1
+随后并行。只有 G1 与 G0B 同时关闭后才进入 WS-1 正式 schema、compiler、reducer
+和创建入口。R3 内部门允许持续形成性测试，但只有 G3 可以发布
+`0.5-canon-alpha`。G3 与 G3B 同时关闭后才进入 WS-2。
 
 ### 继续停止
 
@@ -596,7 +771,9 @@ Lane A/B 中进入 R1 所需的决定 Accepted 并关闭 G0A 后，可以实施 
 
 恢复 R1 平台实现前必须同时满足：
 
-- [当前 G0A GateEvidence](./G0A_GATE_EVIDENCE_2026-07-17.json) 的 `decision` 必须等于 `passed`，且不存在未登记 waiver；截至 2026-07-18 该值仍为 `blocked`；
+- [当前 G0A GateEvidence](./G0A_GATE_EVIDENCE_2026-07-17.json) 的 `decision` 必须等于 `passed`，且不存在未登记 waiver；截至 2026-07-19 该值仍为 `blocked`；
+- GateEvidence 必须引用精确包含 `R0A-01`、`R0A-02-ADR011`、`R0A-03`、`R0A-04`、`R0A-05`、`R0A-06`、`R0A-07`、`R0A-08`、`R0A-09`、`R0A-10` 和完整 DeliveryReadiness 的新 policy；旧 policy 下的 `passed` 不满足本启动门；
+- R0A-08/09/10 已关闭：零执行 pytest 不能通过，失败 evidence 原子保持 blocked，真实 MSRV 与 Windows/Linux desktop gate 通过，current v1 writer/archive/index 的并发和故障注入矩阵通过，legacy raw evidence 已冻结；
 - ADR 依赖图无环；Project/Operation/Run/Job、staging、query、dependency bundle 与 storage authority 中影响持久化身份、回放或权威写入的决定已经 Accepted；
 - G0A clean checkout、RNG、平台 API/Job/Gate 合同可复现；
 - `scripts/g0a_handoff.py --check --require-clean-subject` 证明不存在未提交的 subject candidate、瞬态产物、冲突或未经单独复核的删除/重命名；
@@ -609,8 +786,26 @@ Lane A/B 中进入 R1 所需的决定 Accepted 并关闭 G0A 后，可以实施 
 
 - `ROADMAP.md` 只维护产品方向、里程碑状态、发布切片和当前 Next；
 - `LANGUAGE_SIMULATOR_PLAN.md` 维护长期能力地图、领域工作包与跨阶段 Gate；
-- 本文维护关键路径、详细执行 WBS、依赖、Stop/Go 和当前队列；
+- 本文是工作包 ID、依赖、R2A–R2F 映射、关键路径、Stop/Go 和当前队列的唯一 canonical WBS；
 - ADR 维护不可逆的架构和持久化语义决策；
 - 每个里程碑结束时更新状态、证据、基线、失败与下一阻断项；
-- 任何能力声明变化必须同步 README、capability registry 和 UI；
+- 任何能力或发布声明变化必须先更新并验证 ReleaseClaimManifest；README、capability registry、UI 和导出必须从其投影或通过一致性测试；
 - 不用测试数量、代码量、词数或规则数代替阶段完成度。
+
+### 23.1 Machine consistency requirements
+
+现有 `scripts/docs_check.py` 必须逐步扩展为至少验证：
+
+1. canonical WBS 中 work-package ID 唯一、dependency 存在且依赖图无环；
+2. `LANGUAGE_SIMULATOR_PLAN.md` 的 R2A–R2F 镜像与本文名称、顺序完全一致；
+3. 历史 `PLAN_OPTIMIZATION_*` 不得声明与本文不同的当前执行顺序；
+4. G0A policy required IDs 与本文的 G0A requirement policy contract 完全一致；
+5. GateEvidence 的 policy/schema 版本、requirement 集合和接受谓词匹配当前 policy；
+6. 任一 `Ready`/`passed` 包具有 owner、所需独立 reviewer、capacity、estimate、WIP 和 timebox；
+7. ADR Index 与 ADR frontmatter 状态一致，Proposed ADR 不能满足 Accepted dependency；
+8. STATUS 由当前 evidence 重建，禁止手写动态 Gate 状态和测试数量；
+9. planned/rejected capability 不得在 UI、README、导出或 ReleaseClaimManifest 中显示为 supported；
+10. JourneyPack 的 required Gate、evidence kind 和权威写入许可彼此一致。
+
+任一检查失败时 docs gate 和相应产品 Gate 均 fail closed。计划文档只定义这些检查；
+实际 validator、policy 和负例仍须作为 R0A-08/R0B-04A 的独立实现提交。

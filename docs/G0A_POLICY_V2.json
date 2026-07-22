@@ -1,0 +1,256 @@
+{
+  "$schema": "G0A_POLICY_V2.schema.json",
+  "schemaVersion": "telysta-g0a-policy.v2",
+  "gateId": "G0A",
+  "supersedes": {
+    "path": "docs/G0A_POLICY_V1.json",
+    "schemaVersion": "telysta-g0a-policy.v1",
+    "currentDecisionTreatment": "reject_as_obsolete"
+  },
+  "nonWaivableRequirementIds": [
+    "R0A-01",
+    "R0A-02-ADR011",
+    "R0A-03",
+    "R0A-04",
+    "R0A-05",
+    "R0A-06",
+    "R0A-07",
+    "R0A-08",
+    "R0A-09",
+    "R0A-10"
+  ],
+  "requiredWorkPackageIds": [
+    "R0A-01",
+    "R0A-02",
+    "R0A-03",
+    "R0A-04",
+    "R0A-05",
+    "R0A-06",
+    "R0A-07",
+    "R0A-08",
+    "R0A-09",
+    "R0A-10",
+    "R1-01",
+    "R1-01A",
+    "R1-02A",
+    "R1-02B",
+    "R1-02C",
+    "R1-02D",
+    "R1-02E",
+    "R1-03",
+    "R1-04",
+    "R1-05",
+    "R1-06",
+    "R1-07",
+    "R1-08",
+    "R1-09",
+    "R1-10"
+  ],
+  "requirements": {
+    "R0A-01": {
+      "workPackageId": "R0A-01",
+      "requiredPaths": [
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md"
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/PRODUCT_DEVELOPMENT_PLAN.md",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        }
+      ]
+    },
+    "R0A-02-ADR011": {
+      "workPackageId": "R0A-02",
+      "requiredDecisions": [
+        {
+          "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
+          "status": "accepted"
+        }
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
+          "kind": "ArchitectureDecisionEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        }
+      ]
+    },
+    "R0A-03": {
+      "workPackageId": "R0A-03",
+      "requiredDecisions": [
+        {
+          "path": "docs/adr/ADR-012-project-package-commit-authority.md",
+          "status": "accepted"
+        }
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/PLATFORM_CONTRACT_PACK_V1.md",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "docs/adr/ADR-012-project-package-commit-authority.md",
+          "kind": "ArchitectureDecisionEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        }
+      ]
+    },
+    "R0A-04": {
+      "workPackageId": "R0A-04",
+      "requiredDecisions": [
+        {
+          "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
+          "status": "accepted"
+        }
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
+          "kind": "ArchitectureDecisionEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "tests/fixtures/rng_known_answers_v1.json",
+          "kind": "DeterminismEvidence",
+          "acceptedResults": [
+            "pass"
+          ]
+        }
+      ]
+    },
+    "R0A-05": {
+      "workPackageId": "R0A-05",
+      "requiredPaths": [
+        "docs/governance/G0A_REVIEW_AND_BASELINE_HANDOFF.md",
+        "docs/evidence/R0A_05_CLEAN_BASELINE_TERMINAL_V1.json"
+      ],
+      "requiresCleanCommittedSubject": true,
+      "terminalAcceptance": {
+        "evidencePath": "docs/evidence/R0A_05_CLEAN_BASELINE_TERMINAL_V1.json",
+        "kind": "RepositoryBaselineEvidence",
+        "acceptedResult": "accepted_terminal",
+        "requiresRemoteProvenance": true
+      }
+    },
+    "R0A-06": {
+      "workPackageId": "R0A-06",
+      "requiredPaths": [
+        "docs/G0A_POLICY_V2.schema.json",
+        "docs/G0A_POLICY_V2.json",
+        "docs/GATE_EVIDENCE_MANIFEST_V3.schema.json",
+        "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
+        "scripts/generate_gate_evidence.py"
+      ],
+      "requiredEvidence": [
+        {
+          "path": "docs/G0A_POLICY_V2.json",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "docs/GATE_EVIDENCE_MANIFEST_V3.schema.json",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        },
+        {
+          "path": "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
+          "kind": "ArchitectureContractEvidence",
+          "acceptedResults": [
+            "accepted"
+          ]
+        }
+      ]
+    },
+    "R0A-07": {
+      "workPackageId": "R0A-07",
+      "requiredPaths": [
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md",
+        "docs/evidence/R0A_07_DELIVERY_READINESS_TERMINAL_V1.json"
+      ],
+      "requiresAssignedOwner": true,
+      "requiresIndependentReviewer": true,
+      "requiresDeliveryReadiness": true,
+      "terminalAcceptance": {
+        "evidencePath": "docs/evidence/R0A_07_DELIVERY_READINESS_TERMINAL_V1.json",
+        "kind": "DeliveryReadinessEvidence",
+        "acceptedResult": "accepted_terminal",
+        "requiresRemoteProvenance": false
+      }
+    },
+    "R0A-08": {
+      "workPackageId": "R0A-08",
+      "requiredPaths": [
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md",
+        "docs/AUDIT_CORRECTION_PLAN_2026-07-18.md",
+        "docs/AUDIT_DEFECT_LEDGER_2026-07-18.md",
+        "docs/G0A_POLICY_V2.json",
+        "docs/GATE_EVIDENCE_MANIFEST_V3.schema.json",
+        "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
+        "scripts/pytest_runner.py",
+        "scripts/generate_gate_evidence.py",
+        ".github/workflows/ci.yml",
+        "rust-toolchain.toml",
+        "Cargo.lock",
+        "docs/evidence/R0A_08_VERIFICATION_TRUST_TERMINAL_V1.json"
+      ],
+      "terminalAcceptance": {
+        "evidencePath": "docs/evidence/R0A_08_VERIFICATION_TRUST_TERMINAL_V1.json",
+        "kind": "SoftwareVerificationEvidence",
+        "acceptedResult": "accepted_terminal",
+        "requiresRemoteProvenance": true
+      }
+    },
+    "R0A-09": {
+      "workPackageId": "R0A-09",
+      "requiredPaths": [
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md",
+        "docs/AUDIT_DEFECT_LEDGER_2026-07-18.md",
+        "docs/PROJECT_STORAGE_V1.md",
+        "docs/PROJECT_RUNTIME_V1.md",
+        "crates/telysta-storage/src/lib.rs",
+        "crates/telysta-storage/src/session.rs",
+        "docs/evidence/R0A_09_CURRENT_V1_AUTHORITY_TERMINAL_V1.json"
+      ],
+      "terminalAcceptance": {
+        "evidencePath": "docs/evidence/R0A_09_CURRENT_V1_AUTHORITY_TERMINAL_V1.json",
+        "kind": "AuthorityIntegrityEvidence",
+        "acceptedResult": "accepted_terminal",
+        "requiresRemoteProvenance": true
+      }
+    },
+    "R0A-10": {
+      "workPackageId": "R0A-10",
+      "requiredPaths": [
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md",
+        "docs/AUDIT_DEFECT_LEDGER_2026-07-18.md",
+        "docs/CLEANUP_PLAN.md",
+        "tests/fixtures/legacy_replay_migration_cases_v1.json",
+        "tests/fixtures/golden/legacy_v1.json",
+        "tests/integration/test_golden_baseline.py",
+        "docs/evidence/R0A_10_LEGACY_CONTAINMENT_TERMINAL_V1.json"
+      ],
+      "terminalAcceptance": {
+        "evidencePath": "docs/evidence/R0A_10_LEGACY_CONTAINMENT_TERMINAL_V1.json",
+        "kind": "LegacyContainmentEvidence",
+        "acceptedResult": "accepted_terminal",
+        "requiresRemoteProvenance": false
+      }
+    }
+  }
+}

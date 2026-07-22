@@ -150,8 +150,10 @@ jobs:
     needs:
       - python
       - rust
-    runs-on: windows-latest
+    runs-on: windows-2025
     timeout-minutes: 45
+    env:
+      RUSTUP_TOOLCHAIN: "1.88.0"
 
     steps:
       - name: Check out exact subject revision
@@ -164,8 +166,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-          cache: poetry
-          cache-dependency-path: poetry.lock
 
       - name: Install Poetry and project dependencies
         run: |
@@ -174,12 +174,27 @@ jobs:
           poetry install --no-interaction
 
       - name: Install pinned Rust toolchain
-        run: rustup toolchain install 1.77.2 --profile minimal --component rustfmt,clippy
+        run: rustup toolchain install 1.88.0 --profile minimal --component rustfmt,clippy
+
+      - name: Assert exact gate-evidence Rust toolchain
+        shell: pwsh
+        run: |
+          $actualRustc = (rustc --version).Split()[1]
+          $actualCargo = (cargo --version).Split()[1]
+          if ($actualRustc -ne "1.88.0") {
+            throw "Expected rustc 1.88.0, got $actualRustc"
+          }
+          if ($actualCargo -ne "1.88.0") {
+            throw "Expected cargo 1.88.0, got $actualCargo"
+          }
+          rustc --version --verbose
+          cargo --version --verbose
 
       - name: Generate subject-bound diagnostic evidence
-        run: poetry run python scripts/generate_gate_evidence.py --verify
+        run: poetry run python -I scripts/generate_gate_evidence.py --verify
 
       - name: Upload generated evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: g0a-evidence-${{ github.sha }}

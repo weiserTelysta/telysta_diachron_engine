@@ -36,9 +36,10 @@ REVIEW_TARGETS = (
         "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
     ),
     ("architecture-contract", "docs/PLATFORM_CONTRACT_PACK_V1.md"),
-    ("gate-policy", "docs/G0A_POLICY_V1.json"),
-    ("gate-schema", "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json"),
-    ("gate-model", "docs/governance/GATE_EVIDENCE_MODEL_V2.md"),
+    ("gate-policy-schema", "docs/G0A_POLICY_V2.schema.json"),
+    ("gate-policy", "docs/G0A_POLICY_V2.json"),
+    ("gate-schema", "docs/GATE_EVIDENCE_MANIFEST_V3.schema.json"),
+    ("gate-model", "docs/governance/GATE_EVIDENCE_MODEL_V3.md"),
     ("determinism-fixture", "tests/fixtures/rng_known_answers_v1.json"),
 )
 TRANSIENT_SEGMENTS = frozenset(

@@ -22,11 +22,15 @@
 - [计划优化记录（2026-07-16）](./PLAN_OPTIMIZATION_2026-07-16.md)
 - [审计修正执行计划（2026-07-18）](./AUDIT_CORRECTION_PLAN_2026-07-18.md)：把 P0/P1 缺陷映射到现有 WBS、Gate、负例、迁移与清理放行条件。
 - [审计缺陷控制台账（2026-07-18）](./AUDIT_DEFECT_LEDGER_2026-07-18.md)：P0/P1 的工作包、fixture、Gate、责任与关闭证据。
-- [G0A GateEvidence（2026-07-17）](./G0A_GATE_EVIDENCE_2026-07-17.json)：当前决策为 `blocked`。
-- [GateEvidence v2 治理模型](./governance/GATE_EVIDENCE_MODEL_V2.md)：subject revision 与 attestation revision 的无自引用合同。
-- [GateEvidenceManifest v2 schema](./GATE_EVIDENCE_MANIFEST_V2.schema.json)：当前 G0A 证据结构与运行记录。
-- [G0A policy v1](./G0A_POLICY_V1.json)：requirement、ADR 接受条件和不可豁免项。
+- [G0A GateEvidence（2026-07-17）](./G0A_GATE_EVIDENCE_2026-07-17.json)：当前决策为 `blocked`；该存量 v1/v2 记录尚不满足 Proposed v3 合同。
+- [G0A policy v2](./G0A_POLICY_V2.json)：当前应审查的 Proposed G0A requirement、terminal evidence 与 delivery-readiness policy；尚未获得独立接受。
+- [G0A policy v2 schema](./G0A_POLICY_V2.schema.json)：上述 Proposed policy 的封闭结构与精确 R0A/R1 工作包集合。
+- [GateEvidence v3 治理模型](./governance/GATE_EVIDENCE_MODEL_V3.md)：当前应审查的 Proposed policy lock、subject/attestation、delivery readiness 与远端 provenance 合同。
+- [GateEvidenceManifest v3 schema](./GATE_EVIDENCE_MANIFEST_V3.schema.json)：上述 Proposed v3 证据结构；现有证据尚未形成有效 v3 attestation。
 - [G0A 独立评审与 Clean Baseline 交接](./governance/G0A_REVIEW_AND_BASELINE_HANDOFF.md)：可复现清单、评审职责与 subject/attestation 提交顺序。
+- [GateEvidence v2 治理模型](./governance/GATE_EVIDENCE_MODEL_V2.md)：v3 迁移前的 subject/attestation 合同与历史实现说明，不再足以支持当前 G0A pass。
+- [GateEvidenceManifest v2 schema](./GATE_EVIDENCE_MANIFEST_V2.schema.json)：现有证据的迁移输入 schema，不再是当前 G0A 的通过性 schema。
+- [G0A policy v1](./G0A_POLICY_V1.json)：已被 v2 合同取代的迁移输入；不得为当前决定恢复旧 pass。
 - [GateEvidenceManifest v1 schema](./GATE_EVIDENCE_MANIFEST_V1.schema.json)：历史迁移输入，不再用于新决定。
 - [ADR-011 planning schema](./ADR_011_SCHEMA_DRAFT_V1.json)：仅用于评审和 fixture，不是生产格式。
 - [ADR-011 接受证据合同草案](./PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md)

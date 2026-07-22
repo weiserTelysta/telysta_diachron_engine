@@ -3,9 +3,9 @@ document_type: operational-status
 decision_status: not-applicable
 implementation_status: generated
 normative_scope: current
-last_verified: 2026-07-18T22:23:58Z
-base_commit: 050683f5ecc6f5f5c058f9acbae07ab40b3d6664
-worktree_fingerprint: 4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13
+last_verified: not-verified
+base_commit: 599f50d3b952178bcb841afa86edd3886cef1024
+worktree_fingerprint: 8745e30bad3153de0f1fa4bc184c30d1ab0bd5a1578e6cde05ec5816fdcf100c
 generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
 
@@ -17,11 +17,11 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 
 | Gate | Decision | Worktree | Verified |
 |---|---|---|---|
-| G0A | `blocked` | clean (0 entries) | 2026-07-18T22:23:58Z |
+| G0A | `blocked` | dirty (35 entries) | not-verified |
 
-- Subject commit: `050683f5ecc6f5f5c058f9acbae07ab40b3d6664`
-- Subject tree: `886f709b7d54ca1945ee73ff8c1dd09cc62c35f9`
-- Fingerprint: `4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13`
+- Subject commit: `599f50d3b952178bcb841afa86edd3886cef1024`
+- Subject tree: `2a3e1bd4fd33e21edf36fcd6e75d33f0635fd02c`
+- Fingerprint: `8745e30bad3153de0f1fa4bc184c30d1ab0bd5a1578e6cde05ec5816fdcf100c`
 - Fingerprint schema: `telysta-git-worktree-fingerprint.v2`
 - 当前实现能力见 [Current Architecture](./architecture/CURRENT.md)。
 - 当前执行顺序见 [产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)。
@@ -34,16 +34,19 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 | R0A-02-ADR011 | `blocked` | Project/Operation/Run/Job identity decision |
 | R0A-03 | `ready_for_independent_review` | application, staging, query, dependency bundle and replay contract pack |
 | R0A-04 | `ready_for_independent_review` | RNG decision record and compatibility policy |
-| R0A-05 | `ready_for_independent_review` | reviewed clean-checkout repository baseline |
+| R0A-05 | `failed` | reviewed clean-checkout repository baseline |
 | R0A-06 | `ready_for_independent_review` | GateEvidenceManifest v2 |
 | R0A-07 | `incomplete` | named owners, independent reviewers, capacity, estimate, WIP and timebox |
+| R0A-08 | `incomplete` | verification trust, cross-platform provenance and verifier lease |
+| R0A-09 | `incomplete` | current v1 authority repair |
+| R0A-10 | `incomplete` | legacy evidence containment |
 
 ## 当前允许声明
 
 - ADR-011 planning evidence is executable and ready for independent review
 - R0A-03 platform and R0A-04 RNG compatibility evidence are ready for independent review
 - the current Rust RNG behavior matches the recorded v1 known-answer vectors
-- the recorded clean worktree passes the recorded Python and Rust verification commands
+- the recorded dirty worktree passes the recorded Python and Rust verification commands
 
 ## 当前禁止声明
 
@@ -57,9 +60,13 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ## Blockers
 
 - `G0A-B01`：ADR-011 independent approval is absent
-- `G0A-B02`：clean-checkout repository baseline is absent
 - `G0A-B03`：ADR-012 platform authority and ADR-013 RNG compatibility lack independent approval
-- `G0A-B04`：named ownership, independent reviewers and capacity are unassigned
+- `G0A-B97`：the v2-to-v3 migration candidate requires independent review under GateEvidence v3 and G0A policy v2
+- `G0A-B02`：clean-checkout repository baseline terminal evidence is absent
+- `G0A-B04`：complete delivery readiness and independent approval are absent
+- `G0A-B05`：verification trust terminal evidence and Windows/Linux provenance are absent
+- `G0A-B06`：current v1 authority fault-matrix terminal evidence is absent
+- `G0A-B07`：legacy containment terminal evidence is absent
 
 ## 下一决策
 

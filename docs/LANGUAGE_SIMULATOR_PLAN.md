@@ -3,7 +3,7 @@ document_type: capability-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: target
-last_verified: 2026-07-17
+last_verified: 2026-07-19
 owner: unassigned
 reviewers: []
 ---
@@ -13,22 +13,26 @@ reviewers: []
 - 状态：`Accepted capability map；R0A/R0B/R3B gate graph 于 2026-07-16 修订`
 - 技术架构：Rust 原生生产核心已经 `Accepted`，见 [ADR-006](./adr/ADR-006-rust-native-core-python-research-bridge.md)
 - 语言学架构：社区驱动模拟仍为分阶段 `Proposed`，不是 WS-1 前置；其局部机制须由后续 ADR 与 G2/G3/G4/G5 证据接受、替代或否决，见 [ADR-005](./adr/ADR-005-community-driven-language-simulation.md)
-- 基线日期：2026-07-12；最近路线修订：2026-07-16
-- 当前工作包：`R0A 平台决策修复 + R0B WS-1 领域证据；GEN-001.2 implementation blocked`
+- 基线日期：2026-07-12；最近路线修订：2026-07-19
+- 当前工作包：`R0A-08 verification trust + R0A-09 current v1 authority + R0A-10 legacy evidence containment + R0B WS-1 领域证据；GEN-001.2 implementation blocked`
 - 目标：将现有研究原型逐步演进为可复现、可审计、可实际创作并可扩展至语言家族的语言历史模拟器
 
 ## 1. 文档职责
 
-本文是完整工作分解和依赖基线：
+本文维护长期能力地图、领域边界、跨阶段依赖和 Gate 语义，不是当前执行 WBS、
+工作包状态或队列的权威来源：
 
-- [项目路线图](./ROADMAP.md)记录阶段状态和当前优先级；
-- 本文记录目标系统、工作流、工作包、依赖和完成标准；
-- [产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)记录当前关键路径、详细 WBS、Stop/Go、任务阶梯与执行队列；
+- [项目路线图](./ROADMAP.md)只汇总阶段状态、发布切片和当前 Next；
+- 本文记录目标系统、长期能力、领域边界与跨阶段完成标准；
+- [产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)是工作包 ID、依赖、R2A–R2F 映射、当前状态、Stop/Go、执行队列与 capacity 的唯一 canonical WBS；
 - [规则系统与语言质量计划](./RULE_QUALITY_PLAN.md)记录 RuleSpec 和质量指标细节；
 - [代码与模块清理计划](./CLEANUP_PLAN.md)规定模块删除和合并流程；
-- ADR 记录不可轻易改变的架构决策。
+- Accepted ADR 与已接受领域合同决定不可变语义、身份、writer、migration 和 replay；
+- 版本化 Gate policy 决定 requirement 与接受谓词，GateEvidence 是实际 Gate decision 的唯一机器事实。
 
-任何新功能必须归属本文中的工作流；无法归属的功能先进入研究清单，不直接加入主流程。
+本文若重复列出 WBS 顺序，只构成便于阅读的镜像。镜像与 canonical WBS 不一致时，
+相关工作立即停止并同步修订，不得选择对当前实现最方便的一份。任何新功能必须归属
+长期能力地图与 canonical WBS；无法归属的功能先进入研究清单，不直接加入主流程。
 
 ### 1.1 交付方式
 
@@ -47,7 +51,7 @@ reviewers: []
 9. R6 单语言高级篇章/文学能力与家族后续集成；
 10. R7 Core Release，以及彼此独立的 Speech、Research、LLM/Extension 可选列车。
 
-WS-1 的验收对象不是独立模块数量，而是一次真实流程：用户输入 Blueprint 或 CanonSeed，Rust 编译多个 candidate，经独立 evaluator 后封存 GenesisArtifact；项目创建并重开；同一 Grammar IR 生成并分析一段短文本、输出 IGT；应用一个 typed structural change；随后从 UI 查看状态、语义 hash、事件、canon impact 和来源解释。该 change 只证明事务与回放，不证明真实传播。
+WS-1 的验收对象不是独立模块数量，而是一次真实流程：用户输入 Blueprint 或 CanonSeed，Rust 编译多个 candidate，经独立 evaluator 后封存 GenesisArtifact；项目创建并重开；同一 Grammar IR 生成并分析一段短文本、输出 IGT；应用一个 typed structural change；随后从 UI 查看状态、语义 hash、事件、CanonSeed compatibility/impact preview 和来源解释。R2 不创建 AuthorCanonCorpus/CanonRelease；该 change 只证明事务与回放，不证明真实传播。
 
 ## 2. 产品完成定义
 
@@ -260,6 +264,36 @@ Grammar IR 必须由生成与分析共享，最小表达上述有限子集、sel
 
 TaskCase 保存 scene facts、speaker/addressee、deictic anchor、speech act、scope graph、required meaning、optional nuance、forbidden reading、commitment status、discourse pre/postcondition、register/genre 与 equivalence policy。每个正式输出携带意义、构式、词素、gloss、音系、正字法、时代/方言、允许歧义与来源，形成可验证的 `ProofCarryingUtterance`。
 
+### 5.10A Orthography 与 IGT Projection Authority
+
+正字法不是 IPA 展示别名，也不要求与音系双射。其权威拆分会改变持久化实体含义，
+因此在 ADR-014 修订或 replacement ADR Accepted 前不得实现 WS1-04A。推荐决策是：
+LanguageStructureState 拥有版本化字素表、Unicode normalization、边界策略、
+typed phonology↔orthography mapping 与词汇化拼写 override；CanonSeed spelling
+保持带来源和锁定策略的输入约束，作者接受后才成为相应 Canon/lexical authority。
+WordForm 身份不得由显示拼写字符串推导，拼写也不得只以裸 `PhonologicalForm` 为键。
+ADR 必须选择稳定 `OrthographicForm/SpellingRealization`：优先以 typed
+WordForm/analysis occurrence + OrthographyRevision 为键；若选择独立 orthographic
+base，必须给出等价的 identity/hash/replay 语义。上述 authoritative identity、
+mapping、policy 和 override 进入 StateSemanticHash；拼写候选、analysis forest 与
+IGT 是绑定 language revision 和输入 Meaning 的纯查询工件，不进入该 hash。
+
+软件硬约束是确定性投影、显式歧义、segment/morpheme/construction 可追踪性和
+query purity，而不是强迫每种文字系统一一对应。`SoundChange` 只改变其 typed
+phonological effect，不得静默改写拼写；保守拼写持续存在，直到独立、可审计且可回放
+的 `OrthographicChange` 被提交。v2 migration 缺少 mapping 时必须产生显式
+`OrthographyUnavailable`/typed gap，禁止猜测。ADR 必须冻结 lexical spelling、
+保守拼写、拼写改革和 WordForm 的 migration/hash/replay 语义。
+
+`parse(spell(A, O), O)` 必须包含与 typed analysis `A` 等价的分析，同时拒绝锁定的
+forbidden analysis；其中 `O` 是 OrthographyRevision。对 `parse(S, O)` 返回的每个
+许可分析，`spell(A', O)` 只能产生许可的 canonical/variant spelling。malformed
+spelling、同音异写、未映射音段、字素冲突、normalization 差异、analysis precision
+和 ambiguity budget 必须通过 hostile cases，禁止“任何输入返回全部分析”的万能
+analyzer，也禁止回退到 raw IPA。IGT 必须从同一分析图投影 orthographic line、morpheme segmentation、
+versioned gloss vocabulary 与 translation，并对 zero、syncretism、fusion 等非双射
+结构保存 span/contribution 对齐，不能手工维护第二份分析。
+
 ### 5.11 CanonCorpus 与 Onomasticon
 
 CanonSeed 保存已有姓名、词语、拼写和台词锚点；`AuthorCanonCorpus` 保存作者批准的正式文本与发布版本。任何规则、语法、词义或历史变化必须先执行 canon impact。Onomasticon 将人名、地名、族名、王号、本名/外名/旧名建模为有词素、时代、lect、命名传统和词源的对象，而不是随机合法字符串；完整 SpeechCommunity 关联在 WS-2 建立。
@@ -271,6 +305,13 @@ CanonSeed 保存已有姓名、词语、拼写和台词锚点；`AuthorCanonCorp
 `LanguageCapabilityCertificate` 锁定 language revision、era、lect、Meaning/Grammar、TaskPack/evaluator packs、Canon、数据/模型锁、支持能力、typed gaps 和已知限制。影响语义或评价边界的变更会使证书过期；能力层级使用 `LC0–LC6`，其中 `LC1` 仅称“可执行微型语言”。
 
 `ProductUsabilityEvidenceBundle` 另行锁定 app build、平台、locale、无障碍配置、persona、招募条件、任务协议、完成/耗时/错误/求助/恢复指标，以及用户是否理解 gap、canon impact 和 provenance。`CreativeEvaluationRecord` 保存作者与盲评者的审美、文学和声音判断。三者不得互相替代，也不得压缩成单一“自然度”分数。
+
+`ReleaseClaimManifest` 将 build、manifest phase、candidate/effective channel、
+`claimsEffective`、GateEvidence hash、Capability Matrix、supported/planned/refused
+能力、允许/禁止声明、已知限制与过期条件投影到应用、README 和导出。它是只读发布
+工件，不进入 LanguageState 或历史，也不能成为第二权威 writer。用于产生 Gate 证据
+的 candidate manifest 不生效产品声明；Gate 通过后另行生成引用 candidate/evidence
+hash 的 immutable effective manifest，禁止原地升级。
 
 ## 6. 工作流与工作包
 
@@ -377,7 +418,7 @@ CanonSeed 保存已有姓名、词语、拼写和台词锚点；`AuthorCanonCorp
 | GRM-004 | Constraint Solver | 依赖、冲突、罕见组合提示 | 硬错误与软警告分离 |
 | GRM-005 | Semantic/Discourse IR | 指代、事件、时体、情态、信息结构 | 可表达复杂叙事而非只支持 SVO |
 | GRM-006 | Realizer | IR → construction → morphology → order | 不静默丢失核心语义角色 |
-| GRM-007 | Interlinear Gloss | 文本、词素切分、gloss、翻译 | 所有示例可生成 IGT |
+| GRM-007 | Interlinear Gloss | 文本、词素切分、versioned gloss vocabulary、翻译 | IGT 从 realizer/analyzer 同一图投影；zero/syncretism/fusion 的非双射 span/contribution 可追踪，不手写第二分析 |
 | GRM-008 | Bidirectional Analyzer | surface/morphology/construction → Meaning IR | `analyse(realize(M))` 至少包含一个与 M 等价的读法 |
 | GRM-009 | Proof-Carrying Utterance | 意义、构式、词素、gloss、音系、语体、来源 | 无法结清意义或结构义务的输出不能进入 Canon |
 
@@ -494,18 +535,28 @@ RulePack：R3 Structural/Authoring rules → R4 Process rules → SDK/optional s
 - R3 交付确定性 `PronunciationPlan v1`；R7 的语音渲染/TTS 不参与定义语言结构、历史或使用性是否正确；
 - R3 后的单语言文学能力不等待 R5；只有家族史集成、重建审计和全量 Language Bible 依赖 R5。
 
-### 7.1 R2 内部门
+### 7.1 R2 内部门（canonical WBS 镜像）
+
+本节镜像[产品开发执行计划 §8](./PRODUCT_DEVELOPMENT_PLAN.md#8-r2--ws-1可执行语言纵切)；
+工作包 ID、依赖和状态以该执行计划为唯一 canonical WBS。
 
 WS-1 不以一个大 PR 一次通过，按以下可停止、可回滚的内部门推进：
 
-1. `R2A`：ProjectManifest/RunLedger、Registry、State、Meaning/Grammar 的 in-memory typed language；
-2. `R2B`：candidate compiler + independent evaluator，sealed/negative evidence 隔离；
-3. `R2C`：seal/create/reopen + dependency bundle/ReplayCapability；
-4. `R2D`：Meaning Workbench + authoring round trip + typed gaps；
-5. `R2E`：typed structural ChangeSet + reducer/failure rollback/replay；
+1. `R2A`：复用 R1 已验证的 ProjectManifest/RunLedger shell，完成 Registry、State、
+   Meaning/Grammar 的 in-memory typed language；不得重新定义 Project/Operation/Run/Job；
+2. `R2B`：candidate compiler + independent evaluator，隔离 CandidateSelection、
+   sealed 和 negative evidence；
+3. `R2C`：typed structural ChangeSet + atomic reducer，先在内存中验证 precondition、
+   effect ordering、rollback 和 replay；
+4. `R2D`：append-only domain history + Genesis seal/create/reopen + dependency
+   bundle/ReplayCapability；只有 R2B 与 R2C 均通过后才能物化生产 Genesis root；
+5. `R2E`：Meaning Workbench + authoring round trip + typed gaps；
 6. `R2F`：Tauri vertical slice、cancel/crash/reopen、query projection 与 GateEvidence 收口。
 
-任一门失败都回到该 slice 的合同或实现，不允许以空状态、字符串语义、完整状态替换或 UI fallback 跨越后续门。
+R2B 与 R2C 可以并行准备，但同一时刻最多一个包改变 schema、writer 或 replay。
+R2D 同时依赖 R2B 与 R2C，不得把 seal/create 提前到 typed ChangeSet 和 history
+boundary 之前。任一门失败都回到该 slice 的合同或实现，不允许以空状态、自由字符串
+语义、完整状态替换或 UI fallback 跨越后续门。
 
 产品主流程固定为：
 
@@ -704,6 +755,13 @@ A-002 的 schema 是 `legacy canonical adapter`，用于固定旧引擎观察结
 
 ### G0A：Platform Contract Ready
 
+G0A 的 requirement 与接受谓词必须由版本化 Gate policy 机器定义。下一版 policy
+的 required requirement 集合必须精确等于 `R0A-01`、`R0A-02-ADR011`、`R0A-03`、`R0A-04`、`R0A-05`、
+`R0A-06`、`R0A-07`、`R0A-08`、`R0A-09`、`R0A-10`。其中 R0A-07 必须机器
+验证 owner、独立 reviewer、capacity、estimate、WIP 与 timebox；R0A-08/09/10
+必须使用各自的 terminal acceptance predicate 和 provenance。policy 缺项、文档与
+policy 集合不一致或 evidence 使用旧 policy 时，G0A 一律保持 `blocked`。
+
 - 首发 Story Language Kit、primary persona/JTBD、1.0 范围、非目标、假设分类和允许声明已冻结为可证伪产品假设；这不是价值已获验证，R0B 失败会使 G0A 相关声明过期并触发重开；
 - ADR 依赖图无环；ProjectManifest/RunLedger/Operation/Job、RngTree、application、staging、query、dependency bundle 与 storage authority 的持久化/回放决定已 Accepted 或被 Accepted 决定明确替代；
 - GateEvidence schema、owner/reviewer、容量、估算、WIP 与 timebox 已登记；
@@ -717,8 +775,10 @@ G0A 只允许进入不冻结 LanguageState v3 的 R1 平台纵切；它不证明
 - ADR-007/008/009/010 与 Meaning/Grammar/Task/Canon/evaluator 的持久化和 replay 决定已 Accepted 或被明确替代；
 - WS-1 Capability Matrix 明确 supported/planned/rejected，且一个主 profile 与一个结构非同构对照 fixture 可表达；
 - Meaning 六层、equivalence/ambiguity/obligation、四类 evaluator pack、CorpusRole 与证书边界可执行；
+- Linguistic Execution Contract 在 G0B 锁定 manifest schema、runner harness、adapter schema/registry、case-to-Gate 映射、当前可执行的 G0B 命令和 evidence 输出；尚未允许实现的 G2 adapter 可登记 `future`，但不计入通过能力；
+- Orthography/IGT/PCU review vectors 先攻击 Proposed authority ADR；ADR Accepted 后再冻结 version/hash/reviewer 和 adapter plan，避免 ADR 接受条件与 fixture authority 循环；覆盖 normalization、未映射、同音异写、拼写冲突/歧义、禁 IPA fallback、正/负 typed-analysis round trip、非双射 IGT span、PCU integrity 及音变不静默重拼写；
 - 真实小数据切片锁定精确 payload、hash、许可证、sampling unit、split 与 transform；
-- Meaning Workbench 原型由目标叙事作者用真实 canon 验证；形成性研究与确认性任务分离；
+- Meaning Workbench 原型由目标叙事作者用真实 canon 验证；形成性研究与确认性任务分离；原型发现必须经正式 Meaning/Canon contract 编译和复核，不能单独充当 G0B 通过证据；
 - Genesis TheoryProfile、ModelEvidence/ODD-TRACE 与 parameter recovery/identifiability 方案已登记。
 
 G0B 不以 SpeechCommunity、Variation 或 ChangeProcess 为前置；这些属于 G3B。
@@ -740,12 +800,15 @@ G0B 不以 SpeechCommunity、Variation 或 ChangeProcess 为前置；这些属�
 - 多候选 Genesis、独立 evaluator、VerifiedGenesisArtifact、create/reopen 与锁过期闭环通过；
 - 每个 candidate 锁定最小 Genesis TheoryProfile、数据、registry、规则、compiler 和 RNG；任一语义锁变化都会触发重验；
 - typed phonology、最小名词/动词范式、Meaning/Grammar IR 和三类核心构式联合工作；
+- Orthography v0、Unicode 策略、spelling analysis 和 IGT projection 与同一分析图联合工作；禁止 raw IPA fallback；
 - `analyse(realize(M))` 至少包含等价读法，非法读法和 forbidden reading 被拒绝；
+- G-LANG/G-CHANGE adapter 已从 `future` 切换为真实 Rust 命令并生成锁定输入/结果 evidence；仅有 fixture 或 sentinel 不算能力；
+- `parse(spell(A, O), O)` 至少包含等价 typed analysis 并拒绝 forbidden analysis；对 `parse(S, O)` 返回的每个许可分析，`spell(A', O)` 只产生许可 spelling；normalization、同音异写、malformed/未映射项、precision 和拼写歧义上限通过；
 - Development、CandidateSelection、SealedAudit 与 adversarial negative 任务分离；sealed pack 不参与候选排序；
 - evaluator 分别报告 hard pass、under-generation、over-generation、forbidden-reading acceptance、ambiguity、gap correctness 与 construction coverage；
 - 所有 WS-1 TaskCase 产生 Proof-Carrying Utterance，不能表达时返回 typed ExpressionGap；主 profile 与结构非同构对照均通过相应边界；
 - 一个 feature-based structural ChangeSet 原子提交、失败回滚、回放和解释通过；
-- 生成 `LanguageCapabilityCertificate`；该 Gate 只允许声明“可执行微型语言与可审计结构变换”，不得声明真实社会传播或产品易用。
+- 生成 `LanguageCapabilityCertificate`；其中 `G-LANG` 只声明可执行、可分析的微型语言，`G-CHANGE` 只声明可审计的作者结构变换；两者均不得声明真实社会传播或产品易用。
 
 ### G3：Story Language Kit / Creator Usability
 
@@ -753,6 +816,7 @@ G0B 不以 SpeechCommunity、Variation 或 ChangeProcess 为前置；这些属�
 - 名称、2–3 话轮对白、短叙事和仪式/誓言任务保留 speaker/addressee、deixis、speech act、基本照应、引语来源、register/politeness 和 context pre/postcondition，无 silent fallback；
 - Structural/Authoring RulePack v1 仅对已稳定结构 effect 提供 validate/dry-run/canon impact；用户批准后事务提交，已发布 Canon 不被静默改写；
 - 未参与开发的目标叙事作者不编辑 JSON/形式语义即可发现并解决一种真实歧义或义务，完成新场景、恢复错误并安全扩充语言；
+- `CanonAlphaJourney.g3` 与 ReleaseClaimManifest 已预注册；确认性样本与形成性样本隔离，安全硬门和比例门在观察结果前冻结；
 - 词典、语法、IGT、正字法、音节/重音、`PronunciationPlan v1` 和来源来自同一分析；R7 只增加音频渲染；
 - 生成独立的 `ProductUsabilityEvidenceBundle` 与 `CreativeEvaluationRecord`，不能用 LanguageCapabilityCertificate 代替。
 
@@ -765,7 +829,7 @@ G0B 不以 SpeechCommunity、Variation 或 ChangeProcess 为前置；这些属�
 - internal ExperimentRunner、parameter recovery、identifiability/equifinality、calibration/held-out split 和 acceptance predicates 就绪；
 - surface variation/perception 能为音变和借词适应提供 typed evidence，而不是直接对底层 IPA/grapheme 串做替换。
 
-### G4：Mechanistic Change Simulator v1
+### G4：Mechanistic Change Simulator v1 / G-SIM
 
 - 创新、新旧变体共存、UsageObservation、传播/失败、常规化和结构提交分层；
 - 同一创新至少有成功 run、失败对照和残留/逆转可表示路径；
@@ -819,6 +883,12 @@ G0B、G2、G3B、G4、G5 和 G7 各进行一次相应专业角色的阶段外部
 | 性能优化过早 | Rust 方向已确定，但局部优化仍由 profiling 和预算触发 |
 
 ## 12. 计划维护
+
+本文不得独立改变工作包 ID、R2A–R2F 映射、当前状态或执行顺序。任何 canonical
+WBS 变化先修改 `PRODUCT_DEVELOPMENT_PLAN.md`，并在同一变更中更新本文镜像。
+`scripts/docs_check.py` 必须检查 R2 镜像、G0A policy requirement 集合、ADR 状态和
+capability/release claim 的一致性；动态 Gate 状态、测试数量、subject hash 和运行
+环境不得手写复制到本文。
 
 每个工作包进入开发前必须补充：
 

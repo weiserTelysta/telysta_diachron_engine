@@ -7,6 +7,12 @@
 
 本文记录执行顺序和证据门的修订，不替代 Accepted ADR。涉及项目身份、Run/Event 归属、LanguageState v3、ChangeSet locus、聚合边界、回放或插件执行的条目仍必须先由 ADR 决定。
 
+本文是 2026-07-16 的历史计划优化记录，不是当前执行 WBS 或 Gate 状态源。工作包
+ID、依赖、R2A–R2F 映射、Stop/Go 和当前队列以
+[产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)为唯一 canonical WBS；Gate
+requirement 与 decision 分别以版本化 policy 和 GateEvidence 为机器事实。若本文的
+历史顺序与当前执行计划不同，不得据本文启动实现。
+
 ## 1. 结论
 
 项目继续采用 `Conditional Go + Domain Implementation Hold`：Rust 单一权威、Tauri 薄客户端、确定性 RngTree、事务回放、typed IR、独立 evaluator、Canon impact 和 ODD/TRACE 方向保留；原计划不得按单一 G0 串行执行。这里的 Hold 只冻结尚未由 Accepted ADR 和对应 Gate 放行的持久化领域语义，不冻结文档、fixture、数据锁、UX 原型、研究实验，也不冻结 G0A 关闭后的 R1 平台 walking skeleton。
@@ -67,6 +73,9 @@ R7 optional trains：speech / neural voice / LLM / extension preview
 ```
 
 ### G0A：Platform Contract Ready
+
+本节只保留 Gate 设计理由，不维护当前 required requirement 集合或状态；当前集合、
+接受谓词和 decision 以版本化 policy、canonical WBS 和 GateEvidence 为准。
 
 只包含进入 R1 所需条件：
 
@@ -173,7 +182,13 @@ R0B 原型和 WS-1 必须提供 `Meaning Workbench v0`：作者可以用场景�
 
 - R1 在 ADR-011 Accepted 后先建立 Project/Operation/Run ledger shell，再将 Persistent Job 拆为 JobStore、worker lease、event journal/cursor、result staging/GC 和 restart/resume contract；
 - R1 增加 query projection、dependency bundle/replay capability 和通用 headless ExperimentRunner；
-- R2 拆为 in-memory language、candidate/evaluator、seal/reopen、authoring、ChangeSet/replay、Tauri 六个内部门；
+- 当前 canonical R2 顺序为 `R2A in-memory typed language`
+  → `R2B candidate compiler / independent evaluator`
+  → `R2C typed ChangeSet / atomic reducer`
+  → `R2D append-only history / seal / create / reopen / ReplayCapability`
+  → `R2E Meaning Workbench / authoring round trip`
+  → `R2F Tauri vertical slice`；本记录原先把 seal/create 提前到
+  ChangeSet/history 之前，该顺序已被当前执行计划修正；
 - R3 增加最小 InteractionContext/Discourse 和 corpus source typing；R3 RulePack 的直接应用标为 authorial structural transform，不宣称社会传播；
 - R4 前完成 storage scale decision；R5 的 storage 工作只作复验；
 - R3 交付 deterministic PronunciationPlan v1；最小 surface variation 与 production/perception mapping 在 R3B 完成，先于 R4/R5 音位化和借词；R7 只增加 SpeechRenderPlan/TTS；
@@ -219,6 +234,9 @@ Gate 通过必须能由该 manifest 重演和复核，不能只依赖会议结�
 - 未经迁移矩阵和等价任务验证的 legacy 删除。
 
 ## 10. 下一次实现入口
+
+以下是 2026-07-16 时点的历史建议，不表示当前工作包已经 Ready。当前 Next 必须由
+canonical WBS、GateEvidence 和 owner/capacity 记录联合决定。
 
 1. 关闭 G0A，进入 R1 平台 walking skeleton；
 2. 并行完成 G0B 的 WS-1 领域证据；
