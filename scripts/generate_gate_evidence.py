@@ -2636,9 +2636,15 @@ def _write_blocked_after_output_failure(
 
 @contextmanager
 def verifier_lease(root: Path) -> Any:
-    """Hold an exclusive repository-local lease for the entire publication."""
+    """Hold an exclusive checkout-local lease for the entire publication."""
 
-    lease_path = root / VERIFIER_LEASE_PATH
+    # A linked worktree has a .git *file*. Ask Git for this checkout's metadata
+    # path rather than treating that file as a directory or sharing another
+    # checkout's publication lock.
+    metadata_path = _git(root, "rev-parse", "--git-path", VERIFIER_LEASE_PATH.name).rstrip(b"\r\n")
+    lease_path = Path(os.fsdecode(metadata_path))
+    if not lease_path.is_absolute():
+        lease_path = root / lease_path
     lease_path.parent.mkdir(parents=True, exist_ok=True)
     payload = (
         json.dumps(

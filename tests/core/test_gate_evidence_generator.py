@@ -1551,6 +1551,31 @@ def test_verifier_lease_rejects_concurrent_publication_without_mutation(
     assert status_path.read_bytes() == original_status
 
 
+def test_verifier_lease_resolves_linked_worktree_git_file_and_keeps_outputs_unchanged(
+    tmp_path: Path,
+) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    root = _repository(repository)
+    linked = tmp_path / "linked"
+    _git(root, "worktree", "add", "--detach", str(linked), "HEAD")
+    assert (linked / ".git").is_file()
+    evidence_path, status_path = _write_gate_outputs(linked, _evidence())
+    before = evidence_path.read_bytes(), status_path.read_bytes()
+    git_path = subprocess.check_output(
+        ["git", "rev-parse", "--git-path", gate_evidence.VERIFIER_LEASE_PATH.name], cwd=linked, text=True,
+    ).strip()
+    lock = Path(git_path)
+    if not lock.is_absolute():
+        lock = linked / lock
+    with gate_evidence.verifier_lease(linked):
+        assert lock.is_file()
+        assert gate_evidence.generate(linked) == 1
+        assert before == (evidence_path.read_bytes(), status_path.read_bytes())
+    assert not lock.exists()
+    assert (linked / ".git").is_file()
+
+
 def test_malformed_evidence_is_preserved_and_stale_status_is_removed(
     tmp_path: Path,
 ) -> None:

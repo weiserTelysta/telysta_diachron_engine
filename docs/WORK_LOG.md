@@ -193,3 +193,11 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   用独立检出执行完整门；不切换当前工作分支，不推送，不纳入用户 `references/`。
   精确 subject、环境与结果只读该候选的生成 GateEvidence/STATUS，不把本地候选
   称为正式 clean baseline acceptance、远端 attestation 或 G0A 通过。
+  初始候选 `5b51d9add04b86ed3121b63b5a9800464c40d59b` 收录 74 个实现/评审文件；
+  独立 venv 按 poetry.lock 的 48 个分发包及 wheel SHA-256 重新安装，不复制旧 venv。
+  首次验证真实失败：verifier lease 把 linked worktree 的 `.git` 文件当作目录。
+  新回归先复现失败，再改由 Git 定位当前检出的 metadata 锁；同一检出竞争仍拒绝
+  且输出不变，58 项 generator tests 通过。`/root/checkout_lease_review` 在普通及
+  linked 检出独立验证跨进程拒绝、带空格路径和正常/异常清理，无 finding。
+  修复后 clean run 结果以候选分支最新 subject/生成证据为准；初次失败日志
+  保留在候选 target 中。

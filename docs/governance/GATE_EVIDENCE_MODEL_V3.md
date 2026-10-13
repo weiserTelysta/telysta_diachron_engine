@@ -111,6 +111,10 @@ passed 只允许证明 clean committed subject。验证应在不可变 clean che
 验证、最终 fingerprint、evidence 准备与发布期间持有单 verifier lease。仅在发布前再比较
 一次 dirty worktree 不能替代不可变 subject 和 lease。
 
+lease 属于当前检出：使用 `git rev-parse --git-path` 解析实际 metadata 路径，
+兼容 `.git` 为文件的 linked worktree；同一检出的并发发布仍拒绝，独立检出不共享
+可变输出或锁。该兼容修复不放宽 clean subject、信任验证或正式 attestation 条件。
+
 passed 至少需要 Windows 与 Linux 两个成功 verification run。每个 run 必须绑定同一
 subject commit/tree、真实环境、协议列表、lock hashes，以及 provider、repository、
 workflow、run ID、job ID、URL 和 artifact digest。本地 Linux 完整门结果见
