@@ -6,24 +6,24 @@
   "decision": "blocked",
   "decisionDate": "2026-10-13",
   "source": {
-    "subjectCommit": "9ff7e5e8cb820afde281a2c47a74d35e95c1e995",
-    "subjectTree": "474dffb0ed52e24501ef1ad239dbbc90f09b9490",
-    "worktreeDirty": true,
-    "worktreeStatusEntryCount": 110,
+    "subjectCommit": "f13e869c70289f69919d73512058b6b9d6c9b247",
+    "subjectTree": "c016f28569744f361cf002bc8943a8fb5363e9de",
+    "worktreeDirty": false,
+    "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
-    "worktreeInventorySha256": "250a5ccff063b171a35d01fb75717c1c1564669278ec20790915c56f45fc130f",
+    "worktreeInventorySha256": "4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13",
     "excludedGeneratedPaths": [
       "docs/G0A_GATE_EVIDENCE_2026-07-17.json",
       "docs/STATUS.md"
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:1f5dd89bd022b086ae7ee00a6b9b00e1",
-        "subjectCommit": "9ff7e5e8cb820afde281a2c47a74d35e95c1e995",
-        "subjectTree": "474dffb0ed52e24501ef1ad239dbbc90f09b9490",
+        "runId": "gate-run:a1941463ea943b34c12a8e86e1fa353f",
+        "subjectCommit": "f13e869c70289f69919d73512058b6b9d6c9b247",
+        "subjectTree": "c016f28569744f361cf002bc8943a8fb5363e9de",
         "platformFamily": "linux",
-        "startedAt": "2026-10-13T19:24:37Z",
-        "finishedAt": "2026-10-13T19:24:58Z",
+        "startedAt": "2026-10-13T19:33:44Z",
+        "finishedAt": "2026-10-13T19:34:25Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
@@ -59,7 +59,7 @@
       "ADR-011 planning evidence is executable and ready for independent review",
       "R0A-03 platform and R0A-04 RNG compatibility evidence are ready for independent review",
       "the current Rust RNG behavior matches the recorded v1 known-answer vectors",
-      "the recorded dirty worktree passes the recorded Python and Rust verification commands"
+      "the recorded clean worktree passes the recorded Python and Rust verification commands"
     ],
     "forbidden": [
       "G0A has passed",
@@ -182,7 +182,7 @@
       "protocol": ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
       "details": "required Python and documentation gate passed",
       "verificationMode": "direct",
-      "executedCommand": "/home/weiser/Code/telysta_diachron_engine/.venv/bin/python -I scripts/check.py"
+      "executedCommand": "/home/weiser/.local/share/telysta-tooling/review-worktrees/2026-10-14/.venv/bin/python -I scripts/check.py"
     },
     {
       "evidenceId": "evidence:4f6ba705e33852e273a7dcb83b5bf37e",
@@ -193,7 +193,7 @@
       "protocol": ".\\.venv\\Scripts\\python.exe -I scripts\\pytest_runner.py tests\\core\\test_adr_011_contract.py -q",
       "details": "targeted ADR-011 Python contract passed through the hermetic runner",
       "verificationMode": "direct",
-      "executedCommand": "/home/weiser/Code/telysta_diachron_engine/.venv/bin/python -I scripts/pytest_runner.py tests/core/test_adr_011_contract.py -q"
+      "executedCommand": "/home/weiser/.local/share/telysta-tooling/review-worktrees/2026-10-14/.venv/bin/python -I scripts/pytest_runner.py tests/core/test_adr_011_contract.py -q"
     },
     {
       "evidenceId": "evidence:068d43468da41b57daad5a5b64543fb9",
@@ -286,7 +286,7 @@
       "evidenceId": "evidence:b85d8c01a502f3ea2f00f9a030e0cdbf",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
-      "sha256": "ef29b6d362019b8fa78a092d6b7843868e358a91b466a3d00ecb62678900d812",
+      "sha256": "33bd1f1b39e017da9aae52629ebdf37cb69da33b9cdcf4821edbd8d4c799cf19",
       "result": "pending"
     }
   ],
@@ -340,8 +340,8 @@
     {
       "id": "R0A-05",
       "name": "reviewed clean-checkout repository baseline",
-      "status": "failed",
-      "reason": "the generated-evidence inputs contain 110 modified or untracked entries; HEAD does not contain the reviewed Rust/Tauri/doc baseline",
+      "status": "ready_for_independent_review",
+      "reason": "the worktree is clean; independent clean-checkout reproduction is still required",
       "evidenceRefs": [],
       "terminalEvidence": {
         "evidenceId": "evidence:5a31af4f67019c72b69c3c5a8d17bfe2",

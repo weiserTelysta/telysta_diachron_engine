@@ -4,8 +4,8 @@ decision_status: not-applicable
 implementation_status: generated
 normative_scope: current
 last_verified: not-verified
-base_commit: 9ff7e5e8cb820afde281a2c47a74d35e95c1e995
-worktree_fingerprint: 250a5ccff063b171a35d01fb75717c1c1564669278ec20790915c56f45fc130f
+base_commit: f13e869c70289f69919d73512058b6b9d6c9b247
+worktree_fingerprint: 4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13
 generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
 
@@ -17,11 +17,11 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 
 | Gate | Decision | Worktree | Verified |
 |---|---|---|---|
-| G0A | `blocked` | dirty (110 entries) | not-verified |
+| G0A | `blocked` | clean (0 entries) | not-verified |
 
-- Subject commit: `9ff7e5e8cb820afde281a2c47a74d35e95c1e995`
-- Subject tree: `474dffb0ed52e24501ef1ad239dbbc90f09b9490`
-- Fingerprint: `250a5ccff063b171a35d01fb75717c1c1564669278ec20790915c56f45fc130f`
+- Subject commit: `f13e869c70289f69919d73512058b6b9d6c9b247`
+- Subject tree: `c016f28569744f361cf002bc8943a8fb5363e9de`
+- Fingerprint: `4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13`
 - Fingerprint schema: `telysta-git-worktree-fingerprint.v2`
 - 当前实现能力见 [Current Architecture](./architecture/CURRENT.md)。
 - 当前执行顺序见 [产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)。
@@ -34,7 +34,7 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 | R0A-02-ADR011 | `blocked` | Project/Operation/Run/Job identity decision |
 | R0A-03 | `ready_for_independent_review` | application, staging, query, dependency bundle and replay contract pack |
 | R0A-04 | `ready_for_independent_review` | RNG decision record and compatibility policy |
-| R0A-05 | `failed` | reviewed clean-checkout repository baseline |
+| R0A-05 | `ready_for_independent_review` | reviewed clean-checkout repository baseline |
 | R0A-06 | `ready_for_independent_review` | GateEvidenceManifest v2 |
 | R0A-07 | `incomplete` | named owners, independent reviewers, capacity, estimate, WIP and timebox |
 | R0A-08 | `incomplete` | verification trust, cross-platform provenance and verifier lease |
@@ -46,7 +46,7 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 - ADR-011 planning evidence is executable and ready for independent review
 - R0A-03 platform and R0A-04 RNG compatibility evidence are ready for independent review
 - the current Rust RNG behavior matches the recorded v1 known-answer vectors
-- the recorded dirty worktree passes the recorded Python and Rust verification commands
+- the recorded clean worktree passes the recorded Python and Rust verification commands
 
 ## 当前禁止声明
 
