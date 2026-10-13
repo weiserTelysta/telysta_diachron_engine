@@ -139,7 +139,12 @@ jobs:
 
       - name: Check desktop JavaScript
         if: matrix.lane == 'stable' && runner.os == 'Linux'
-        run: node --check apps/desktop/web/app.js
+        run: |
+          node --check apps/desktop/web/app.js
+          node --test apps/desktop/tests/app.test.cjs
+          node --check experiments/meaning-workbench/app.js
+          node --test experiments/meaning-workbench/app.test.cjs
+          node --test tests/core/rng-wire.test.cjs
 
       - name: Assert Rust gates did not modify tracked inputs
         run: git diff --exit-code

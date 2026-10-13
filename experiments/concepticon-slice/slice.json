@@ -1,0 +1,278 @@
+{
+  "datasetId": "telysta:data-set:concepticon-3-4-0",
+  "schemaVersion": "telysta-concepticon-research-slice.v1",
+  "selection": {
+    "conceptIds": [
+      "Swadesh-1955-100-6",
+      "Swadesh-1955-100-16",
+      "Swadesh-1955-100-23",
+      "Swadesh-1955-100-28",
+      "Swadesh-1955-100-29",
+      "Swadesh-1955-100-42",
+      "Swadesh-1955-100-62",
+      "Swadesh-1955-100-64",
+      "Swadesh-1955-100-72",
+      "Swadesh-1955-100-87",
+      "Swadesh-1955-100-94",
+      "Swadesh-1955-100-95"
+    ],
+    "conceptlistId": "Swadesh-1955-100",
+    "limitations": [
+      "One historically curated list with English elicitation labels; neither representative of all concept lists nor independent cross-language observations.",
+      "Labels and definitions are comparison aids, not a complete Meaning IR, universal ontology, lexicalization requirement or rule for generating words.",
+      "Twelve entries do not prove coverage of user canon, sentence tasks, argument structure, scope, polysemy or pragmatic commitment.",
+      "Source-list mappings are curated judgments, preserved as published rather than corrected or treated as ground truth.",
+      "This selection is development material, not a sealed audit or evidence for linguistic naturalness.",
+      "Only three selected tables and their mapping closure are checked; this is not general CLDF/schema/foreign-key validation. Gloss languages are elicitation-label languages, not target-language doculects."
+    ],
+    "method": "Purposive developer selection by fixed source-entry IDs, covering a few participants, actions, entities and negation for development examples; no random sampling or frequency estimate.",
+    "samplingUnit": "source-list entry; mapped concept sets are comparison targets, not sampled languages or doculects"
+  },
+  "sourceArchiveSha256": "a385f04140540582222d6a57f596d38b28e4f5a39c02a828d9223f9cb540fc6e",
+  "sourceVersion": "3.4.0",
+  "status": "research_only",
+  "tables": {
+    "concepticon.csv": [
+      {
+        "ColumnSpec": "",
+        "Description": "The speaker or writer referring to himself or herself alone.",
+        "ID": "1209",
+        "Name": "I",
+        "Ontological_Category": "Other",
+        "Replacement_ID": "",
+        "Semantic_Field": "Kinship"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "The speaker or writer and at least one other person.",
+        "ID": "1212",
+        "Name": "WE",
+        "Ontological_Category": "Other",
+        "Replacement_ID": "",
+        "Semantic_Field": "Kinship"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "The person addressed.",
+        "ID": "1215",
+        "Name": "THOU",
+        "Ontological_Category": "Other",
+        "Replacement_ID": "",
+        "Semantic_Field": "Kinship"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "Negates the meaning of the modified verb or adjective.",
+        "ID": "1240",
+        "Name": "NOT",
+        "Ontological_Category": "Other",
+        "Replacement_ID": "",
+        "Semantic_Field": "Miscellaneous function words"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "To consume something solid or semi-solid (usually food) by putting it into the mouth and eventually swallowing it.",
+        "ID": "1336",
+        "Name": "EAT",
+        "Ontological_Category": "Action/Process",
+        "Replacement_ID": "",
+        "Semantic_Field": "Food and drink"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "To perceive [images] with the eye, without necessarily paying attention to them.",
+        "ID": "1409",
+        "Name": "SEE",
+        "Ontological_Category": "Action/Process",
+        "Replacement_ID": "",
+        "Semantic_Field": "Sense perception"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "To move toward or to reach either the speaker, the person spoken to, or the subject of the speaker's narrative.",
+        "ID": "1446",
+        "Name": "COME",
+        "Ontological_Category": "Action/Process",
+        "Replacement_ID": "",
+        "Semantic_Field": "Motion"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "The state of combustion in which inflammable material burns, producing heat, flames and often smoke.",
+        "ID": "221",
+        "Name": "FIRE",
+        "Ontological_Category": "Person/Thing",
+        "Replacement_ID": "",
+        "Semantic_Field": "The physical world"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "A cold-blooded vertebrate animal that lives in water that moves with the help of fins and breathes using gills (Pisces).",
+        "ID": "227",
+        "Name": "FISH",
+        "Ontological_Category": "Person/Thing",
+        "Replacement_ID": "",
+        "Semantic_Field": "Animals"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "A human being.",
+        "ID": "683",
+        "Name": "PERSON",
+        "Ontological_Category": "Person/Thing",
+        "Replacement_ID": "",
+        "Semantic_Field": "Kinship"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "Any of the bipedal, warm-blooded vertebrates that lay eggs having wings which, for most species, enables them to fly.",
+        "ID": "937",
+        "Name": "BIRD",
+        "Ontological_Category": "Person/Thing",
+        "Replacement_ID": "",
+        "Semantic_Field": "Animals"
+      },
+      {
+        "ColumnSpec": "",
+        "Description": "Common liquid (H₂O) which forms rain, rivers, the sea, etc., and which makes up a large part of the bodies of organisms.",
+        "ID": "948",
+        "Name": "WATER",
+        "Ontological_Category": "Person/Thing",
+        "Replacement_ID": "",
+        "Semantic_Field": "The physical world"
+      }
+    ],
+    "conceptlists.csv": [
+      {
+        "Alias": "Swadesh-100",
+        "Attributes": "",
+        "Citation": "n.d.",
+        "Contributor": "Swadesh, Morris",
+        "Description": "Swadesh's most famous concept list of 100 items. The original article lists all 215 items originally proposed in the first article on [lexicostatistics in 1950](sources.bib#cldf:Swadesh1950), but marks the most stable 92 items, and adds eight more items which became then the list of 100 items as shown here. In the list, we marked the eight additional items with an asterisk preceding the concept label. Since this list was only implicitly provided in Swadesh's original publication, we ordered the items alphabetically.",
+        "Gloss_Language_IDs": "english",
+        "ID": "Swadesh-1955-100",
+        "List_Suffix": "",
+        "Name": "Swadesh, Morris 1955",
+        "Number_Of_Items": "100",
+        "PDF": "Swadesh1955",
+        "Pages": "133-137",
+        "Related": "",
+        "Source": "Swadesh1955",
+        "Source_URL": "",
+        "Tags": "basic",
+        "Target_Language": "Global",
+        "Year": "1955"
+      }
+    ],
+    "concepts.csv": [
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "937",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-6",
+        "Index": "6",
+        "Name": "bird",
+        "Number": "6"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "1446",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-16",
+        "Index": "16",
+        "Name": "come",
+        "Number": "16"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "1336",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-23",
+        "Index": "23",
+        "Name": "eat",
+        "Number": "23"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "221",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-28",
+        "Index": "28",
+        "Name": "fire",
+        "Number": "28"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "227",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-29",
+        "Index": "29",
+        "Name": "fish",
+        "Number": "29"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "1209",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-42",
+        "Index": "42",
+        "Name": "I",
+        "Number": "42"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "1240",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-62",
+        "Index": "62",
+        "Name": "not",
+        "Number": "62"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "683",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-64",
+        "Index": "64",
+        "Name": "person (human being)",
+        "Number": "64"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "1409",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-72",
+        "Index": "72",
+        "Name": "see",
+        "Number": "72"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "1215",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-87",
+        "Index": "87",
+        "Name": "thou",
+        "Number": "87"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "948",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-94",
+        "Index": "94",
+        "Name": "water",
+        "Number": "94"
+      },
+      {
+        "Attributes": "{}",
+        "Concepticon_ID": "1212",
+        "Conceptlist_ID": "Swadesh-1955-100",
+        "ID": "Swadesh-1955-100-95",
+        "Index": "95",
+        "Name": "we",
+        "Number": "95"
+      }
+    ]
+  }
+}

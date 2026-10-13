@@ -16,6 +16,8 @@
   "limitations": [
     "An inventory is a source-specific doculect record; inventories must not be merged merely by ISO or Glottocode.",
     "Coverage and analysis conventions vary by contributing source.",
+    "This is unresolved catalog metadata, not an execution-ready payload lock: the website describes PHOIBLE 2.0 under CC-BY-SA-3.0 (https://phoible.org/), while the concept DOI currently resolves to the CLDF v2.0.1 release https://doi.org/10.5281/zenodo.2677911, whose API metadata declares cc-by-3.0 (https://zenodo.org/api/records/2677911).",
+    "The applicable payload version and license basis must be resolved before execution or distribution; adding a checksum alone is insufficient. The current license label is the website's declaration, not a clearance of the CLDF archive, whose embedded license has not been reviewed here.",
     "This manifest does not pin a local payload; a downloaded payload must add its SHA-256 before use in a release build."
   ]
 }

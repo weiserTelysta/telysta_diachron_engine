@@ -2,6 +2,26 @@
   "schemaVersion": "telysta-adr-011-sequence-fixtures.v1",
   "contractSchema": "docs/ADR_011_SCHEMA_DRAFT_V1.json",
   "status": "planning_only_not_a_production_persistence_format",
+  "publicationReview": {
+    "schemaVersion": "telysta-publication-review.v1",
+    "runnerStatus": "future_not_bound",
+    "scope": "Process-crash planning states, not executed storage faults or a power-loss guarantee.",
+    "graphs": {
+      "pre": {"manifestRef": "fixture:manifest:pre", "roots": ["fixture:object:history-old", "fixture:object:ledger-old", "fixture:object:dependencies"]},
+      "post": {"manifestRef": "fixture:manifest:post", "roots": ["fixture:object:history-new", "fixture:object:ledger-new", "fixture:object:dependencies"]}
+    },
+    "recoveryRecord": {"preManifestRef": "fixture:manifest:pre", "postManifestRef": "fixture:manifest:post", "protectGraphs": ["pre", "post"]},
+    "faults": [
+      {"phase": "object_sync_failed", "visible": "pre", "allowedAuthority": ["pre"], "return": "not_published", "recoveryPending": false},
+      {"phase": "candidate_sync_failed", "visible": "pre", "allowedAuthority": ["pre"], "return": "not_published", "recoveryPending": false},
+      {"phase": "recovery_record_sync_failed", "visible": "pre", "allowedAuthority": ["pre"], "return": "not_published", "recoveryPending": true},
+      {"phase": "before_replace", "visible": "pre", "allowedAuthority": ["pre"], "return": "not_published", "recoveryPending": true},
+      {"phase": "replace_result_uncertain", "visible": "unknown", "allowedAuthority": ["pre", "post"], "return": "commit_outcome_unknown", "recoveryPending": true},
+      {"phase": "directory_sync_failed_after_replace", "visible": "post", "allowedAuthority": ["post"], "return": "commit_outcome_unknown", "recoveryPending": true},
+      {"phase": "post_publish_validation_failed", "visible": "unknown", "allowedAuthority": ["pre", "post"], "return": "commit_outcome_unknown", "recoveryPending": true},
+      {"phase": "job_update_failed", "visible": "post", "allowedAuthority": ["post"], "return": "committed_job_reconciliation_pending", "recoveryPending": false}
+    ]
+  },
   "cases": [
     {
       "caseId": "genesis_create",

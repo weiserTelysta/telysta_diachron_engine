@@ -4,8 +4,8 @@ decision_status: not-applicable
 implementation_status: generated
 normative_scope: current
 last_verified: not-verified
-base_commit: 599f50d3b952178bcb841afa86edd3886cef1024
-worktree_fingerprint: 8745e30bad3153de0f1fa4bc184c30d1ab0bd5a1578e6cde05ec5816fdcf100c
+base_commit: 9ff7e5e8cb820afde281a2c47a74d35e95c1e995
+worktree_fingerprint: 250a5ccff063b171a35d01fb75717c1c1564669278ec20790915c56f45fc130f
 generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
 
@@ -17,11 +17,11 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 
 | Gate | Decision | Worktree | Verified |
 |---|---|---|---|
-| G0A | `blocked` | dirty (35 entries) | not-verified |
+| G0A | `blocked` | dirty (110 entries) | not-verified |
 
-- Subject commit: `599f50d3b952178bcb841afa86edd3886cef1024`
-- Subject tree: `2a3e1bd4fd33e21edf36fcd6e75d33f0635fd02c`
-- Fingerprint: `8745e30bad3153de0f1fa4bc184c30d1ab0bd5a1578e6cde05ec5816fdcf100c`
+- Subject commit: `9ff7e5e8cb820afde281a2c47a74d35e95c1e995`
+- Subject tree: `474dffb0ed52e24501ef1ad239dbbc90f09b9490`
+- Fingerprint: `250a5ccff063b171a35d01fb75717c1c1564669278ec20790915c56f45fc130f`
 - Fingerprint schema: `telysta-git-worktree-fingerprint.v2`
 - 当前实现能力见 [Current Architecture](./architecture/CURRENT.md)。
 - 当前执行顺序见 [产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)。

@@ -3,7 +3,7 @@ document_type: adr
 decision_status: proposed
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-07-18
+last_verified: 2026-10-14
 owner: unassigned
 reviewers: []
 ---
@@ -65,6 +65,39 @@ commit 必须：
 7. 之后再收敛 Job disposition；Job 更新失败不得触发第二次语义提交。
 
 未被任一有效 manifest、保留 ledger、migration archive 或 active staging 引用的 object 才能 GC。SQLite/projection 不参与 authority。JobStore 记录执行事实，但删除它不会改变已提交 Project/LanguageState。
+
+### 3.1 持久化与结果未知的发布（Proposed）
+
+R1 首先验证受支持本地文件系统上的**进程崩溃**一致性。系统崩溃/掉电保证必须另有
+平台、文件系统及存储设备的同步能力与故障证据；不能凭 rename 或单文件 fsync
+宣称普遍掉电安全。网络盘与不支持所需发布/同步原语的介质不得静默降级成相同保证。
+
+在 project lease 内按以下顺序准备：写完并校验不可变对象 → 同步对象内容及新对象
+名称所在目录 → 写完整 candidate manifest、同步其文件 → 写含 pre/post manifest
+字节 hash、OperationId、expected authority 和两侧 root references 的 recovery record，
+同步记录及其目录 → 调用平台验证过的原子替换原语 → 同步发布名称/目录的持久化
+元数据 → 重新读取并验证 manifest 与可达图 → 清理 recovery record 并同步清理 →
+返回 committed，再收敛 Job。recovery record 是非语义协调记录，不得进入 authority
+graph 或造成 ProjectAuthorityHash 循环；prepared candidate 不是第二发布点。
+
+替换前的明确失败返回 `not_published`；替换结果未知，或替换后同步、读取/校验失败，
+返回 `commit_outcome_unknown` 并保持恢复记录和两侧对象，不能回报普通“未提交”、
+重新申请语义 Operation、盲目重试提交或立即 GC。恢复必须先在 lease 内读取当前
+primary：仅当字节 hash 与 record 的 pre/post 之一相符、对应图完整且全部引用校验
+通过时，才能确认该侧结果；其他合法 primary、缺失/损坏 primary 或无法完成验证
+均保留材料并进入显式 recovery-required，不能猜测某侧、覆盖 foreign primary。
+已确认 post 时重试同一 Operation 返回原提交结果，Job 更新失败只做状态收敛。
+
+平台原语必须分别设计和验证。[Linux fsync 文档](https://man7.org/linux/man-pages/man2/fsync.2.html)
+明确文件同步不自动保证目录项持久；Windows 的
+[FlushFileBuffers](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-flushfilebuffers)
+与 [ReplaceFileW](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-replacefilew)
+须按其成功/失败状态处理，不能把某个原子替换 API 名称当作同步协议证明。
+当前没有实现 target writer 或执行掉电测试。
+
+八个 publication planning states 位于 ADR-011 sequence fixture 的
+`publicationReview`；pre/post graph refs 是 review notation，不是实际 payload hash。
+其一致性检查不冒充 storage fault injection；G1 必须绑定真实平台调用和图验证。
 
 ## 4. 兼容与迁移
 

@@ -3,7 +3,7 @@ document_type: contract
 decision_status: accepted
 implementation_status: partial
 normative_scope: current
-last_verified: 2026-07-19
+last_verified: 2026-10-12
 implementation_schema: telysta-project-file.v1
 implementation_path: crates/telysta-storage/src/lib.rs
 implementation_constant: PROJECT_FILE_SCHEMA
@@ -15,14 +15,16 @@ implementation_constant: PROJECT_FILE_SCHEMA
 - Completed: 2026-07-14 (`FND-008`, `FND-008.1`)
 - Implementation: `crates/telysta-storage`
 
-> **2026-07-19 implementation review:** the v1 schema and sole-authority
-> decision remain accepted, but implementation closure is reopened. Project
-> creation checks existence before taking the write lease, arbitrary
-> replay-valid history can replace the current history, migration recovery can
-> clear its journal without revalidating the source archive, and derived-index
-> publication/query has an authority-token race. These are tracked by
-> `R0A-09`; create/commit must not be exposed to Tauri until the repair matrix
-> passes.
+> **2026-10-12 local repair candidate:** `R0A-09` now checks creation under
+> the publication lease, requires conditional commits to extend the existing
+> history without changing its context, revalidates migration archives and
+> regenerated targets before clearing journals, and holds the project lease
+> across authoritative loading, index publication and event queries. Published
+> snapshots now return directly to the runtime; recovery preserves foreign
+> primary bytes and rejects linked archives. New
+> regression tests reproduced the prior failures and pass with the repair.
+> Independent review and cross-platform terminal evidence remain pending;
+> this does not close G0A or expose create/commit to Tauri.
 
 ## Authority boundary
 
@@ -48,7 +50,8 @@ index as fresh.
 
 ## Write coordination
 
-Every `save`, `save_if_current`, `migrate`, and `recover_migration` operation
+Every `create_if_absent`, `save`, `save_if_current`, `load`, `event_index_entries`,
+`migrate`, and `recover_migration` operation
 holds an exclusive project write lease. The lease combines an OS-released file
 lock (`project.write.lock`) with an in-process path registry, so two desktop
 windows in one process and two separate processes cannot mutate a project at
@@ -56,8 +59,27 @@ the same time.
 
 `save_if_current(history, expected_history_sha256)` is the normal UI save path:
 the command rejects a stale editor when the project history changed after it
-was loaded. Plain `save` remains available for creating a project or an
-intentional unconditional replacement.
+was loaded. It also requires an unchanged `RunContext` and an exact current event
+prefix; replay validity alone does not authorize truncation or a fork. An
+identical retry is allowed. The core owns this rule through
+`ProjectHistory::validate_extension_of`; runtime checks its opened session and
+storage independently checks the current disk history under the lease.
+
+**Behavior change, 2026-10-12:** plain `save` retains its Rust signature but
+now allows only initial creation or an exactly identical retry. An identical
+retry does not rewrite authority or the recovery copy. Replacement, truncation,
+forks and even valid extensions require `save_if_current` with an expected hash;
+the prior unconditional replacement behavior is deliberately removed. Normal
+writes refuse any pending migration journal until explicit recovery completes.
+The session creation path uses `create_if_absent`.
+Creation checks the primary file, recovery copy and pending migration journal
+while holding the same lease used for publication, including dangling links.
+The runtime receives a snapshot of its own publication before the lease is
+released; it does not reacquire the lease for a second load after committing.
+
+`load` holds the lease while reading authority and checking/rebuilding the
+index. `event_index_entries` keeps it through the SQLite query. Contention
+returns `WriteLocked`; it must not publish or return an unbound projection.
 
 ## Commit and recovery
 
@@ -95,7 +117,20 @@ Before publishing the migrated file, storage also writes
 `migration.journal.json`, containing the source schema/archive and expected
 target history hash. If publication is interrupted, `migrate()` resumes from
 that journal automatically; `recover_migration()` exposes the same recovery
-path explicitly. A completed target is verified before the journal is cleared.
+path explicitly. Even when the target is already published, recovery verifies the archive
+bytes against its content-addressed name, the source schema, the registered
+transformation, and the regenerated target history hash before clearing the
+journal. An existing archive with different bytes is rejected, never reused
+or overwritten. Missing/corrupt archives leave the journal available for
+diagnosis and do not change the primary file.
+
+Recovery may publish over the exact archived source bytes or a missing primary;
+an already matching target may complete the journal. Any different existing
+primary, including another valid legacy document or damaged bytes, is preserved
+for explicit resolution. The migration directory must be a physical directory
+and its archive a regular file; symlinks and Windows reparse points are rejected.
+These checks assume writers honor the project lease, and do not claim resistance
+to malicious filesystem changes outside that coordination boundary.
 
 The initial built-in migrator is intentionally explicit:
 
@@ -122,3 +157,13 @@ defaults.
 - rebuilding an index whose rows were changed while metadata remained intact;
 - write-lease contention, stale-history save rejection, and duplicate migration
   registration safety.
+
+The R0A-09 regression matrix additionally covers simultaneous creators,
+recovery/journal preservation, duplicate runtime identities before publication,
+truncated/forked histories and changed run inputs, missing/tampered archives
+before and after target publication, source/target/registry mismatches, and a
+real subprocess contending for the project lease. Further regressions cover
+foreign/damaged primary preservation, linked archives/directories on Unix,
+publication-bound snapshots, session revision checks, pending migration write
+rejection and the removal of unconditional replacement. Schemas, event identities,
+RNG answers and semantic hashing are unchanged.

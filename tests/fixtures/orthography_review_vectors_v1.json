@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "telysta-orthography-review-vectors.v1",
+  "status": "planning_only_mutable_not_frozen",
+  "sourceAdr": "docs/adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md#44a-正字法身份与投影新增-proposed-决定",
+  "workPackages": ["R0B-01A-D", "R0B-04B-D"],
+  "productionRunnerStatus": "future",
+  "executionEvidenceStatus": "not_attached",
+  "reviewers": [],
+  "notation": "WF/A/G/P/O/R are review-local symbols, not EntityIds, production IR or a wire schema. Strings illustrate writing only; phonology is referenced by typed symbols.",
+  "assumptionClass": "hard_constraint",
+  "constraintScope": "software_and_authority_not_universal_linguistic_law",
+  "cases": [
+    {
+      "id": "ORT-R01",
+      "question": "Canonical Unicode equivalence must not merge lexical identities.",
+      "given": {"forms": [{"wordForm": "WF-A", "input": "á"}, {"wordForm": "WF-B", "input": "á"}], "normalization": "NFC"},
+      "probe": "normalize_and_index",
+      "required": {"canonicalStrings": ["á", "á"], "distinctWordForms": ["WF-A", "WF-B"], "originalInputsRetained": true},
+      "forbidden": ["merge_WF_A_and_WF_B_by_string", "rewrite_author_source_bytes"]
+    },
+    {
+      "id": "ORT-R02",
+      "question": "Compatibility folding cannot silently erase a written contrast.",
+      "given": {"inputs": ["ﬀ", "ff"], "normalization": "NFC", "compatibilityFolding": "not_authorized"},
+      "probe": "normalize",
+      "required": {"canonicalStrings": ["ﬀ", "ff"], "distinct": true},
+      "forbidden": ["implicit_NFKC", "implicit_casefold_or_diacritic_removal"]
+    },
+    {
+      "id": "ORT-R03",
+      "question": "A missing mapping must return a gap, never raw IPA.",
+      "given": {"analysis": "A-A", "wordForm": "WF-A", "phonemes": ["P-UNMAPPED"], "orthographicBase": null},
+      "probe": "spell",
+      "required": {"outcome": "OrthographyUnavailable", "stateUnchanged": true},
+      "forbidden": ["IPA_display_as_spelling", "create_base_during_query", "invent_grapheme"]
+    },
+    {
+      "id": "ORT-R04",
+      "question": "Homophones may have different lexical spelling bases.",
+      "given": {"forms": [{"wordForm": "WF-A", "analysis": "A-A", "phonemes": ["P-X"], "base": ["G-C"]}, {"wordForm": "WF-B", "analysis": "A-B", "phonemes": ["P-X"], "base": ["G-K"]}], "additionalSpellingMappings": []},
+      "probe": "spell_and_parse_each_typed_analysis",
+      "required": {"WF-A": ["G-C"], "WF-B": ["G-K"], "roundTripContainsOwnAnalysis": true, "exactAnalysesByBase": {"G-C": ["A-A"], "G-K": ["A-B"]}, "everyAnalysisRespellsInputUnderSameLocks": true},
+      "forbidden": ["phoneme_sequence_as_only_spelling_key", "collapse_homophones", "A_B_from_G_C_without_licensed_mapping", "A_A_from_G_K_without_licensed_mapping"]
+    },
+    {
+      "id": "ORT-R05",
+      "question": "A grapheme, Unicode cluster and phoneme are different units.",
+      "given": {"grapheme": "G-CH", "spelling": "ch", "unicodeClusterCount": 2, "phonemeRefs": ["P-AFFRICATE"]},
+      "probe": "segment_and_project",
+      "required": {"graphemeCount": 1, "phonemeCount": 1, "utf8ByteSpan": [0, 2]},
+      "forbidden": ["cluster_count_as_grapheme_count", "codepoint_count_as_phoneme_count"]
+    },
+    {
+      "id": "ORT-R06",
+      "question": "Word boundaries cannot be reconstructed by splitting pronunciation or morphemes.",
+      "given": {"analysis": "A-COMPOUND", "orderedParents": ["WF-A", "WF-B"], "orthographicWords": 1, "morphOccurrences": ["M-A", "M-B"]},
+      "probe": "project_orthographic_line_and_IGT",
+      "required": {"orthographicWords": 1, "orderedMorphOccurrences": ["M-A", "M-B"]},
+      "forbidden": ["one_written_word_per_morpheme", "split_IPA_in_half", "lose_parent_order"]
+    },
+    {
+      "id": "ORT-R07",
+      "question": "Zero realization still contributes to analysis without a written glyph.",
+      "given": {"analysis": "A-ZERO", "occurrence": "M-ZERO", "contribution": "C-NUMBER", "surfaceSpan": null, "anchor": 2},
+      "probe": "project_IGT",
+      "required": {"preserveContribution": "C-NUMBER", "writtenGlyphAdded": false, "alignmentKind": "zero_anchor"},
+      "forbidden": ["invent_letter_for_zero", "drop_grammatical_contribution", "gloss_symbol_as_language_glyph"]
+    },
+    {
+      "id": "ORT-R08",
+      "question": "Fusion may associate several contributions with one exponent span.",
+      "given": {"unit": "RU-FUSED", "contributions": ["C-A", "C-B"], "graphemes": ["G-X"], "span": [0, 1], "capability": "planned"},
+      "probe": "review_fused_IGT_graph_and_capability_gap",
+      "required": {"distinctContributions": ["C-A", "C-B"], "sharedSpanAllowed": true, "currentExecution": "typed_gap_if_unsupported"},
+      "forbidden": ["force_bijective_morpheme_glyph_mapping", "invent_single_owner_Allomorph", "claim_fusion_supported_from_vector"]
+    },
+    {
+      "id": "ORT-R09",
+      "question": "Syncretism permits licensed ambiguity, but not arbitrary readings.",
+      "given": {"input": "ta", "licensedAnalyses": ["A-ONE", "A-TWO"], "forbiddenAnalyses": ["A-THREE"], "ambiguityBudget": 2},
+      "probe": "parse_then_spell_each_analysis",
+      "required": {"analysisSet": ["A-ONE", "A-TWO"], "allowedSpellings": ["ta"], "ambiguityReported": true},
+      "forbidden": ["return_all_inventory_analyses", "admit_A_THREE", "collapse_distinct_WordForm_ids"]
+    },
+    {
+      "id": "ORT-R10",
+      "question": "A phonological update must preserve the locked spelling base.",
+      "given": {"wordForm": "WF-A", "base": ["G-P", "G-A", "G-K"], "orthographyRevision": "O-1", "languageRevisionBefore": "R-1", "languageRevisionAfter": "R-2", "phonologyBefore": ["P-1", "P-2", "P-3"], "phonologyAfter": ["P-1", "P-2", "P-4"]},
+      "probe": "review_sound_change_then_spell_and_parse_at_new_language_revision",
+      "required": {"wordForm": "WF-A", "base": ["G-P", "G-A", "G-K"], "orthographyRevision": "O-1", "roundTripContainsOwnAnalysis": true, "resolvedCurrentPhonology": ["P-1", "P-2", "P-4"], "oldRevisionEvidenceStale": true},
+      "forbidden": ["regenerate_base_from_current_phonology", "implicit_spelling_reform", "new_WordForm_from_pronunciation", "old_base_as_current_pronunciation_authority"]
+    },
+    {
+      "id": "ORT-R11",
+      "question": "An explicit spelling reform has its own effects, history and provenance.",
+      "given": {"wordForm": "WF-A", "orthographicFormKey": "OF-CANONICAL", "oldRevision": "O-1", "newRevision": "O-2", "oldBase": ["G-K"], "newBase": ["G-G"]},
+      "probe": "review_validated_OrthographicChange_and_replay",
+      "required": {"stableWordForm": "WF-A", "stableOrthographicFormKey": "OF-CANONICAL", "orthographyHashChanges": true, "historyHeadChanges": true, "phonologyUnchanged": true, "provenanceRequired": true},
+      "forbidden": ["label_reform_as_SoundChange", "post_state_hash_as_revision_id", "rewrite_old_canon_without_impact_review"]
+    },
+    {
+      "id": "ORT-R12",
+      "question": "An author spelling is an input constraint until explicitly resolved.",
+      "given": {"canonSeedSpelling": "Ael", "mappingStatus": "conflicting", "authorAcceptance": false},
+      "probe": "review_CanonSeed_compatibility",
+      "required": {"outcome": "NeedsResolution", "sourceSpellingRetained": true, "stateUnchanged": true},
+      "forbidden": ["silently_accept_lexical_override", "invent_historical_explanation", "treat_author_text_as_empirical_frequency"]
+    },
+    {
+      "id": "ORT-R13",
+      "question": "Legacy pronunciation alone does not establish spelling or its history.",
+      "given": {"sourceSchema": "telysta-language-state.v2", "orthographicMapping": null, "orthographicIdentity": null},
+      "probe": "review_state_only_migration",
+      "required": {"unresolved": "missing_orthographic_authority", "allowedDispositions": ["NeedsResolution", "ArchiveOnly"], "sourceArchiveRequired": true},
+      "forbidden": ["IPA_as_inferred_spelling", "invent_old_orthography_revision", "executable_root_with_unresolved_hard_item"]
+    },
+    {
+      "id": "ORT-R14",
+      "question": "PCU/IGT evidence must expire when its orthography or policy lock changes.",
+      "given": {"artifactLocks": {"languageRevision": "R-1", "orthographyRevision": "O-1", "unicodePolicy": "U-1"}, "requestedLocks": {"languageRevision": "R-1", "orthographyRevision": "O-2", "unicodePolicy": "U-2"}},
+      "probe": "verify_old_PCU_then_query_without_mutation",
+      "required": {"outcome": "stale_or_integrity_gap", "stateUnchanged": true, "historyUnchanged": true},
+      "forbidden": ["reuse_old_artifact_as_current_evidence", "repair_authority_in_query", "discard_revision_locks"]
+    },
+    {
+      "id": "ORT-R15",
+      "question": "Unknown or malformed written input must not receive fabricated analyses.",
+      "given": {"input": "qqq", "allowedGraphemes": ["a", "t"], "licensedAnalyses": []},
+      "probe": "parse",
+      "required": {"outcome": "AnalysisGap", "successfulAnalyses": []},
+      "forbidden": ["universal_analyzer", "silently_drop_unknown_graphemes", "nearest_gloss_fallback"]
+    },
+    {
+      "id": "ORT-R16",
+      "question": "Budget exhaustion must be explicit rather than a complete-looking truncated forest.",
+      "given": {"licensedAnalyses": ["A-ONE", "A-TWO", "A-THREE"], "ambiguityBudget": 2},
+      "probe": "parse_with_bounded_search",
+      "required": {"complete": false, "diagnostic": "ambiguity_or_search_budget_exhausted"},
+      "forbidden": ["claim_complete_with_two_readings", "ranker_promotes_unvalidated_reading"]
+    },
+    {
+      "id": "ORT-R17",
+      "question": "Spelling/query results must be reproducible across process and map order.",
+      "given": {"analysis": "A-A", "locks": ["R-1", "O-1", "U-1"], "registryInsertions": [["G-A", "G-B"], ["G-B", "G-A"]]},
+      "probe": "future_cross_process_and_insertion_order_runner",
+      "required": {"sameCanonicalSpelling": true, "sameAnalysisContentHash": true, "sameAuthorityHashesBeforeAfterQuery": true},
+      "forbidden": ["uncontrolled_random_tiebreak", "UI_locale_as_semantic_input", "claim_executed_from_planning_checks"]
+    },
+    {
+      "id": "ORT-R18",
+      "question": "Raw and NFC spans need an explicit coordinate mapping.",
+      "given": {"raw": "á", "canonical": "á", "rawUtf8ByteSpan": [0, 3], "canonicalUtf8ByteSpan": [0, 2], "normalization": "NFC"},
+      "probe": "review_raw_to_canonical_alignment_and_Webview_projection",
+      "required": {"preserveBothSourceReferences": true, "explicitAlignment": true},
+      "forbidden": ["copy_UTF16_offset_into_UTF8_span", "use_raw_span_on_canonical_artifact", "infer_morpheme_boundary_from_byte_count"]
+    },
+    {
+      "id": "ORT-R19",
+      "question": "A deleted phoneme must not survive as pronunciation merely because its historical letter remains.",
+      "given": {"wordForm": "WF-A", "base": ["G-A", "G-B", "G-C"], "languageRevisionBefore": "R-1", "languageRevisionAfter": "R-2", "orthographyRevision": "O-1", "phonologyBefore": ["P-1", "P-2", "P-3"], "phonologyAfter": ["P-1", "P-3"]},
+      "probe": "review_conservative_spelling_after_segment_deletion_then_parse",
+      "required": {"base": ["G-A", "G-B", "G-C"], "parsedWordForm": "WF-A", "resolvedCurrentPhonology": ["P-1", "P-3"], "roundTripContainsOwnAnalysis": true},
+      "forbidden": ["letter_count_must_equal_segment_count", "restore_P_2_from_historical_spelling", "query_rewrites_base"]
+    },
+    {
+      "id": "ORT-R20",
+      "question": "A phonological merger can preserve distinct spellings and their typed lexical analyses.",
+      "given": {"forms": [{"wordForm": "WF-A", "analysis": "A-A", "base": ["G-A"], "phonologyBefore": ["P-1"], "phonologyAfter": ["P-3"]}, {"wordForm": "WF-B", "analysis": "A-B", "base": ["G-B"], "phonologyBefore": ["P-2"], "phonologyAfter": ["P-3"]}], "languageRevisionAfter": "R-2", "orthographyRevision": "O-1", "additionalSpellingMappings": []},
+      "probe": "review_merger_then_spell_and_parse_each_base",
+      "required": {"distinctWordForms": ["WF-A", "WF-B"], "distinctBasesRetained": true, "eachBaseParsesToOwnLicensedAnalysis": true, "bothResolveCurrentPhonology": ["P-3"], "exactAnalysesByBase": {"G-A": ["A-A"], "G-B": ["A-B"]}, "everyAnalysisRespellsInputUnderSameLocks": true},
+      "forbidden": ["merge_WordForms_by_current_phonology", "invent_spelling_reform", "retain_pre_merger_pronunciation_as_current", "cross_reading_without_licensed_spelling_mapping"]
+    },
+    {
+      "id": "ORT-R21",
+      "question": "NFC composition across contributions preserves their distinct identities and shared canonical span.",
+      "given": {"orderedContributions": [{"id": "C-A", "raw": "a", "rawUtf8ByteSpan": [0, 1]}, {"id": "C-B", "raw": "́", "rawUtf8ByteSpan": [1, 3]}], "concatenatedRaw": "á", "canonical": "á", "normalization": "NFC"},
+      "probe": "review_normalization_after_concatenation_and_IGT_alignment",
+      "required": {"preserveContributionOrder": ["C-A", "C-B"], "canonicalUtf8ByteSpan": [0, 2], "bothContributionsShareCanonicalSpan": true, "rawSourceReferencesRetained": true},
+      "forbidden": ["assume_concatenated_NFC_fragments_are_NFC", "merge_contributions_as_morphological_fusion", "discard_cross_boundary_alignment"]
+    },
+    {
+      "id": "ORT-R22",
+      "question": "Canonical combining-mark reordering must not reorder morphological contributions.",
+      "given": {"orderedContributions": [{"id": "C-A", "rawUtf8ByteSpan": [0, 1]}, {"id": "C-B", "rawUtf8ByteSpan": [1, 3]}, {"id": "C-C", "rawUtf8ByteSpan": [3, 5]}], "raw": "à̕", "canonical": "à̕", "normalization": "NFC"},
+      "probe": "review_cross_boundary_composition_reordering_and_many_to_many_alignment",
+      "required": {"preserveContributionOrder": ["C-A", "C-B", "C-C"], "canonicalSpans": {"C-A": [0, 2], "C-B": [2, 4], "C-C": [0, 2]}, "explicitNonMonotonicAlignment": true, "rawSourceReferencesRetained": true},
+      "forbidden": ["sort_MorphOccurrence_by_normalized_bytes", "require_bijective_or_monotonic_span_mapping", "describe_Unicode_reordering_as_grammar_change"]
+    }
+  ]
+}

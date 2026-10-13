@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'" />
+    <title>Telysta · 语言创作流程原型</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">跳到创作区</a>
+    <div class="shell">
+      <aside class="sidebar" aria-label="工作区导航">
+        <a class="brand" href="#workspace"><span class="brand-mark" aria-hidden="true">t</span><span>telysta<small>语言与它的来处</small></span></a>
+        <p class="nav-label">创作路径</p>
+        <nav>
+          <a href="#brief"><span aria-hidden="true">01</span> 描述语言</a>
+          <a href="#meaning"><span aria-hidden="true">02</span> 确认意图</a>
+          <a href="#concepts"><span aria-hidden="true">03</span> 比较方案</a>
+          <a href="#review"><span aria-hidden="true">04</span> 回看与导出</a>
+        </nav>
+        <div class="sidebar-note"><span class="dot" aria-hidden="true"></span> 本地流程实验<p>输入仅保留在当前页面。<br />关闭页面前请导出草稿。</p></div>
+      </aside>
+      <main id="workspace">
+        <header class="topbar"><span>创作室 <span class="separator">/</span> 新语言构想</span><span class="badge">研究原型 · R0B-06P</span></header>
+        <div class="intro">
+          <p class="eyebrow">FORMATIVE JOURNEY · 01</p>
+          <h1>让语言拥有<span>来处。</span></h1>
+          <p class="lede">从一个名字、一段对白开始。先说清您想表达什么，再决定语言如何表达。</p>
+          <p class="scope-note">这是作者流程原型：方案、历史与读音均为规划示意。这里不会生成语言、验证语言学正确性或写入正式项目。</p>
+        </div>
+        <form id="draft-form">
+          <section class="panel" id="brief" aria-labelledby="brief-title">
+            <div class="section-heading"><span class="step">01</span><div><p class="eyebrow">LANGUAGE BRIEF</p><h2 id="brief-title">您在想象怎样的语言？</h2></div></div>
+            <label for="language-name">构想名称 <span class="optional">可选</span></label>
+            <input id="language-name" name="languageName" maxlength="120" placeholder="给它一个暂时的名字" />
+            <label for="language-brief">创作需求</label>
+            <textarea id="language-brief" name="brief" rows="3" maxlength="5000" required placeholder="例如：用于河谷城邦的故事；希望名字简洁，能写对白，并看出古今读音的联系。"></textarea>
+            <div class="field-heading"><label for="canon">已有名字或对白</label><span class="optional">每行一条，建议 3–5 条</span></div>
+            <textarea id="canon" name="canon" rows="4" maxlength="10000" placeholder="输入您自己的创作材料；也可以留空探索流程。"></textarea>
+            <p class="field-note">已有材料代表您的创作选择，不作为语言演化的经验数据。</p>
+            <label for="canon-intents">这些材料要表达什么？</label>
+            <textarea id="canon-intents" name="canonIntents" rows="5" maxlength="10000" aria-describedby="intent-help" placeholder="每行：材料序号 | 一项希望表达的意思。可以为同一材料写多项。"></textarea>
+            <p class="field-note" id="intent-help">围绕上方 3–5 条非空材料记录 5–10 项真实意图，例如“2 | 请求对方不要关门；说话者身份尚未确定”。这些是您的笔记，原型不会自动分析或确认意义。</p>
+          </section>
+
+          <section class="panel" id="meaning" aria-labelledby="meaning-title">
+            <div class="section-heading"><span class="step">02</span><div><p class="eyebrow">MEANING WORKBENCH</p><h2 id="meaning-title">先确认这句话的意图</h2></div></div>
+            <div class="scene"><span class="scene-label">固定练习场景 · 非生成结果</span><p>“我昨天看见他过河。”</p><span>下方八项只练习如何澄清这句话，不分析上方自有材料，也不替代关联的真实意图。您可以保留未知项。</span></div>
+            <div class="questions">
+              <label>“我”指的是谁？<select name="speaker"><option value="">尚未确认</option><option value="speaker">说话者本人</option><option value="quoted">引述中的说话者</option><option value="unknown">暂时不知道</option></select></label>
+              <label>“他”指的是谁？<select name="referent"><option value="">尚未确认</option><option value="known">双方已经提到的人</option><option value="new">第一次提到的人</option><option value="unknown">暂时不知道</option></select></label>
+              <label>过河的人有几位？<select name="number"><option value="">尚未确认</option><option value="one">一位</option><option value="many">多位</option><option value="unknown">暂时不知道</option></select></label>
+              <label>说话者如何得知此事？<select name="source"><option value="">尚未确认</option><option value="seen">亲眼看见</option><option value="reported">听别人说</option><option value="unknown">暂时不知道</option></select></label>
+              <label>事情发生在什么时候？<select name="time"><option value="">尚未确认</option><option value="yesterday">昨天</option><option value="past">过去某时</option><option value="unknown">暂时不知道</option></select></label>
+              <label>过河是否已经完成？<select name="completion"><option value="">尚未确认</option><option value="complete">已经到达对岸</option><option value="ongoing">只看见正在过河</option><option value="unknown">暂时不知道</option></select></label>
+              <label>这是肯定还是否定？<select name="polarity"><option value="">尚未确认</option><option value="positive">确实看见了</option><option value="negative">没有看见</option><option value="unknown">暂时不知道</option></select></label>
+              <label>这句话在做什么？<select name="speechAct"><option value="">尚未确认</option><option value="inform">告诉对方一件事</option><option value="ask">询问是否发生</option><option value="unknown">暂时不知道</option></select></label>
+            </div>
+            <p class="field-note">这些问题用于探索作者需求，不是目标语言已经确定的语法范畴，也不要求所有语言都强制表达。</p>
+          </section>
+
+          <section class="panel" id="concepts" aria-labelledby="concept-title">
+            <div class="section-heading"><span class="step">03</span><div><p class="eyebrow">CANDIDATE CONCEPTS</p><h2 id="concept-title">您更想探索哪种表达方式？</h2></div></div>
+            <p class="section-description">两种设计方向，供比较创作偏好。它们没有生成词汇、规则或候选语言，也没有“自然度”排名。</p>
+            <fieldset class="concept-grid"><legend class="visually-hidden">选择一个方案概念</legend>
+              <label class="concept"><input type="radio" name="concept" value="analytic" /><span class="concept-number">A <span>方案概念</span></span><strong>清晰的词间关系</strong><span>倾向用独立词表达关系，让词形保持简洁。</span><span class="tags"><span>独立标记</span><span>简洁词形</span></span><small>创作偏好；可行性尚未验证</small></label>
+              <label class="concept"><input type="radio" name="concept" value="layered" /><span class="concept-number">B <span>方案概念</span></span><strong>丰富的词内结构</strong><span>倾向用多个可辨认成分表达关系，探索范式的规律。</span><span class="tags"><span>形态组合</span><span>范式关系</span></span><small>创作偏好；可行性尚未验证</small></label>
+            </fieldset>
+            <div class="planned-grid">
+              <div><span class="planned">尚未实现</span><h3>听见它的声音</h3><p>未来由音系与读音计划产生有限音素预览，明确标出无法支持的读音。</p></div>
+              <div><span class="planned">尚未实现</span><h3>看见它的历史</h3><p>未来逐步解释规则、环境、词源与变化结果；不会自动为创作例外编造历史。</p></div>
+            </div>
+          </section>
+
+          <section class="panel" id="review" aria-labelledby="review-title">
+            <div class="section-heading"><span class="step">04</span><div><p class="eyebrow">REVIEW & EXPORT</p><h2 id="review-title">留下构想，也留下疑问</h2></div></div>
+            <label for="alternative">如果没有 Telysta，您会怎样完成这件事？ <span class="optional">可选</span></label>
+            <input id="alternative" name="alternative" maxlength="1000" placeholder="例如：手写语法表、现有造语工具、查阅语言学资料" />
+            <label for="feedback">哪些地方让您困惑，或会让您放弃这个流程？ <span class="optional">可选</span></label>
+            <textarea id="feedback" name="feedback" rows="3" maxlength="5000" placeholder="真实的困难比满意度分数更有帮助。"></textarea>
+            <div class="actions"><button type="submit">整理流程草稿 <span aria-hidden="true">↗</span></button><button id="download" type="button" class="secondary" disabled>导出 Markdown</button></div>
+            <p id="status" role="status" aria-live="polite">草稿包含您的输入、已确认意图和未解决项；不是语言手册或能力证明。</p>
+            <pre id="preview" hidden tabindex="0" aria-label="流程草稿预览"></pre>
+          </section>
+        </form>
+        <footer>Telysta · FormativeJourney.r0b <span>无外部请求 · 不写正式语言状态</span></footer>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

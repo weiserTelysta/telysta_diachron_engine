@@ -39,8 +39,8 @@ LanguageState v3 尚未实现。详见 [Current Architecture](./docs/architectur
 - `data/` — 语言数据、语法化路径、预设
 - `docs/` — 架构与开发文档
 - `tests/` — 单元与集成测试
-- `main.py` — CLI 入口
-- `streamlit_app.py` — Web UI 入口
+- `main.py` — 旧引擎研究 CLI
+- `streamlit_app.py` — 旧引擎研究界面
 
 ## 快速开始
 
@@ -65,7 +65,10 @@ Poetry 在隔离的工具环境中运行，以保证项目 `.venv` 与 `poetry.l
 rustup toolchain install 1.88.0 --component rustfmt --component clippy
 ```
 
-### 运行 CLI
+### 运行旧引擎研究 CLI
+
+Python 输出是研究材料，不是正式 Rust 项目。已知回放信息损失见
+[旧引擎覆盖账本](./docs/LEGACY_EVENT_COVERAGE.md)。
 
 ```bash
 python main.py
@@ -80,15 +83,16 @@ cargo +1.88.0 test --workspace --locked
 cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings
 cargo +1.88.0 build -p telysta-desktop --locked
 node --check apps/desktop/web/app.js
+node --test apps/desktop/tests/app.test.cjs
 ```
 
 Python 命令只覆盖 legacy/research 基线和文档治理，不能替代 Rust 与桌面质量门。
 
 Linux 桌面构建还需要[开发环境指南](./docs/DEVELOPMENT_SETUP.md)列出的 Tauri 系统依赖。
-Windows 上的精确 1.88.0 检查已在本地通过；Linux 与 fresh-checkout CI 证据仍待完成，
-因此这不表示 G0A 已通过。
+Windows 上的精确 1.88.0 检查有既往本地记录；本轮 Linux 工作区检查见
+[执行记录](./docs/WORK_LOG.md)。Fresh-checkout CI 与独立证据仍待完成，G0A 保持 blocked。
 
-### 运行 Streamlit 界面
+### 运行旧引擎研究界面
 
 ```bash
 python -m streamlit run streamlit_app.py

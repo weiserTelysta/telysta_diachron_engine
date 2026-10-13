@@ -24,6 +24,12 @@ fn field<'a>(record: &'a Value, key: &str) -> &'a str {
         .unwrap_or_else(|| panic!("{key} string"))
 }
 
+fn assert_planning_seed(rng_lock: &Value) {
+    let text = field(rng_lock, "rootSeed");
+    let seed = text.parse::<u64>().expect("planning seed fits u64");
+    assert_eq!(seed.to_string(), text, "canonical unsigned decimal");
+}
+
 fn assert_proposed_id_uses_entity_local_grammar(value: &str, kind: &str) {
     let prefix = format!("telysta:{kind}:");
     let local = value
@@ -50,7 +56,7 @@ fn planning_records_reuse_accepted_entity_and_rng_value_grammars() {
         let rng_lock = &operation["rngLock"];
         if rng_lock["kind"] == "rng_tree" {
             RngPath::parse(field(rng_lock, "pathRoot")).expect("accepted RngPath");
-            rng_lock["rootSeed"].as_u64().expect("u64 root seed");
+            assert_planning_seed(rng_lock);
         }
     }
 
@@ -60,7 +66,7 @@ fn planning_records_reuse_accepted_entity_and_rng_value_grammars() {
         assert_proposed_id_uses_entity_local_grammar(field(run, "operationId"), "operation");
         let rng_lock = &run["rngLock"];
         RngPath::parse(field(rng_lock, "pathRoot")).expect("accepted RngPath");
-        rng_lock["rootSeed"].as_u64().expect("u64 root seed");
+        assert_planning_seed(rng_lock);
     }
 
     for job in array(&bundle, "jobRecords") {

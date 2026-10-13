@@ -3,7 +3,7 @@ document_type: adr
 decision_status: proposed
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-07-18
+last_verified: 2026-10-12
 owner: unassigned
 reviewers: []
 ---
@@ -14,12 +14,12 @@ reviewers: []
 
 - 状态：`Proposed`
 - 日期：2026-07-18
-- 决策范围：Meaning、Grammar、Lexeme/Sense/WordForm/Morpheme/Paradigm/Construction 身份、language-internal lexical class、双向 realization/analysis、query purity、迁移、provenance、semantic hash 与 replay
+- 决策范围：Meaning、Grammar、Lexeme/Sense/WordForm/Morpheme/Paradigm/Construction 身份、language-internal lexical class、正字法、双向 realization/analysis、query purity、迁移、provenance、semantic hash 与 replay
 - 已接受前置：ADR-006
 - 接受前必须闭合：ADR-008、ADR-011、R0B-01 Meaning/Task Contract
 - 跨合同发布/RNG 依赖：ADR-012 唯一拥有 `ProjectAuthorityHash` 与单发布点；ADR-013 唯一拥有 RNG compatibility contract
 - 下游消费者：ADR-009、ADR-010、ADR-012、ADR-007 umbrella
-- 产生工作包：R0B-01A、COR-L01
+- 产生工作包：R0B-01A-D/01A、R0B-04B-D/04B、COR-L01/04
 
 本文是评审草案，不是生产 schema，也不授权实现 `LanguageState v3`、正式 reducer、Genesis 创建入口或新的权威 writer。只有本 ADR，或在 ADR Index 中具名登记、标为 `Accepted`、显式 `supersedes/replaces ADR-014` 且附逐条覆盖矩阵与同等独立评审的替代 ADR，被接受并且 G0B 关闭、G1 已通过后，相关持久化实现才可进入 WS-1。
 
@@ -93,6 +93,7 @@ Rust 生产核心使用相互引用但不互相替代的权威 aggregate。这�
 | language-internal `SenseMeaning`、`PredicateFrame` 与 typed semantic relation | `LanguageState.MeaningInventory` | validated ChangeSet + reducer + `StateTransaction` | `StateSemanticHash` |
 | language-internal category、Construction、selection、agreement、linearization、morphology 与 morphophonology | `LanguageState.GrammarInventory` / Morphology inventory | validated ChangeSet + reducer + `StateTransaction` | `StateSemanticHash` |
 | Lexeme、Sense、WordForm、Morpheme、Paradigm、ordered occurrence 与 state-level etymological references | `LanguageState` 的 Lexicon/Morphology/Meaning inventories | validated ChangeSet + reducer + `StateTransaction` | `StateSemanticHash` |
+| 正字法 policy、grapheme inventory、WordForm spelling base/variant 与 OrthographyRevision | `LanguageState.OrthographyInventory`；细节见 §4.4A | validated root/ChangeSet；查询不得物化缺失 base | `StateSemanticHash` |
 | realization、analysis、IGT、trace 与 candidate ranking | revision-bound `ProofCarryingUtterance` / analysis artifact | pure query service；不能取得 state writer capability | artifact content hash；不进入 `StateSemanticHash` 或 `HistoryHeadHash` |
 | ComparativeConcept、Concepticon/CLICS 对齐与 typological gloss | versioned external alignment/data artifact | data import/curation boundary | data/alignment lock；不是 language-internal meaning |
 
@@ -206,6 +207,88 @@ Allomorph 始终只有一个 owner Morpheme；fusion 不伪装成被任意一个
 
 WS-1 最低支持 ordered morphology、zero 和 syncretism。其他机制可以为 `planned`，但目标身份结构不能迫使未来靠字符串补丁实现。
 
+#### 4.4A 正字法身份与投影（新增 Proposed 决定）
+
+用户问题是：两个同音词能否保留不同拼写，音变后能否保留古老拼写，词典、
+句子、IGT 与语言文档是否能引用同一份拼写依据。当前 v2 没有这些能力。
+本节及 [review vectors](../../tests/fixtures/orthography_review_vectors_v1.json)
+均可随评审修订，不是 frozen fixture 或生产 wire schema。
+
+拟选择 **typed WordForm/occurrence 身份 + 显式 orthographic base**：
+
+| 对象 | 身份与 owner | 写入及 hash |
+|---|---|---|
+| OrthographyInventory | LanguageState 拥有；包含字素、normalization/边界策略、拼写规则和基底引用 | Genesis/legacy root 或 validated ChangeSet；进入 StateSemanticHash |
+| OrthographicForm | WordForm-scoped stable local key；同一 WordForm 可以有具名 canonical/variant form | 显式物化的有序 grapheme/base 或有锁的形态拼写推导；进入 StateSemanticHash |
+| OrthographyRevision | 提交前分配的 revision identity，不能从 post-state hash 派生 | 内容、引用和 provenance 进入相应 state/hash；历史由 ADR-009/012 发布 |
+| SpellingRealization | query artifact；键含 typed analysis/occurrence、language revision、OrthographyRevision 与相关 locks | 纯查询、独立 content hash；不进入 StateSemanticHash |
+| IGT / SpellingAnalysisForest | 同一 analysis graph 的 revision-bound 投影 | 纯查询、独立 content hash；不得产生第二份词素/意义真相 |
+
+`OrthographicForm` 的 local key 不由显示字符串、IPA、排序、candidate hash
+或 post-state hash 导出。拼写修订保留其身份；新增独立 variant 创建新的 key。
+WordForm 身份不因换字体、Unicode 表示或拼写改革改变。这里不增加生产
+`EntityKind`；若评审选择全局 OrthographicFormId，须同时修改 EntityId 合同、
+迁移向量与覆盖清单，不能悄悄扩展 parser。
+
+orthographic base 保存显式 grapheme identity/顺序/边界，或引用版本锁定的
+morpheme spelling base 和 typed realization plan；它不是当下发音的显示缓存。
+Genesis 或显式新增词形命令可以使用 typed phonology + owner/lexical context
+编译初始 base；query 不能为缺失 base 自行创建 state entity。最小 WS-1 先
+覆盖固定 TaskPack 的 word forms，不据此宣称能处理任意文字系统或新词。
+
+`SoundChange` 只改变 typed phonological effect，不重建上述 base。更新读音
+后 `spell` 仍按旧 base/revision 输出保守拼写；选择更贴近新读音的拼写必须有
+独立 `OrthographicChange`、author/provenance、影响清单和 replay。productive
+拼写也必须从锁定 base/形态结构推导，不能藏一个“当前 phonology → 字符串”
+查询，让声音变化在未提交拼写改革时静默改写文字。拼写改革只改变正字法
+相关 state/history；不能因此伪造 phonological change 或新 WordForm 身份。
+
+保守拼写的反向路径必须先解析到当前 language revision 许可的 typed
+WordForm/occurrence analysis，再引用其当前 phonology 与 morphophonological
+realization plan。旧 base 不是旧发音的权威缓存。音段删除或合流后，旧拼写
+仍须回到该词形的新读音；同音异写可保留不同词形，不能靠字母逐一反推音段。
+音变使旧 revision 的 PCU/IGT 过期，即使 OrthographyRevision 没有变化。
+
+Unicode 与 span 拟定边界：
+
+- 以 NFC 比较/规范化允许的书写表示，同时保留 AuthorCanon/导入来源原始
+  字节；不会因 canonical equivalence 合并两个 lexical identities。
+- 不默认 NFKC、大小写折叠或去变音符号；兼容字符合并必须由具名、版本化
+  policy 决定并列出冲突。normalization 不是正字法改革，更不是音变。
+- Unicode data version、normalizer、segmenter/tailoring 与策略都锁定。研究
+  参照为 [UAX #15 rev58 / Unicode 18](https://www.unicode.org/reports/tr15/tr15-58.html)
+  与 [UAX #29 rev49](https://www.unicode.org/reports/tr29/tr29-49.html)；不因此
+  宣称当前 Python/Rust 已实现 Unicode 18。生产版本需在依赖审查时明确选择。
+- Unicode grapheme cluster 不是语言学 grapheme、phoneme 或 morpheme；如
+  一个 digraph 可有两个 clusters。字素表和 typed segmentation 另行定义。
+- artifact span 使用明确 source artifact + normalization revision + UTF-8
+  byte interval；raw→canonical alignment 单独保存。Webview 的 UTF-16 offset
+  不能直接当 byte span；zero contribution 使用显式 anchor/empty span。
+- 分别 NFC 的形素片段拼接后未必仍为 NFC，最终书写 artifact 按锁定 policy
+  规范化，并保存跨片段合成/组合符重排的多对多 alignment。两个 contribution
+  可以指向同一 canonical byte span；原始 occurrence 顺序与身份仍保留。
+  Unicode 合成不构成形态 fusion，重排组合符也不能重排 MorphOccurrence。
+  参照 [UAX #15 §1.4](https://www.unicode.org/reports/tr15/tr15-58.html#Concatenation)。
+
+`parse(spell(A,O),O)` 必须包含等价 typed analysis，并排除锁定的 forbidden
+reading。不同同音词不能只靠 phoneme string 选择拼写；同形/合流可以返回多
+分析，但每项必须由 Grammar/Lexicon 许可，预算不足显式返回 incomplete/gap，
+不能用“返回全部分析”或静默截断冒充成功。缺失 mapping 返回 typed gap，
+禁止 raw IPA fallback。正向和反向都绑定同一 revision、orthography、registry
+与 Unicode policy；变更这些输入使旧 PCU/IGT 证据过期。
+
+IGT 的写词行、形素分段、gloss 与翻译从同一分析图投影。zero、syncretism、
+fusion 允许贡献和 span 非双射；glossing 标记不是目标语言新增的文字、词素
+或意义。规则来源参照 [Leipzig Glossing Rules](https://www.eva.mpg.de/lingua/resources/glossing-rules.php)，
+不把规范展示当作真实分析已通过的证明。缺失映射的 v2/legacy 输入只能产生
+`NeedsResolution`/`ArchiveOnly` 或 non-executable `OrthographyUnavailable`；
+不能从 IPA、字形外观或英语 gloss 推断未保存的正字法身份和历史。
+
+替代方案仍供 reviewer 比较：仅 phonology-keyed projection 会丢同音异写与
+保守拼写；每次音变自动重拼写会混淆两个过程；全部只存 display string 会
+丢失字素/边界与 typed analysis 关联。显式 base 的成本是维护拼写来源、
+形态推导和迁移缺口；若选择更轻的替代，须逐项通过同等反例。
+
 ### 4.5 Language-internal categories
 
 语言完整性以功能能力而不是英语 POS 清单判断：
@@ -246,6 +329,14 @@ analyze(revision, surface, context, options)
 - gradient ranker 只能排序已通过 hard validation 的候选。
 
 partial realization 只有在调用者显式请求且结果同时列出未满足 obligations 时才允许；它不能获得“完整表达成功”的能力声明。
+
+评审用 [Meaning vectors](../../tests/fixtures/meaning_review_vectors_v1.json)仍是
+mutable planning notation：分别攻击否定/量化 scope、承诺状态、speech act 与
+显式报告内容/来源。有限 scene 的不同真值可见证非等价；相同真值不证明一般
+等价。捕获规避的 alpha relation 是有限支持域的保守检查，不是完整意义判定器。
+中性 `Ask(Report(r,p))` 不承诺 p 的例子不定义所有语言 evidential 的承诺性质。
+当前没有 production adapter 或表达成功证据；永远返回 gap、reject-all 或把所有
+读法加入 forest 的实现均不能通过 declared supported profile 的完整表达验收。
 
 ### 4.7 Command/Query 分离
 
@@ -358,6 +449,8 @@ HashCoverageManifest 中证明无环。
 - Sense、PredicateFrame、Construction 与 language-internal category；
 - FeatureBundle、ParadigmCell、RealizationUnit 与 ordered MorphOccurrence；
 - 权威 underlying/phonological representation；
+- OrthographyInventory 的 policy、grapheme/base、mapping 与 lexical variant
+  身份/引用；不包含 SpellingRealization/IGT 的派生查询内容或其 post hash；
 - accepted lexical/grammar/language-internal meaning 的当前结果；
 - 解释这些字段所必需的 schema、EntityId schema、RegistryBundle lock 与 state-level provenance references。
 
@@ -386,6 +479,8 @@ hash 算法、覆盖或规范排序改变必须版本化并记录 baseline 变�
 - 明确的 `MigrationResolutionMap` 可以记录经评审的人为消歧；没有 resolution 的结果只能是 `ArchiveOnly` 或 `NeedsResolution`，不能进入可执行 WS-1 状态；
 - v2 完整状态历史进入 ADR-009 唯一 persisted kind `LegacyHistoryBoundary`。该 boundary 内含一个 imported checkpoint、source archive ref/hash、loss report、migration resolution ref、迁移器版本和 provenance discontinuity；`ImportedCheckpoint` 只是 boundary payload，不是第二种 replay root；
 - 不从 state diff 推断 SoundChange、Analogy、Grammaticalization、Borrowing 或 community history。
+- 缺失 orthographic base/mapping/variant identity 时，不用现有 IPA 自动补齐；
+  产生具名 unresolved item，经评审 resolution 后才可物化可执行状态。
 
 迁移结果在 unresolved hard item 清零前不得取得任何 root materialization capability；
 全部解决并通过 state-only migration validation 后，只能取得独立的
@@ -418,10 +513,14 @@ LanguageStructureState
 │  ├─ Lexeme
 │  ├─ WordForm
 │  └─ Etymon / provenance links
-└─ Morphology
-   ├─ Morpheme / RealizationUnit
-   ├─ Paradigm / ParadigmCell
-   └─ ordered MorphOccurrence
+├─ Morphology
+│  ├─ Morpheme / RealizationUnit
+│  ├─ Paradigm / ParadigmCell
+│  └─ ordered MorphOccurrence
+└─ OrthographyInventory
+   ├─ Grapheme / normalization and boundary policy
+   ├─ OrthographicForm / locked spelling base and variants
+   └─ OrthographyRevision / typed mapping rules
 ```
 
 具体 Rust 类型、ID 编码和 wire schema 只有在本 ADR 与 ADR-007/008/009 的依赖图接受后才可冻结。
@@ -480,6 +579,10 @@ LanguageStructureState
 8. `telysta-entity-id.v2` 的 kind/stable-key/migration 合同、state-only migration mapping、state-level provenance ID 顺序和 `StateSemanticHash` coverage/非循环测试向量均已冻结；`HistoryHeadHash` 与 `ProjectAuthorityHash` 向量分别由下游 ADR-009 与跨 Gate ADR-012 验收，不作为本 ADR 的循环接受前置；
 9. ADR review-evidence manifest 已绑定本决定、fixture subject hash 和 reviewer attestation；它只用于接受 ADR，不冒充最终 G0B GateEvidence；
 10. ADR 接受后，最终 G0B GateEvidence 再引用 Accepted ADR 与 R0B-01～07 的完整证据；本 ADR 仍不单独授权实现，生产 v3 继续等待 G1 + G0B。
+11. R0B-04B-D 的正字法/IGT/PCU planning vectors 已独立审阅，身份、base、
+    normalization、同音异写、非双射 span、hash/迁移和保守拼写决定闭合。
+    R0B-04B 的 frozen hostile pack 必须在 ADR Accepted 后重写、绑定版本与
+    reviewer；不能要求生产 runner 先通过再接受本 ADR，形成依赖循环。
 
 ## 10. 实施顺序
 

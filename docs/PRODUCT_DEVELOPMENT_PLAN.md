@@ -3,7 +3,7 @@ document_type: product-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-07-19
+last_verified: 2026-10-12
 owner: unassigned
 reviewers: []
 ---
@@ -11,7 +11,7 @@ reviewers: []
 # Telysta 产品开发执行计划
 
 - 状态：`Active planning baseline / Domain Implementation Hold`
-- 最近修订：2026-07-19
+- 最近修订：2026-10-12
 - 适用范围：产品定义、Rust 核心、Tauri 工作台、语言生成、历时模拟、验证、数据、迁移与发布
 - 当前阶段：`R0A 计划/决策修复 + R0B WS-1 领域证据`
 - 当前阻断：G0A 为 `blocked`；2026-07-19 复审又重新打开 Gate/CI hermeticity、真实 MSRV、当前 v1 create/append/migration/index authority 和 legacy evidence 边界；R0B evidence preparation 正在进行，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`，G0B=`not evaluated` 且没有通过性 GateEvidence；ADR-007～014 均未完成所需接受流程，ADR-014 已形成 Proposed 草案但 owner/reviewer 未分配；Project/Operation/Run/Job、Meaning/Grammar/Lexical Class/Realization、TheoryProfile、ChangeSet locus、聚合与 replay 边界尚未闭合。ADR-005 是分阶段研究背景，不是 WS-1 前置
@@ -64,6 +64,38 @@ Telysta 不以“一键生成 Tolkien 级语言”为可验证承诺。产品目
 - 由未参与开发的创作者完成新场景和命名任务，并通过外部语言学审计。
 
 神经 TTS、任意代码插件、完整自动文学翻译、个体级大规模 agent simulation 与“普适自然度”均不是 1.0 硬门。
+
+### 1.3 2026-10-12 用户目标落实与路线复审
+
+保留客户端、本地优先、确定性生成和可追溯历史的路线。首个可交付结果仍为
+R2 的可执行微型语言，再由 R3 完成作者任务；不以大量词表或规则替代它。
+本次范围修订来自用户明确要求，既不接受 Proposed ADR，也不改变持久化语义。
+
+- **语言说明随语言交付**：R2 候选/项目至少导出可阅读的 Markdown/HTML
+  说明，包含版本/锁、音系、拼写、现有范式与构式、词汇/词源、短文本与
+  同图 IGT、一次变化历史及限制。由 WS1-10/R2F 与 G2 Journey 验收，
+  不等到 R6 才首次提供文档；R6 的 LIT-08 扩展为完整 Language Bible。
+- **基础读音**：STORY-10 先验证 typed PronunciationPlan；STORY-10A 将 SPH-004
+  的受限本地试听作为 R3/G3 必需交付，并作为首次满足用户读音需求的
+  功能。它只读取发音计划，覆盖外的音必须明确失败或静音标注，不能用
+  普通自然语言 TTS 猜读架空拼写。完整 SpeechRenderPlan/表现性语音仍归 R7。
+  发布包含试听时必须验证音段、时长、重音/边界、WAV 与许可证；基础
+  试听不依赖神经语音，也不宣称自然人声。尚未完成发音计划前只准备研究原型。
+- **视觉偏好**：采用 Rosé Pine 的语义色彩与字体层次；这属于 creative
+  preference。R0B-06P 可用它探索非权威作者流程；正式客户端在版本化 API
+  与任务模型稳定后落地。必须支持中文/IPA、键盘操作、可见焦点及 WCAG 2.2
+  AA 对比度，错误与能力状态同时使用文字，不仅依赖颜色。
+- **资料使用**：`references/` 是本地研究库，不是默认产品数据。教材用于
+  抽取问题、反例和文档组织经验；经验先验须来自可锁定的数据与论文。
+  未明确许可的译本、词典、字体与音频不得进入安装包。扫描版需 OCR 并
+  核对页码，未经阅读不得标记 reviewed。
+- **文档收敛**：执行计划是唯一 WBS，路线图只保留摘要和稳定链接，能力图
+  保存领域合同与 Gate 定义；实际检查与恢复断点只记在
+  [执行记录](./WORK_LOG.md)。历史合同与 schema 在迁移完成前继续保留。
+
+本轮优先关闭 R0A-09 的既有 v1 correctness 缺口；其本地回归通过不代替
+独立批准、clean-checkout 与跨平台终态证据。论文依据及适用范围见
+[路线复审补充](./RESEARCH_ROUTE_REVIEW_2026-07-14.md#17-2026-10-12-路线复审补充)。
 
 ## 2. 产品声明阶梯
 
@@ -322,7 +354,7 @@ impact”在本阶段仅表示兼容性与变化预览，不建立 `AuthorCanonC
 | WS1-01A | Language History + Ledger Integration | WS1-01/09、R1-01A、Accepted ADR-009 | Authoring/StructuralChange Operation、history node、validated ChangeSet 与 LegacyHistoryBoundary 集成；只允许 Legacy/test root | 多次 Authoring/Structural Operation 可回放；ChangeSet 引用 OperationId；不得在 seal 前构造生产 GenesisRoot；Job/Attempt 不进入语义 hash |
 | WS1-07 | Genesis Trust Boundary | WS1-01A、WS1-05/06、R1-04、Accepted ADR-010 | CandidateSet、Unverified/Verified artifact、revalidation、生产 GenesisRoot materialization、seal/create/reopen | 磁盘/IPC 候选重新验证；只有 VerifiedGenesisArtifact 能原子创建生产 GenesisRoot；客户端无法伪造创建 |
 | WS1-08 | Minimal Authoring Loop | WS1-02A/03/04/04A/06/07 | scene → confirmed Meaning → utterance candidates → orthography/analysis/IGT/broad phonological form/explain → author selects test utterance | 5–10 句真实场景零随机 fallback；输出 ProofCarryingUtterance；选择结果不构成 AuthorCanonCorpus commit |
-| WS1-10 | Tauri Vertical Slice | G1、WS1-01A、WS1-04A/05/06/07/08/09 | Blueprint/CanonSeed 表单、候选比较、create/reopen、句子检查、变化 diff、Why inspector | 不编辑 JSON 完成 `ExecutableJourney.g2`；取消或崩溃不产生半项目；UI 明示该 build 不是 Canon-safe Alpha |
+| WS1-10 | Tauri Vertical Slice + Minimal Language Manual | G1、WS1-01A、WS1-04A/05/06/07/08/09 | Blueprint/CanonSeed 表单、候选比较、create/reopen、句子检查、变化 diff、Why inspector；Markdown/HTML 最小语言说明 | 不编辑 JSON 完成 `ExecutableJourney.g2`；导出音系/拼写/范式/构式/词汇词源/短文IGT/变化/限制，全部绑定同一 language revision、OrthographyRevision、analysis locks 与 history head；重开及删缓存重导出正文/hash 稳定；取消或崩溃不产生半项目；UI 明示非 Canon-safe Alpha |
 
 ### R2 内部门与 WS-1 固定范围
 
@@ -333,7 +365,7 @@ R2 不等到最终 G2 才首次集成，按以下内部门交付可运行工件�
 3. R2C：typed structural ChangeSet + atomic reducer；
 4. R2D：append-only domain history + seal/create/reopen + dependency bundle/replay capability；
 5. R2E：Meaning Workbench + authoring round trip；
-6. R2F：Tauri vertical slice、cancel/crash/reopen 和 query projection。
+6. R2F：Tauri vertical slice、cancel/crash/reopen、query projection 与同版本最小语言说明导出。
 
 Canonical dependency assertions：
 
@@ -365,6 +397,8 @@ append-only domain history 之前。
 - Linguistic Execution Manifest 绑定真实 runner；`future`、sentinel hash 或人工 pass 不计入能力；
 - `parse(spell(A, O), O)` 与 `analyse(realize(M))` 都包含等价 typed analysis，同时拒绝锁定的 forbidden analysis；其中 `A` 是稳定 WordForm/analysis occurrence，`O` 是 OrthographyRevision；对 `parse(S, O)` 返回的每个许可分析，`spell(A', O)` 只产生许可的 canonical/variant spelling；malformed spelling、precision、同音异写和 ambiguity budget 通过；IGT 从同一分析图投影；
 - 删除快照后可由 Genesis + ChangeSet 重建同一语义状态；
+- WS1-10 最小语言说明可脱离客户端阅读；变化后词典、例句和历史说明使用
+  当前读音与锁定拼写，重开/删除派生缓存后导出内容稳定且所有章节版本一致；
 - 外部语言学评审没有阻断性表示缺口；
 - 产品文案只称“可执行微型语言/可审计结构变换”。
 
@@ -390,14 +424,15 @@ accept、reject、retcon 或 branch。AuthorCanon 只证明作者选择与产品
 | STORY-07 | Creative/Aesthetic Profile | WS1、STORY-05 | pairwise candidate audition、声音/节奏/文字偏好及解释 | 偏好不成为经验规律；相同语义内容用于候选比较 |
 | STORY-08 | Structural RulePack v1 | WS1-09、稳定 Grammar/Change IR | 声明式 validate → conflicts → dry-run → impact → authorial structural transform → explain | 无任意代码；R3 变换不在 UI 中伪装为社群传播历史 |
 | STORY-09A | Creator Workbench Integration Shell | R1、G2 | Forge / Write / Inspect / Quality 导航、versioned API adapter、首个 Canon Intake 纵切 | 从 ALPHA-01 起持续集成；形成性构建明示非 G3，不等待 STORY-01～08 全部完成 |
-| STORY-09B | Creator Workbench Closed Alpha | STORY-01～08、STORY-10、STORY-09A、ALPHA-01～06 | 完整固定路径、错误恢复、claim projection 与确认性研究构建 | 目标叙事作者完成候选和短场景；expert 可追踪现代形式；中英文状态不变；只作为 G3 candidate，不提前生效 Alpha 声明 |
+| STORY-09B | Creator Workbench Closed Alpha | STORY-01～08、STORY-10/10A、STORY-09A、ALPHA-01～06 | 完整固定路径、错误恢复、claim projection 与确认性研究构建 | 目标叙事作者完成候选和短场景并试听受支持形式；expert 可追踪现代形式；中英文状态不变；只作为 G3 candidate，不提前生效 Alpha 声明 |
 | STORY-10 | Deterministic PronunciationPlan v1 | WS1-04、STORY-03/05 | morphology → phonology → typed allophony → utterance prosody → phones | 同一分析与锁跨进程结果一致；覆盖音段、边界、重音/声调；只承诺发音计划，不承诺音频自然性 |
+| STORY-10A | Basic Local Pronunciation Preview | STORY-10、STORY-09A | 版本化受限本地 renderer、音段/韵律覆盖表、试听与 WAV 导出；承接 SPH-004 基础范围 | R3/G3 必需；仅消费验证后的当前 PronunciationPlan；相同 plan/renderer locks 输出稳定；验证音段、时长、重音/边界与支持的声调，覆盖外显式拒绝；删除/合流后的保守拼写读当前音；锁定许可，不宣称自然人声 |
 
 R3 不要求庞大词典。完成度由 TaskPack 覆盖、生产力、意义保真、canon 稳定性和第二人使用决定。
 
 ### R3 Canon-first Alpha 内部门
 
-STORY-01～10 是 R3 epic。以下内部门提供可独立验收的最小纵切；它们通过不自动表示
+STORY-01～10 及 STORY-10A 是 R3 epic。以下内部门提供可独立验收的最小纵切；它们通过不自动表示
 父 epic 或 G3 已完成。
 
 | ID | 内部门 | 依赖 | 最小可见结果 | 验收 |
@@ -407,8 +442,8 @@ STORY-01～10 是 R3 epic。以下内部门提供可独立验收的最小纵切�
 | ALPHA-03 | One Naming Construction | ALPHA-01、STORY-02/03 | 用一个受支持命名构式生成并分析一个新名字 | 显示词素、语体、时代和词源；不靠随机合法字符串 |
 | ALPHA-04 | One Short Scene | ALPHA-01、STORY-03/04/05 | 2–3 话轮或一个短叙事、一个 typed gap 和一次最小 debt 解决 | 零 silent fallback；进入 canon 前结清意义与结构账 |
 | ALPHA-05 | Canon Impact | ALPHA-02/03/04、STORY-08 | dry-run 一条稳定结构规则并显示受影响名字和句子 | 取消不改 hash；提交前显式 accept/reject/branch |
-| ALPHA-06 | Canon Release + Export | ALPHA-05、STORY-01/05A、STORY-10 | 创建 release、关闭/重开并导出 grammar/lexicon/IGT/provenance/limitations | 重开与导出引用同一 release/hash；无半发布 |
-| ALPHA-07 | Closed Alpha Candidate | ALPHA-06、STORY-07/09B/10 | Forge/Write/Inspect/Quality 固定路径与 `CanonAlphaJourney.g3` | candidate manifest、JourneyPack 和预注册证据包齐全；通过 G3 后另发 immutable effective manifest |
+| ALPHA-06 | Canon Release + Export | ALPHA-05、STORY-01/05A、STORY-10/10A | 创建 release、关闭/重开并导出 grammar/lexicon/IGT/provenance/limitations，试听并导出受支持读音 | 重开、文档与音频引用同一 release/analysis/plan/renderer locks；覆盖外不猜读；无半发布 |
+| ALPHA-07 | Closed Alpha Candidate | ALPHA-06、STORY-07/09B/10/10A | Forge/Write/Inspect/Quality 固定路径与 `CanonAlphaJourney.g3` | candidate manifest、JourneyPack 和预注册证据包齐全；通过 G3 后另发 immutable effective manifest |
 
 执行顺序为 `Protocol Ready → Canon Intake → Create and Explain → Safe Growth →
 Closed Alpha Candidate → G3`。任一内部门只能用于形成性测试，不扩大阶段允许声明。
@@ -488,7 +523,7 @@ Closed Alpha Candidate → G3`。任一内部门只能用于形成性测试，�
 |---|---|---|---|---|
 | R7-SPH-01 | SpeechRenderPlan / PhoneticPlan v2 | G6、STORY-10、R3B-04 | tempo、coarticulation、actor guidance、音频/TTS 映射 | 在 v1 上提升表现精度；不首次定义音变机制或反向改变 LanguageState |
 | R7-SPH-02 | Actor Pack | R7-SPH-01、G6 | 音节、重音、慢/常速、最小对立、台词指导 | 人类表演者可按文档复现；音频不掩盖缺失音 |
-| R7-SPH-03 | Deterministic Speech Preview | R7-SPH-01 | 可重复的本地发音预览 | 明确标为 pronunciation aid，不宣称自然人声真值 |
+| R7-SPH-03 | Deterministic Speech Preview | R7-SPH-01、STORY-10A | 在 R3 必需的受限基础试听上扩展表现性渲染 | R7 完整渲染明确标为 pronunciation aid，不宣称自然人声真值；不能替代或推迟 STORY-10A |
 | R7-SPH-04 | Optional Neural Voice | R7-SPH-01–03 | 版本化外部模型结果与限制 | 不参与语言正确性；模型、输入、许可和结果锁定 |
 | R7-RES-01 | Research UI / Scale-up | R1-08、R4/R5 | 参数扫描 UI、队列管理、大规模 replicates、发布级 evidence bundle | 复用既有 headless runner；不成为 G4 前置能力的首次实现 |
 | R7-LLM-01 | Proposal Escrow | 稳定 Meaning/Rule IR | LLM 只提议 scene/meaning/rule/explanation | schema/domain/impact/user confirmation 后才能 commit |
@@ -630,8 +665,8 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 |---|---|---|---|
 | `FormativeJourney.r0b` | R0B-06P；形成性 ProductUsabilityEvidence | 导入 3–5 个真实 canon item；确认 5–10 个意图；比较候选概念；理解 gap/impact/export；记录替代工具与转向条件 | 禁止；仅 prototype/fixture |
 | `PlatformJourney.g1` | G1；SoftwareVerification + UI task evidence | submit fake operation；查看进度；cancel；强制终止；restart/reclaim；reopen；删除缓存后得到同一结果 | 只写平台 Job/staging fixture；不写正式语言状态 |
-| `ExecutableJourney.g2` | G2；LanguageCapabilityEvidence | CanonSeed/Blueprint → candidates → evaluator → seal/create/reopen → paragraph/IGT/analyse → typed gap → structural change → replay/explain | 允许 verified Genesis/ChangeSet；禁止 AuthorCanonCorpus release |
-| `CanonAlphaJourney.g3` | G3；ProductUsabilityEvidence + CreativeEvaluationRecord | 导入并协调 AuthorCanon；创建新名字和短场景；解决一个 gap/debt；dry-run impact；accept/reject/branch；release/reopen/export；恢复一次错误 | 允许验证后且由作者显式接受的 CanonCommit/Release |
+| `ExecutableJourney.g2` | G2；LanguageCapabilityEvidence | CanonSeed/Blueprint → candidates → evaluator → seal/create/reopen → paragraph/IGT/analyse → typed gap → structural change → replay/explain → 最小语言说明导出；重开/删缓存后重导出，章节版本锁一致 | 允许 verified Genesis/ChangeSet；禁止 AuthorCanonCorpus release |
+| `CanonAlphaJourney.g3` | G3；ProductUsabilityEvidence + CreativeEvaluationRecord | 导入并协调 AuthorCanon；创建新名字和短场景；解决一个 gap/debt；dry-run impact；accept/reject/branch；release/reopen/export；试听并导出受支持读音，识别覆盖外失败；恢复一次错误 | 允许验证后且由作者显式接受的 CanonCommit/Release |
 
 目标叙事作者验证主要工作流；conlanger 只验证 Expert 渐进披露；语言学家验证分析、
 证据和表示边界。三类参与者不得互相冒充 primary persona。形成性研究与 Gate 确认
@@ -700,7 +735,7 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 | Canon 自证传播 | 作者台词直接变成人口频率 | CorpusRole、synthetic sampling、observation model | R0B-02/WS2-02 |
 | Project/Job 二次迁移 | 一个项目只有一个 run、JobId 被当历史身份 | Project/Run/Job ADR + RunLedger migration | R0A-02/WS1-01A |
 | LLM 污染真值 | 自由文本直接进入状态 | Proposal Escrow + schema/domain/user decision | R7-LLM-01 |
-| TTS 掩盖错误分析 | 好听音频先于 phonetic plan | R7-SPH-01 硬前置 | R7 Speech Gate |
+| TTS 掩盖错误分析 | 好听音频先于 phonetic plan | R3 基础试听以 STORY-10 验证的 PronunciationPlan 为前置；R7 表现性渲染另以 R7-SPH-01 为前置 | STORY-10 / R7 Speech Gate |
 | UI 复制领域逻辑 | webview 自建 Blueprint/State | versioned API、shared capability registry | R1-03 |
 | 双核心长期共存 | Python/Rust 都写项目 | 领域切换后停止 Python production | 每阶段 cleanup |
 | 数据关联变因果 | 频率直接成为硬规则 | prior/hypothesis/preferences 分层 | R0B-05/07 |
@@ -747,6 +782,19 @@ Ready 门：
 | `WIP-PRODUCT` | R0B-06P / `FormativeJourney.r0b` | 不写权威状态的 Meaning Workbench 原型、真实 canon 形成性证据与失败/转向记录 |
 | `QUEUED-DOMAIN` | R0B-01～05（含 R0B-01A-D/01A/04A/04B-D/04B）、R0B-06 与 R0B-07 | Meaning/Grammar/Corpus/TaskPack/Capability、产品 evidence contract、execution contract、ADR review vectors、冻结反例与数据锁 |
 
+2026-10-12 本地执行断点见 [WORK_LOG](./WORK_LOG.md)：R0A-09 修复候选进入
+复审，R0A-10 有真实运行材料的采集/校验工具；R0B-06P 的非权威
+[作者流程原型](../experiments/meaning-workbench/README.md) 已可本地试用。
+这些都是实现/研究候选，不替代独立关闭、真实作者研究或 GateEvidence。
+
+R0B-05 的 [Concepticon 离线研究切片](../experiments/concepticon-slice/README.md)
+已完成本地实现及独立 AI 复审，生产 payload adapter 尚待绑定。R0B-04 已修补
+Meaning 禁读 oracle，并独立检查
+[scope/commitment review vectors](../tests/fixtures/meaning_review_vectors_v1.json)。
+这些可修订向量仍未绑定生产 runner；不能计作 G2 表达能力或 sealed 证据。
+2026-10-14 的平台预算/恢复 planning 校验与当前只读 Blueprint 原文输入修复
+已进入本地复审/验证；实际结论集中在 WORK_LOG，不在此复制测试数或动态 hash。
+
 若只有一个具备实际容量的 owner，全局 WIP 自动降为 1。任一时刻最多一个包改变
 schema、writer 或 replay；R0A-09、R0A-10 和 R0B evidence 只在当前 Active 包进入
 Review、Blocked 或 Complete 后轮换。
@@ -763,7 +811,7 @@ R1 所需决定 Accepted、R0A-08/09/10 关闭并通过 G0A 后才可以实施 R
 - 大批生产规则；
 - 全量外部数据导入；
 - 正式 UI 视觉精修；
-- TTS、权威 LLM、WASM/代码插件；
+- 未经 PronunciationPlan 验证的 TTS、权威 LLM、WASM/代码插件；
 - 删除 Python legacy；
 - 把 current demo worker 或 `project.json` 直接扩展成长期架构。
 

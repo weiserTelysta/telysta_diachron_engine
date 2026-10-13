@@ -3,7 +3,7 @@ document_type: runbook
 decision_status: not-applicable
 implementation_status: implemented
 normative_scope: migration
-last_verified: 2026-07-19
+last_verified: 2026-10-12
 ---
 
 # G0A 独立评审与 Clean Baseline 交接
@@ -12,8 +12,8 @@ last_verified: 2026-07-19
 
 本交接包把 G0A 的待审合同、工作树纳入范围和提交顺序变成可复核流程。它不接受 ADR，
 不指定或冒充人员，不创建 Git 提交，也不改变 Gate 决定。现存
-[G0A GateEvidence](../G0A_GATE_EVIDENCE_2026-07-17.json) 仍是 v1/v2 路径产生的
-`blocked` 迁移输入，尚不满足 Proposed v3 合同；在有效 v3 evidence 明确为 `passed`
+[G0A GateEvidence](../G0A_GATE_EVIDENCE_2026-07-17.json) 已是 v3 的本地
+`blocked` 候选，尚未形成可信 attestation；在有效 v3 evidence 明确为 `passed`
 之前，G0A fail closed，R1 持久化 walking skeleton 继续冻结。
 
 ## 一次性生成交接清单

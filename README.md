@@ -42,8 +42,8 @@ product capabilities:
 - `data/` — linguistic datasets, pathways, and presets
 - `docs/` — development architecture and design documentation
 - `tests/` — unit and integration tests
-- `main.py` — CLI entry point
-- `streamlit_app.py` — web UI entry point
+- `main.py` — legacy research CLI
+- `streamlit_app.py` — legacy research UI
 
 ## Quickstart
 
@@ -69,7 +69,10 @@ Install the pinned Rust toolchain:
 rustup toolchain install 1.88.0 --component rustfmt --component clippy
 ```
 
-### Run CLI
+### Run the legacy research CLI
+
+Python output is research material, not an official Rust project. Known replay information
+loss is tracked in the [legacy coverage ledger](./docs/LEGACY_EVENT_COVERAGE.md).
 
 ```bash
 python main.py
@@ -84,6 +87,7 @@ cargo +1.88.0 test --workspace --locked
 cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings
 cargo +1.88.0 build -p telysta-desktop --locked
 node --check apps/desktop/web/app.js
+node --test apps/desktop/tests/app.test.cjs
 ```
 
 The Python command covers the legacy/research baseline and documentation governance. It is
@@ -91,10 +95,11 @@ not a replacement for the Rust and desktop gates.
 
 Linux desktop builds also require the Tauri system packages documented in
 [the development setup guide](./docs/DEVELOPMENT_SETUP.md). The exact 1.88.0
-Windows checks pass locally; Linux and fresh-checkout CI evidence is still
-pending, so this does not mean G0A has passed.
+Windows checks have a prior local record; the current Linux workspace checks are recorded
+in the [work log](./docs/WORK_LOG.md). Fresh-checkout CI and independent evidence are still
+pending, so G0A remains blocked.
 
-### Run Streamlit UI
+### Run the legacy research UI
 
 ```bash
 python -m streamlit run streamlit_app.py

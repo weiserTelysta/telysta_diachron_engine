@@ -76,6 +76,12 @@ DomainEvent     = schemaVersion + projectId + sequence + eventSchema
 - Webview 只接收分页 projection、diff、诊断和 opaque capability token，不接收可写完整 LanguageState；
 - Tauri `emit` 只是低延迟提示，客户端必须能按 cursor 补取遗漏事件。
 
+Operation/Run 输入继承与 RNG frontier 采用 ADR-011/013 的固定输入决定；Run
+不能 override seed/model/parameter/budget。发布协议唯一见
+[ADR-012 §3.1](./adr/ADR-012-project-package-commit-authority.md#31-持久化与结果未知的发布proposed)。
+`commit_outcome_unknown` 对应 `retry_after_refresh`：先查询并完成恢复/核对原
+Operation，不能据此自动重新执行 mutation 或创建新 Operation。
+
 ## 5. JobStore、journal 与 cursor
 
 Job 状态机遵守 ADR-011，最小执行序列为：

@@ -1,4 +1,4 @@
-"""TelystaLexisEngine — Streamlit MVP Demo (Phase 6).
+"""Telysta legacy research lab — Streamlit demonstration.
 
 Launch:  streamlit run streamlit_app.py
 """
@@ -8,14 +8,18 @@ from __future__ import annotations
 import streamlit as st
 
 st.set_page_config(
-    page_title="TelystaLexisEngine",
+    page_title="Telysta — Legacy Research Lab",
     page_icon="🗣️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.title("TelystaLexisEngine")
-st.caption("Neuro-Symbolic Conlang Evolution Engine — Phase 6 MVP Demo")
+st.title("Telysta · Legacy Research Lab")
+st.caption("Python research prototype · not the Rust desktop product")
+st.warning(
+    "此界面仅供旧引擎研究与迁移对照，尚有已知的历史回放信息损失。"
+    "输出不是正式 Rust 项目，也不代表已生成完整可用的语言。"
+)
 
 # --- Sidebar ---
 from ui.sidebar import render_sidebar

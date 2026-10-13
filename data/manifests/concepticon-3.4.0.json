@@ -6,7 +6,7 @@
   "license": "CC-BY-4.0",
   "citation": "List, Johann-Mattis et al. (eds.). 2025. CLLD Concepticon 3.4.0.",
   "pinnedUri": "https://doi.org/10.5281/zenodo.14923561",
-  "format": "json",
+  "format": "cldfWordlist",
   "contentSha256": null,
   "coverage": {
     "samplingUnit": "conceptSet",
@@ -16,6 +16,7 @@
   "limitations": [
     "A short gloss is a convenience label and must not be treated as a complete semantic definition.",
     "Concept mappings are curated judgments and may be revised between releases.",
+    "The pinned release is concepticon-cldf v3.4.0, a CLDF Wordlist with JSON metadata and CSV tables, not a standalone JSON dataset; an execution lock must identify the archive, metadata path, selected tables and transformations.",
     "This manifest does not pin a local payload; a downloaded payload must add its SHA-256 before use in a release build."
   ]
 }

@@ -339,17 +339,17 @@ impl ProjectRuntime {
                 project_root: root_to_wire(&root)?,
             });
         }
-        let store = ProjectStore::open(root.clone())?;
-        if store.project_path().exists() {
-            return Err(ProjectRuntimeError::Storage {
-                message: format!(
-                    "refusing to create a project over existing {}",
-                    store.project_path().display()
-                ),
+        if self
+            .open_by_project_id
+            .contains_key(history.context().project_id())
+        {
+            return Err(ProjectRuntimeError::ProjectIdentityAlreadyOpen {
+                project_id: history.context().project_id().clone(),
+                project_root: root_to_wire(&root)?,
             });
         }
-        store.save(history)?;
-        let loaded = store.load()?;
+        let store = ProjectStore::open(root.clone())?;
+        let loaded = store.create_with_snapshot(history)?;
         self.register_loaded(root, store, loaded)
     }
 
@@ -415,16 +415,21 @@ impl ProjectRuntime {
                 actual_run_id,
             });
         }
+        if expected_history_sha256 != project.session.history_sha256 {
+            return Err(ProjectRuntimeError::WriteConflict {
+                expected_history_sha256: expected_history_sha256.to_owned(),
+                actual_history_sha256: Some(project.session.history_sha256.clone()),
+            });
+        }
         history
-            .replay()
+            .validate_extension_of(&project.history)
             .map_err(|error| ProjectRuntimeError::InvalidHistory {
                 message: error.to_string(),
             })?;
 
-        project
+        let loaded = project
             .store
-            .save_if_current(history, expected_history_sha256)?;
-        let loaded = project.store.load()?;
+            .save_if_current_with_snapshot(history, expected_history_sha256)?;
         let session = ProjectSession::from_loaded(project.store.root(), &loaded)?;
         project.history = loaded.history;
         project.session = session.clone();

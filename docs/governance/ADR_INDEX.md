@@ -32,7 +32,7 @@ ADR 接受前置又成为接受 ADR 后才能生成的结果。
 | [ADR-011](../adr/ADR-011-project-manifest-run-ledger-job-identity.md) | Proposed | Project/Operation/Run/Job 身份和 lifecycle |
 | [ADR-012](../adr/ADR-012-project-package-commit-authority.md) | Proposed | 单 manifest 发布点与不可变对象图 |
 | [ADR-013](../adr/ADR-013-rng-compatibility-and-distribution-versioning.md) | Proposed | RNG/distribution/checkpoint 兼容 |
-| [ADR-014](../adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md) | Proposed | Meaning/Grammar/Lexical Identity/Class/Realization 权威边界 |
+| [ADR-014](../adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md) | Proposed | Meaning/Grammar/Lexical Identity/Class/Realization 与正字法 base/投影权威边界 |
 
 ## 当前实施门
 

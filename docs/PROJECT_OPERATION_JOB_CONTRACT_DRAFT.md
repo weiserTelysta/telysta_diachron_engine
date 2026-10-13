@@ -46,6 +46,14 @@
 
 规划期 Schema 的 `ProjectId` 与 `RunId` 直接复用当前 Rust `telysta-entity-id.v1` 的已接受 kind 和 local-value 语法；尚未进入生产 `EntityKind` 的 `OperationId`、`JobId` 与 `AttemptId` 只作为 ADR-011 提议 kind，并复用同一 1–96 字节小写 ASCII/数字/连字符 local-value 语法。Schema 或 fixture 不得被解释为已授权扩充 Rust `EntityKind`。
 
+2026-10-14 修订：采用固定输入 Operation；candidate/replicate 仅通过唯一
+`role + runKey` 派生流根，不能 override 父 parameter/model/seed/budget。
+sweep/替代模型改变输入时创建新 Operation。预算和完整 frontier 的唯一语义定义
+见 [ADR-013 §3.4](./adr/ADR-013-rng-compatibility-and-distribution-versioning.md#34-counter-overflow-与-resume)。
+schema validator 之外还须检查这些跨记录关系；当前 unit helpers 是 planning oracle，
+不能签发生产 validated context。rootSeed 已同步 ADR-013 的 Proposed 规范十进制
+字符串决定；schema/Node/Rust 交叉检查不等于独立接受或生产 DTO 已实施。
+
 ## 3. 与当前 v1 的迁移映射
 
 | 当前 v1 | 目标解释 | 迁移限制 |
@@ -73,6 +81,9 @@
 ### 4.3 Simulation
 
 一个 Simulation Operation 可以登记多个 Run。多个 Job 可以全部 `Completed`，但只有用户选择且通过验证的 Run 能提交；其余结果保留为未提交研究证据，不能自动成为语言历史。
+
+同一 Operation 下的这些 Run 继承相同输入；不同参数/模型/seed 的比较使用多个
+Operation，按 ADR-011 的固定输入决定处理。
 
 ### 4.4 Legacy import
 

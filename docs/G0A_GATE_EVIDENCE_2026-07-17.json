@@ -4,26 +4,26 @@
   "gateId": "G0A",
   "gateName": "Platform Contract Ready",
   "decision": "blocked",
-  "decisionDate": "2026-07-19",
+  "decisionDate": "2026-10-13",
   "source": {
-    "subjectCommit": "599f50d3b952178bcb841afa86edd3886cef1024",
-    "subjectTree": "2a3e1bd4fd33e21edf36fcd6e75d33f0635fd02c",
+    "subjectCommit": "9ff7e5e8cb820afde281a2c47a74d35e95c1e995",
+    "subjectTree": "474dffb0ed52e24501ef1ad239dbbc90f09b9490",
     "worktreeDirty": true,
-    "worktreeStatusEntryCount": 35,
+    "worktreeStatusEntryCount": 110,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
-    "worktreeInventorySha256": "8745e30bad3153de0f1fa4bc184c30d1ab0bd5a1578e6cde05ec5816fdcf100c",
+    "worktreeInventorySha256": "250a5ccff063b171a35d01fb75717c1c1564669278ec20790915c56f45fc130f",
     "excludedGeneratedPaths": [
       "docs/G0A_GATE_EVIDENCE_2026-07-17.json",
       "docs/STATUS.md"
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:e7f36f74d9d8e9652b14e1b9cc42c2d8",
-        "subjectCommit": "599f50d3b952178bcb841afa86edd3886cef1024",
-        "subjectTree": "2a3e1bd4fd33e21edf36fcd6e75d33f0635fd02c",
-        "platformFamily": "windows",
-        "startedAt": "2026-07-19T05:21:11Z",
-        "finishedAt": "2026-07-19T05:22:10Z",
+        "runId": "gate-run:1f5dd89bd022b086ae7ee00a6b9b00e1",
+        "subjectCommit": "9ff7e5e8cb820afde281a2c47a74d35e95c1e995",
+        "subjectTree": "474dffb0ed52e24501ef1ad239dbbc90f09b9490",
+        "platformFamily": "linux",
+        "startedAt": "2026-10-13T19:24:37Z",
+        "finishedAt": "2026-10-13T19:24:58Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
@@ -37,13 +37,13 @@
           "node --check apps/desktop/web/app.js"
         ],
         "environment": {
-          "os": "Windows-11-10.0.26200-SP0",
-          "architecture": "AMD64",
+          "os": "Linux-6.12.111+deb13-amd64-x86_64-with-glibc2.41",
+          "architecture": "x86_64",
           "toolchain": {
-            "python": "3.14.5",
+            "python": "3.13.5",
             "rustc": "rustc 1.88.0 (6b00bc388 2025-06-23)",
             "cargo": "cargo 1.88.0 (873a06493 2025-05-10)",
-            "node": "v24.16.0"
+            "node": "v24.21.0"
           },
           "lockFileSha256": {
             "Cargo.lock": "fab920b9408aa28210ce846d167618d793aca2db194c040c6bd5264f46cc59c0",
@@ -82,7 +82,7 @@
       "evidenceId": "evidence:cbc1156e1326a5e25e9d57da9d3a3570",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/GATE_EVIDENCE_MANIFEST_V2.schema.json",
-      "sha256": "0a4f19bf4d074648dbb3ba0ae28ea04c143c99a94ef9b5584720552d31d1661f",
+      "sha256": "5abd0c3ccc6d41e3839a79493a3344332c9df369004faa4d1971ef9c5ab3e6c0",
       "result": "pass"
     },
     {
@@ -103,56 +103,56 @@
       "evidenceId": "evidence:1e9a85b06cd2183f3901b9027db03abf",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
-      "sha256": "cadbfa4425126724bfc57078e1de27646b9163860239ecefb26f94bf17809507",
+      "sha256": "5cf5d8e3879c6cd485a65da57cebe486bf2bd09287a7c77263b19edb2f10b546",
       "result": "pending"
     },
     {
       "evidenceId": "evidence:de364c83837d9be329d9c6fac6c839be",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/ADR_011_SCHEMA_DRAFT_V1.json",
-      "sha256": "0ae74b95de361eb49b9c996b2a57c86c86ab2c0574a07739eb52a522cb794435",
+      "sha256": "25e07d82bb0478824468f7101c47eff648bdfe149858e62c56ff13ffd0baefb5",
       "result": "pass"
     },
     {
       "evidenceId": "evidence:de1b0d630d716722a6ccb653e3ecb826",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
-      "sha256": "2e2fae10abb5b923ce5ff7d42e3639f401ce049fcde3c47e9bec33e2007fa799",
+      "sha256": "4189533ec04de2a23b69cb04fde610e6729dcc6e1eb1066d6cad0b7cfd216555",
       "result": "pending"
     },
     {
       "evidenceId": "evidence:acfd4e7c53bc15ff751fa170ef58f57c",
       "kind": "ArchitectureContractEvidence",
       "path": "tests/fixtures/adr_011_sequences_v1.json",
-      "sha256": "bc52f3c6ad0af41d006488d5c3ae603710127be973e435e36aaa0336ae295629",
+      "sha256": "b060c16a6e7acb370004e8ff86f4346ca9ae9f03179d6dfc42b67d66d81273c0",
       "result": "pass"
     },
     {
       "evidenceId": "evidence:d9d22c2431808c38fb12502f736457f7",
       "kind": "ArchitectureContractEvidence",
       "path": "tests/fixtures/adr_011_schema_records_v1.json",
-      "sha256": "b7d5d23a9e6144608cc531ff802a058e1f8305dd23009f4f1bfacb765fb400b5",
+      "sha256": "7ebe9809607847863523433376facc6e0b4f28300fdf5c1226b97e9dadb4dd4a",
       "result": "pass"
     },
     {
       "evidenceId": "evidence:6ac60e19a14c9d6d0aa528a6222c4f2e",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PLATFORM_CONTRACT_PACK_V1.md",
-      "sha256": "73c4f5e900011f33ee837329336a2e48e135888ab2d21ed475b80e6664dbc7c8",
+      "sha256": "7a4495ef8ac28d2d345e5929a61af74c3bfc1dc8c723a4a6d1547d395ff8f575",
       "result": "pending"
     },
     {
       "evidenceId": "evidence:9dea6d4574d0b93f52fa11ee7ba09e54",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-012-project-package-commit-authority.md",
-      "sha256": "263f51694a6c3da4b0c297bf6d41ef9e2c72bab23ae7c8d7402fb07fdea96d05",
+      "sha256": "68dc3de64c8f1e526740a86c2584b62e790385b5c0464ead70d6b29bc52c989f",
       "result": "pending"
     },
     {
       "evidenceId": "evidence:9fd37d0af47316e5d25f6b2d5af416c6",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
-      "sha256": "956c61f96d6d44dd470c680f2dc77839a2e0cc37fe0ccec4e1195eeae5e9244a",
+      "sha256": "8327b96696a25403f48ae2d2761d101645622ec3559b5a54617b468f605e4848",
       "result": "pending"
     },
     {
@@ -166,7 +166,7 @@
       "evidenceId": "evidence:c7b6d2f5d7510942293f58cf103ea9bf",
       "kind": "SoftwareVerificationEvidence",
       "path": "apps/desktop/web/app.js",
-      "sha256": "957f288df4d69abbdd02c2b15eb0620bc7d41874612c309dd7859560bf9bbaf2",
+      "sha256": "132f9f8aaecd31ff89c0fb236723f2347bbf51280698d31adfbb7a7792285081",
       "result": "pass",
       "protocol": "node --check apps/desktop/web/app.js",
       "details": "desktop JavaScript syntax passed",
@@ -182,18 +182,18 @@
       "protocol": ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
       "details": "required Python and documentation gate passed",
       "verificationMode": "direct",
-      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe -I scripts/check.py"
+      "executedCommand": "/home/weiser/Code/telysta_diachron_engine/.venv/bin/python -I scripts/check.py"
     },
     {
       "evidenceId": "evidence:4f6ba705e33852e273a7dcb83b5bf37e",
       "kind": "SoftwareVerificationEvidence",
       "path": "tests/core/test_adr_011_contract.py",
-      "sha256": "5d22ecd343e86556645f532143714785ee5d0b746259b491544bb9b529b9e8bc",
+      "sha256": "6606ea1a31073b1bd2211542c716ed578b3b5e658069336ec88e339f62b5aaf5",
       "result": "pass",
       "protocol": ".\\.venv\\Scripts\\python.exe -I scripts\\pytest_runner.py tests\\core\\test_adr_011_contract.py -q",
       "details": "targeted ADR-011 Python contract passed through the hermetic runner",
       "verificationMode": "direct",
-      "executedCommand": "C:\\Users\\weiser\\Desktop\\Codes\\language\\telysta_diachron_engine\\.venv\\Scripts\\python.exe -I scripts/pytest_runner.py tests\\core\\test_adr_011_contract.py -q"
+      "executedCommand": "/home/weiser/Code/telysta_diachron_engine/.venv/bin/python -I scripts/pytest_runner.py tests/core/test_adr_011_contract.py -q"
     },
     {
       "evidenceId": "evidence:068d43468da41b57daad5a5b64543fb9",
@@ -221,7 +221,7 @@
       "evidenceId": "evidence:3be156baa440e0dcc978804a2731a08d",
       "kind": "SoftwareVerificationEvidence",
       "path": "crates/telysta-core/tests/adr_011_schema_records.rs",
-      "sha256": "f904cef2358458d4d03562ed93ddaa7fb8d5dae47160856786ad04ade6e8fc08",
+      "sha256": "3b5170d2f686bddbe3f941e53db858be9c460f6a81eccc0d10f1fb19e37a832f",
       "result": "pass",
       "protocol": "cargo +1.88.0 test -p telysta-core --test adr_011_schema_records --locked",
       "details": "targeted ADR-011 Rust contract passed directly",
@@ -286,7 +286,7 @@
       "evidenceId": "evidence:b85d8c01a502f3ea2f00f9a030e0cdbf",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
-      "sha256": "8a5c5e8f2446c07222b0b3eb6c60e3355c8ce890c08079fad797ae2652b9d7c6",
+      "sha256": "ef29b6d362019b8fa78a092d6b7843868e358a91b466a3d00ecb62678900d812",
       "result": "pending"
     }
   ],
@@ -341,7 +341,7 @@
       "id": "R0A-05",
       "name": "reviewed clean-checkout repository baseline",
       "status": "failed",
-      "reason": "the generated-evidence inputs contain 35 modified or untracked entries; HEAD does not contain the reviewed Rust/Tauri/doc baseline",
+      "reason": "the generated-evidence inputs contain 110 modified or untracked entries; HEAD does not contain the reviewed Rust/Tauri/doc baseline",
       "evidenceRefs": [],
       "terminalEvidence": {
         "evidenceId": "evidence:5a31af4f67019c72b69c3c5a8d17bfe2",

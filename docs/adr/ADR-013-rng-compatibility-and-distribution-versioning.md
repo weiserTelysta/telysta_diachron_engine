@@ -3,7 +3,7 @@ document_type: adr
 decision_status: proposed
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-07-18
+last_verified: 2026-10-14
 owner: unassigned
 reviewers: []
 ---
@@ -31,16 +31,27 @@ reviewers: []
 
 ## 3. 提议决定
 
-### 3.0 独立评审阻断：64-bit JSON wire 编码
+### 3.0 64-bit JSON wire 编码（Proposed 决定）
 
-当前 ADR-011 planning schema 和 Tauri demo command 仍把 `rootSeed`/`seed` 表示为 JSON
-integer / Rust `u64`。大于 JavaScript `Number.MAX_SAFE_INTEGER` 的值无法在 Webview 中无损
-往返；fixture 已覆盖 `u64::MAX`，因此这不是理论边界。
+本轮前 ADR-011 planning schema 与当前 Tauri demo command 把 `rootSeed`/`seed`
+表示为 JSON integer / Rust `u64`。Webview 的 Number 不能区分所有大整数，见
+[ECMAScript Number.MAX_SAFE_INTEGER](https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-number.max_safe_integer)。
+fixture 已覆盖 `u64::MAX`，不能继续把该 wire 问题留给客户端自行截断。
 
-ADR-013 Accepted 前必须独立决定并测试 target wire 表示。当前推荐候选是规范化十进制
-字符串：禁止符号、前导零和空白，范围限定为 `0..=u64::MAX`；Rust 领域内部仍使用
-`u64`。在该决定批准并同步 ADR-011 schema、Tauri DTO、known-answer fixture 和迁移规则
-前，当前整数 planning draft 只可用于评审，不得成为生产 wire 格式。
+2026-10-14 Proposed 决定：target `rootSeed` 采用规范化 ASCII 十进制字符串，
+仅 `"0"` 或无前导零的正数字符串，范围 `0..=18446744073709551615`；禁止符号、
+空白、指数、小数、Unicode 数字与 JSON number。Rust 领域内部仍使用 `u64`，
+验证后解析并要求 `parsed.to_string() == text`；Webview 不经 Number/parseInt 转换，
+也不把 BigInt 直接放入 JSON。ADR-011 planning schema/records 已同步该字符串；
+Python range oracle、Node ECMAScript grammar/JSON round trip 和 Rust parse 交叉检查，
+但仍须独立接受和未来 target DTO 绑定，不能宣称生产 wire 已升级。
+
+现有 `RunContext v1`、demo command 与冻结 RNG known-answer 保留原格式和字节。
+未来显式迁移从归档原文由 Rust 精确解出 legacy u64 后生成规范字符串，保存源
+artifact/schema/hash 和转换记录；不得先走 JS Number，不重写源 archive，不改变
+raw tree、distribution 或 legacy path。已丢失精度的外部 number 无法猜回原 seed，
+必须拒绝并要求原始来源/显式解决，而不是补零。target 请求不隐式接收 legacy number；
+legacy adapter 与正式 DTO 仍需按 R1/G0A 接受条件实施。
 
 ### 3.1 保留 v1 raw stream
 
@@ -80,6 +91,24 @@ return value % upper_exclusive
 - checkpoint 保存 tree/distribution schema、完整 path、next counter、budget、已消费 draw 和 checksum；
 - 缺任一字段只能 Restart；Resume 不得改变 RunSpec、path 或 cursor；
 - counter/budget 不进入 LanguageState semantic hash，但进入 Operation/Run lock、checkpoint 和 replay evidence。
+
+2026-10-14 Proposed planning slice：`rngLock.streamBudgets` 显式列出相对
+stream path 与 `maxRawDraws`；同一锁中 path 唯一，Run 继承父预算。完整路径为
+Run pathRoot + relativePath；未声明流拒绝执行。预算/计数采用
+`0..=2^53-1` 的 JSON safe integer 子域，这只是有限执行策略，不改变 v1 raw
+算法，也不替代 §3.0 的独立接受与生产 DTO 绑定。零预算有效，但第一 draw 即耗尽。
+
+`telysta-rng-frontier-draft.v1` 列出全部已声明流（未用流为零计数）的完整 path、
+distributionVersion、预算、consumedRawDraws 与 nextCounter；初始 counter 为零，
+每次 raw draw（包括 sampler 丢弃值）计数一次，故两种计数必须相等且不越预算。
+到达预算的 checkpoint 可验证，但下一 draw 必须 `rng_stream_exhausted`。
+恢复器需要匹配此 frontier schema 及 RunSpec 锁，不能只接受一个不透明 hash。
+
+planning frontier 摘要覆盖完整对象：UTF-8 JSON、对象键排序、无额外空白/末尾换行、
+数组保留已声明顺序；这里的字段和值限定为本草案的 ASCII 字符串与 safe integers。
+这不是通用 canonicalizer 或 StateSemanticHash。实际记录 fixture 的 frontier hash
+可重算，其他重复十六进制仍是 format sentinel。当前 Python 检查验证 schema、
+跨记录关系与负突变，尚无生产 cursor、恢复器或 restart/resume 执行证据。
 
 如未来需要改变 primitive API 来消除 wrapping，实现必须保留 v1 replay adapter，并通过新 ADR 决定新 schema；不得直接修改 v1 known-answer。
 

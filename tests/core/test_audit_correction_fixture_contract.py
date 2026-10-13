@@ -16,6 +16,8 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from app.domain.lexicon.dag import WordDAG
 from app.domain.lexicon.models import LexicalEntity
 from app.domain.storage.canonical import canonical_json_bytes
@@ -222,6 +224,36 @@ def _segment_occurrences(value: Any) -> list[dict[str, Any]]:
         for form in forms
         for occurrence in form["occurrences"]
     ]
+
+
+def _assert_semantic_contrast_oracles(case: dict[str, Any]) -> None:
+    definitions = case["setup"]["readingDefinitions"]
+    assert case["setup"]["equivalencePolicy"] == "fixture_structural_identity.v1"
+    for contrast in case["request"]["contrasts"]:
+        assert definitions[contrast["requiredReading"]] != definitions[contrast["candidateReading"]]
+    controls = case["request"]["positiveControls"]
+    assert controls
+    assert case["oracle"]["positiveControlDecisions"] == {
+        control["controlId"]: "accept" for control in controls
+    }
+    for control in controls:
+        assert definitions[control["requiredReading"]] == definitions[control["candidateReading"]]
+
+
+def test_semantic_contrasts_reject_identical_reading_mutation() -> None:
+    baseline = _cases_by_id(_load(LINGUISTIC_FIXTURE_PATH))["SEM-N01"]
+    _assert_semantic_contrast_oracles(baseline)
+    for index in range(len(baseline["request"]["contrasts"])):
+        mutant = copy.deepcopy(baseline)
+        contrast = mutant["request"]["contrasts"][index]
+        contrast["candidateReading"] = contrast["requiredReading"]
+        with pytest.raises(AssertionError):
+            _assert_semantic_contrast_oracles(mutant)
+    mutant = copy.deepcopy(baseline)
+    control = mutant["request"]["positiveControls"][0]
+    control["candidateReading"] = "fixture:reading:quality-good"
+    with pytest.raises(AssertionError):
+        _assert_semantic_contrast_oracles(mutant)
 
 
 def test_linguistic_fixture_protocol_is_closed_and_runner_facing() -> None:
@@ -621,6 +653,7 @@ def test_identity_meaning_valency_and_event_oracles_check_input_structure() -> N
     )
 
     semantic_contrasts = cases["SEM-N01"]["request"]["contrasts"]
+    _assert_semantic_contrast_oracles(cases["SEM-N01"])
     assert {contrast["contrastId"] for contrast in semantic_contrasts} == {
         "bad-good",
         "below-above",

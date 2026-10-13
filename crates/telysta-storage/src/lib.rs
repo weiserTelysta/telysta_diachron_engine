@@ -208,6 +208,15 @@ pub struct LoadedProject {
     pub recovered_from_last_valid: bool,
 }
 
+impl LoadedProject {
+    fn into_save_outcome(self) -> SaveOutcome {
+        SaveOutcome {
+            history_sha256: self.history_sha256,
+            index_status: self.index_status,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventIndexEntry {
     pub sequence: u64,
@@ -461,12 +470,64 @@ impl ProjectStore {
         }
     }
 
-    /// Persist a history only after replay validation and checksum creation.
-    /// A prior valid project is retained as a recovery candidate before the
-    /// authoritative file is replaced.
+    /// Initialize a project or acknowledge an exact retry without rewriting it.
+    /// Existing histories can change only through `save_if_current`.
     pub fn save(&self, history: ProjectHistory) -> Result<SaveOutcome, ProjectStorageError> {
         let _lease = self.acquire_write_lease()?;
-        self.save_unlocked(history, None)
+        self.ensure_no_pending_migration()?;
+        if path_metadata(&self.project_path())?.is_none() {
+            return self
+                .create_snapshot_unlocked(history)
+                .map(LoadedProject::into_save_outcome);
+        }
+        let current = self.read_project_file(&self.project_path())?;
+        if current.history() != &history {
+            return Err(ProjectStorageError::Validation(
+                "save without an expected hash cannot replace or extend an existing project; use save_if_current"
+                    .to_owned(),
+            ));
+        }
+        self.load_unlocked().map(LoadedProject::into_save_outcome)
+    }
+
+    /// Create under the same lease as publication, preserving recovery and
+    /// migration artifacts if a project has already occupied this directory.
+    pub fn create_if_absent(
+        &self,
+        history: ProjectHistory,
+    ) -> Result<SaveOutcome, ProjectStorageError> {
+        self.create_with_snapshot(history)
+            .map(LoadedProject::into_save_outcome)
+    }
+
+    // Bind the runtime result to this publication while the lease is held.
+    // Reacquiring a lease to load afterwards can fail after a successful write,
+    // or observe a later writer's history instead of the caller's commit.
+    pub(crate) fn create_with_snapshot(
+        &self,
+        history: ProjectHistory,
+    ) -> Result<LoadedProject, ProjectStorageError> {
+        let _lease = self.acquire_write_lease()?;
+        self.create_snapshot_unlocked(history)
+    }
+
+    fn create_snapshot_unlocked(
+        &self,
+        history: ProjectHistory,
+    ) -> Result<LoadedProject, ProjectStorageError> {
+        for path in [
+            self.project_path(),
+            self.recovery_path(),
+            self.migration_journal_path(),
+        ] {
+            if path_metadata(&path)?.is_some() {
+                return Err(ProjectStorageError::Validation(format!(
+                    "refusing to create a project over existing {}",
+                    path.display()
+                )));
+            }
+        }
+        self.save_snapshot_unlocked(history, None)
     }
 
     /// Save only when the caller still holds the history revision it loaded.
@@ -477,38 +538,77 @@ impl ProjectStore {
         history: ProjectHistory,
         expected_history_sha256: &str,
     ) -> Result<SaveOutcome, ProjectStorageError> {
-        ensure_sha256(expected_history_sha256, "expected history SHA-256")?;
-        let _lease = self.acquire_write_lease()?;
-        self.save_unlocked(history, Some(expected_history_sha256))
+        self.save_if_current_with_snapshot(history, expected_history_sha256)
+            .map(LoadedProject::into_save_outcome)
     }
 
-    fn save_unlocked(
+    pub(crate) fn save_if_current_with_snapshot(
+        &self,
+        history: ProjectHistory,
+        expected_history_sha256: &str,
+    ) -> Result<LoadedProject, ProjectStorageError> {
+        ensure_sha256(expected_history_sha256, "expected history SHA-256")?;
+        let _lease = self.acquire_write_lease()?;
+        self.save_snapshot_unlocked(history, Some(expected_history_sha256))
+    }
+
+    fn save_snapshot_unlocked(
         &self,
         history: ProjectHistory,
         expected_history_sha256: Option<&str>,
-    ) -> Result<SaveOutcome, ProjectStorageError> {
+    ) -> Result<LoadedProject, ProjectStorageError> {
+        self.ensure_no_pending_migration()?;
         if let Some(expected) = expected_history_sha256 {
             let project_path = self.project_path();
-            let actual = if project_path.exists() {
-                Some(self.read_project_file(&project_path)?.history_sha256)
+            let current = if project_path
+                .try_exists()
+                .map_err(|error| io_error("check current project", &project_path, error))?
+            {
+                Some(self.read_project_file(&project_path)?)
             } else {
                 None
             };
-            if actual.as_deref() != Some(expected) {
+            if current.as_ref().map(ProjectFile::history_sha256) != Some(expected) {
                 return Err(ProjectStorageError::WriteConflict {
                     expected_history_sha256: expected.to_owned(),
-                    actual_history_sha256: actual,
+                    actual_history_sha256: current.map(|file| file.history_sha256),
                 });
             }
+            let current = current.expect("matching history hash requires a current file");
+            history
+                .validate_extension_of(current.history())
+                .map_err(|error| ProjectStorageError::Validation(error.to_string()))?;
         }
         let file = ProjectFile::new(history)?;
-        self.write_project_file(&file, true)
+        let saved = self.write_project_file(&file, true)?;
+        Ok(LoadedProject {
+            history: file.history,
+            history_sha256: saved.history_sha256,
+            index_status: saved.index_status,
+            recovered_from_last_valid: false,
+        })
+    }
+
+    fn ensure_no_pending_migration(&self) -> Result<(), ProjectStorageError> {
+        if path_metadata(&self.migration_journal_path())?.is_some() {
+            return Err(ProjectStorageError::Migration(
+                "a pending migration must be explicitly recovered before normal writes".to_owned(),
+            ));
+        }
+        Ok(())
     }
 
     /// Load the authoritative file. A recovery copy is considered only when
     /// the primary file is corrupt or incomplete; an old schema is never
     /// silently treated as corruption or guessed into the current format.
     pub fn load(&self) -> Result<LoadedProject, ProjectStorageError> {
+        let _lease = self.acquire_write_lease()?;
+        self.load_unlocked()
+    }
+
+    // The lease must cover authoritative loading and derived-index publication.
+    // Mutation paths already holding it use this helper to avoid re-entry.
+    fn load_unlocked(&self) -> Result<LoadedProject, ProjectStorageError> {
         let (file, recovered_from_last_valid) = self.load_authoritative_file()?;
         let index_status = match self.index_is_current(&file) {
             Ok(true) => IndexStatus::Fresh,
@@ -556,11 +656,19 @@ impl ProjectStore {
         registry: &ProjectMigrationRegistry,
     ) -> Result<MigrationOutcome, ProjectStorageError> {
         if let Some(journal) = self.read_migration_journal()? {
+            let archive = self
+                .migration_directory()
+                .join(&journal.source_archive_file);
+            self.validate_archive_path(&archive)?;
+            let bytes = fs::read(&archive).map_err(|error| {
+                io_error("read pending migration source archive", &archive, error)
+            })?;
+            self.validate_pending_migration(registry, &bytes, &journal)?;
             match self.read_project_file(&self.project_path()) {
                 Ok(file) if file.history_sha256() == journal.target_history_sha256 => {
                     self.clear_migration_journal()?;
                     return Ok(MigrationOutcome {
-                        project: self.load()?,
+                        project: self.load_unlocked()?,
                         source_schema: journal.source_schema,
                         source_archive: Some(
                             self.migration_directory().join(journal.source_archive_file),
@@ -575,12 +683,21 @@ impl ProjectStore {
                     )));
                 }
                 Err(_) => {
-                    let archive = self
-                        .migration_directory()
-                        .join(&journal.source_archive_file);
-                    let bytes = fs::read(&archive).map_err(|error| {
-                        io_error("read pending migration source archive", &archive, error)
-                    })?;
+                    // Only the exact archived source or an absent publication
+                    // belongs to this interrupted migration. Another legacy
+                    // document, unknown schema or damaged file is user data.
+                    let path = self.project_path();
+                    if path_metadata(&path)?.is_some() {
+                        let primary = fs::read(&path).map_err(|error| {
+                            io_error("check pending migration primary", &path, error)
+                        })?;
+                        if primary != bytes {
+                            return Err(ProjectStorageError::Migration(
+                                "current project differs from the pending migration source; preserving both for explicit resolution"
+                                    .to_owned(),
+                            ));
+                        }
+                    }
                     return self.migrate_source_bytes(registry, bytes, Some(journal));
                 }
             }
@@ -590,6 +707,42 @@ impl ProjectStore {
         let bytes = fs::read(&path)
             .map_err(|error| io_error("read project for migration", &path, error))?;
         self.migrate_source_bytes(registry, bytes, None)
+    }
+
+    fn validate_pending_migration(
+        &self,
+        registry: &ProjectMigrationRegistry,
+        bytes: &[u8],
+        journal: &MigrationJournal,
+    ) -> Result<(), ProjectStorageError> {
+        if journal.source_archive_file != format!("{}.source.json", sha256_hex(bytes)) {
+            return Err(ProjectStorageError::Migration(
+                "migration source archive does not match its content-addressed name".to_owned(),
+            ));
+        }
+        let document: Value = serde_json::from_slice(bytes)
+            .map_err(|error| ProjectStorageError::Migration(error.to_string()))?;
+        let schema = document_schema(&document)?;
+        if schema != journal.source_schema {
+            return Err(ProjectStorageError::Migration(
+                "migration journal source schema does not match archived source".to_owned(),
+            ));
+        }
+        let migration = registry
+            .find(&schema)
+            .ok_or(ProjectStorageError::MigrationRequired {
+                found_schema: schema,
+                expected_schema: PROJECT_FILE_SCHEMA,
+            })?;
+        let regenerated = (migration.transform)(document)?;
+        if migration.target_schema != regenerated.schema_version()
+            || regenerated.history_sha256() != journal.target_history_sha256
+        {
+            return Err(ProjectStorageError::Migration(
+                "archived source does not regenerate the journal's target".to_owned(),
+            ));
+        }
+        Ok(())
     }
 
     fn migrate_source_bytes(
@@ -604,7 +757,7 @@ impl ProjectStore {
 
         if source_schema == PROJECT_FILE_SCHEMA {
             return Ok(MigrationOutcome {
-                project: self.load()?,
+                project: self.load_unlocked()?,
                 source_schema,
                 source_archive: None,
             });
@@ -662,7 +815,7 @@ impl ProjectStore {
         self.write_project_file(&migrated, false)?;
         self.clear_migration_journal()?;
         Ok(MigrationOutcome {
-            project: self.load()?,
+            project: self.load_unlocked()?,
             source_schema,
             source_archive: Some(archive),
         })
@@ -671,7 +824,8 @@ impl ProjectStore {
     /// Return the SQLite event index after ensuring it corresponds to the
     /// authoritative history. Consumers never query a stale index.
     pub fn event_index_entries(&self) -> Result<Vec<EventIndexEntry>, ProjectStorageError> {
-        let loaded = self.load()?;
+        let _lease = self.acquire_write_lease()?;
+        let loaded = self.load_unlocked()?;
         if let IndexStatus::Deferred { reason } = loaded.index_status {
             return Err(ProjectStorageError::Index(reason));
         }
@@ -776,10 +930,43 @@ impl ProjectStore {
         fs::create_dir_all(&directory)
             .map_err(|error| io_error("create migration archive directory", &directory, error))?;
         let path = directory.join(format!("{}.source.json", sha256_hex(bytes)));
-        if !path.exists() {
+        self.validate_archive_path(&path)?;
+        if path_metadata(&path)?.is_none() {
             write_replaceable_file(&path, bytes, None)?;
         }
+        let archived = fs::read(&path)
+            .map_err(|error| io_error("verify migration source archive", &path, error))?;
+        if archived != bytes {
+            return Err(ProjectStorageError::Migration(
+                "existing source archive does not match the migration input".to_owned(),
+            ));
+        }
         Ok(path)
+    }
+
+    fn validate_archive_path(&self, path: &Path) -> Result<(), ProjectStorageError> {
+        let directory = self.migration_directory();
+        let metadata = fs::symlink_metadata(&directory)
+            .map_err(|error| io_error("inspect migration directory", &directory, error))?;
+        if is_link_or_reparse_point(&metadata) || !metadata.is_dir() {
+            return Err(ProjectStorageError::Migration(
+                "migration directory must be a physical project-local directory".to_owned(),
+            ));
+        }
+        if path.parent() != Some(directory.as_path()) {
+            return Err(ProjectStorageError::Migration(
+                "migration archive must be inside the migration directory".to_owned(),
+            ));
+        }
+        if let Some(metadata) = path_metadata(path)? {
+            if is_link_or_reparse_point(&metadata) || !metadata.is_file() {
+                return Err(ProjectStorageError::Migration(
+                    "migration archive must be a regular file, never a link or reparse point"
+                        .to_owned(),
+                ));
+            }
+        }
+        Ok(())
     }
 
     fn read_migration_journal(&self) -> Result<Option<MigrationJournal>, ProjectStorageError> {
@@ -984,6 +1171,27 @@ fn document_schema(document: &Value) -> Result<String, ProjectStorageError> {
                 "project document must contain a non-blank schemaVersion".to_owned(),
             )
         })
+}
+
+fn path_metadata(path: &Path) -> Result<Option<fs::Metadata>, ProjectStorageError> {
+    match fs::symlink_metadata(path) {
+        Ok(metadata) => Ok(Some(metadata)),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(io_error("inspect project artifact", path, error)),
+    }
+}
+
+fn is_link_or_reparse_point(metadata: &fs::Metadata) -> bool {
+    #[cfg(windows)]
+    {
+        use std::os::windows::fs::MetadataExt;
+        const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x400;
+        metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
+    }
+    #[cfg(not(windows))]
+    {
+        metadata.file_type().is_symlink()
+    }
 }
 
 fn ensure_sha256(value: &str, label: &str) -> Result<(), ProjectStorageError> {
@@ -1325,6 +1533,463 @@ mod tests {
         ))
     }
 
+    fn revised_history(base: &ProjectHistory, label: &str) -> ProjectHistory {
+        let mut transaction = base.replay().expect("replay fixture");
+        transaction
+            .revise_state(id(EntityKind::Event, label), minimal_state(), label)
+            .expect("valid revision");
+        transaction.history()
+    }
+
+    fn pending_migration(store: &ProjectStore, publish_target: bool) -> PathBuf {
+        let source = serde_json::to_vec_pretty(&history()).expect("encode source");
+        fs::write(store.project_path(), &source).expect("write source");
+        let archive = store
+            .archive_migration_source(&source)
+            .expect("archive source");
+        let target = ProjectFile::new(history()).expect("target file");
+        let journal = MigrationJournal::new(
+            PROJECT_HISTORY_SCHEMA.to_owned(),
+            archive.file_name().unwrap().to_str().unwrap().to_owned(),
+            target.history_sha256().to_owned(),
+        )
+        .expect("journal");
+        store
+            .write_migration_journal(&journal)
+            .expect("write journal");
+        if publish_target {
+            store
+                .write_project_file(&target, false)
+                .expect("publish target");
+        }
+        archive
+    }
+
+    #[test]
+    fn pending_migration_preserves_an_unrelated_or_damaged_primary() {
+        let alternate = revised_history(&history(), "newer-legacy-data");
+        for bytes in [
+            serde_json::to_vec(&alternate).unwrap(),
+            br#"{"schemaVersion":"unrecognized-project.v9","data":"preserve"}"#.to_vec(),
+            b"damaged but potentially recoverable user data".to_vec(),
+        ] {
+            let temporary = TempProject::new("migration-primary-conflict");
+            let store = ProjectStore::open(&temporary.path).unwrap();
+            let archive = pending_migration(&store, false);
+            let archived = fs::read(&archive).unwrap();
+            let journal = fs::read(store.migration_journal_path()).unwrap();
+            fs::write(store.project_path(), &bytes).unwrap();
+            assert!(store
+                .recover_migration(&ProjectMigrationRegistry::with_legacy_history_v1())
+                .is_err());
+            assert_eq!(fs::read(store.project_path()).unwrap(), bytes);
+            assert_eq!(fs::read(store.migration_journal_path()).unwrap(), journal);
+            assert_eq!(fs::read(archive).unwrap(), archived);
+        }
+    }
+
+    #[test]
+    fn pending_migration_resumes_its_exact_source_or_published_target() {
+        for published in [false, true] {
+            let temporary = TempProject::new("migration-matching-primary");
+            let store = ProjectStore::open(&temporary.path).unwrap();
+            let archive = pending_migration(&store, published);
+            let result = store
+                .recover_migration(&ProjectMigrationRegistry::with_legacy_history_v1())
+                .unwrap()
+                .unwrap();
+            assert_eq!(result.project.history, history());
+            assert_eq!(result.source_archive, Some(archive));
+            assert!(!store.migration_journal_path().exists());
+        }
+    }
+
+    #[test]
+    fn published_snapshots_remain_bound_to_the_callers_commit() {
+        let temporary = TempProject::new("publication-snapshot");
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        let base = history();
+        let created = store.create_with_snapshot(base.clone()).unwrap();
+        let first = revised_history(&base, "first-writer");
+        let committed = store
+            .save_if_current_with_snapshot(first.clone(), &created.history_sha256)
+            .unwrap();
+        let second = revised_history(&first, "second-writer");
+        store
+            .save_if_current(second.clone(), &committed.history_sha256)
+            .unwrap();
+        let _lease = store.acquire_write_lease().unwrap();
+        assert!(matches!(
+            store.load(),
+            Err(ProjectStorageError::WriteLocked { .. })
+        ));
+        assert_eq!(created.history, base);
+        assert_eq!(committed.history, first);
+        assert_ne!(created.history_sha256, committed.history_sha256);
+        assert!(!created.recovered_from_last_valid);
+        assert!(!committed.recovered_from_last_valid);
+        assert_eq!(store.load_unlocked().unwrap().history, second);
+    }
+
+    #[test]
+    fn save_without_expected_hash_cannot_replace_or_extend_existing_history() {
+        let temporary = TempProject::new("save-authority");
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        let base = history();
+        let first = revised_history(&base, "first");
+        let created = store.save(first.clone()).unwrap();
+        let bytes = fs::read(store.project_path()).unwrap();
+        for candidate in [base, revised_history(&first, "unconditional-append")] {
+            assert!(store.save(candidate).is_err());
+            assert_eq!(fs::read(store.project_path()).unwrap(), bytes);
+            assert!(!store.recovery_path().exists());
+        }
+        let retry = store.save(first).unwrap();
+        assert_eq!(retry.history_sha256, created.history_sha256);
+        assert_eq!(fs::read(store.project_path()).unwrap(), bytes);
+        assert!(!store.recovery_path().exists());
+    }
+
+    #[test]
+    fn runtime_requires_its_open_revision_even_if_caller_knows_new_disk_hash() {
+        let temporary = TempProject::new("session-authority");
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        let base = history();
+        store.create_if_absent(base.clone()).unwrap();
+        let mut runtime = ProjectRuntime::default();
+        let session = runtime.open_existing(&temporary.path).unwrap();
+        let external = revised_history(&base, "external");
+        let saved = store
+            .save_if_current(external.clone(), &session.history_sha256)
+            .unwrap();
+        let candidate = revised_history(&external, "candidate");
+        let bytes = fs::read(store.project_path()).unwrap();
+        assert!(matches!(
+            runtime.commit_history(
+                &session.project_id,
+                &saved.history_sha256,
+                candidate.clone()
+            ),
+            Err(ProjectRuntimeError::WriteConflict { .. })
+        ));
+        assert_eq!(runtime.session(&session.project_id).unwrap(), session);
+        assert_eq!(fs::read(store.project_path()).unwrap(), bytes);
+        let refreshed = runtime.refresh(&session.project_id).unwrap();
+        runtime
+            .commit_history(&session.project_id, &refreshed.history_sha256, candidate)
+            .unwrap();
+    }
+
+    #[test]
+    fn normal_writers_preserve_a_pending_migration_journal() {
+        let temporary = TempProject::new("pending-migration-writer");
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        pending_migration(&store, true);
+        let loaded = store.load().unwrap();
+        let bytes = fs::read(store.project_path()).unwrap();
+        let journal = fs::read(store.migration_journal_path()).unwrap();
+        assert!(store.save(loaded.history.clone()).is_err());
+        assert!(store
+            .save_if_current(
+                revised_history(&loaded.history, "premature-append"),
+                &loaded.history_sha256,
+            )
+            .is_err());
+        assert_eq!(fs::read(store.project_path()).unwrap(), bytes);
+        assert_eq!(fs::read(store.migration_journal_path()).unwrap(), journal);
+        assert!(!store.recovery_path().exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn migration_rejects_linked_archives_and_directories() {
+        use std::os::unix::fs::symlink;
+
+        for linked_directory in [false, true] {
+            let temporary = TempProject::new("migration-linked-archive");
+            let outside = TempProject::new("migration-external-data");
+            let store = ProjectStore::open(&temporary.path).unwrap();
+            let archive = pending_migration(&store, true);
+            let archived = fs::read(&archive).unwrap();
+            let external = outside.path.join(archive.file_name().unwrap());
+            fs::write(&external, &archived).unwrap();
+            if linked_directory {
+                fs::remove_dir_all(store.migration_directory()).unwrap();
+                symlink(&outside.path, store.migration_directory()).unwrap();
+            } else {
+                fs::remove_file(&archive).unwrap();
+                symlink(&external, &archive).unwrap();
+            }
+            let primary = fs::read(store.project_path()).unwrap();
+            assert!(store
+                .recover_migration(&ProjectMigrationRegistry::with_legacy_history_v1())
+                .is_err());
+            assert!(store.migration_journal_path().is_file());
+            assert_eq!(fs::read(store.project_path()).unwrap(), primary);
+            assert_eq!(fs::read(external).unwrap(), archived);
+        }
+
+        let temporary = TempProject::new("migration-linked-output");
+        let outside = TempProject::new("migration-external-output");
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        symlink(&outside.path, store.migration_directory()).unwrap();
+        assert!(store.archive_migration_source(b"source bytes").is_err());
+        assert_eq!(fs::read_dir(&outside.path).unwrap().count(), 0);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn creation_preserves_dangling_artifact_links() {
+        use std::os::unix::fs::symlink;
+
+        for artifact in [
+            PROJECT_FILE_NAME,
+            PROJECT_RECOVERY_FILE_NAME,
+            PROJECT_MIGRATION_JOURNAL_FILE_NAME,
+        ] {
+            let temporary = TempProject::new("create-dangling-link");
+            let store = ProjectStore::open(&temporary.path).unwrap();
+            let path = temporary.path.join(artifact);
+            let missing = temporary.path.join("missing-source");
+            symlink(&missing, &path).unwrap();
+            assert!(store.create_if_absent(history()).is_err());
+            assert_eq!(fs::read_link(path).unwrap(), missing);
+        }
+    }
+
+    #[test]
+    fn commit_rejects_truncation_and_fork_without_changing_files() {
+        let temporary = TempProject::new("append-only");
+        let store = ProjectStore::open(&temporary.path).expect("open store");
+        let base = history();
+        let committed = revised_history(&base, "committed");
+        store.save(committed.clone()).expect("save history");
+        let mut runtime = ProjectRuntime::default();
+        let session = runtime
+            .open_existing(&temporary.path)
+            .expect("open session");
+        let bytes = fs::read(store.project_path()).expect("read original");
+        for candidate in [base.clone(), revised_history(&base, "fork")] {
+            assert!(runtime
+                .commit_history(&session.project_id, &session.history_sha256, candidate)
+                .is_err());
+            assert_eq!(fs::read(store.project_path()).unwrap(), bytes);
+            assert_eq!(runtime.session(&session.project_id).unwrap(), session);
+        }
+        let extended = revised_history(&committed, "extension");
+        runtime
+            .commit_history(
+                &session.project_id,
+                &session.history_sha256,
+                extended.clone(),
+            )
+            .expect("append valid extension");
+        assert_eq!(store.load().unwrap().history, extended);
+    }
+
+    #[test]
+    fn conditional_save_rejects_changed_run_inputs() {
+        let temporary = TempProject::new("context-immutable");
+        let store = ProjectStore::open(&temporary.path).expect("open store");
+        store.save(history()).expect("save initial");
+        let loaded = store.load().unwrap();
+        let mut document = serde_json::to_value(&loaded.history).unwrap();
+        document["context"]["rootSeed"] = Value::from(89);
+        let candidate: ProjectHistory =
+            serde_json::from_value(document).expect("replayable context");
+        assert!(store
+            .save_if_current(candidate, &loaded.history_sha256)
+            .is_err());
+        assert_eq!(store.load().unwrap().history, loaded.history);
+    }
+
+    #[test]
+    fn runtime_creation_rejects_duplicate_identity_before_writing() {
+        let first = TempProject::new("create-first");
+        let second = TempProject::new("create-second");
+        let mut runtime = ProjectRuntime::default();
+        runtime
+            .create_from_genesis(&first.path, history())
+            .expect("create first");
+        assert!(matches!(
+            runtime.create_from_genesis(&second.path, history()),
+            Err(ProjectRuntimeError::ProjectIdentityAlreadyOpen { .. })
+        ));
+        assert!(!second.path.join(PROJECT_FILE_NAME).exists());
+    }
+
+    #[test]
+    fn pending_migration_rejects_missing_or_tampered_archive_before_clearing_journal() {
+        for published in [false, true] {
+            for missing in [false, true] {
+                let temporary = TempProject::new("archive-integrity");
+                let store = ProjectStore::open(&temporary.path).expect("open store");
+                let archive = pending_migration(&store, published);
+                if missing {
+                    fs::remove_file(archive).unwrap();
+                } else {
+                    fs::write(archive, b"tampered source").unwrap();
+                }
+                let before = fs::read(store.project_path()).unwrap();
+                assert!(store
+                    .recover_migration(&ProjectMigrationRegistry::with_legacy_history_v1())
+                    .is_err());
+                assert!(store.migration_journal_path().exists());
+                assert_eq!(fs::read(store.project_path()).unwrap(), before);
+            }
+        }
+    }
+
+    #[test]
+    fn migration_rejects_corrupt_existing_content_addressed_archive() {
+        let temporary = TempProject::new("archive-collision");
+        let store = ProjectStore::open(&temporary.path).expect("open store");
+        let source = serde_json::to_vec_pretty(&history()).unwrap();
+        fs::write(store.project_path(), &source).unwrap();
+        let archive = store.archive_migration_source(&source).unwrap();
+        fs::write(archive, b"corrupt existing archive").unwrap();
+        assert!(store
+            .migrate(&ProjectMigrationRegistry::with_legacy_history_v1())
+            .is_err());
+        assert_eq!(fs::read(store.project_path()).unwrap(), source);
+        assert!(!store.migration_journal_path().exists());
+    }
+
+    #[test]
+    fn completed_migration_still_revalidates_registry_and_journal_source() {
+        let temporary = TempProject::new("completed-source-proof");
+        let store = ProjectStore::open(&temporary.path).expect("open store");
+        pending_migration(&store, true);
+        assert!(store
+            .recover_migration(&ProjectMigrationRegistry::default())
+            .is_err());
+        assert!(store.migration_journal_path().exists());
+        let mut journal = store.read_migration_journal().unwrap().unwrap();
+        journal.source_schema = "unknown-source.v1".to_owned();
+        store.write_migration_journal(&journal).unwrap();
+        assert!(store
+            .recover_migration(&ProjectMigrationRegistry::with_legacy_history_v1())
+            .is_err());
+        assert!(store.migration_journal_path().exists());
+    }
+
+    #[test]
+    fn reads_do_not_publish_or_query_index_while_another_writer_holds_the_lease() {
+        let temporary = TempProject::new("index-lease");
+        let store = ProjectStore::open(&temporary.path).expect("open store");
+        store.save(history()).unwrap();
+        fs::remove_file(store.index_path()).unwrap();
+        let _lease = store.acquire_write_lease().unwrap();
+        let reader = ProjectStore::open(&temporary.path).unwrap();
+        assert!(matches!(
+            reader.load(),
+            Err(ProjectStorageError::WriteLocked { .. })
+        ));
+        assert!(matches!(
+            reader.event_index_entries(),
+            Err(ProjectStorageError::WriteLocked { .. })
+        ));
+        assert!(!store.index_path().exists());
+    }
+
+    #[test]
+    fn creation_is_exclusive_and_preserves_existing_recovery_artifacts() {
+        let temporary = TempProject::new("create-race");
+        let barrier = std::sync::Arc::new(std::sync::Barrier::new(2));
+        let creators: Vec<_> = (0..2)
+            .map(|_| {
+                let barrier = barrier.clone();
+                let root = temporary.path.clone();
+                std::thread::spawn(move || {
+                    let store = ProjectStore::open(root).unwrap();
+                    barrier.wait();
+                    store.create_if_absent(history())
+                })
+            })
+            .collect();
+        let outcomes: Vec<_> = creators
+            .into_iter()
+            .map(|thread| thread.join().unwrap())
+            .collect();
+        assert_eq!(outcomes.iter().filter(|result| result.is_ok()).count(), 1);
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        assert_eq!(store.load().unwrap().history, history());
+        assert!(!store.recovery_path().exists());
+
+        for artifact in [
+            PROJECT_RECOVERY_FILE_NAME,
+            PROJECT_MIGRATION_JOURNAL_FILE_NAME,
+        ] {
+            let temporary = TempProject::new("create-recovery");
+            let store = ProjectStore::open(&temporary.path).unwrap();
+            let path = temporary.path.join(artifact);
+            fs::write(&path, b"preserve forensic evidence").unwrap();
+            assert!(store.create_if_absent(history()).is_err());
+            assert_eq!(fs::read(path).unwrap(), b"preserve forensic evidence");
+            assert!(!store.project_path().exists());
+        }
+    }
+
+    #[test]
+    fn completed_migration_rejects_archive_that_regenerates_a_different_target() {
+        let temporary = TempProject::new("migration-target-proof");
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        pending_migration(&store, true);
+        let alternate = revised_history(&history(), "alternate-source");
+        let source = serde_json::to_vec(&alternate).unwrap();
+        let archive = store.archive_migration_source(&source).unwrap();
+        let mut journal = store.read_migration_journal().unwrap().unwrap();
+        journal.source_archive_file = archive.file_name().unwrap().to_str().unwrap().to_owned();
+        store.write_migration_journal(&journal).unwrap();
+        assert!(store
+            .recover_migration(&ProjectMigrationRegistry::with_legacy_history_v1())
+            .is_err());
+        assert!(store.migration_journal_path().exists());
+        assert_eq!(store.load().unwrap().history, history());
+    }
+
+    #[test]
+    fn cross_process_lease_excludes_creation_and_projection() {
+        const PROBE_ROOT: &str = "TELYSTA_STORAGE_LEASE_PROBE_ROOT";
+        if let Some(root) = env::var_os(PROBE_ROOT) {
+            let store = ProjectStore::open(PathBuf::from(root)).unwrap();
+            assert!(matches!(
+                store.create_if_absent(history()),
+                Err(ProjectStorageError::WriteLocked { .. })
+            ));
+            assert!(matches!(
+                store.load(),
+                Err(ProjectStorageError::WriteLocked { .. })
+            ));
+            assert!(matches!(
+                store.event_index_entries(),
+                Err(ProjectStorageError::WriteLocked { .. })
+            ));
+            return;
+        }
+        let temporary = TempProject::new("process-lease");
+        let store = ProjectStore::open(&temporary.path).unwrap();
+        store.save(history()).unwrap();
+        fs::remove_file(store.index_path()).unwrap();
+        let _lease = store.acquire_write_lease().unwrap();
+        let output = std::process::Command::new(env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "tests::cross_process_lease_excludes_creation_and_projection",
+                "--nocapture",
+            ])
+            .env(PROBE_ROOT, &temporary.path)
+            .output()
+            .expect("run independent storage process");
+        assert!(
+            output.status.success(),
+            "{}\n{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(!store.index_path().exists());
+    }
+
     #[test]
     fn saves_replays_and_indexes_a_project() {
         let temporary = TempProject::new("round-trip");
@@ -1346,9 +2011,9 @@ mod tests {
         let temporary = TempProject::new("recovery");
         let store = ProjectStore::open(&temporary.path).expect("open project store");
         let expected = history();
-        store.save(expected.clone()).expect("initial save");
+        let saved = store.save(expected.clone()).expect("initial save");
         store
-            .save(expected.clone())
+            .save_if_current(expected.clone(), &saved.history_sha256)
             .expect("second save writes recovery copy");
         fs::write(store.project_path(), b"{not valid JSON").expect("corrupt primary file");
 

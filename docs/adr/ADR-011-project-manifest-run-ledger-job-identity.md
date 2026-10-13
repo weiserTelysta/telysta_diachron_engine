@@ -3,7 +3,7 @@ document_type: adr
 decision_status: proposed
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-07-18
+last_verified: 2026-10-14
 owner: unassigned
 reviewers: []
 ---
@@ -100,13 +100,18 @@ Manifest 不保存 UI 选择、进度百分比、当前窗口、日志路径或 
 - provenance actor/source 与 AuthorIntervention 信息；
 - canonical request hash 和 idempotency key。
 
+本轮 Proposed 决定采用**固定输入 Operation**：OperationSpec 同时锁定
+`parameterSha256`。parameter sweep、替代 TheoryProfile、不同 seed 或改变基点的
+counterfactual 各自创建新的 Operation；研究分组可以关联它们，但不能以分组标签
+绕过 Operation 身份和幂等边界。不在本版引入可变的实验/变体目录。
+
 `OperationContext` 是 Rust application service 对 OperationSpec、项目基点和所有锁完成验证后构造的内存能力。反序列化一个字段相同的 JSON 不能直接获得已验证 OperationContext。
 
 OperationSpec 一经登记不得原地修改。改变参数、模型、数据、规则、seed、目标 history 或基点必须创建新的 OperationId。这样不会用一次“重试”重新解释旧历史。
 
 ### 4.3 Run 与 RunLedger
 
-`RunId` 标识 Operation 下的一组不可变确定性执行输入。普通操作通常有一个 Run；candidate、replicate、parameter sweep 或 counterfactual 可以在同一 Operation 下登记多个明确区分的 Run。只进行同步验证且不需要执行产物的作者操作可以没有后台 Run，但仍必须拥有 OperationId。
+`RunId` 标识 Operation 下的一组不可变确定性执行输入。普通操作通常有一个 Run；candidate/replicate 可以在同一 Operation 下登记多个 Run，但参数、模型、数据、规则、root seed 与预算必须继承 Operation。改变这些输入的 sweep/counterfactual 使用不同 Operation。只进行同步验证且不需要执行产物的作者操作可以没有后台 Run，但仍必须拥有 OperationId。
 
 每个 `RunSpec` 至少锁定：
 
@@ -117,6 +122,12 @@ OperationSpec 一经登记不得原地修改。改变参数、模型、数据、
 - 全部模型、数据、registry、rule、compiler/reducer 锁；
 - base history hash；
 - input semantic hash 与预期输出类型/schema。
+
+每个 Run 有已声明的 `role + runKey`，该二元组在 Operation 内唯一；`runKey`
+是 1–64 字节的合法 RNG 单段值。随机流根确定为
+`Operation.rngLock.pathRoot + "." + role + "." + runKey`，不能由 Attempt、
+调度顺序或新生成的随机 ID 派生。除该 pathRoot 外，Run rngLock 与父锁相同；
+`Run.parameterSha256 == Operation.parameterSha256`。NoRng 操作仍为 NoRng。
 
 `RunLedger` 是项目级、版本化、append-only 的语义审计账本。它保存：
 
@@ -246,7 +257,7 @@ Job 的 `Completed` 只表示确定性执行和 durable staging 已完成，不�
 
 ### Simulation 与实验
 
-Simulation Operation 可以登记多个锁定的 Run，例如 replicate、替代 TheoryProfile 或 counterfactual。只有用户明确选择且通过领域验证的结果才能产生 committed ChangeSet。未选择、失败或仅用于校准的 Run 仍可留在 RunLedger/研究工件中，但不会自动成为语言历史。
+Simulation Operation 可以登记输入相同、runKey 不同的 candidate/replicate。替代 TheoryProfile、参数 sweep 或不同 seed 的 counterfactual 分属新 Operation；比较界面可将其组成研究分组。只有用户明确选择且通过领域验证的结果才能产生 committed ChangeSet。未选择、失败或仅用于校准的 Run 仍可留在 RunLedger/研究工件中，但不会自动成为语言历史。
 
 ### Migration 与 Import
 

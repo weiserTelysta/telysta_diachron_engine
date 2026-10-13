@@ -47,3 +47,31 @@ Rust `StateTransaction` 必须一次性写入 command、验证结果、事件、
 ## A-003 特征测试
 
 `tests/storage/test_history_replay_features.py` 包含当前可通过的词形/注词/软删除回放，以及严格 `xfail` 的 DAG、Swadesh、类型学、辅助事件字段、借词、化石、复合和 Epoch 注词覆盖。任何 `XPASS` 都会使 CI 失败，要求移除相应缺陷记录并更新账本。
+
+## R0A-10 原始执行材料
+
+```bash
+.venv/bin/python -I scripts/legacy_evidence.py --output target/legacy-evidence/new-capture
+.venv/bin/python -I scripts/legacy_evidence.py --verify target/legacy-evidence/new-capture
+```
+
+输出目录必须不存在。工具以 hermetic runner 对八个来源测试逐项执行
+`--runxfail`，要求每项恰好执行一次并真实失败；保存实际 keyframe/event 字节、
+JUnit/控制台失败、源码与数据、tracked patch、运行环境和指纹。decoder-only
+用例没有持久文件，归档如实保留空清单，不从 planning fixture 伪造 event。
+failure fingerprint 只记录实际异常；当前工具不判断异常是否命中了预期
+replay-loss 机制。冻结前须独立核对断言位置、异常类型和原始产物，提前发生的
+无关异常不能作为对应缺陷已复现的证明。
+pytest 的 `current` 导航软链接单独记录描述再移除；语言 artifact 不做换行或
+JSON 规范化。目录清单记录逐文件原始字节 SHA-256 与长度。
+
+五个 seed=888 黄金场景另外运行，保留写出的文件、报告、已知非法词形，核对
+已有黄金分域/full hash 与 hard errors。该工具不改变旧引擎行为，也不创建
+Rust `project.json`。校验拒绝缺失、额外、损坏文件和伪造 review 声明。
+
+格式为 `telysta-legacy-evidence-archive.v1`，仅是研究证据；manifest/checksum
+提供完整性检查，不能证明发布者身份、独立评审或科学正确性。当前状态固定为
+`local_capture_not_reviewed_or_frozen`，`reviewedSubjectCommit=null`。独立确认
+clean subject、平台来源、失败机制、fixture 对应及责任分配后，才能形成正式
+R0A-10 关闭材料；本地产物不能自动使 Gate passed。原始大文件放在忽略目录，
+本轮具体位置与校验结果见 [执行记录](./WORK_LOG.md)。

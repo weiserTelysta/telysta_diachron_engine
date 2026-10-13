@@ -203,7 +203,7 @@ VERIFICATION_COMMANDS = (
             str(repository_python(root)),
             "-I",
             "scripts/pytest_runner.py",
-            r"tests\core\test_adr_011_contract.py",
+            str(Path("tests") / "core" / "test_adr_011_contract.py"),
             "-q",
         ],
         "targeted ADR-011 Python contract passed through the hermetic runner",
@@ -314,16 +314,22 @@ def repository_python(root: Path) -> Path:
     )
     for candidate in candidates:
         if candidate.is_file():
-            return candidate.resolve()
+            # Resolving the final symlink on Unix launches the base interpreter
+            # without pyvenv.cfg, losing this environment's installed packages.
+            return candidate.parent.resolve() / candidate.name
     raise FileNotFoundError("repository Python environment is missing; create .venv before verification")
 
 
 def _validate_repository_python(root: Path) -> Path:
     expected = repository_python(root)
-    actual = Path(sys.executable).resolve()
-    if actual != expected:
+    actual = Path(sys.executable).absolute()
+    prefix = Path(sys.prefix).resolve()
+    if (actual.resolve() != expected.resolve()
+            or prefix != (root / ".venv").resolve()
+            or prefix == Path(sys.base_prefix).resolve()):
         raise RuntimeError(
-            f"gate verification must run from the repository interpreter: expected {expected}, got {actual}"
+            f"gate verification must run from the repository interpreter: "
+            f"expected {expected}, got {actual} with prefix {prefix}"
         )
     return actual
 
@@ -1632,6 +1638,21 @@ def _subject_attestation_issues(
     return issues
 
 
+def _trusted_attestation_issues(evidence: dict[str, Any], *, root: Path) -> list[str]:
+    """Keep pass issuance closed until external trust verification exists.
+
+    Account IDs, provider URLs/digests and accepted-terminal mirrors below are
+    declarations. Checking their JSON shape or repository hash cannot establish
+    account consent, provider authenticity or terminal-payload acceptance.
+    A future reviewed verifier must bind all three to this exact subject. There
+    is deliberately no CLI flag or evidence field that disables this boundary.
+    """
+    return [
+        "external attestation verification is unavailable: authenticated account consent, "
+        "provider results and independent terminal-payload validation are not implemented"
+    ]
+
+
 def validate_passed_decision(
     evidence: dict[str, Any],
     *,
@@ -1643,7 +1664,7 @@ def validate_passed_decision(
     if evidence.get("decision") != "passed":
         return
 
-    issues: list[str] = []
+    issues: list[str] = _trusted_attestation_issues(evidence, root=root)
     requirements = evidence.get("requirements", [])
     requirement_by_id = {item.get("id"): item for item in requirements if isinstance(item, dict)}
     failing_requirements = [
@@ -1810,13 +1831,13 @@ def validate_passed_decision(
         latest_run = verification_runs[-1] if verification_runs else None
         if latest_run is None or latest_run.get("result") != "pass":
             issues.append("latest verification run is not passing")
-        trusted_passing_runs = [
+        claimed_remote_runs = [
             run
             for run in verification_runs
             if run.get("result") == "pass" and isinstance(run.get("remoteProvenance"), dict)
         ]
-        trusted_platforms = {run.get("platformFamily") for run in trusted_passing_runs}
-        missing_trusted_platforms = {"windows", "linux"} - trusted_platforms
+        claimed_platforms = {run.get("platformFamily") for run in claimed_remote_runs}
+        missing_trusted_platforms = {"windows", "linux"} - claimed_platforms
         if missing_trusted_platforms:
             issues.append(
                 "trusted cross-platform verification is missing: " + ", ".join(sorted(missing_trusted_platforms))
@@ -2225,7 +2246,7 @@ def _verification_environment(root: Path) -> dict[str, Any]:
     )
     environment = {
         "platform": platform.platform(),
-        "pythonExecutable": str(Path(sys.executable).resolve()),
+        "pythonExecutable": str(Path(sys.executable).absolute()),
         "pythonVersion": platform.python_version(),
         "rustcVersion": rustc_version,
         "cargoVersion": cargo_version,
@@ -2271,7 +2292,7 @@ def _fallback_verification_environment(
         return None
     environment = {
         "platform": platform.platform() or "unavailable",
-        "pythonExecutable": str(Path(sys.executable).resolve()),
+        "pythonExecutable": str(Path(sys.executable).absolute()),
         "pythonVersion": platform.python_version() or "unavailable",
         "rustcVersion": _safe_tool_version(
             root,

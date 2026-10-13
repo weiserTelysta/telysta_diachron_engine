@@ -1,0 +1,153 @@
+{
+  "output": {
+    "path": "experiments/concepticon-slice/slice.json",
+    "schemaVersion": "telysta-concepticon-research-slice.v1",
+    "sha256": "81c931721f470c3f74b1ac76a3466f174b0257580b28d1597c10977cdbfde10b",
+    "sizeBytes": 9691
+  },
+  "schemaVersion": "telysta-concepticon-research-lock.v1",
+  "selection": {
+    "conceptIds": [
+      "Swadesh-1955-100-6",
+      "Swadesh-1955-100-16",
+      "Swadesh-1955-100-23",
+      "Swadesh-1955-100-28",
+      "Swadesh-1955-100-29",
+      "Swadesh-1955-100-42",
+      "Swadesh-1955-100-62",
+      "Swadesh-1955-100-64",
+      "Swadesh-1955-100-72",
+      "Swadesh-1955-100-87",
+      "Swadesh-1955-100-94",
+      "Swadesh-1955-100-95"
+    ],
+    "conceptlistId": "Swadesh-1955-100",
+    "limitations": [
+      "One historically curated list with English elicitation labels; neither representative of all concept lists nor independent cross-language observations.",
+      "Labels and definitions are comparison aids, not a complete Meaning IR, universal ontology, lexicalization requirement or rule for generating words.",
+      "Twelve entries do not prove coverage of user canon, sentence tasks, argument structure, scope, polysemy or pragmatic commitment.",
+      "Source-list mappings are curated judgments, preserved as published rather than corrected or treated as ground truth.",
+      "This selection is development material, not a sealed audit or evidence for linguistic naturalness.",
+      "Only three selected tables and their mapping closure are checked; this is not general CLDF/schema/foreign-key validation. Gloss languages are elicitation-label languages, not target-language doculects."
+    ],
+    "method": "Purposive developer selection by fixed source-entry IDs, covering a few participants, actions, entities and negation for development examples; no random sampling or frequency estimate.",
+    "samplingUnit": "source-list entry; mapped concept sets are comparison targets, not sampled languages or doculects"
+  },
+  "source": {
+    "archive": {
+      "sha256": "a385f04140540582222d6a57f596d38b28e4f5a39c02a828d9223f9cb540fc6e",
+      "sizeBytes": 12498411,
+      "url": "https://zenodo.org/records/14923561/files/concepticon/concepticon-cldf-v3.4.0.zip?download=1",
+      "zenodoMd5": "5ad7c625dfac60e46aefa9ed10c1858c"
+    },
+    "bibliography": {
+      "member": "concepticon-concepticon-cldf-e354898/cldf/sources.bib",
+      "sha256": "862c459c37d0bde1799522d6d5a6dc090538e124fc7de19874bd40f4a8ff93f6",
+      "sizeBytes": 170822
+    },
+    "citation": "List, Johann Mattis; Tjuka, Annika; Blum, Frederic; Kučerová, Alžběta; Barrientos Ugarte, Carlos; Rzymski, Christoph; Greenhill, Simon; Forkel, Robert (2025). CLLD Concepticon 3.4.0 as CLDF dataset (v3.4.0). Zenodo. doi:10.5281/zenodo.14923561.",
+    "datasetId": "telysta:data-set:concepticon-3-4-0",
+    "doi": "https://doi.org/10.5281/zenodo.14923561",
+    "license": "CC-BY-4.0",
+    "licenseFile": {
+      "member": "concepticon-concepticon-cldf-e354898/LICENSE",
+      "sha256": "945fbcb37deca05bccd7c3ca0e261679f1f5373515504fdbad68f6f3cf6f49b9",
+      "sizeBytes": 18652
+    },
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "metadata": {
+      "member": "concepticon-concepticon-cldf-e354898/cldf/Wordlist-metadata.json",
+      "sha256": "69c628c4f1ea72242a250c356be1f777587f18c89722d6c99bdf62e213188c30",
+      "sizeBytes": 31736
+    },
+    "releaseCaveat": "The DOI and archive identify release v3.4.0. Embedded prov:wasDerivedFrom still names concepticon-cldf v3.3.0 and concepticon-data v3.3.0-26-gad44e5e0; preserve these upstream declarations, do not silently relabel them.",
+    "tables": {
+      "concepticon.csv": {
+        "columns": [
+          "ID",
+          "Name",
+          "Description",
+          "ColumnSpec",
+          "Semantic_Field",
+          "Ontological_Category",
+          "Replacement_ID"
+        ],
+        "member": "concepticon-concepticon-cldf-e354898/cldf/concepticon.csv",
+        "sha256": "0712d914164aa1d1d7a5765ee7be8f8cc0c6bd70259c08b2a26a76276186dd9a",
+        "sizeBytes": 474702
+      },
+      "conceptlists.csv": {
+        "columns": [
+          "ID",
+          "Name",
+          "Description",
+          "Contributor",
+          "Citation",
+          "Source",
+          "Related",
+          "PDF",
+          "Tags",
+          "Year",
+          "Number_Of_Items",
+          "Gloss_Language_IDs",
+          "Target_Language",
+          "List_Suffix",
+          "Source_URL",
+          "Pages",
+          "Alias",
+          "Attributes"
+        ],
+        "member": "concepticon-concepticon-cldf-e354898/cldf/conceptlists.csv",
+        "sha256": "094c1d643056d2b77cf979104a6b83d411c13eee7aeab47400bc8d16ac86e5d1",
+        "sizeBytes": 335474
+      },
+      "concepts.csv": {
+        "columns": [
+          "ID",
+          "Name",
+          "Number",
+          "Index",
+          "Conceptlist_ID",
+          "Concepticon_ID",
+          "Attributes"
+        ],
+        "member": "concepticon-concepticon-cldf-e354898/cldf/concepts.csv",
+        "sha256": "47fbea11f7c1828776e1db1d223ba38fd521e37e0f4eb1e66169c8828060a5a7",
+        "sizeBytes": 55022127
+      }
+    },
+    "upstreamDerivedFrom": [
+      {
+        "dc:created": "v3.3.0",
+        "dc:title": "Repository",
+        "rdf:about": "https://github.com/concepticon/concepticon-cldf",
+        "rdf:type": "prov:Entity"
+      },
+      {
+        "dc:created": "v5.1",
+        "dc:title": "Glottolog",
+        "rdf:about": "https://github.com/glottolog/glottolog",
+        "rdf:type": "prov:Entity"
+      },
+      {
+        "dc:created": "v3.3.0-26-gad44e5e0",
+        "dc:title": "Repository",
+        "rdf:about": "https://github.com/concepticon/concepticon-data",
+        "rdf:type": "prov:Entity"
+      }
+    ],
+    "version": "3.4.0"
+  },
+  "status": "research_only",
+  "transform": {
+    "operations": [
+      "Decode selected member CSV as strict UTF-8; preserve all column values, whitespace, empty fields and Unicode without normalization.",
+      "Select the explicit source-list entry IDs in listed order and their one source-list row.",
+      "Select exactly their mapped concept-set rows, ordered lexicographically by published ID; reject missing, duplicate, foreign-list or superseded records.",
+      "Serialize research JSON as UTF-8, sorted object keys, two-space indent and final LF. No production state is written."
+    ],
+    "schemaVersion": "telysta-concepticon-selection.v1",
+    "scriptPath": "scripts/concepticon_slice.py",
+    "scriptSha256": "a337334df311d7d801aceb31038fc4fd53621687e7f0cd8174a6adc55f61adff"
+  }
+}

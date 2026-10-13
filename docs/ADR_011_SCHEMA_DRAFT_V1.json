@@ -56,6 +56,13 @@
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     },
+    "u64Decimal": {
+      "description": "Planning-only canonical unsigned decimal string, exact range 0..=u64::MAX; no signs, whitespace, exponents or leading zeros.",
+      "type": "string",
+      "maxLength": 20,
+      "not": {"pattern": "[^0-9]"},
+      "pattern": "^(?:0|[1-9][0-9]{0,18}|1[0-7][0-9]{18}|18[0-3][0-9]{17}|184[0-3][0-9]{16}|1844[0-5][0-9]{15}|18446[0-6][0-9]{14}|184467[0-3][0-9]{13}|1844674[0-3][0-9]{12}|184467440[0-6][0-9]{10}|1844674407[0-2][0-9]{9}|18446744073[0-6][0-9]{8}|1844674407370[0-8][0-9]{6}|18446744073709[0-4][0-9]{5}|184467440737095[0-4][0-9]{4}|18446744073709550[0-9]{3}|18446744073709551[0-5][0-9]{2}|1844674407370955160[0-9]{1}|1844674407370955161[0-4]|18446744073709551615)$"
+    },
     "projectId": {
       "type": "string",
       "pattern": "^telysta:project:[a-z0-9](?:[a-z0-9-]{0,94}[a-z0-9])?$"
@@ -86,6 +93,36 @@
         "contentSha256": {"$ref": "#/$defs/sha256"}
       }
     },
+    "rngPath": {"type": "string", "pattern": "^[a-z0-9_-]{1,64}(?:\\.[a-z0-9_-]{1,64})*$"},
+    "safeDrawCount": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "streamBudget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["relativePath", "maxRawDraws"],
+      "properties": {
+        "relativePath": {"$ref": "#/$defs/rngPath"},
+        "maxRawDraws": {"$ref": "#/$defs/safeDrawCount"}
+      }
+    },
+    "rngFrontier": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schemaVersion", "streams"],
+      "properties": {
+        "schemaVersion": {"const": "telysta-rng-frontier-draft.v1"},
+        "streams": {
+          "type": "array", "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["path", "distributionVersion", "maxRawDraws", "consumedRawDraws", "nextCounter"],
+            "properties": {
+              "path": {"$ref": "#/$defs/rngPath"},
+              "distributionVersion": {"type": "string", "minLength": 1},
+              "maxRawDraws": {"$ref": "#/$defs/safeDrawCount"},
+              "consumedRawDraws": {"$ref": "#/$defs/safeDrawCount"},
+              "nextCounter": {"$ref": "#/$defs/safeDrawCount"}
+            }
+          }
+        }
+      }
+    },
     "rngLock": {
       "oneOf": [
         {
@@ -97,20 +134,17 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "schemaVersion", "rootSeed", "pathRoot", "distributionVersion"],
+          "required": ["kind", "schemaVersion", "rootSeed", "pathRoot", "distributionVersion", "streamBudgets"],
           "properties": {
             "kind": {"const": "rng_tree"},
             "schemaVersion": {"type": "string", "pattern": "^telysta-rng-tree\\.v[0-9]+$"},
-            "rootSeed": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 18446744073709551615
-            },
+            "rootSeed": {"$ref": "#/$defs/u64Decimal"},
             "pathRoot": {
               "type": "string",
               "pattern": "^[a-z0-9_-]{1,64}(?:\\.[a-z0-9_-]{1,64})*$"
             },
-            "distributionVersion": {"type": "string", "minLength": 1}
+            "distributionVersion": {"type": "string", "minLength": 1},
+            "streamBudgets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/streamBudget"}}
           }
         }
       ]
@@ -184,6 +218,7 @@
         "expectedHistorySha256",
         "commandSchema",
         "commandPayloadSha256",
+        "parameterSha256",
         "engineVersion",
         "registryLocks",
         "dataLocks",
@@ -205,6 +240,7 @@
         },
         "commandSchema": {"type": "string", "minLength": 1},
         "commandPayloadSha256": {"$ref": "#/$defs/sha256"},
+        "parameterSha256": {"$ref": "#/$defs/sha256"},
         "engineVersion": {"type": "string", "minLength": 1},
         "registryLocks": {"type": "array", "items": {"$ref": "#/$defs/contentLock"}},
         "dataLocks": {"type": "array", "items": {"$ref": "#/$defs/contentLock"}},
@@ -234,6 +270,7 @@
         "operationId",
         "operationSpecSha256",
         "role",
+        "runKey",
         "parameterSha256",
         "rngLock",
         "inputSemanticSha256",
@@ -246,6 +283,7 @@
         "operationId": {"$ref": "#/$defs/operationId"},
         "operationSpecSha256": {"$ref": "#/$defs/sha256"},
         "role": {"enum": ["candidate", "replicate", "counterfactual", "migration", "single"]},
+        "runKey": {"type": "string", "pattern": "^[a-z0-9_-]{1,64}$"},
         "parameterSha256": {"$ref": "#/$defs/sha256"},
         "rngLock": {"$ref": "#/$defs/rngLock"},
         "inputSemanticSha256": {"$ref": "#/$defs/sha256"},
@@ -331,6 +369,7 @@
         "baseHistorySha256",
         "dependencyBundleSha256",
         "rngFrontierSha256",
+        "rngFrontier",
         "stagingPrefixSha256",
         "checkpointSha256"
       ],
@@ -344,6 +383,7 @@
         },
         "dependencyBundleSha256": {"$ref": "#/$defs/sha256"},
         "rngFrontierSha256": {"$ref": "#/$defs/sha256"},
+        "rngFrontier": {"$ref": "#/$defs/rngFrontier"},
         "stagingPrefixSha256": {"$ref": "#/$defs/sha256"},
         "checkpointSha256": {"$ref": "#/$defs/sha256"}
       }

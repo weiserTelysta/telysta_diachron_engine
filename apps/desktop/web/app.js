@@ -9,6 +9,7 @@ const blueprintReport = document.querySelector("#blueprint-report");
 const status = document.querySelector("#status");
 const sessionPanel = document.querySelector("#session");
 let currentProjectId = null;
+let sessionBusy = false;
 
 const exampleBlueprint = {
   schemaVersion: "telysta-language-blueprint.v2",
@@ -100,7 +101,18 @@ function renderSession(session) {
   write("event-count", session.summary.eventCount);
 }
 
-async function requireInvoke() {
+function setSessionBusy(busy) {
+  sessionBusy = busy;
+  const hasSession = currentProjectId !== null;
+  openButton.disabled = busy || hasSession;
+  rootInput.disabled = busy || hasSession;
+  refreshButton.disabled = busy || !hasSession;
+  closeButton.disabled = busy || !hasSession;
+}
+
+setSessionBusy(false);
+
+function requireInvoke() {
   if (!invoke) {
     throw new Error("This workspace must be opened by the Telysta desktop runtime.");
   }
@@ -108,67 +120,89 @@ async function requireInvoke() {
 }
 
 openButton.addEventListener("click", async () => {
+  if (sessionBusy || currentProjectId !== null) return;
   const projectRoot = rootInput.value.trim();
   if (!projectRoot) {
     showStatus("Enter the directory that contains project.json.", "error");
     return;
   }
-  openButton.disabled = true;
+  setSessionBusy(true);
   showStatus("Opening and validating project…");
   try {
-    const response = await (await requireInvoke())("open_project", { projectRoot });
+    const response = await requireInvoke()("open_project", { projectRoot });
     renderSession(response.data);
     showStatus("Project opened from its authoritative history.", "success");
   } catch (error) {
     showError(error);
   } finally {
-    openButton.disabled = false;
+    setSessionBusy(false);
   }
 });
 
 refreshButton.addEventListener("click", async () => {
-  if (!currentProjectId) return;
+  if (sessionBusy || currentProjectId === null) return;
+  setSessionBusy(true);
   try {
-    const response = await (await requireInvoke())("refresh_project", {
+    const response = await requireInvoke()("refresh_project", {
       projectId: currentProjectId,
     });
     renderSession(response.data);
     showStatus("Project state refreshed and revalidated.", "success");
   } catch (error) {
     showError(error);
+  } finally {
+    setSessionBusy(false);
   }
 });
 
 closeButton.addEventListener("click", async () => {
-  if (!currentProjectId) return;
+  if (sessionBusy || currentProjectId === null) return;
+  setSessionBusy(true);
   try {
-    await (await requireInvoke())("close_project", { projectId: currentProjectId });
+    await requireInvoke()("close_project", { projectId: currentProjectId });
     currentProjectId = null;
     sessionPanel.hidden = true;
     showStatus("Project session closed.", "success");
   } catch (error) {
     showError(error);
+  } finally {
+    setSessionBusy(false);
   }
 });
+
+function showBlueprintChanged() {
+  blueprintReport.hidden = true;
+  showStatus("Blueprint edited. Validate the current text to see its diagnostics.", "info");
+}
+
+blueprintInput.addEventListener("input", showBlueprintChanged);
 
 validateBlueprintButton.addEventListener("click", async () => {
   validateBlueprintButton.disabled = true;
   blueprintReport.hidden = true;
+  const blueprintJson = blueprintInput.value;
   try {
-    const blueprint = JSON.parse(blueprintInput.value);
-    const response = await (await requireInvoke())("validate_blueprint", { blueprint });
+    // Syntax feedback only. Send the original text so Rust validates the
+    // author's numeric tokens and duplicate fields without a JS rewrite.
+    JSON.parse(blueprintJson);
+    const response = await requireInvoke()("validate_blueprint", { blueprintJson });
+    if (blueprintInput.value !== blueprintJson) {
+      showBlueprintChanged();
+      return;
+    }
     blueprintReport.textContent = JSON.stringify(response.data, null, 2);
     blueprintReport.hidden = false;
     if (response.data.readyForCompilation) {
       showStatus("Blueprint is valid and supported by the current compiler.", "success");
     } else {
       showStatus(
-        "Blueprint structure is valid; review diagnostics before generation.",
+        "Blueprint cannot be compiled. Review the diagnostics for invalid or unsupported intents.",
         "info"
       );
     }
   } catch (error) {
-    showError(error);
+    if (blueprintInput.value !== blueprintJson) showBlueprintChanged();
+    else showError(error);
   } finally {
     validateBlueprintButton.disabled = false;
   }

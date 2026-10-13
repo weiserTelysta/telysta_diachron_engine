@@ -29,6 +29,7 @@
       "expectedHistorySha256": null,
       "commandSchema": "telysta-command-create-project.v1",
       "commandPayloadSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "parameterSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "engineVersion": "0.1.0",
       "registryLocks": [
         {
@@ -43,9 +44,10 @@
       "rngLock": {
         "kind": "rng_tree",
         "schemaVersion": "telysta-rng-tree.v1",
-        "rootSeed": 18446744073709551615,
+        "rootSeed": "18446744073709551615",
         "pathRoot": "genesis.phonology_core",
-        "distributionVersion": "telysta-rng-uniform-u64.v1"
+        "distributionVersion": "telysta-rng-uniform-u64.v1",
+        "streamBudgets": [{"relativePath": "draws", "maxRawDraws": 1024}]
       },
       "actorProvenance": {
         "kind": "user",
@@ -64,6 +66,7 @@
       "expectedHistorySha256": "1111111111111111111111111111111111111111111111111111111111111111",
       "commandSchema": "telysta-command-authoring.v1",
       "commandPayloadSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "parameterSha256": "8888888888888888888888888888888888888888888888888888888888888888",
       "engineVersion": "0.1.0",
       "registryLocks": [],
       "dataLocks": [],
@@ -88,13 +91,15 @@
       "operationId": "telysta:operation:genesis-0001",
       "operationSpecSha256": "7777777777777777777777777777777777777777777777777777777777777777",
       "role": "candidate",
+      "runKey": "0001",
       "parameterSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "rngLock": {
         "kind": "rng_tree",
         "schemaVersion": "telysta-rng-tree.v1",
-        "rootSeed": 18446744073709551615,
-        "pathRoot": "genesis.phonology_core",
-        "distributionVersion": "telysta-rng-uniform-u64.v1"
+        "rootSeed": "18446744073709551615",
+        "pathRoot": "genesis.phonology_core.candidate.0001",
+        "distributionVersion": "telysta-rng-uniform-u64.v1",
+        "streamBudgets": [{"relativePath": "draws", "maxRawDraws": 1024}]
       },
       "inputSemanticSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "outputSchema": "telysta-genesis-staging-result.v1",
@@ -143,7 +148,11 @@
       "runSpecSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
       "baseHistorySha256": null,
       "dependencyBundleSha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-      "rngFrontierSha256": "123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+      "rngFrontierSha256": "87801e85b50ef35d782b19910297ec3dd714174893492a86afac8752b5c9cc08",
+      "rngFrontier": {
+        "schemaVersion": "telysta-rng-frontier-draft.v1",
+        "streams": [{"path": "genesis.phonology_core.candidate.0001.draws", "distributionVersion": "telysta-rng-uniform-u64.v1", "maxRawDraws": 1024, "consumedRawDraws": 10, "nextCounter": 10}]
+      },
       "stagingPrefixSha256": "23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
       "checkpointSha256": "3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012"
     }

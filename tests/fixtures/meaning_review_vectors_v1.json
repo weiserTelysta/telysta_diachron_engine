@@ -1,0 +1,454 @@
+{
+  "schemaVersion": "telysta-meaning-review-vectors.v1",
+  "status": "mutable_planning_only",
+  "runnerBinding": "future_not_bound",
+  "targetWorkPackage": "R0B-04",
+  "authorityDraft": "docs/adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md",
+  "assumptionClass": "hard_constraint_within_declared_supported_fixture_profile",
+  "notation": {
+    "scope": "Prefix lists: [not, body], [forall|exists, binder, domain, body], [predicate, term...]; terms are [var, binder] or [const, fixed individual]. All symbols are fixture-local, not persisted entity kinds.",
+    "intent": "Finite review records distinguish speech act, issue/content, holder, proposition and commitment status. No production Meaning IR is implemented.",
+    "equivalence": "Alpha equivalence preserves binder scope, domains, predicates and all free constants; intent records also preserve act and commitments, ignoring only object-key and commitment-list order. This is a conservative fixture relation, not a complete semantic equivalence algorithm.",
+    "witness": "Finite truth assignments prove a specific non-equivalence; identical truth in one scene never proves general equivalence. Commitment and speech-act differences require their separate signature even when scene truth agrees."
+  },
+  "futureExecutionContract": {
+    "baseline": "Establish realization/analysis of the required meaning on an Accepted supported profile before applying each foil independently.",
+    "success": "Analysis forest contains an equivalent required reading and no forbidden readings; reject-all, always-gap and universal analyzer do not pass.",
+    "unsupported": "Planned or rejected capabilities return a separately expected typed gap, never full-expression success.",
+    "observationBoundary": "Current checks validate planning consistency and finite witnesses only; no production realization/analyzer evidence, sealed audit or linguistic naturalness claim."
+  },
+  "cases": [
+    {
+      "fixtureId": "M-SCOPE-NEG",
+      "kind": "scope",
+      "required": [
+        "not",
+        [
+          "forall",
+          "x",
+          "persons",
+          [
+            "P",
+            [
+              "var",
+              "x"
+            ]
+          ]
+        ]
+      ],
+      "equivalent": [
+        "not",
+        [
+          "forall",
+          "u",
+          "persons",
+          [
+            "P",
+            [
+              "var",
+              "u"
+            ]
+          ]
+        ]
+      ],
+      "forbidden": [
+        [
+          "forall",
+          "x",
+          "persons",
+          [
+            "not",
+            [
+              "P",
+              [
+                "var",
+                "x"
+              ]
+            ]
+          ]
+        ]
+      ],
+      "witness": {
+        "domains": {
+          "persons": [
+            "a",
+            "b"
+          ]
+        },
+        "relations": {
+          "P": [
+            [
+              "a"
+            ]
+          ]
+        },
+        "requiredTruth": true,
+        "forbiddenTruth": [
+          false
+        ]
+      },
+      "equivalencePolicy": "capture_avoiding_alpha_only.v1"
+    },
+    {
+      "fixtureId": "M-SCOPE-QUANT",
+      "kind": "scope",
+      "required": [
+        "forall",
+        "x",
+        "donors",
+        [
+          "exists",
+          "y",
+          "recipients",
+          [
+            "Transfer",
+            [
+              "var",
+              "x"
+            ],
+            [
+              "const",
+              "theme0"
+            ],
+            [
+              "var",
+              "y"
+            ]
+          ]
+        ]
+      ],
+      "equivalent": [
+        "forall",
+        "u",
+        "donors",
+        [
+          "exists",
+          "v",
+          "recipients",
+          [
+            "Transfer",
+            [
+              "var",
+              "u"
+            ],
+            [
+              "const",
+              "theme0"
+            ],
+            [
+              "var",
+              "v"
+            ]
+          ]
+        ]
+      ],
+      "forbidden": [
+        [
+          "exists",
+          "y",
+          "recipients",
+          [
+            "forall",
+            "x",
+            "donors",
+            [
+              "Transfer",
+              [
+                "var",
+                "x"
+              ],
+              [
+                "const",
+                "theme0"
+              ],
+              [
+                "var",
+                "y"
+              ]
+            ]
+          ]
+        ]
+      ],
+      "witness": {
+        "domains": {
+          "donors": [
+            "d1",
+            "d2"
+          ],
+          "recipients": [
+            "r1",
+            "r2"
+          ]
+        },
+        "relations": {
+          "Transfer": [
+            [
+              "d1",
+              "theme0",
+              "r1"
+            ],
+            [
+              "d2",
+              "theme0",
+              "r2"
+            ]
+          ]
+        },
+        "requiredTruth": true,
+        "forbiddenTruth": [
+          false
+        ]
+      },
+      "equivalencePolicy": "capture_avoiding_alpha_only.v1"
+    },
+    {
+      "fixtureId": "M-COMMITMENT",
+      "kind": "commitment",
+      "required": {
+        "speechAct": "assert",
+        "speaker": "s",
+        "atIssue": [
+          "q"
+        ],
+        "commitments": [
+          {
+            "holder": "s",
+            "proposition": "p",
+            "status": "presupposed"
+          },
+          {
+            "holder": "s",
+            "proposition": "q",
+            "status": "asserted"
+          }
+        ]
+      },
+      "equivalent": {
+        "speechAct": "assert",
+        "speaker": "s",
+        "atIssue": [
+          "q"
+        ],
+        "commitments": [
+          {
+            "holder": "s",
+            "proposition": "q",
+            "status": "asserted"
+          },
+          {
+            "holder": "s",
+            "proposition": "p",
+            "status": "presupposed"
+          }
+        ]
+      },
+      "forbidden": [
+        {
+          "speechAct": "assert",
+          "speaker": "s",
+          "atIssue": [
+            "p",
+            "q"
+          ],
+          "commitments": [
+            {
+              "holder": "s",
+              "proposition": "p",
+              "status": "asserted"
+            },
+            {
+              "holder": "s",
+              "proposition": "q",
+              "status": "asserted"
+            }
+          ]
+        }
+      ],
+      "context": {
+        "sceneTruth": {
+          "p": true,
+          "q": true
+        },
+        "licensedPresuppositions": [
+          "p"
+        ]
+      },
+      "equivalencePolicy": "exact_act_and_commitments_unordered.v1"
+    },
+    {
+      "fixtureId": "M-QUESTION-REPORT",
+      "kind": "question_report",
+      "required": {
+        "speechAct": "polarQuestion",
+        "speaker": "s",
+        "issue": [
+          [
+            "Report",
+            [
+              "const",
+              "r"
+            ],
+            [
+              "const",
+              "p"
+            ]
+          ],
+          [
+            "not",
+            [
+              "Report",
+              [
+                "const",
+                "r"
+              ],
+              [
+                "const",
+                "p"
+              ]
+            ]
+          ]
+        ],
+        "commitments": []
+      },
+      "equivalent": {
+        "speechAct": "polarQuestion",
+        "speaker": "s",
+        "issue": [
+          [
+            "Report",
+            [
+              "const",
+              "r"
+            ],
+            [
+              "const",
+              "p"
+            ]
+          ],
+          [
+            "not",
+            [
+              "Report",
+              [
+                "const",
+                "r"
+              ],
+              [
+                "const",
+                "p"
+              ]
+            ]
+          ]
+        ],
+        "commitments": []
+      },
+      "forbidden": [
+        {
+          "speechAct": "assert",
+          "speaker": "s",
+          "content": [
+            "Report",
+            [
+              "const",
+              "r"
+            ],
+            [
+              "const",
+              "p"
+            ]
+          ],
+          "commitments": [
+            {
+              "holder": "s",
+              "proposition": [
+                "Report",
+                [
+                  "const",
+                  "r"
+                ],
+                [
+                  "const",
+                  "p"
+                ]
+              ],
+              "status": "asserted"
+            }
+          ]
+        },
+        {
+          "speechAct": "polarQuestion",
+          "speaker": "s",
+          "issue": [
+            [
+              "P0"
+            ],
+            [
+              "not",
+              [
+                "P0"
+              ]
+            ]
+          ],
+          "commitments": []
+        },
+        {
+          "speechAct": "polarQuestion",
+          "speaker": "s",
+          "issue": [
+            [
+              "Report",
+              [
+                "const",
+                "t"
+              ],
+              [
+                "const",
+                "p"
+              ]
+            ],
+            [
+              "not",
+              [
+                "Report",
+                [
+                  "const",
+                  "t"
+                ],
+                [
+                  "const",
+                  "p"
+                ]
+              ]
+            ]
+          ],
+          "commitments": []
+        }
+      ],
+      "witness": {
+        "domains": {},
+        "relations": {
+          "P0": [],
+          "Report": [
+            [
+              "r",
+              "p"
+            ]
+          ]
+        },
+        "requiredPositiveAlternativeTruth": true,
+        "forbiddenQuestionPositiveAlternativeTruth": [
+          false,
+          false
+        ],
+        "propositionDesignators": {
+          "p": [
+            "P0"
+          ]
+        }
+      },
+      "equivalencePolicy": "exact_act_and_commitments_unordered.v1",
+      "caseMode": "batch_independent_single_mutations",
+      "boundary": "Report(r,p) is an explicit reporting proposition, not a universal meaning/commitment rule for evidential morphology."
+    }
+  ]
+}

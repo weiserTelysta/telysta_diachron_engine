@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator
+import pytest
 from scripts.generate_gate_evidence import fingerprint_workspace, render_status
 
 
@@ -58,11 +59,168 @@ def _schema_validator() -> Draft202012Validator:
     return Draft202012Validator(schema)
 
 
+def _assert_run_and_checkpoint_locks(records: dict[str, Any]) -> None:
+    operations = {item["operationId"]: item for item in records["operationSpecs"]}
+    runs = {item["runId"]: item for item in records["runSpecs"]}
+    jobs = {item["jobId"]: item for item in records["jobRecords"]}
+    attempts = {item["attemptId"]: item for item in records["attemptRecords"]}
+    for index, collection in ((operations, "operationSpecs"), (runs, "runSpecs"),
+                              (jobs, "jobRecords"), (attempts, "attemptRecords")):
+        assert len(index) == len(records[collection])
+    for operation in operations.values():
+        lock = operation["rngLock"]
+        if lock["kind"] == "rng_tree":
+            paths = [item["relativePath"] for item in lock["streamBudgets"]]
+            assert len(paths) == len(set(paths))
+    keys = set()
+    for run in runs.values():
+        operation = operations[run["operationId"]]
+        assert run["operationSpecSha256"] == operation["operationSpecSha256"]
+        assert run["parameterSha256"] == operation["parameterSha256"]
+        key = (run["operationId"], run["role"], run["runKey"])
+        assert key not in keys
+        keys.add(key)
+        parent_lock, run_lock = operation["rngLock"], run["rngLock"]
+        assert parent_lock["kind"] == run_lock["kind"]
+        if parent_lock["kind"] == "no_rng":
+            continue
+        assert {k: v for k, v in parent_lock.items() if k != "pathRoot"} == {
+            k: v for k, v in run_lock.items() if k != "pathRoot"
+        }
+        assert run_lock["pathRoot"] == f"{parent_lock['pathRoot']}.{run['role']}.{run['runKey']}"
+        paths = [item["relativePath"] for item in run_lock["streamBudgets"]]
+        assert len(paths) == len(set(paths))
+    for checkpoint in records["checkpointRecords"]:
+        attempt = attempts[checkpoint["attemptId"]]
+        run = runs[jobs[attempt["jobId"]]["runId"]]
+        operation = operations[run["operationId"]]
+        assert checkpoint["operationSpecSha256"] == run["operationSpecSha256"]
+        assert checkpoint["runSpecSha256"] == run["runSpecSha256"]
+        assert checkpoint["baseHistorySha256"] == operation["expectedHistorySha256"]
+        frontier = checkpoint["rngFrontier"]
+        raw = json.dumps(frontier, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        assert checkpoint["rngFrontierSha256"] == hashlib.sha256(raw).hexdigest()
+        lock = run["rngLock"]
+        budgets = {} if lock["kind"] == "no_rng" else {
+            f"{lock['pathRoot']}.{item['relativePath']}": item["maxRawDraws"] for item in lock["streamBudgets"]
+        }
+        streams = frontier["streams"]
+        assert len(streams) == len(budgets) and {item["path"] for item in streams} == set(budgets)
+        for stream in streams:
+            assert stream["distributionVersion"] == lock["distributionVersion"]
+            assert stream["maxRawDraws"] == budgets[stream["path"]]
+            assert 0 <= stream["nextCounter"] == stream["consumedRawDraws"] <= stream["maxRawDraws"]
+
+
+def _refresh_frontier_hash(checkpoint: dict[str, Any]) -> None:
+    raw = json.dumps(checkpoint["rngFrontier"], sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    checkpoint["rngFrontierSha256"] = hashlib.sha256(raw).hexdigest()
+
+
+def test_planning_seed_wire_is_canonical_decimal_and_matches_integer_range_oracle() -> None:
+    definitions = _load(SCHEMA_PATH)["$defs"]
+    validator = Draft202012Validator({"$ref": "#/$defs/u64Decimal", "$defs": definitions})
+    maximum = 2**64 - 1
+    values = set(range(1024)) | set(range(maximum - 1024, maximum + 1025))
+    values |= {10**power + offset for power in range(1, 21) for offset in (-1, 0, 1)}
+    values |= {2**53 - 1, 2**53, 2**53 + 1}
+    bound = str(maximum)
+    for index in range(len(bound)):
+        for digit in "0123456789":
+            for fill in "09":
+                values.add(int(bound[:index] + digit + fill * (len(bound) - index - 1)))
+    for value in values:
+        assert validator.is_valid(str(value)) == (0 <= value <= maximum), value
+    for invalid in ("", "00", "01", "-0", "-1", "+1", "1.0", "1e3", " 1", "1 ", "0\n", "١", "１", 0, maximum, None):
+        assert not validator.is_valid(invalid), invalid
+
+
+def test_run_variants_inherit_inputs_and_only_derive_their_stream_root() -> None:
+    records = _load(SCHEMA_RECORDS_PATH)
+    second = copy.deepcopy(records["runSpecs"][0])
+    second.update(runId="telysta:run:genesis-candidate-0002", runKey="0002", runSpecSha256="d" * 64)
+    second["rngLock"]["pathRoot"] = "genesis.phonology_core.candidate.0002"
+    records["runSpecs"].append(second)
+    _schema_validator().validate(records)
+    _assert_run_and_checkpoint_locks(records)
+    for mutation in ("seed", "parameters", "root", "distribution", "budget", "duplicate_key"):
+        mutant = copy.deepcopy(records)
+        run = mutant["runSpecs"][1]
+        if mutation == "seed":
+            run["rngLock"]["rootSeed"] = "889"
+        elif mutation == "parameters":
+            run["parameterSha256"] = "0" * 64
+        elif mutation == "root":
+            run["rngLock"]["pathRoot"] = "unrelated.stream"
+        elif mutation == "distribution":
+            run["rngLock"]["distributionVersion"] = "unknown.v9"
+        elif mutation == "budget":
+            run["rngLock"]["streamBudgets"][0]["maxRawDraws"] += 1
+        else:
+            run["runKey"] = "0001"
+            run["rngLock"]["pathRoot"] = "genesis.phonology_core.candidate.0001"
+        with pytest.raises(AssertionError):
+            _assert_run_and_checkpoint_locks(mutant)
+
+
+def test_operation_budget_is_unambiguous_before_any_run_is_registered() -> None:
+    records = _load(SCHEMA_RECORDS_PATH)
+    operation = copy.deepcopy(records["operationSpecs"][0])
+    operation.update(operationId="telysta:operation:unstarted", idempotencyKey="unstarted-request")
+    records["operationSpecs"].append(operation)
+    _schema_validator().validate(records)
+    _assert_run_and_checkpoint_locks(records)
+    operation["rngLock"]["streamBudgets"].append({"relativePath": "draws", "maxRawDraws": 2048})
+    _schema_validator().validate(records)
+    with pytest.raises(AssertionError):
+        _assert_run_and_checkpoint_locks(records)
+
+
+def test_rng_frontier_rejects_missing_or_rehashed_inconsistent_recovery_locks() -> None:
+    baseline = _load(SCHEMA_RECORDS_PATH)
+    validator = _schema_validator()
+    missing = copy.deepcopy(baseline)
+    del missing["runSpecs"][0]["rngLock"]["streamBudgets"]
+    assert list(validator.iter_errors(missing))
+    oversized = copy.deepcopy(baseline)
+    oversized["runSpecs"][0]["rngLock"]["streamBudgets"][0]["maxRawDraws"] = 2**53
+    assert list(validator.iter_errors(oversized))
+    for mutation in ("budget", "path", "counter", "over_budget", "duplicate", "hash"):
+        mutant = copy.deepcopy(baseline)
+        checkpoint = mutant["checkpointRecords"][0]
+        stream = checkpoint["rngFrontier"]["streams"][0]
+        if mutation == "budget":
+            stream["maxRawDraws"] += 1
+        elif mutation == "path":
+            stream["path"] = "undeclared.stream"
+        elif mutation == "counter":
+            stream["nextCounter"] += 1
+        elif mutation == "over_budget":
+            stream["nextCounter"] = stream["consumedRawDraws"] = 1025
+        elif mutation == "duplicate":
+            checkpoint["rngFrontier"]["streams"].append(dict(stream))
+        _refresh_frontier_hash(checkpoint)
+        if mutation == "hash":
+            checkpoint["rngFrontierSha256"] = "0" * 64
+        validator.validate(mutant)
+        with pytest.raises(AssertionError):
+            _assert_run_and_checkpoint_locks(mutant)
+    exhausted = copy.deepcopy(baseline)
+    checkpoint = exhausted["checkpointRecords"][0]
+    stream = checkpoint["rngFrontier"]["streams"][0]
+    stream["nextCounter"] = stream["consumedRawDraws"] = stream["maxRawDraws"]
+    _refresh_frontier_hash(checkpoint)
+    validator.validate(exhausted)
+    _assert_run_and_checkpoint_locks(exhausted)
+    assert not stream["consumedRawDraws"] < stream["maxRawDraws"]
+
+
 def test_schema_draft_names_every_identity_and_recovery_record() -> None:
     schema = _load(SCHEMA_PATH)
     validator = _schema_validator()
     records = _load(SCHEMA_RECORDS_PATH)
     validator.validate(records)
+    _assert_run_and_checkpoint_locks(records)
 
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
     assert "Planning-only" in schema["description"]
@@ -147,7 +305,7 @@ def test_schema_draft_rejects_identity_rng_migration_and_unknown_field_drift() -
     invalid_records.append(oversized_id)
 
     seed_overflow = copy.deepcopy(records)
-    seed_overflow["runSpecs"][0]["rngLock"]["rootSeed"] = 2**64
+    seed_overflow["runSpecs"][0]["rngLock"]["rootSeed"] = str(2**64)
     invalid_records.append(seed_overflow)
 
     invalid_rng_path = copy.deepcopy(records)
@@ -188,6 +346,7 @@ def test_sequence_fixtures_keep_semantic_and_execution_identity_separate() -> No
         assert operation["idempotencyKey"].strip()
 
         run_ids: set[str] = set()
+        run_by_id = {run["runId"]: run for run in case["runs"]}
         for run in case["runs"]:
             _assert_id(run["runId"], "run")
             assert run["operationId"] == operation["operationId"]
@@ -209,6 +368,7 @@ def test_sequence_fixtures_keep_semantic_and_execution_identity_separate() -> No
                 attempt_ids.add(attempt["attemptId"])
                 if attempt["state"] == "completed":
                     assert SHA256.fullmatch(attempt["resultSha256"])
+                    assert attempt["resultSha256"] == run_by_id[job["runId"]]["resultSha256"]
 
         ledger = case["ledger"]
         assert [entry["sequence"] for entry in ledger] == list(range(1, len(ledger) + 1))
@@ -262,6 +422,65 @@ def test_negative_cases_cover_every_adr_011_stop_condition() -> None:
     assert negative["determinism_failure"]["expectedDecision"] == "reject_all_results"
     assert negative["commit_crash"]["expectedDecision"] == "recover_pre_or_post_commit_only"
     assert all(case["expectedCode"].strip() for case in negative.values())
+
+
+def _assert_publication_review(review: dict[str, Any]) -> None:
+    assert review["runnerStatus"] == "future_not_bound"
+    graphs = review["graphs"]
+    recovery = review["recoveryRecord"]
+    assert recovery["preManifestRef"] == graphs["pre"]["manifestRef"]
+    assert recovery["postManifestRef"] == graphs["post"]["manifestRef"]
+    assert set(recovery["protectGraphs"]) == {"pre", "post"}
+    assert graphs["pre"]["roots"] != graphs["post"]["roots"]
+    for graph in graphs.values():
+        assert len(graph["roots"]) == len(set(graph["roots"])) == 3
+        assert any("history-" in root for root in graph["roots"])
+        assert any("ledger-" in root for root in graph["roots"])
+        assert "fixture:object:dependencies" in graph["roots"]
+    faults = {item["phase"]: item for item in review["faults"]}
+    expected = {
+        "object_sync_failed": ("not_published", False),
+        "candidate_sync_failed": ("not_published", False),
+        "recovery_record_sync_failed": ("not_published", True),
+        "before_replace": ("not_published", True),
+        "replace_result_uncertain": ("commit_outcome_unknown", True),
+        "directory_sync_failed_after_replace": ("commit_outcome_unknown", True),
+        "post_publish_validation_failed": ("commit_outcome_unknown", True),
+        "job_update_failed": ("committed_job_reconciliation_pending", False),
+    }
+    assert len(faults) == len(review["faults"]) == len(expected)
+    assert set(faults) == set(expected)
+    for fault in faults.values():
+        assert (fault["return"], fault["recoveryPending"]) == expected[fault["phase"]]
+        if fault["visible"] in graphs:
+            assert fault["allowedAuthority"] == [fault["visible"]]
+        else:
+            assert fault["visible"] == "unknown"
+            assert set(fault["allowedAuthority"]) == {"pre", "post"}
+        if fault["return"] == "not_published":
+            assert fault["visible"] == "pre"
+        if fault["return"] == "commit_outcome_unknown":
+            assert fault["recoveryPending"] is True
+    assert faults["directory_sync_failed_after_replace"]["return"] == "commit_outcome_unknown"
+    assert faults["post_publish_validation_failed"]["return"] == "commit_outcome_unknown"
+    assert faults["job_update_failed"]["return"] == "committed_job_reconciliation_pending"
+
+
+def test_publication_planning_faults_preserve_both_graphs_until_outcome_is_resolved() -> None:
+    _assert_publication_review(_load(FIXTURE_PATH)["publicationReview"])
+
+
+def test_uncertain_replace_cannot_be_declared_committed_or_discard_recovery() -> None:
+    review = _load(FIXTURE_PATH)["publicationReview"]
+    for mutation in ("committed", "discard_recovery"):
+        mutant = copy.deepcopy(review)
+        fault = next(item for item in mutant["faults"] if item["phase"] == "replace_result_uncertain")
+        if mutation == "committed":
+            fault["return"] = "committed"
+        else:
+            fault["recoveryPending"] = False
+        with pytest.raises(AssertionError):
+            _assert_publication_review(mutant)
 
 
 def test_g0a_evidence_cannot_misreport_an_unreviewed_gate_as_passed() -> None:

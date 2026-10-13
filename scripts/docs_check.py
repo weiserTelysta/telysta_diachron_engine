@@ -48,7 +48,6 @@ LEGACY_METADATA_EXEMPTIONS = frozenset(
         "docs/PLATFORM_CONTRACT_PACK_V1.md",
         "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
         "docs/README.md",
-        "docs/RESEARCH_ROUTE_REVIEW_2026-07-14.md",
         "docs/RULE_QUALITY_PLAN.md",
         "docs/RUST_DESKTOP_SPIKE.md",
         "docs/SKILL_ALLOWLIST.md",

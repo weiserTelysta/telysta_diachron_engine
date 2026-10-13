@@ -541,6 +541,19 @@ impl ProjectHistory {
         StateTransaction::from_history(self.clone())
     }
 
+    /// Validate an append-only successor, including an identical retry.
+    /// Replay validity alone does not authorize rewriting a committed prefix.
+    pub fn validate_extension_of(&self, base: &Self) -> Result<(), ProjectError> {
+        if self.context != base.context || !self.events.starts_with(&base.events) {
+            return Err(ProjectError::validation(
+                "committed history must preserve its run context and extend the current event prefix",
+            ));
+        }
+        base.replay()?;
+        self.replay()?;
+        Ok(())
+    }
+
     fn from_parts(
         schema_version: String,
         context: RunContext,
@@ -1058,5 +1071,45 @@ mod tests {
             context.rng_tree().stream(&path).next_u64(),
             context.rng_tree().stream(&path).next_u64()
         );
+    }
+
+    #[test]
+    fn history_extension_preserves_context_and_exact_committed_prefix() {
+        let mut transaction = StateTransaction::begin(
+            context(ProjectDataLock::new(Vec::new()).unwrap()),
+            id(EntityKind::Event, "genesis"),
+            fixture_minimal_state(),
+        )
+        .unwrap();
+        let base = transaction.history();
+        transaction
+            .revise_state(
+                id(EntityKind::Event, "first"),
+                fixture_minimal_state(),
+                "first revision",
+            )
+            .unwrap();
+        let committed = transaction.history();
+        base.validate_extension_of(&base).unwrap();
+        committed.validate_extension_of(&base).unwrap();
+        assert!(base.validate_extension_of(&committed).is_err());
+
+        let mut fork = base.replay().unwrap();
+        fork.revise_state(
+            id(EntityKind::Event, "fork"),
+            fixture_minimal_state(),
+            "another valid branch",
+        )
+        .unwrap();
+        assert!(fork.history().validate_extension_of(&committed).is_err());
+
+        let mut changed_context = committed.clone();
+        changed_context.context.root_seed += 1;
+        changed_context.replay().unwrap();
+        assert!(changed_context.validate_extension_of(&committed).is_err());
+
+        let mut invalid_tail = committed.clone();
+        invalid_tail.events.push(committed.events[1].clone());
+        assert!(invalid_tail.validate_extension_of(&committed).is_err());
     }
 }

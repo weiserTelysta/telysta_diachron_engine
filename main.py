@@ -1,4 +1,4 @@
-"""TelystaLexisEngine — CLI entry point.
+"""Telysta legacy research lab — Python CLI entry point.
 
 All business logic lives in ``app/engine/``.  This file is a thin
 wrapper: create session → run → print summary → demo.
@@ -12,6 +12,10 @@ logger = get_logger(__name__)
 
 
 def main() -> None:
+    logger.warning(
+        "Legacy Research Lab：Python 输出仅供研究与迁移对照，"
+        "不是正式 Rust 项目，也不保证完整语言或历史可回放。"
+    )
     session = EngineSession(seed=888, is_llm=True, era_steps=100)
     result = session.run()
 

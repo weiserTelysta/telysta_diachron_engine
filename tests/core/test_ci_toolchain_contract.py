@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import re
+import struct
 from pathlib import Path
 import tomllib
 from typing import Any
@@ -120,3 +122,28 @@ def test_job_level_environment_uses_only_server_available_contexts() -> None:
                 f"job-level env {job_name}.{variable} uses unavailable "
                 f"contexts: {sorted(contexts - JOB_ENV_CONTEXTS)}"
             )
+
+
+def test_desktop_icons_are_available_for_linux_and_windows() -> None:
+    desktop = ROOT / "apps" / "desktop" / "src-tauri"
+    config = json.loads((desktop / "tauri.conf.json").read_text(encoding="utf-8"))
+    icons = config["bundle"]["icon"]
+    assert {Path(name).suffix for name in icons} >= {".png", ".ico"}
+    for name in icons:
+        assert (desktop / name).is_file(), name
+    png = (desktop / "icons" / "icon.png").read_bytes()
+    assert png[:8] == b"\x89PNG\r\n\x1a\n"
+    assert png[12:16] == b"IHDR"
+    width, height, depth, color_type = struct.unpack(">IIBB", png[16:26])
+    assert width == height and width >= 32
+    assert (depth, color_type) == (8, 6), "Tauri requires an RGBA icon"
+
+
+def test_static_desktop_client_has_its_tauri_command_bridge() -> None:
+    desktop = ROOT / "apps" / "desktop"
+    config = json.loads(
+        (desktop / "src-tauri" / "tauri.conf.json").read_text(encoding="utf-8")
+    )
+    client = (desktop / "web" / "app.js").read_text(encoding="utf-8")
+    assert "window.__TAURI__?.core?.invoke" in client
+    assert config["app"].get("withGlobalTauri") is True

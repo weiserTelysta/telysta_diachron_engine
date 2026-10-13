@@ -760,8 +760,22 @@
       "contractGate": "G0B",
       "executionGate": "G2",
       "runnerBinding": {"status": "future", "adapter": "validate_candidate_readings.v1", "caseMode": "batch_diagnostic_coverage"},
-      "setup": {},
+      "setup": {
+        "notation": "Mutable fixture-local property/relation definitions, not a production Meaning IR or universal evaluation scale.",
+        "equivalencePolicy": "fixture_structural_identity.v1",
+        "readingDefinitions": {
+          "fixture:reading:quality-bad": {"kind": "propertyAssignment", "bearer": "fixture:participant:object", "property": "fixture:property:quality", "value": "fixture:value:bad"},
+          "fixture:reading:quality-bad-alias": {"kind": "propertyAssignment", "bearer": "fixture:participant:object", "property": "fixture:property:quality", "value": "fixture:value:bad"},
+          "fixture:reading:quality-good": {"kind": "propertyAssignment", "bearer": "fixture:participant:object", "property": "fixture:property:quality", "value": "fixture:value:good"},
+          "fixture:reading:spatial-below": {"kind": "relation", "predicate": "fixture:predicate:lower-than", "roles": {"figure": "fixture:participant:a", "ground": "fixture:participant:b"}},
+          "fixture:reading:spatial-above": {"kind": "relation", "predicate": "fixture:predicate:lower-than", "roles": {"figure": "fixture:participant:b", "ground": "fixture:participant:a"}}
+        }
+      },
       "request": {
+        "positiveControls": [
+          {"controlId": "identical-reading", "requiredReading": "fixture:reading:quality-bad", "candidateReading": "fixture:reading:quality-bad"},
+          {"controlId": "alias-same-definition", "requiredReading": "fixture:reading:quality-bad", "candidateReading": "fixture:reading:quality-bad-alias"}
+        ],
         "contrasts": [
           {
             "contrastId": "bad-good",
@@ -777,6 +791,7 @@
       },
       "oracle": {
         "decision": "reject",
+        "positiveControlDecisions": {"identical-reading": "accept", "alias-same-definition": "accept"},
         "diagnostics": [
           {"code": "forbidden_reading", "subjectRef": "bad-good"},
           {"code": "forbidden_reading", "subjectRef": "below-above"}
@@ -853,11 +868,17 @@
         "predicateFrames": [
           {"predicateRef": "fixture:predicate:perceive", "roles": ["experiencer", "stimulus"]},
           {"predicateRef": "fixture:predicate:give", "roles": ["donor", "theme", "recipient"]}
-        ]
+        ],
+        "participantRefs": ["fixture:participant:a", "fixture:participant:b", "fixture:participant:object"],
+        "notation": "Role-to-participant bindings below are mutable review notation, not a production Meaning IR or new EntityId kind."
       },
       "request": {
         "kind": "realize_then_analyze",
-        "predicateRefs": ["fixture:predicate:perceive", "fixture:predicate:give"]
+        "predicateRefs": ["fixture:predicate:perceive", "fixture:predicate:give"],
+        "propositions": [
+          {"eventRef": "fixture:event:perception", "predicateRef": "fixture:predicate:perceive", "roleBindings": {"experiencer": "fixture:participant:a", "stimulus": "fixture:participant:b"}},
+          {"eventRef": "fixture:event:transfer", "predicateRef": "fixture:predicate:give", "roleBindings": {"donor": "fixture:participant:a", "theme": "fixture:participant:object", "recipient": "fixture:participant:b"}}
+        ]
       },
       "oracle": {
         "decision": "accept",
@@ -866,9 +887,17 @@
           "preservedRoles": {
             "fixture:predicate:perceive": ["experiencer", "stimulus"],
             "fixture:predicate:give": ["donor", "theme", "recipient"]
-          }
+          },
+          "requiredRoleBindings": {
+            "fixture:event:perception": {"experiencer": "fixture:participant:a", "stimulus": "fixture:participant:b"},
+            "fixture:event:transfer": {"donor": "fixture:participant:a", "theme": "fixture:participant:object", "recipient": "fixture:participant:b"}
+          },
+          "forbiddenRoleBindings": [
+            {"eventRef": "fixture:event:perception", "roleBindings": {"experiencer": "fixture:participant:b", "stimulus": "fixture:participant:a"}},
+            {"eventRef": "fixture:event:transfer", "roleBindings": {"donor": "fixture:participant:b", "theme": "fixture:participant:object", "recipient": "fixture:participant:a"}}
+          ]
         },
-        "invariants": ["no_first_agent_patient_truncation"]
+        "invariants": ["no_first_agent_patient_truncation", "role_names_alone_do_not_prove_meaning_equivalence", "reject_swapped_participant_bindings"]
       },
       "evidenceRefs": ["docs/AUDIT_CORRECTION_PLAN_2026-07-18.md#8-必须冻结的语言学回归-fixture"]
     },

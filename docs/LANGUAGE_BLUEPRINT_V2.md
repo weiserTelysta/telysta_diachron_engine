@@ -83,8 +83,12 @@ Feature 的 domain、值域、允许的 control、依赖、不兼容项和编译
 `ProjectDataLock`。正式 Genesis 还必须把 Blueprint hash、注册表 hash、规则包锁和 RNG
 合同锁入运行上下文；这部分随 Genesis 编译器交付。
 
-Tauri `validate_blueprint` 直接反序列化 Rust v2 类型，并使用内置注册表返回同一份验证
-报告。桌面 JSON inspector 只是专家协议入口；未来 Quick/Expert UI 必须生成同一 wire
+Tauri `validate_blueprint` 使用 Rust v2 类型和内置注册表返回同一份验证报告。
+桌面 JSON inspector 发送 `blueprintJson` 原文，Rust 直接解析；JavaScript 的
+JSON.parse 仅用于语法提示，解析结果不进入 IPC，避免 i64 改值或小数转成整数。
+旧 `blueprint` typed 参数仍兼容；两种参数必须恰有一个非 null 值，双传/都缺失拒绝。
+这是当前只读适配器的保真修复，不改变 schema、hash 算法或开放 Genesis。
+JSON inspector 只是专家协议入口；未来 Quick/Expert UI 必须生成同一 wire
 document，不能建立另一套参数模型。
 
 ## 6. 验收与路线交接

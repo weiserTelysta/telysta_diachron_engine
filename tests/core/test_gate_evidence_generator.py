@@ -69,11 +69,25 @@ def _repository(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def ignore_gate_policy(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Unit fixtures below test structural predicates with synthetic accounts
+    # and provider records. They cannot establish external attestation trust.
     monkeypatch.setattr(gate_evidence, "_gate_policy_issues", lambda evidence, root: [])
+    monkeypatch.setattr(gate_evidence, "_trusted_attestation_issues", lambda evidence, root: [])
 
 
 def _fixture_sha256(seed: str) -> str:
     return hashlib.sha256(seed.encode("utf-8")).hexdigest()
+
+
+def test_structured_claims_cannot_replace_external_attestation_validation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Isolate the external trust boundary; this fixture has every required
+    # structural field but supplies no authenticated accounts/provider results
+    # or independently validated terminal payloads.
+    monkeypatch.setattr(gate_evidence, "_gate_policy_issues", lambda evidence, root: [])
+    with pytest.raises(ValueError, match="external attestation verification is unavailable"):
+        validate_passed_decision(_passing_evidence(), verify_current_workspace=False)
 
 
 def _account(account_id: str, *, role: str) -> dict[str, str]:
@@ -799,6 +813,44 @@ def test_verification_rejects_non_repository_python(
     run = evidence["source"]["verificationRuns"][0]
     assert run["result"] == "fail"
     assert run["protocols"] == [gate_evidence.PYTHON_GATE_PROTOCOL]
+
+
+def test_repository_python_preserves_virtual_environment_launcher(tmp_path: Path) -> None:
+    subprocess.run(
+        [sys.executable, "-I", "-m", "venv", "--without-pip", str(tmp_path / ".venv")],
+        check=True, capture_output=True,
+    )
+    executable = gate_evidence.repository_python(tmp_path)
+    completed = subprocess.run(
+        [str(executable), "-I", "-c", "import sys; print(sys.prefix)"],
+        check=True, capture_output=True, text=True,
+    )
+    assert Path(completed.stdout.strip()).resolve() == (tmp_path / ".venv").resolve()
+
+
+def test_base_python_cannot_impersonate_symlinked_repository_environment(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    subprocess.run(
+        [sys.executable, "-I", "-m", "venv", "--without-pip", str(tmp_path / ".venv")],
+        check=True, capture_output=True,
+    )
+    executable = gate_evidence.repository_python(tmp_path)
+    monkeypatch.setattr(sys, "executable", str(executable))
+    monkeypatch.setattr(sys, "prefix", sys.base_prefix)
+    with pytest.raises(RuntimeError, match="repository interpreter"):
+        gate_evidence._validate_repository_python(tmp_path)
+
+
+def test_targeted_python_verification_uses_native_path_separators(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(gate_evidence, "repository_python", lambda root: tmp_path / "python")
+    factory = next(
+        factory for protocol, factory, _ in gate_evidence.VERIFICATION_COMMANDS
+        if protocol == gate_evidence.TARGETED_PYTHON_PROTOCOL
+    )
+    assert factory(tmp_path)[-2] == str(Path("tests") / "core" / "test_adr_011_contract.py")
 
 
 def test_verify_persists_blocked_checkpoint_before_preflight(

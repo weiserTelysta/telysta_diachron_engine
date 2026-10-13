@@ -3,7 +3,7 @@ document_type: governance-policy
 decision_status: proposed
 implementation_status: in-progress
 normative_scope: migration
-last_verified: 2026-07-19
+last_verified: 2026-10-14
 owner: unassigned
 reviewers: []
 ---
@@ -113,8 +113,9 @@ passed 只允许证明 clean committed subject。验证应在不可变 clean che
 
 passed 至少需要 Windows 与 Linux 两个成功 verification run。每个 run 必须绑定同一
 subject commit/tree、真实环境、协议列表、lock hashes，以及 provider、repository、
-workflow、run ID、job ID、URL 和 artifact digest。当前仓库只有本地 Windows 候选记录；
-Linux/fresh-checkout 远端运行和受信 provenance 尚未产生，因此 G0A 必须保持 blocked。
+workflow、run ID、job ID、URL 和 artifact digest。本地 Linux 完整门结果见
+[执行记录](../WORK_LOG.md)；Windows/Linux fresh-checkout 远端运行和受信
+provenance 尚未产生，因此 G0A 必须保持 blocked。
 
 ## 7. Fail-closed 启动与发布
 
@@ -129,6 +130,12 @@ Linux/fresh-checkout 远端运行和受信 provenance 尚未产生，因此 G0A 
 
 v3 schema 的 conditional 只提供结构防线。生成器仍必须验证 evidence 引用、hash、终端
 predicate、时间、账户独立性、subject/attestation diff、lease 和远端 provenance。
+
+2026-10-14 实现边界修正：当前只能检查声明的结构、hash 与本地条件，尚无
+认证账户同意、provider 结果及独立 terminal payload 的受信验证器。
+`validate_passed_decision` 因而明确拒绝所有 passed 签发，直到该验证能力经独立
+评审后实现；不提供 CLI/JSON 放行开关。单元测试中的 synthetic account/provider
+仅隔离验证结构谓词，不产生真实可信批准。blocked 候选与本地软件检查继续可运行。
 
 ## 8. ReleaseClaim 边界
 

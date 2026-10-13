@@ -7,6 +7,7 @@
 use std::{collections::BTreeMap, error::Error, fmt};
 
 use serde::{Deserialize, Deserializer, Serialize};
+use sha2::{Digest, Sha256};
 
 use crate::identity::{EntityId, EntityKind};
 
@@ -94,6 +95,29 @@ impl DataManifest {
 
     pub fn format(&self) -> DataFormat {
         self.format
+    }
+
+    /// Verify a locked payload's exact bytes before a data adapter consumes it.
+    ///
+    /// This proves checksum integrity only. It does not parse the data, check
+    /// record membership, approve its license, or validate an empirical claim.
+    /// Metadata-only catalog entries remain valid but cannot verify a payload.
+    pub fn verify_payload_checksum(&self, payload: &[u8]) -> Result<(), DataError> {
+        self.validate()?;
+        let expected = self.content_sha256().ok_or_else(|| {
+            DataError::Validation(format!(
+                "data set {} requires a pinned content SHA-256 before payload use",
+                self.id
+            ))
+        })?;
+        let actual = format!("{:x}", Sha256::digest(payload));
+        if actual != expected {
+            return Err(DataError::Validation(format!(
+                "data set {} payload SHA-256 mismatch: expected {expected}, got {actual}",
+                self.id
+            )));
+        }
+        Ok(())
     }
 
     pub fn validate_reference(&self, reference: &DataReference) -> Result<(), DataError> {
@@ -367,6 +391,34 @@ mod tests {
             limitations: vec!["Fixture data has no empirical value.".to_owned()],
         })
         .expect("valid manifest")
+    }
+
+    #[test]
+    fn payload_checksum_is_required_before_consuming_catalog_data() {
+        let mut catalog_entry = manifest();
+        catalog_entry.content_sha256 = None;
+        catalog_entry
+            .validate()
+            .expect("metadata-only catalog is valid");
+        let error = catalog_entry.verify_payload_checksum(b"{}").unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("requires a pinned content SHA-256"));
+    }
+
+    #[test]
+    fn payload_checksum_verifies_exact_bytes_not_normalized_json() {
+        let mut locked = manifest();
+        // SHA-256 known answer for the two raw bytes "{}".
+        locked.content_sha256 =
+            Some("44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a".to_owned());
+        locked
+            .verify_payload_checksum(b"{}")
+            .expect("matching raw bytes");
+        for changed in [b"{}\n".as_slice(), b"{ }", b"[]", b""] {
+            let error = locked.verify_payload_checksum(changed).unwrap_err();
+            assert!(error.to_string().contains("payload SHA-256 mismatch"));
+        }
     }
 
     #[test]

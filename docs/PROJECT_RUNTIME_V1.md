@@ -3,7 +3,7 @@ document_type: contract
 decision_status: accepted
 implementation_status: partial
 normative_scope: current
-last_verified: 2026-07-19
+last_verified: 2026-10-12
 implementation_schema: telysta-project-history.v1
 implementation_path: crates/telysta-core/src/project.rs
 implementation_constant: PROJECT_HISTORY_SCHEMA
@@ -16,10 +16,10 @@ implementation_constant: PROJECT_HISTORY_SCHEMA
 当前项目历史 schema 为 `telysta-project-history.v1`；本合同描述它的运行时、事务和
 回放边界，不把它扩展为长期 Project/Operation/Run/Job 目标。
 
-> **2026-07-19 实现复审：** `ProjectHistory` 与 `StateTransaction` 的 schema/replay
-> 合同保持 Accepted，但 storage session 的 `commit_history` 目前只检查 candidate
-> 可 replay，没有证明它是已打开 history 的前缀扩展。修复前该集成实现保持
-> `partial`，不得把“expected hash 已检查”描述为 append-only history 已成立。
+> **2026-10-12 本地修复候选：** storage 的 `save_if_current` 在同一 lease 内
+> 验证 expected hash、完整 RunContext 相等和已有事件的精确前缀，拒绝截断、
+> 分叉及输入锁替换；`commit_history` 复用此边界。回归测试已复现旧错误并通过
+> 修复；独立评审和完整跨平台终态证据尚未完成，状态仍为 `partial`。
 - 完成日期：2026-07-13
 - 对应工作：`B-004`、`FND-005`、`FND-006`（`FND-007` 的事件信封基础）
 - 实现：`crates/telysta-core/src/project.rs`
@@ -69,6 +69,11 @@ Project ID + Run ID + TimeModel + root seed
 2. `revise_state` 在写入前校验语言身份、时间单调性、数据锁与 provenance；
 3. `ProjectHistory` 反序列化时执行完整 replay 验证，非法 JSON 不能成为可读取项目；
 4. 回放结果与最后一条事件状态相同。
+
+`ProjectHistory::validate_extension_of(base)` 是当前 v1 append-only 验证入口：
+context 与完整旧事件前缀必须精确相等，并验证合法尾部；等长相同历史可幂等。
+runtime 验证其打开的 revision，storage 在 lease 内对磁盘历史再次验证；二者
+不能互相替代。公开 `save` 已收紧为初始创建/完全相同重试，行为变化见存储合同。
 
 本合同在 2026-07-13 验收时尚未提供 `FND-008` 的正式原子文件存储、迁移器或 SQLite 索引；这些能力随后已由 [Project Storage v1](./PROJECT_STORAGE_V1.md) 完成。桌面 demo 的双槽 checkpoint 仍仅是历史技术 Spike，不得冒充项目存储；本段记录验收时边界，不定义当前 Next。
 

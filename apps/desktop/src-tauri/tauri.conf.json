@@ -7,6 +7,7 @@
     "frontendDist": "../web"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "title": "Telysta Diachron Engine",
@@ -21,6 +22,7 @@
     }
   },
   "bundle": {
-    "active": false
+    "active": false,
+    "icon": ["icons/icon.png", "icons/icon.ico"]
   }
 }

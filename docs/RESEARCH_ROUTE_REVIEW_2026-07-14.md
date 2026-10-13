@@ -1,3 +1,11 @@
+---
+document_type: research
+decision_status: not-applicable
+implementation_status: in-progress
+normative_scope: historical
+last_verified: 2026-10-12
+---
+
 # Telysta 语言生成与历时模拟路线严格评审
 
 - 状态：Research Review / historical planning evidence
@@ -463,6 +471,11 @@ Genealogy DAG
 - PHOIBLE 标为 2.0，但 URI 10.5281/zenodo.2562766 是概念 DOI；CLDF 2.0.1 的精确版本 DOI 是 10.5281/zenodo.2677911；
 - Grambank 标为 1.0.3，但 URI 10.5281/zenodo.7740139 是概念 DOI；1.0.3 的精确版本 DOI 是 10.5281/zenodo.7844558；
 - Concepticon 3.4.0 的 CLDF DOI 10.5281/zenodo.14923561 与版本相符；
+- 2026-10-12 独立 AI 实证复审补充：上述 Concepticon 发布物是 CLDF Wordlist，
+  不是普通 JSON；catalog 已纠正 format。PHOIBLE 网站声明 CC-BY-SA-3.0，
+  [CLDF 2.0.1 发布 API](https://zenodo.org/api/records/2677911) 声明 cc-by-3.0，
+  这是来源冲突，尚未查归档内许可；不能据 API 较宽声明直接放宽适用许可。
+  当前 PHOIBLE catalog 保留网站标签并记录未决来源，执行 lock 前必须解决。
 - 三者的 contentSha256 与 recordCount 均为空；
 - 尚无项目级样本选择、过滤、转换、feature 映射和输出 hash。
 
@@ -471,7 +484,8 @@ Genealogy DAG
 - exact version DOI；
 - 原始 payload SHA-256；
 - license and distribution decision；
-- source and doculect IDs；
+- source IDs，以及适用时的 doculect IDs；概念/映射切片记录 concept set、
+  source list 与转换谱系等对应单位；
 - sampling manifest；
 - transformation code/version/hash；
 - transformed payload hash；
@@ -492,7 +506,12 @@ PHOIBLE 的 CC-BY-SA 许可还需要明确衍生数据与发布物的分发决�
 | WOLD | 借词实例、来源和可借性观察 | 普适固定借词概率 |
 | Glottolog | 稳定 languoid ID、分类与来源 | 分类永远不变或没有争议 |
 
-所有 empirical prior 都应按 doculect 处理，控制 family 与 area，报告缺失值，避免大语系重复加权，并执行 family-held-out 与 area-held-out 验证。
+语言结构观察应保留来源/doculect 单位，控制 family 与 area，报告缺失值，避免
+大语系重复加权，并按主张选择 family-held-out 与 area-held-out 验证。
+2026-10-12 复审收窄原“所有 prior”表述：Concepticon 等概念/映射数据须按
+concept set、source list 与转换谱系声明单位；标签语言不是目标 doculect。
+其表结构依据为[官方 v3.4.0 元数据](https://raw.githubusercontent.com/concepticon/concepticon-cldf/v3.4.0/cldf/Wordlist-metadata.json)，
+不据 metadata extent 冒充本轮实际重计记录数。
 
 ## 10. 科学验证路线
 
@@ -858,3 +877,57 @@ TTS 继续后置，必须建立在同一 morphology → phonology → allophony 
 > 一个工程上可靠、规则可回放、界面可操作，但语言变化仍过于机械的高级规则执行器。
 
 补完这些边界后，Telysta 才有机会成为专业语言学家愿意认真评审、创作者愿意长期使用的语言历史实验与创作平台。
+
+## 17. 2026-10-12 路线复审补充
+
+本节为本轮研究记录；上文保留原始评审背景。当前执行范围只以
+[产品计划](./PRODUCT_DEVELOPMENT_PLAN.md#13-2026-10-12-用户目标落实与路线复审)为准。
+
+### 研究与实践依据
+
+| 来源 | 本轮已核对范围 | 对 Telysta 的含义与限制 |
+|---|---|---|
+| [Moscoso Del Prado Martin & Salhan 2026](https://aclanthology.org/2026.scil-main.14/)，DOI 10.18653/v1/2026.scil-main.14 | 论文元数据与摘要；全文方法尚待复核 | 随机历时模型可复现部分频率统计；加入频率/库存稳定假设影响拟合。属于 research hypothesis，不能仅因统计拟合就认定历史机制真实；列入 G4 对照模型候选 |
+| [McGahay 2025](https://www.isca-archive.org/interspeech_2025/mcgahay25_interspeech.html) | 官方摘要 | 感知混淆优化提供元音系统变化的局部模型候选；不是所有音系、语法或社会变化的普遍原因 |
+| [Unicode 18 UAX #15 rev58](https://www.unicode.org/reports/tr15/tr15-58.html)、[UAX #29 rev49](https://www.unicode.org/reports/tr29/tr29-49.html) | 官方规范相关章节 | normalization、文本 cluster 与语言 grapheme 分开；版本锁定、source/span 对齐进入正字法评审；不宣称当前运行库已支持 Unicode 18 |
+| [Rubino et al. 2024](https://aclanthology.org/2024.findings-naacl.215/) | 官方摘要 | 历史词形归一与现代化可区分；支持单独设计保守拼写与显式改革，不把历史文本模型当造语正确性证明 |
+| [Lexibank](https://lexibank.clld.org/)与 [CLDF 1.3](https://cldf.clld.org/) | 官方数据入口与格式说明 | 采用稳定概念/语言/音段引用、独立数据与转换锁；采样单位及版本逐项固定，不从网站当前版本自动替换项目锁 |
+| [Leipzig Glossing Rules](https://www.eva.mpg.de/lingua/resources/glossing-rules.php) | 规则与分析边界 | IGT 是分析的展示；同图投影且支持非一对一实现。规范本身不证明分析正确 |
+| [eSpeak NG](https://github.com/espeak-ng/espeak-ng/blob/master/docs/index.md)及 [GPL-3.0 许可](https://github.com/espeak-ng/espeak-ng/blob/master/COPYING) | 文档入口、音素输入和许可证 | 可作本地语音研究参考；尚未决定分发，不能直接加入 MIT 客户端。先定义 typed pronunciation adapter 与受限试听覆盖，独立评估音质与许可 |
+| [Rosé Pine palette](https://rosepinetheme.com/palette/)与 [WCAG 2.2](https://www.w3.org/TR/WCAG22/) | 官方配色与无障碍标准 | 色彩是作者 creative preference；逐组合核验对比度、焦点、键盘和中文/IPA 显示，不能把主题名当成可访问性证明 |
+
+上述资料截至 2026-10-12 检索；未下载和锁定论文数据，不形成生产数据依赖。
+新规则进入默认包前仍需正/反例、组合顺序、replay 与独立评价。
+
+### 本地资料库
+
+已盘点 `references/` 的文件种类；本轮抽读 Sindarin 教程的版权/目录页、
+《律史前月读教程》文本、Laloxv15 手册前七个 PDF 页及《浅谈手语基本语序研究
+方法》前六页，未宣称已通读全部教材。印欧语入门的前九页无法
+提取文本，需渲染/OCR 后再审阅。资料内容有自然语言教材、架空语言设定、
+民间译本及与本项目无关的系统排障笔记，不可整体当成同质语言学证据。
+
+施婉萍《浅谈手语基本语序研究方法》（2018，DOI
+[10.12677/ml.2018.61013](https://doi.org/10.12677/ml.2018.61013)；本地 PDF
+第 1–6 页）讨论采样定义、形态/空间/角色转换对表面语序研究的影响。本地
+第 2 页标注 CC BY 4.0，DOI 网页本轮未能访问。它提示 TaskPack 需控制角色、
+语境与诱导任务，不能仅用 SOV/SVO 标签代替 grammar capability；不会把论文
+对手语的分析直接移植成有声架空语言规则，也不宣称当前产品支持手语。
+
+Laloxv15 手册的构词、分类借词和语法说明用来观察作者如何组织规则与示例；
+其中学习难度和普适性的自述不作为经验结论。当前仅记录阅读，不抽取词表、
+字体或成体系的规则进入生成器；分发许可尚未核实。
+
+- 自然语言教材：用于设计结构边界和反例，优先核对原书、页码与版本。
+- 人造语言教程：用于学习发音说明、范式、练习和词典组织；游戏设定与
+  推测语法归 creative preference/research hypothesis，不升级为经验先验。
+- 词典与字体：先记来源、hash 与许可，再决定是否允许抽取或分发；
+  不把已有作品词汇直接作为生成器默认词表。
+- 语言说明验收：读者能够据导出说明读出支持的形式、构造新句子，追溯
+  词源及一条变化，并知道未支持的表达；不靠篇幅或词数证明语言可用。
+
+### 规划评审决定
+
+保留 Rust 唯一权威、Tauri 客户端和 WS-1 最小纵切。优先修复当前存储边界，
+同时准备双向语法与作者任务的评审材料。基础文档随 R2 交付；基础试听在
+STORY-10 验证后先行，完整表现性语音后置。此处没有接受任何 ADR 或 Gate。

@@ -3,7 +3,7 @@ document_type: capability-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: target
-last_verified: 2026-07-19
+last_verified: 2026-10-12
 owner: unassigned
 reviewers: []
 ---
@@ -260,6 +260,11 @@ Grammar IR 必须由生成与分析共享，最小表达上述有限子集、sel
 
 解析索引、FST、搜索表和缓存由 grammar hash + compiler version 派生，不进入权威状态。
 
+2026-10-12 的四个 [Meaning review vectors](../tests/fixtures/meaning_review_vectors_v1.json)
+补充否定/量化 scope、commitment status 与中性报告问句；有限模型只提供非等价
+见证，不能以同一 scene 真值相同证明意义等价。当前检查只验证 planning oracle，
+生产 runner 仍未绑定；正式能力验收需实现 required/forbidden round trip。
+
 ### 5.10 TaskPack 与 ProofCarryingUtterance
 
 TaskCase 保存 scene facts、speaker/addressee、deictic anchor、speech act、scope graph、required meaning、optional nuance、forbidden reading、commitment status、discourse pre/postcondition、register/genre 与 equivalence policy。每个正式输出携带意义、构式、词素、gloss、音系、正字法、时代/方言、允许歧义与来源，形成可验证的 `ProofCarryingUtterance`。
@@ -267,7 +272,11 @@ TaskCase 保存 scene facts、speaker/addressee、deictic anchor、speech act、
 ### 5.10A Orthography 与 IGT Projection Authority
 
 正字法不是 IPA 展示别名，也不要求与音系双射。其权威拆分会改变持久化实体含义，
-因此在 ADR-014 修订或 replacement ADR Accepted 前不得实现 WS1-04A。推荐决策是：
+因此在 ADR-014 修订或 replacement ADR Accepted 前不得实现 WS1-04A。
+2026-10-12 的 [ADR-014 §4.4A](./adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md#44a-正字法身份与投影新增-proposed-决定)
+已提出 typed WordForm/occurrence + explicit orthographic base 的可评审决定，
+及 22 个可修订 [review vectors](../tests/fixtures/orthography_review_vectors_v1.json)。
+它们尚未冻结，也没有生产 runner 证据。拟定边界为：
 LanguageStructureState 拥有版本化字素表、Unicode normalization、边界策略、
 typed phonology↔orthography mapping 与词汇化拼写 override；CanonSeed spelling
 保持带来源和锁定策略的输入约束，作者接受后才成为相应 Canon/lexical authority。
@@ -490,10 +499,12 @@ hash 的 immutable effective manifest，禁止原地升级。
 | SPH-002 | Orthographic Realizer | 形态结果 → 正字法 | 拼写规则版本化 |
 | SPH-003 | PronunciationPlan v1 | morphology → phonology → typed allophony → utterance prosody → phones | R3 提供确定性、可审计发音计划；不承诺自然音频 |
 | SPH-003A | SpeechRenderPlan / PhoneticPlan v2 | tempo、coarticulation、actor guidance、音频/TTS 映射 | R7 在 v1 上扩展渲染，不反向定义语言结构 |
-| SPH-004 | Deterministic TTS | 自定义音素映射与 WAV 输出 | 所有目标音素有定义输出 |
+| SPH-004 | Deterministic Speech Preview | STORY-10A 在 R3/G3 提供受限本地试听与 WAV；R7 扩展表现性 | typed phones/韵律与 renderer locks 决定输出，覆盖外显式拒绝；不使用外语拼写猜读，不宣称自然人声 |
 | SPH-005 | Neural Speech Option | 音系特征条件化语音 | 与确定性发音分开标注质量 |
 
-TTS 不能早于稳定的音系、韵律、形态音系和正字法模型。
+基础试听不能早于 STORY-10 的稳定发音计划。按用户 2026-10-12 的要求，STORY-10A
+受限试听是 R3/G3 必需交付；完整渲染仍在 R7，神经语音保持可选。R2 同步导出最小语言说明，
+R6 扩展完整 Language Bible。具体范围只在[执行计划](./PRODUCT_DEVELOPMENT_PLAN.md#13-2026-10-12-用户目标落实与路线复审)维护。
 
 ## 7. 阶段依赖
 
@@ -551,7 +562,7 @@ WS-1 不以一个大 PR 一次通过，按以下可停止、可回滚的内部�
 4. `R2D`：append-only domain history + Genesis seal/create/reopen + dependency
    bundle/ReplayCapability；只有 R2B 与 R2C 均通过后才能物化生产 Genesis root；
 5. `R2E`：Meaning Workbench + authoring round trip + typed gaps；
-6. `R2F`：Tauri vertical slice、cancel/crash/reopen、query projection 与 GateEvidence 收口。
+6. `R2F`：Tauri vertical slice、cancel/crash/reopen、query projection 与同版本最小语言说明导出；GateEvidence 收口。
 
 R2B 与 R2C 可以并行准备，但同一时刻最多一个包改变 schema、writer 或 replay。
 R2D 同时依赖 R2B 与 R2C，不得把 seal/create 提前到 typed ChangeSet 和 history
@@ -808,6 +819,9 @@ G0B 不以 SpeechCommunity、Variation 或 ChangeProcess 为前置；这些属�
 - evaluator 分别报告 hard pass、under-generation、over-generation、forbidden-reading acceptance、ambiguity、gap correctness 与 construction coverage；
 - 所有 WS-1 TaskCase 产生 Proof-Carrying Utterance，不能表达时返回 typed ExpressionGap；主 profile 与结构非同构对照均通过相应边界；
 - 一个 feature-based structural ChangeSet 原子提交、失败回滚、回放和解释通过；
+- WS1-10 的 Markdown/HTML 最小语言说明可带走阅读；音系、拼写、范式、
+  构式、词汇词源、短文本/IGT、变化与限制绑定同一 language/orthography/
+  analysis/history locks。重开/删派生缓存重导出稳定，变化后的当前读音一致；
 - 生成 `LanguageCapabilityCertificate`；其中 `G-LANG` 只声明可执行、可分析的微型语言，`G-CHANGE` 只声明可审计的作者结构变换；两者均不得声明真实社会传播或产品易用。
 
 ### G3：Story Language Kit / Creator Usability
@@ -817,7 +831,9 @@ G0B 不以 SpeechCommunity、Variation 或 ChangeProcess 为前置；这些属�
 - Structural/Authoring RulePack v1 仅对已稳定结构 effect 提供 validate/dry-run/canon impact；用户批准后事务提交，已发布 Canon 不被静默改写；
 - 未参与开发的目标叙事作者不编辑 JSON/形式语义即可发现并解决一种真实歧义或义务，完成新场景、恢复错误并安全扩充语言；
 - `CanonAlphaJourney.g3` 与 ReleaseClaimManifest 已预注册；确认性样本与形成性样本隔离，安全硬门和比例门在观察结果前冻结；
-- 词典、语法、IGT、正字法、音节/重音、`PronunciationPlan v1` 和来源来自同一分析；R7 只增加音频渲染；
+- 词典、语法、IGT、正字法、音节/重音、`PronunciationPlan v1` 和来源来自同一分析；
+  STORY-10A 基础本地试听/WAV 是 G3 必需交付，绑定 plan/renderer/许可与覆盖表；
+  不支持的音段或韵律显式拒绝，保守拼写读取当前读音；R7 扩展表现性渲染；
 - 生成独立的 `ProductUsabilityEvidenceBundle` 与 `CreativeEvaluationRecord`，不能用 LanguageCapabilityCertificate 代替。
 
 ### G3B：WS-2 Model Contract Ready

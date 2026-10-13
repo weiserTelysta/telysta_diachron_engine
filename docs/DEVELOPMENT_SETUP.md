@@ -3,7 +3,7 @@ document_type: runbook
 decision_status: not-applicable
 implementation_status: implemented
 normative_scope: current
-last_verified: 2026-07-19
+last_verified: 2026-10-12
 ---
 
 # 开发环境与质量检查
@@ -14,7 +14,7 @@ last_verified: 2026-07-19
 > 仓库根目录 [AGENTS.md](../AGENTS.md) 和 CI 为准。
 
 - 状态：`Current local quality runbook`
-- 基线日期：2026-07-12；最后核验：2026-07-19
+- 基线日期：2026-07-12；最后核验：2026-10-12
 - 默认开发版本：Python 3.13
 - 支持范围：Python 3.10–3.14
 
@@ -156,6 +156,11 @@ identity 和 artifact digest。当前 workflow 或本地实现候选存在不等
 产生；现有 v1/v2 evidence 只能作为强制降为 `blocked` 的迁移输入。普通开发循环仍可只运行
 相关子门，但不能据此签发 GateEvidence pass。
 
+Unix 上 `.venv/bin/python` 常是软链接。启动子进程时保留 launcher 路径，
+不能先 `resolve()` 到系统 Python，否则丢失 `pyvenv.cfg` 与锁定依赖环境。
+preflight 同时检查 `.venv` prefix 与解释器目标，证据记录实际 launcher。
+命令参数使用平台路径；证据中的历史 Windows protocol 文本不直接充当 Unix argv。
+
 ## 5. 单独运行
 
 ```powershell
@@ -168,6 +173,9 @@ cargo +1.88.0 test --workspace --locked
 cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings
 cargo +1.88.0 build -p telysta-desktop --locked
 node --check apps/desktop/web/app.js
+node --test apps/desktop/tests/app.test.cjs
+node --check experiments/meaning-workbench/app.js
+node --test experiments/meaning-workbench/app.test.cjs
 ```
 
 2026-07-19 的 Windows 本地实现检查点中，精确 1.88.0 workspace tests 为
@@ -177,6 +185,10 @@ node --check apps/desktop/web/app.js
 
 CI 的 `ubuntu-24.04`/`windows-2025` MSRV lanes 才验证最低版本；附加 stable lanes
 用于发现向前兼容漂移，不能替代 1.88.0 证明。workflow 文件存在也不是远端通过证据。
+
+本轮实际执行断点统一记录在 [WORK_LOG](./WORK_LOG.md)，不在多个文档复制
+动态测试数量。可选浏览器自测及独立工具环境见
+[作者流程原型说明](../experiments/meaning-workbench/README.md)。
 
 ## 6. 依赖管理
 
