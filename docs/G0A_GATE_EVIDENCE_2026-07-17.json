@@ -4,10 +4,10 @@
   "gateId": "G0A",
   "gateName": "Platform Contract Ready",
   "decision": "blocked",
-  "decisionDate": "2026-10-13",
+  "decisionDate": "2026-10-14",
   "source": {
-    "subjectCommit": "f13e869c70289f69919d73512058b6b9d6c9b247",
-    "subjectTree": "c016f28569744f361cf002bc8943a8fb5363e9de",
+    "subjectCommit": "f5b3dd571cb8d029bdd3a0bf361f792f94b7aa6e",
+    "subjectTree": "64314ed7e09a332496bd59f12df006e2f6f359d8",
     "worktreeDirty": false,
     "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
@@ -18,12 +18,12 @@
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:a1941463ea943b34c12a8e86e1fa353f",
-        "subjectCommit": "f13e869c70289f69919d73512058b6b9d6c9b247",
-        "subjectTree": "c016f28569744f361cf002bc8943a8fb5363e9de",
+        "runId": "gate-run:aed930f83c7866907c26a8332ace8b96",
+        "subjectCommit": "f5b3dd571cb8d029bdd3a0bf361f792f94b7aa6e",
+        "subjectTree": "64314ed7e09a332496bd59f12df006e2f6f359d8",
         "platformFamily": "linux",
-        "startedAt": "2026-10-13T19:33:44Z",
-        "finishedAt": "2026-10-13T19:34:25Z",
+        "startedAt": "2026-10-14T01:47:49Z",
+        "finishedAt": "2026-10-14T01:48:27Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
@@ -110,14 +110,14 @@
       "evidenceId": "evidence:de364c83837d9be329d9c6fac6c839be",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/ADR_011_SCHEMA_DRAFT_V1.json",
-      "sha256": "25e07d82bb0478824468f7101c47eff648bdfe149858e62c56ff13ffd0baefb5",
+      "sha256": "619e1012eab18a5281bbbe4e3c98b6daf12f262f9cc51208f24e04b7581efdb9",
       "result": "pass"
     },
     {
       "evidenceId": "evidence:de1b0d630d716722a6ccb653e3ecb826",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
-      "sha256": "4189533ec04de2a23b69cb04fde610e6729dcc6e1eb1066d6cad0b7cfd216555",
+      "sha256": "e6b0e6f4d8ead411449a9e7172011efac47000990b58af5b65a17b21c54667ee",
       "result": "pending"
     },
     {
@@ -131,21 +131,21 @@
       "evidenceId": "evidence:d9d22c2431808c38fb12502f736457f7",
       "kind": "ArchitectureContractEvidence",
       "path": "tests/fixtures/adr_011_schema_records_v1.json",
-      "sha256": "7ebe9809607847863523433376facc6e0b4f28300fdf5c1226b97e9dadb4dd4a",
+      "sha256": "43294c21841e4bc4e0b2e412db0dea35f0a7c659a7a97e6c3a43a21aa2c1b15f",
       "result": "pass"
     },
     {
       "evidenceId": "evidence:6ac60e19a14c9d6d0aa528a6222c4f2e",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PLATFORM_CONTRACT_PACK_V1.md",
-      "sha256": "7a4495ef8ac28d2d345e5929a61af74c3bfc1dc8c723a4a6d1547d395ff8f575",
+      "sha256": "29c8a421170b053367b02343e0f6d05b0a7b69c9b76823468ef0baceee9e731f",
       "result": "pending"
     },
     {
       "evidenceId": "evidence:9dea6d4574d0b93f52fa11ee7ba09e54",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-012-project-package-commit-authority.md",
-      "sha256": "68dc3de64c8f1e526740a86c2584b62e790385b5c0464ead70d6b29bc52c989f",
+      "sha256": "3b33bae92bed0532f166e84c69002a4802aef425531705dc64a78c8a39a0704e",
       "result": "pending"
     },
     {
@@ -188,7 +188,7 @@
       "evidenceId": "evidence:4f6ba705e33852e273a7dcb83b5bf37e",
       "kind": "SoftwareVerificationEvidence",
       "path": "tests/core/test_adr_011_contract.py",
-      "sha256": "6606ea1a31073b1bd2211542c716ed578b3b5e658069336ec88e339f62b5aaf5",
+      "sha256": "077033d13933e0187b2e449ad81fe4478143a534bfacee2c921fd5a48436bb36",
       "result": "pass",
       "protocol": ".\\.venv\\Scripts\\python.exe -I scripts\\pytest_runner.py tests\\core\\test_adr_011_contract.py -q",
       "details": "targeted ADR-011 Python contract passed through the hermetic runner",
