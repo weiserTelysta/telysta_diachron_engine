@@ -52,6 +52,7 @@ scripts/project_authority_review.py + review-only Python/Rust tests
 
 scripts/linguistic_review.py + experiments/linguistic-execution/
   └─ pinned built-in review groups and case-to-Gate map; production adapters future
+      includes five finite orthography relation facets, not a production parser
 ```
 
 ## 2. 当前权威数据

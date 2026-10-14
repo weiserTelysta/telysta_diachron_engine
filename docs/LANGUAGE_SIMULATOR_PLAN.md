@@ -797,12 +797,15 @@ G0B 不以 SpeechCommunity、Variation 或 ChangeProcess 为前置；这些属�
 当前最小研究入口为 `.venv/bin/python -I scripts/linguistic_review.py --run`
 （Windows 使用 `.venv\Scripts\python.exe -I scripts\linguistic_review.py --run`）。
 不加 `--run` 只校验 registry，不执行测试。Draft registry/schema 位于
-`experiments/linguistic-execution/`；源码内固定的三个测试组校验 regression/Meaning
-材料和 Concepticon 研究切片，不接受 JSON 指定命令。报告带输入锁、运行前后
-worktree fingerprint、逐组实际执行数与原始测试输出；退出 0 仅表示所声明的研究
+`experiments/linguistic-execution/`；源码内固定的四个测试组校验 regression/Meaning
+材料、Concepticon 研究切片和五个正字法有限关系 facet，不接受 JSON 指定命令。
+报告带输入锁、运行前后 worktree fingerprint、逐组实际执行及 passedCalls 数和原始
+测试输出；每个选中项必须实际通过，skip/xfail/非严格 XPASS 都不能计为该研究组
+成功。仓库总门的八项严格 legacy xfail 另行保留。退出 0 仅表示所声明的研究
 检查成功，不表示任何 Gate 通过。50 个生产 case 仍为 future；DATA-N01 保留 G0B
-执行门，两项机制 claim 保留 G4，其余 G2。Orthography 只登记未来映射，尚无当前
-执行检查；所有报告 productionCasesExecuted=0、capabilityClaims=[]、Gate not evaluated。
+执行门，两项机制 claim 保留 G4，其余 G2。正字法组不执行其余 17 案、normalizer、
+parser、音变/replay 或生产领域 probe；所有报告 productionCasesExecuted=0、
+capabilityClaims=[]、Gate not evaluated。
 完整 versioned production adapter schema、Accepted authority 后冻结的反例和真实
 Rust 绑定仍未具备，不能以这个局部 harness 关闭整个 R0B-04A/G0B。
 

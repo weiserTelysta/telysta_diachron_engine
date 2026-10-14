@@ -9,14 +9,15 @@
     "pyproject.toml": "0a1b9be13e2f1e54bd304352808ac8ff7621f30a88427a5ca7b3d8a367bdc236",
     "scripts/concepticon_slice.py": "a337334df311d7d801aceb31038fc4fd53621687e7f0cd8174a6adc55f61adff",
     "scripts/generate_gate_evidence.py": "e7f1701dd16b2a0d8b3370511c3251aacc4f3bc60472d4149d3615773e59a550",
-    "scripts/linguistic_review.py": "358c02498b3bcb90d5eaaeb9de014ec7d4d6330b256e3b3201f2f367bc9e4cae",
-    "scripts/pytest_runner.py": "37784c7a75797a4065b156add97709f6179d95ed4344c7a948eaa3bbfdfb1608",
+    "scripts/linguistic_review.py": "7792124cf29977264501fb5e7eb573be3007e3ab8b1c864d5299c1c4a1d7d361",
+    "scripts/pytest_runner.py": "62ece57c98ac6536bc116ac325ed3d3d06977b2a9e1cdf5b3f6fbdda87e4fd0a",
     "tests/core/test_audit_correction_fixture_contract.py": "0b4de8beced62744abc21260575e912781b87c2c491e8ef6c9fb9d12a01626c2",
     "tests/core/test_concepticon_slice.py": "5097878ae60df16dc2f9e02076ceb6e1ef5a345d73de64f008354524c617add6",
     "tests/core/test_meaning_review_vectors.py": "a9af6c1377bacd8c7a80cf6c3925912732aeb7b80ed8b02767c99a2d1202d6dd",
+    "tests/core/test_orthography_review_vectors.py": "dd8c1bb07feebede9ef6ceea11bb177be2ca9a6a39363a1bbdaf227c2c29a010",
     "tests/fixtures/linguistic_regression_cases_v1.json": "2d2e710f06e7064b35ba718a8f94aaed1aee9722e1d7c7487a8c0b2895a39bcf",
     "tests/fixtures/meaning_review_vectors_v1.json": "21b90043217d5b7e2fb701d1ecf12c494260f235f15ae67aaaf789be37e69bf2",
-    "tests/fixtures/orthography_review_vectors_v1.json": "ba6303f2d6191d6c391fdaa9e2bdf9be57b0d2a4745080f08f5d07573076483c"
+    "tests/fixtures/orthography_review_vectors_v1.json": "daa2fd1c8caee59ba8245d7c0b1c66a4de827fa57a62f0350d1e912c6a958703"
   },
   "reviewChecks": {
     "regression-contracts": {
@@ -30,6 +31,11 @@
       "productionCasesExecuted": 0
     },
     "concepticon-research": {
+      "contractGate": "G0B",
+      "evidenceKind": "planning_validation_only",
+      "productionCasesExecuted": 0
+    },
+    "orthography-relations": {
       "contractGate": "G0B",
       "evidenceKind": "planning_validation_only",
       "productionCasesExecuted": 0

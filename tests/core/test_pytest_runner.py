@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+import pytest
+
 from scripts.pytest_runner import GUARD_FAILURE_EXIT_CODE, run_pytest
 
 
@@ -92,7 +94,52 @@ def test_normal_execution_reports_exact_counts(
     assert result.returncode == 0, result.stderr
     assert result.collected == 2
     assert result.executed == 2
+    assert result.passed_calls == 2
     assert result.failure_reason is None
+
+
+@pytest.mark.parametrize("body", [
+    "pytest.skip('skip inside call')", "pytest.xfail('expected failure inside call')",
+])
+def test_strict_groups_reject_nonpassing_call_reports(tmp_path: Path, body: str) -> None:
+    path = _write_test(
+        tmp_path / "suite" / "test_sample.py",
+        f"import pytest\ndef test_one():\n    {body}\n",
+    )
+    result = run_pytest([str(path), "-q"], capture_output=True, require_all_passed=True)
+    assert result.pytest_returncode == 0
+    assert result.collected == result.executed == 1
+    assert result.passed_calls == 0
+    assert result.returncode == GUARD_FAILURE_EXIT_CODE
+    assert result.failure_reason == "pytest did not pass every selected test"
+
+
+def test_strict_groups_reject_partial_skips_and_non_strict_xpass(tmp_path: Path) -> None:
+    path = _write_test(
+        tmp_path / "suite" / "test_sample.py",
+        "import pytest\n"
+        "def test_pass():\n    assert True\n"
+        "def test_skip():\n    pytest.skip('body skip')\n"
+        "@pytest.mark.xfail(strict=False, reason='probe')\n"
+        "def test_xpass():\n    assert True\n",
+    )
+    result = run_pytest([str(path), "-q"], capture_output=True, require_all_passed=True)
+    assert result.pytest_returncode == 0
+    assert result.collected == result.executed == 3
+    assert result.passed_calls == 1
+    assert result.returncode == GUARD_FAILURE_EXIT_CODE
+
+
+def test_default_runner_keeps_explicit_legacy_xfail_accounting(tmp_path: Path) -> None:
+    path = _write_test(
+        tmp_path / "suite" / "test_sample.py",
+        "import pytest\n@pytest.mark.xfail(strict=True, reason='legacy migration probe')\n"
+        "def test_expected_failure():\n    assert False\n",
+    )
+    result = run_pytest([str(path), "-q"], capture_output=True)
+    assert result.returncode == 0
+    assert result.collected == result.executed == 1
+    assert result.passed_calls == 0
 
 
 def test_plugin_pythonpath_and_coverage_environment_are_sanitized(

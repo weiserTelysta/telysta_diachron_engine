@@ -3,7 +3,7 @@ document_type: product-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-12
+last_verified: 2026-10-14
 owner: unassigned
 reviewers: []
 ---
@@ -11,7 +11,7 @@ reviewers: []
 # Telysta 产品开发执行计划
 
 - 状态：`Active planning baseline / Domain Implementation Hold`
-- 最近修订：2026-10-12
+- 最近修订：2026-10-14
 - 适用范围：产品定义、Rust 核心、Tauri 工作台、语言生成、历时模拟、验证、数据、迁移与发布
 - 当前阶段：`R0A 计划/决策修复 + R0B WS-1 领域证据`
 - 当前阻断：G0A 为 `blocked`；2026-07-19 复审又重新打开 Gate/CI hermeticity、真实 MSRV、当前 v1 create/append/migration/index authority 和 legacy evidence 边界；R0B evidence preparation 正在进行，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`，G0B=`not evaluated` 且没有通过性 GateEvidence；ADR-007～014 均未完成所需接受流程，ADR-014 已形成 Proposed 草案但 owner/reviewer 未分配；Project/Operation/Run/Job、Meaning/Grammar/Lexical Class/Realization、TheoryProfile、ChangeSet locus、聚合与 replay 边界尚未闭合。ADR-005 是分阶段研究背景，不是 WS-1 前置
@@ -85,6 +85,11 @@ R2 的可执行微型语言，再由 R3 完成作者任务；不以大量词表�
   preference。R0B-06P 可用它探索非权威作者流程；正式客户端在版本化 API
   与任务模型稳定后落地。必须支持中文/IPA、键盘操作、可见焦点及 WCAG 2.2
   AA 对比度，错误与能力状态同时使用文字，不仅依赖颜色。
+- **LLM 保持选配**：预留 API key 配置，但默认关闭、按用户请求调用；没有 key
+  不阻碍核心语言、历史、手册和基础读音。只解析、提议或解释，不参与权威状态
+  写入或充当正确性 oracle。配置与凭据边界统一见
+  [开发环境第 9 节](./DEVELOPMENT_SETUP.md#9-可选-llm-的-api-key-预留)，生产适配
+  继续归 R7-LLM-01，不能把预留模板当作已实现联网 agent。
 - **资料使用**：`references/` 是本地研究库，不是默认产品数据。教材用于
   抽取问题、反例和文档组织经验；经验先验须来自可锁定的数据与论文。
   未明确许可的译本、词典、字体与音频不得进入安装包。扫描版需 OCR 并
@@ -797,7 +802,8 @@ Meaning 禁读 oracle，并独立检查
 ADR-012 authority coverage/profile 与 known-answer 向量继续在 R0A-03 评审范围内
 闭合；只读 Python/Rust 研究检查不得成为 target writer 或正式 baseline acceptance。
 R0B-04A 已有[最小研究 registry](../experiments/linguistic-execution/manifest.json)
-与固定三组 hermetic review harness；逐案保留 G0B/G2/G4 执行门。它没有实现生产
+与固定四组 hermetic review harness；要求逐项实际通过，逐案保留 G0B/G2/G4 执行门。
+新增正字法组仅检查五个有限关系 facet；它没有实现生产
 adapter schema/真实领域运行或冻结 TaskPack，不视为整个 R0B-04A 已 Complete。
 
 若只有一个具备实际容量的 owner，全局 WIP 自动降为 1。任一时刻最多一个包改变

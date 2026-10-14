@@ -20,7 +20,7 @@ from typing import Mapping, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
-METRICS_SCHEMA = "telysta-hermetic-pytest-run.v1"
+METRICS_SCHEMA = "telysta-hermetic-pytest-run.v2"
 GUARD_FAILURE_EXIT_CODE = 86
 _BOOTSTRAP_FLAG = "--_telysta-hermetic-bootstrap"
 
@@ -37,6 +37,7 @@ class PytestRunResult:
     failure_reason: str | None
     stdout: str | None = None
     stderr: str | None = None
+    passed_calls: int | None = None
 
     @property
     def passed(self) -> bool:
@@ -45,9 +46,10 @@ class PytestRunResult:
     def summary(self) -> str:
         collected = "unknown" if self.collected is None else str(self.collected)
         executed = "unknown" if self.executed is None else str(self.executed)
+        passed_calls = "unknown" if self.passed_calls is None else str(self.passed_calls)
         return (
             "Hermetic pytest result: "
-            f"collected={collected}, executed={executed}, "
+            f"collected={collected}, executed={executed}, passed_calls={passed_calls}, "
             f"pytest_exit={self.pytest_returncode}"
         )
 
@@ -79,19 +81,19 @@ def hermetic_environment(
     return environment
 
 
-def _read_metrics(path: Path) -> tuple[int, int, int]:
+def _read_metrics(path: Path) -> tuple[int, int, int, int]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("schemaVersion") != METRICS_SCHEMA:
         raise ValueError("unexpected pytest metrics schema")
 
-    values = tuple(payload.get(key) for key in ("collected", "executed", "pytestExitCode"))
+    values = tuple(payload.get(key) for key in ("collected", "executed", "pytestExitCode", "passedCalls"))
     if any(type(value) is not int for value in values):
         raise ValueError("pytest metrics counts and exit code must be integers")
 
-    collected, executed, pytest_exit_code = values
-    if collected < 0 or executed < 0 or executed > collected:
+    collected, executed, pytest_exit_code, passed_calls = values
+    if not 0 <= passed_calls <= executed <= collected:
         raise ValueError("pytest metrics contain impossible item counts")
-    return collected, executed, pytest_exit_code
+    return collected, executed, pytest_exit_code, passed_calls
 
 
 def run_pytest(
@@ -100,8 +102,14 @@ def run_pytest(
     cwd: Path | str = ROOT,
     base_environment: Mapping[str, str] | None = None,
     capture_output: bool = False,
+    require_all_passed: bool = False,
 ) -> PytestRunResult:
-    """Run pytest hermetically and fail closed unless at least one test executes."""
+    """Require real call reports; optionally require every selection to pass.
+
+    The default permits explicitly expected failures used by legacy containment.
+    Strict review groups have no permitted skip/xfail/xpass and opt into
+    ``require_all_passed``; a call report alone is not a successful assertion.
+    """
 
     with tempfile.TemporaryDirectory(prefix="telysta-pytest-") as temporary_directory:
         metrics_path = Path(temporary_directory) / "metrics.json"
@@ -127,10 +135,11 @@ def run_pytest(
 
         collected: int | None = None
         executed: int | None = None
+        passed_calls: int | None = None
         metrics_exit_code: int | None = None
         metrics_error: str | None = None
         try:
-            collected, executed, metrics_exit_code = _read_metrics(metrics_path)
+            collected, executed, metrics_exit_code, passed_calls = _read_metrics(metrics_path)
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             metrics_error = f"missing or invalid execution metrics: {exc}"
 
@@ -147,6 +156,8 @@ def run_pytest(
             failure_reason = "pytest selected zero tests"
         elif executed is None or executed <= 0:
             failure_reason = "pytest executed zero tests"
+        elif require_all_passed and passed_calls != collected:
+            failure_reason = "pytest did not pass every selected test"
         else:
             failure_reason = None
 
@@ -164,6 +175,7 @@ def run_pytest(
             failure_reason=failure_reason,
             stdout=completed.stdout,
             stderr=completed.stderr,
+            passed_calls=passed_calls,
         )
 
 
@@ -191,6 +203,7 @@ class _ExecutionMetricsPlugin:
         self._metrics_path = metrics_path
         self._collected = 0
         self._executed = 0
+        self._passed_calls = 0
 
     def pytest_collection_finish(self, session: object) -> None:
         self._collected = len(session.items)  # type: ignore[attr-defined]
@@ -198,6 +211,8 @@ class _ExecutionMetricsPlugin:
     def pytest_runtest_logreport(self, report: object) -> None:
         if report.when == "call":  # type: ignore[attr-defined]
             self._executed += 1
+            if report.passed and not hasattr(report, "wasxfail"):  # type: ignore[attr-defined]
+                self._passed_calls += 1
 
     def pytest_sessionfinish(self, session: object, exitstatus: object) -> None:
         del session
@@ -207,6 +222,7 @@ class _ExecutionMetricsPlugin:
                 "schemaVersion": METRICS_SCHEMA,
                 "collected": self._collected,
                 "executed": self._executed,
+                "passedCalls": self._passed_calls,
                 "pytestExitCode": int(exitstatus),  # type: ignore[arg-type]
             },
         )

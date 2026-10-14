@@ -264,3 +264,50 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   已按锁重新安装的 venv 和主仓 Rust cache，生成证据记录实际 source/run；不是
   新一轮依赖 bootstrap 或独立远端复核。当前工作分支与用户 references 保留。
   恢复后先读最新候选的生成记录与 WORK_LOG，不把旧完整门移作新字节的证据。
+
+## 2026-10-14 续作：执行真值、正字法关系与可选 LLM
+
+本轮规划复审保留客户端/Rust 权威与 R2 最小语言、同版本说明、R3 受限试听的
+交付链。当前主要欠缺仍是真实领域执行、正式接受和跨平台证据；新增研究检查
+不能替代它们。进度继续集中在本文，WBS 只在执行计划、能力边界只在合同维护，
+不另起一份评审/执行计划。
+
+- 上轮未完的最终复审已重新独立执行。`/root/linguistic_runner_final_review`
+  复现 P2：函数内 skip/xfail 有 call report，旧 harness 会误计完整通过；临时
+  副本把三组改为 9/8/15 个真实 body skip 后 CLI 仍返回成功。新回归先 RED，
+  再将临时 metrics 升为 v2，记录排除 skip/xfail/非严格 XPASS 的 passedCalls；
+  研究组必须 require_all_passed，默认 runner 保留八项 legacy strict xfail。
+  独立重跑原 CLI 反例转为 exit 1，partial/marker skip、xfail、XPASS 也拒绝；
+  runner/harness/legacy 共 32 tests 通过，真实 legacy history 3 passed/8 xfailed。
+  无遗留 finding。shared runner 最终 SHA-256
+  `62ece57c98ac6536bc116ac325ed3d3d06977b2a9e1cdf5b3f6fbdda87e4fd0a`。
+- 下一切片只检查 ORT-R04/09/15/16/20 的有限 spelling-analysis 关系。明确给定
+  许可映射，观察必须绑定独立 requested input、同版本 locks、精确 analysis ID、
+  respelling 与当前 phoneme refs。阳性对照加错误分析、缺失/重复读法、万能分析器、
+  always gap/incomplete、旧读音和预算反例均检查；没有实现 normalizer/parser。
+- `/root/orthography_oracle_review` 发现 R20 的 given.orthographyRevision 与
+  oracle lock 可矛盾而不拒绝；单字段回归先 RED 后修复，独立原反例被拒绝。
+  最终 11 项 oracle、14 项 harness 测试通过；实际四组 9/8/15/11 均实际 pass，
+  无遗留 finding。oracle hash
+  `dd8c1bb07feebede9ef6ceea11bb177be2ca9a6a39363a1bbdaf227c2c29a010`；
+  向量 hash `daa2fd1c8caee59ba8245d7c0b1c66a4de827fa57a62f0350d1e912c6a958703`。
+  只覆盖五案的关系 facets，其余 17 案、IGT、音变、replay、生产 IR/adapter 未执行。
+  50 个生产 case 仍 future，生产执行数为零；不算 G0B/G2 或 ADR 接受。
+- 重新读完用户的 2065-byte《律史前月读教程》文本；大小写赋义等只作为创作
+  偏好研究，不升级为自然语言普遍规律，不复制词表或写入产品数据。官方 Unicode
+  规范及本机 UCD 版本边界已核对；本切片不调用 Unicode normalization。
+- 用户补充要求的 API key 入口已预留在 `.env.example`，`.env.local` 等真实配置
+  已 Git ignore，key 为空且默认关闭。当前 Rust/Python 不读取模板，不新增网络
+  调用或 agent loop；生产凭据服务、限额与 Proposal Escrow 仍是后续实现。LLM
+  仅解析、提议、解释，不参与权威生成/归约/验证，核心、说明和试听不依赖 key。
+  此为 creative/product preference 与既有 hard authority constraint，无迁移。
+- 当前切片进入完整验证；精确 subject/run/results 只看生成 GateEvidence。下一
+  断点是保留审阅候选、推进其余正字法/IGT 的规划 oracle 与发音计划评审准备。
+  G0A/Accepted ADR 前不新增 target writer 或正式语言生成入口。
+- 本轮完整本地门通过：706 Python passed / 8 strict xfailed、86 Rust、17 Node，
+  fmt/clippy/desktop build/docs 通过。新增两项已复现 finding 均完成独立复查；
+  oracle范围文字也经独立终核。G0A 仍 blocked，没有 Windows/WebKit/受信远端
+  provenance 或生产生成、语言手册、读音能力的新增声明。
+- 本轮另存本地候选 `codex/review-orthography-2026-10-14`；保留之前两个候选
+  分支，不切换或提交用户当前分支，不包含 references 或真实 `.env` 文件。新候选
+  沿用既有锁定 venv/构建缓存，精确结果由其生成证据记录，不称重新 bootstrap。

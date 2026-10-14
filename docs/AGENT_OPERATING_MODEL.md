@@ -24,6 +24,10 @@ Telysta 的 Agent 不是通用代码补全器，而是受证据和领域合同�
 | LLM | 可选辅助层 | 解析、提议、解释；不得直接提交状态 |
 | 外部数据 | 版本化 manifest + payload lock | 记录来源、hash、许可证、覆盖和限制 |
 
+可选产品 LLM 的 key 预留与默认关闭约定见
+[开发环境第 9 节](./DEVELOPMENT_SETUP.md#9-可选-llm-的-api-key-预留)；它不控制开发
+工具本身的登录，也不授权 LLM 或多 agent 直接提交语言状态。
+
 ## 3. Agent 工作闭环
 
 ```text

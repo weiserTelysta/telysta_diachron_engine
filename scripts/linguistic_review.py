@@ -38,6 +38,13 @@ RUNNERS = {
     "regression-contracts": ("tests/core/test_audit_correction_fixture_contract.py",),
     "meaning-oracles": ("tests/core/test_meaning_review_vectors.py",),
     "concepticon-research": ("tests/core/test_concepticon_slice.py",),
+    "orthography-relations": ("tests/core/test_orthography_review_vectors.py",),
+}
+REVIEW_SCOPES = {
+    "regression-contracts": "Fixture contract checks, not production domain probes.",
+    "meaning-oracles": "Four finite Meaning review vectors, not production analyzability.",
+    "concepticon-research": "Twelve-entry research slice and membership, not full CLDF validation.",
+    "orthography-relations": "Five declared finite relation facets only; no normalizer, parser, history execution or full 22-case validation.",
 }
 LOCK_PATHS = {
     *PACKS.values(), *(path for paths in RUNNERS.values() for path in paths),
@@ -133,20 +140,23 @@ def run_review(manifest: dict[str, Any], *, execute: bool = False) -> dict[str, 
     results = []
     for key, paths in RUNNERS.items():
         if not execute:
-            results.append({"runnerKey": key, "status": "not_executed"})
+            results.append({"runnerKey": key, "scope": REVIEW_SCOPES[key], "status": "not_executed"})
             continue
-        result = run_pytest((*paths, "-q"), capture_output=True)
+        result = run_pytest((*paths, "-q"), capture_output=True, require_all_passed=True)
         complete = (
             result.passed and type(result.collected) is int and result.collected > 0
             and result.executed == result.collected
+            and result.passed_calls == result.collected
         )
         results.append({
             "runnerKey": key, "status": "pass" if complete else "fail",
+            "scope": REVIEW_SCOPES[key],
             "collected": result.collected, "executed": result.executed,
+            "passedCalls": result.passed_calls,
             "returncode": result.returncode, "pytestReturncode": result.pytest_returncode,
             "failureReason": (
                 result.failure_reason if complete or result.failure_reason
-                else "not all selected tests executed"
+                else "not all selected tests passed"
             ),
             "stdout": result.stdout, "stderr": result.stderr,
         })
@@ -179,7 +189,7 @@ def run_review(manifest: dict[str, Any], *, execute: bool = False) -> dict[str, 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run", action="store_true", help="Execute all three built-in review test groups")
+    parser.add_argument("--run", action="store_true", help="Execute all built-in review test groups")
     args = parser.parse_args()
     try:
         report = run_review(_read_json(MANIFEST), execute=args.run)

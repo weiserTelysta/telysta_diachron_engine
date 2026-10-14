@@ -13,3 +13,6 @@ dist/
 era_snapshots/
 logs/
 target/
+.env
+.env.*
+!.env.example

@@ -102,15 +102,16 @@ def test_review_zero_partial_and_failed_execution_cannot_pass(
         calls.append((arguments, kwargs))
         return SimpleNamespace(
             passed=passed, collected=collected, executed=executed,
+            passed_calls=executed,
             returncode=0 if passed else 1, pytest_returncode=0 if passed else 1,
             failure_reason=None if passed else "failed", stdout="raw test output", stderr="",
         )
     monkeypatch.setattr(review, "run_pytest", run)
     result = review.run_review(_manifest(), execute=True)
     assert result["status"] == "review_checks_failed"
-    assert len(calls) == 3
+    assert len(calls) == 4
     assert [args for args, _ in calls] == [(*paths, "-q") for paths in review.RUNNERS.values()]
-    assert all(kwargs == {"capture_output": True} for _, kwargs in calls)
+    assert all(kwargs == {"capture_output": True, "require_all_passed": True} for _, kwargs in calls)
     assert result["productionCasesExecuted"] == 0 and result["gateDecision"] == "not_evaluated"
 
 
@@ -154,8 +155,25 @@ def test_review_json_reader_rejects_duplicate_bindings(tmp_path: Path) -> None:
 def test_review_actual_fixed_groups_execute_without_promoting_future_bindings() -> None:
     result = review.run_review(_manifest(), execute=True)
     assert result["status"] == "review_checks_passed"
-    assert [item["executed"] for item in result["reviewChecks"]] == [9, 8, 15]
-    assert all(item["returncode"] == 0 and item["collected"] == item["executed"] for item in result["reviewChecks"])
+    assert [item["executed"] for item in result["reviewChecks"]] == [9, 8, 15, 11]
+    assert "Five declared finite relation facets only" in result["reviewChecks"][3]["scope"]
+    assert all(item["returncode"] == 0 and item["collected"] == item["executed"] == item["passedCalls"] for item in result["reviewChecks"])
     assert result["productionCasesExecuted"] == 0 and result["gateDecision"] == "not_evaluated"
     assert all(item["status"] == "future_not_bound" for pack in result["productionBindings"].values() for item in pack.values())
     assert result["capabilityClaims"] == []
+
+
+@pytest.mark.parametrize("call", ["skip", "xfail"])
+def test_review_rejects_real_call_phase_skip_or_xfail(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, call: str,
+) -> None:
+    _stable_source(monkeypatch)
+    path = tmp_path / "test_incomplete.py"
+    path.write_text(f"import pytest\ndef test_not_validated():\n    pytest.{call}('review probe')\n")
+    real_runner = review.run_pytest
+    def run(_arguments: tuple, **kwargs: dict) -> object:
+        return real_runner([str(path), "-q"], **kwargs)
+    monkeypatch.setattr(review, "run_pytest", run)
+    result = review.run_review(_manifest(), execute=True)
+    assert result["status"] == "review_checks_failed"
+    assert all(item["status"] == "fail" for item in result["reviewChecks"])

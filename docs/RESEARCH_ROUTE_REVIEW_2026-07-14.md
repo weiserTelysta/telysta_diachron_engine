@@ -899,6 +899,10 @@ TTS 继续后置，必须建立在同一 morphology → phonology → allophony 
 上述资料截至 2026-10-12 检索；未下载和锁定论文数据，不形成生产数据依赖。
 新规则进入默认包前仍需正/反例、组合顺序、replay 与独立评价。
 
+2026-10-14 再核对官方 UAX #15 rev58，仍为 Unicode 18.0.0；本机 Python
+`unicodedata.unidata_version` 为 15.1.0。新增有限正字法 oracle 不执行 normalization，
+不拿运行库版本差异冒充 Unicode 18 conformance。上述标准参照与具体实现锁继续分开。
+
 ### 本地资料库
 
 已盘点 `references/` 的文件种类；本轮抽读 Sindarin 教程的版权/目录页、

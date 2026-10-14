@@ -218,3 +218,24 @@ uvx --from poetry==2.4.1 poetry sync --no-interaction
 当前 Ruff 只启用影响正确性的规则：语法错误、无效控制流和未定义名称。更广泛的导入排序、风格和格式统一将在清理阶段独立进行，避免一次产生大量与行为修改混杂的差异。
 
 任何新增代码仍应保持一致格式；该限制不表示项目接受长期风格漂移。
+
+## 9. 可选 LLM 的 API key 预留
+
+仓库根目录 [`.env.example`](../.env.example) 为未来 Telysta Proposal Assistant
+预留版本标记、provider/base URL/model 与空的 `TELYSTA_LLM_API_KEY`。
+开发时可复制为 `.env.local`；该本地文件及其他 `.env.*` 已由 Git 忽略，只有
+空值模板允许提交。不要把开发工具自身的登录凭据放进本项目。
+
+这只是配置入口草案：当前 desktop 和 Python baseline **都不读取它**，复制或
+填入 key 不会启用联网、切换 legacy backend 或增加后台 agent。默认
+`TELYSTA_LLM_ENABLED=false`；没有配置 key 也不应阻碍未来离线生成、保存、语言
+手册或基础试听。正式适配仍按 R7-LLM-01 的 Proposal Escrow 与 Rust 验证边界实施。
+
+桌面产品的目标是通过 Rust 凭据服务保存到操作系统凭据库；项目文件、历史、
+导出、日志和 webview 查询 DTO 只能持有非敏感配置/凭据引用，不能包含 key。
+这沿用 ADR-004 的凭据原则与 ADR-006 的 Rust 权威，不引入当前未实现的
+keyring 依赖或命令。网络调用须由用户明确启用和请求，具有限额、取消与超时；
+不因存有 key 自动执行 agent 循环。
+
+LLM 仅解析创作意图、提出待审方案或解释已验证结果。音系/语法编译、历史
+归约、正确性判定和基础读音不依赖 LLM；提案不得直接提交状态或补造历史机制。

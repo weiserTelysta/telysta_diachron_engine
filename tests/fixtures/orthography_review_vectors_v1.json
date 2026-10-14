@@ -5,6 +5,15 @@
   "workPackages": ["R0B-01A-D", "R0B-04B-D"],
   "productionRunnerStatus": "future",
   "executionEvidenceStatus": "not_attached",
+  "finiteReviewOracle": {
+    "schemaVersion": "telysta-finite-orthography-oracle-draft.v1",
+    "status": "planning_relation_checks_not_production_execution",
+    "caseIds": ["ORT-R04", "ORT-R09", "ORT-R15", "ORT-R16", "ORT-R20"],
+    "locks": {"languageRevision": "R-2", "orthographyRevision": "O-1", "unicodePolicy": "U-REVIEW-ONLY"},
+    "defaultAmbiguityBudget": 2,
+    "equivalence": "exact_case_local_analysis_identity",
+    "scope": "Finite declared spelling/analysis relation only; no normalization, segmentation, morphology, parser, sound-change execution or production graph validation."
+  },
   "reviewers": [],
   "notation": "WF/A/G/P/O/R are review-local symbols, not EntityIds, production IR or a wire schema. Strings illustrate writing only; phonology is referenced by typed symbols.",
   "assumptionClass": "hard_constraint",
@@ -77,7 +86,7 @@
     {
       "id": "ORT-R09",
       "question": "Syncretism permits licensed ambiguity, but not arbitrary readings.",
-      "given": {"input": "ta", "licensedAnalyses": ["A-ONE", "A-TWO"], "forbiddenAnalyses": ["A-THREE"], "ambiguityBudget": 2},
+      "given": {"input": "ta", "licensedAnalyses": ["A-ONE", "A-TWO"], "forbiddenAnalyses": ["A-THREE"], "ambiguityBudget": 2, "spellingsByAnalysis": {"A-ONE": ["ta"], "A-TWO": ["ta"]}},
       "probe": "parse_then_spell_each_analysis",
       "required": {"analysisSet": ["A-ONE", "A-TWO"], "allowedSpellings": ["ta"], "ambiguityReported": true},
       "forbidden": ["return_all_inventory_analyses", "admit_A_THREE", "collapse_distinct_WordForm_ids"]
@@ -125,7 +134,7 @@
     {
       "id": "ORT-R15",
       "question": "Unknown or malformed written input must not receive fabricated analyses.",
-      "given": {"input": "qqq", "allowedGraphemes": ["a", "t"], "licensedAnalyses": []},
+      "given": {"input": "qqq", "allowedGraphemes": ["a", "t"], "licensedAnalyses": [], "spellingsByAnalysis": {}},
       "probe": "parse",
       "required": {"outcome": "AnalysisGap", "successfulAnalyses": []},
       "forbidden": ["universal_analyzer", "silently_drop_unknown_graphemes", "nearest_gloss_fallback"]
@@ -133,7 +142,7 @@
     {
       "id": "ORT-R16",
       "question": "Budget exhaustion must be explicit rather than a complete-looking truncated forest.",
-      "given": {"licensedAnalyses": ["A-ONE", "A-TWO", "A-THREE"], "ambiguityBudget": 2},
+      "given": {"licensedAnalyses": ["A-ONE", "A-TWO", "A-THREE"], "ambiguityBudget": 2, "input": "ta", "spellingsByAnalysis": {"A-ONE": ["ta"], "A-TWO": ["ta"], "A-THREE": ["ta"]}},
       "probe": "parse_with_bounded_search",
       "required": {"complete": false, "diagnostic": "ambiguity_or_search_budget_exhausted"},
       "forbidden": ["claim_complete_with_two_readings", "ranker_promotes_unvalidated_reading"]

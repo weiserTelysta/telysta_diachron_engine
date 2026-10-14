@@ -3,7 +3,7 @@ document_type: roadmap
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-12
+last_verified: 2026-10-14
 owner: unassigned
 reviewers: []
 ---
@@ -12,7 +12,7 @@ reviewers: []
 
 - 状态：`Active planning baseline / pending reviewed subject`
 - 基线日期：2026-07-12
-- 最近路线修订：2026-10-12
+- 最近路线修订：2026-10-14
 - 适用范围：引擎、桌面客户端、规则系统、项目存储与质量体系
 - 维护方式：每个阶段结束时更新状态和证据，不以功能数量代替完成度
 
@@ -42,6 +42,8 @@ Telysta Diachron Engine 的目标不是一次性随机生成词表，而是成�
 R0B 当前已有可离线复现的真实 Concepticon 研究切片和 Meaning scope/commitment
 评审向量；执行状态与下一轮统一见 [WORK_LOG](./WORK_LOG.md)。它们不表示
 生产语言生成、数据 adapter 或 G0B 已完成。
+当前执行链增加了有限正字法关系检查；LLM 仍是默认关闭的可选辅助，配置
+预留见执行计划与开发环境，不改变离线核心路线。
 
 ## 2. 当前核心判断
 

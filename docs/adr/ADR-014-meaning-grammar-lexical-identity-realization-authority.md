@@ -277,6 +277,13 @@ reading。不同同音词不能只靠 phoneme string 选择拼写；同形/合�
 禁止 raw IPA fallback。正向和反向都绑定同一 revision、orthography、registry
 与 Unicode policy；变更这些输入使旧 PCU/IGT 证据过期。
 
+当前[有限关系 oracle](../../tests/core/test_orthography_review_vectors.py)只检查
+R04/R09/R15/R16/R20 的 declared spelling↔analysis facets：独立 requested input、
+全部许可读法、禁止/重复读法、respelling、显式不完整、当前 phones 与锁的一致性。
+它使用手工阳性对照与 hostile mutations，不产生真实 parser 观察；其余 17 案、
+Unicode normalization、IGT、音变与 replay 未执行。registry 只增加研究检查组，
+production adapters 仍 future，不据此冻结本 ADR 或关闭 R0B-04B/G2。
+
 IGT 的写词行、形素分段、gloss 与翻译从同一分析图投影。zero、syncretism、
 fusion 允许贡献和 span 非双射；glossing 标记不是目标语言新增的文字、词素
 或意义。规则来源参照 [Leipzig Glossing Rules](https://www.eva.mpg.de/lingua/resources/glossing-rules.php)，
