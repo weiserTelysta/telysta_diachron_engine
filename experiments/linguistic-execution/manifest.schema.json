@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://telysta.local/research/linguistic-review-manifest-draft.v1.json",
+  "title": "Mutable linguistic review execution registry; not production capability",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "schemaSha256", "inputLocks", "reviewChecks", "productionBindings"],
+  "properties": {
+    "schemaVersion": {"const": "telysta-linguistic-review-manifest-draft.v1"},
+    "status": {"const": "mutable_preparation_not_gate_or_capability_evidence"},
+    "schemaSha256": {"$ref": "#/$defs/sha256"},
+    "inputLocks": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/sha256"}
+    },
+    "reviewChecks": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["contractGate", "evidenceKind", "productionCasesExecuted"],
+        "properties": {
+          "contractGate": {"const": "G0B"},
+          "evidenceKind": {"const": "planning_validation_only"},
+          "productionCasesExecuted": {"const": 0}
+        }
+      }
+    },
+    "productionBindings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["regression", "meaning", "orthography"],
+      "properties": {
+        "regression": {"$ref": "#/$defs/bindings"},
+        "meaning": {"$ref": "#/$defs/bindings"},
+        "orthography": {"$ref": "#/$defs/bindings"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "minLength": 64, "maxLength": 64, "pattern": "^[0-9a-f]+$"},
+    "bindings": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["contractGate", "executionGate", "adapterKey", "status"],
+        "properties": {
+          "contractGate": {"const": "G0B"},
+          "executionGate": {"enum": ["G0B", "G2", "G4"]},
+          "adapterKey": {"type": "string", "minLength": 1},
+          "status": {"const": "future_not_bound"}
+        }
+      }
+    }
+  }
+}

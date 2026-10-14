@@ -201,3 +201,66 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   linked 检出独立验证跨进程拒绝、带空格路径和正常/异常清理，无 finding。
   修复后 clean run 结果以候选分支最新 subject/生成证据为准；初次失败日志
   保留在候选 target 中。
+  最终源 subject `f13e869c70289f69919d73512058b6b9d6c9b247`、生成材料 HEAD
+  `24005a7b03d13f2c8605e73a69bd668346a7051f`：完整门 654 Python passed /
+  8 strict xfailed、85 Rust、17 Node 通过。`/root/clean_candidate_review`
+  独立重跑完整 Python 与 Node，核对 27 个 hash、subject/tree/fingerprint、锁与
+  日志、STATUS 逐字渲染，无 finding。其后提交仅两份生成 blocked 文档，检出
+  clean，无 references 或缓存纳入。Rust 复用主检出 target 缓存，reviewer 只核对
+  Rust 日志未重建；没有 Windows/WebKit/远端 provenance/人类批准。当前分支未切换
+  或提交；候选不会被后续工作静默改写。忽略目录 `target/clean-candidate-independent-review.json`
+  保存本地范围摘要，不构成正式 attestation。
+
+### 下一循环：ProjectAuthorityHash 评审材料
+
+- 用户问题：多年后保存/恢复项目时，应能检查所有分支、依赖和迁移来源，不能只
+  验证 UI 当前 head。检查发现 ADR-012 文本声称覆盖 state/dependency，而 schema
+  没有对应显式字段；本轮在 Proposed 材料补齐 stateSemanticHashes、dependency
+  bundle root 和 hash profile，state/history branch key 集必须完全相同。
+- 假设：覆盖、自引用排除与重复键拒绝是 hard correctness constraint；受限 JCS
+  profile 是待接受的工程选择；不对语言自然性提出经验或因果结论。
+- ADR-012 §3.2 集中定义 UTF-16 key 排序、Unicode scalar 原样/控制转义、UTF-8
+  规范字节、domain separation 和唯一根字段排除；不执行 NFC 或缺省填充。两组
+  native/legacy known-answer 使用明确的假 preimages；主 record bundle 仍为格式
+  sentinel。只读研究工具及 Python/Rust test-only cross-check 已进入独立复审。
+  未改变生产 v1、replay、semantic hash/RNG baseline 或添加 writer；无生产迁移。
+- `/root/authority_hash_review` 用独立 Node UTF-16/ECMAScript serializer 重算两组
+  bytes/digest，与 Python/Rust 一致；另做 18 个覆盖变更、25 个拒绝反例、全部
+  ASCII 控制字符与 Unicode 排序/normalization 对照，无 finding。独立运行
+  Python 23 项、Rust 1 项通过。最终向量 SHA-256
+  `1beadeab8480386680867e2362e2cae3df38541cd0ec8af0b6b8123a1e067f87`；
+  工具 `02e0e42dfc883d5c49ef8819d6ceaa9ebc2c9516850ee63c1c4dad6562d70a77`。
+  仅审阅该 planning slice；真实 graph/replay/migration/GC/平台发布和正式批准
+  均未验证，完整本地门以最新生成记录为准。
+- 下一断点：完成该切片的独立复审和完整门，再进入 R0B adapter binding plan；
+  target graph/schema/replay 验证、受信 attestation 与正式接受仍不由本工具实现。
+
+### 下一循环：语言学执行链的研究入口
+
+- Authority review 切片完整门通过：677 Python passed / 8 strict xfailed、
+  86 Rust；原生产 semantic/RNG baseline 未改。随后轮换至 R0B-04A。
+- 用户问题：反例文档如何进入实际、可重复的检查，又不把未实现的生成器算作通过。
+  最小 registry/schema 与 `scripts/linguistic_review.py` 固定运行三组既有 hermetic
+  测试、验证 input locks、记录完整源码 fingerprint 前后值；不接受命令或插件路径。
+  这是 hard correctness/research scope，不提出语言普遍规律。无生产 schema迁移。
+- 从三个 pack 登记 24+4+22 个 case，保持原 G0B/G2/G4 与 future 状态，精确拒绝
+  缺 case/改 Gate/虚构 adapter/输入 hash 过期。当前三组真实执行 9/8/15 项，
+  Orthography 没有执行检查；报告明确生产 case 执行数为零、无 capability claim、
+  Gate 未评估。12 项 harness 拒绝/完整性回归通过。
+- `/root/linguistic_runner_review` 按形式指南，在早期版本实际复跑 32 项，确认
+  no-run、删除 case、future→pass、改 Gate/adapter、未知 check、PYTEST_ADDOPTS
+  注入和真实全 skip 反例均未被记为成功。审阅了随后新增测试；但最终字节复核
+  遇到模型 usage limit，未完成。不得把早期结果当最终独立批准。当前只计主会话
+  完整验证；恢复后先让新上下文 reviewer 复核最终版本，再继续下一个切片。
+- 全部 production adapter schema、冻结 TaskPack 与真实 Rust 绑定仍未实施；
+  不将三个研究组称为生产语言学 runner 或 G0B 关闭。下一断点为复审、完整门与
+  新候选检出验证，再按 Accepted authority 准备后续 adapter 设计。
+  Orthography 的 forbidden/合法歧义约束是后续待执行工作，尚未增加新 oracle。
+- 最新主检出完整门已通过：689 Python passed / 8 strict xfailed、86 Rust、
+  17 Node，fmt/clippy/desktop build/docs 全部通过。G0A 仍 blocked，生产语言生成、
+  同版本语言手册与基础读音尚未实现，不把这些研究检查当成功能交付。
+- 为保留最后两个切片，另准备本地分支 `codex/review-contracts-2026-10-14`；
+  旧 `codex/review-baseline-2026-10-14` 保持 `24005a7`。新分支复用原隔离检出的
+  已按锁重新安装的 venv 和主仓 Rust cache，生成证据记录实际 source/run；不是
+  新一轮依赖 bootstrap 或独立远端复核。当前工作分支与用户 references 保留。
+  恢复后先读最新候选的生成记录与 WORK_LOG，不把旧完整门移作新字节的证据。

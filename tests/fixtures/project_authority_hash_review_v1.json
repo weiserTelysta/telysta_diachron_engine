@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "telysta-project-authority-review-vectors-draft.v1",
+  "status": "mutable_review_not_production_evidence",
+  "profile": "telysta-project-authority-hash-draft.v1",
+  "vectors": [
+    {
+      "id": "AUTH-NATIVE",
+      "hashInputs": [
+        {
+          "label": "history:main",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: history:main\n",
+          "sha256": "aaa73507d9da0addc12c29a914215f57539bcd02d9ea66636a6b96bbbeabe13c"
+        },
+        {
+          "label": "state:main",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: state:main\n",
+          "sha256": "e0dea52279a49c702f1f03df3d0a3b063c82e04e009df909c866269fa93170fe"
+        },
+        {
+          "label": "eventStoreRootSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: eventStoreRootSha256\n",
+          "sha256": "82093288c4e6ea38223109f5d1739ec2ca4401c3375b185c56b94b188056dc37"
+        },
+        {
+          "label": "runLedgerHeadSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: runLedgerHeadSha256\n",
+          "sha256": "819b3a1fdfbdc24f3edf01a8378d9b715fce11b8de56293301b8150af2713520"
+        },
+        {
+          "label": "usageCorpusRootSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: usageCorpusRootSha256\n",
+          "sha256": "93027ac1ed4691d6d3398b580985bdcc749a14be1aaa16c027dc5caf0b6fa1a0"
+        },
+        {
+          "label": "dependencyBundleRootSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: dependencyBundleRootSha256\n",
+          "sha256": "2ee120bc80028a91176081beb0eb42e17e2bb0bbbab95e1077024742acc39f57"
+        }
+      ],
+      "rawManifestJson": "{\n  \"schemaVersion\": \"telysta-project-manifest.v1\",\n  \"authorityHashSchema\": \"telysta-project-authority-hash-draft.v1\",\n  \"projectId\": \"telysta:project:hash-review-native\",\n  \"historyHeads\": {\n    \"main\": \"aaa73507d9da0addc12c29a914215f57539bcd02d9ea66636a6b96bbbeabe13c\"\n  },\n  \"stateSemanticHashes\": {\n    \"main\": \"e0dea52279a49c702f1f03df3d0a3b063c82e04e009df909c866269fa93170fe\"\n  },\n  \"eventStoreRootSha256\": \"82093288c4e6ea38223109f5d1739ec2ca4401c3375b185c56b94b188056dc37\",\n  \"runLedgerHeadSha256\": \"819b3a1fdfbdc24f3edf01a8378d9b715fce11b8de56293301b8150af2713520\",\n  \"usageCorpusRootSha256\": \"93027ac1ed4691d6d3398b580985bdcc749a14be1aaa16c027dc5caf0b6fa1a0\",\n  \"dependencyBundleRootSha256\": \"2ee120bc80028a91176081beb0eb42e17e2bb0bbbab95e1077024742acc39f57\",\n  \"migrationMetadata\": {\n    \"kind\": \"native\",\n    \"sourceSchema\": null,\n    \"sourceArtifactSha256\": null,\n    \"migrationId\": null\n  },\n  \"projectAuthorityHash\": \"04e1b6dfbb62a194ca838c570a5491831ee5ea04db3f02586dffc8e006b14dae\"\n}\n",
+      "canonicalJson": "{\"authorityHashSchema\":\"telysta-project-authority-hash-draft.v1\",\"dependencyBundleRootSha256\":\"2ee120bc80028a91176081beb0eb42e17e2bb0bbbab95e1077024742acc39f57\",\"eventStoreRootSha256\":\"82093288c4e6ea38223109f5d1739ec2ca4401c3375b185c56b94b188056dc37\",\"historyHeads\":{\"main\":\"aaa73507d9da0addc12c29a914215f57539bcd02d9ea66636a6b96bbbeabe13c\"},\"migrationMetadata\":{\"kind\":\"native\",\"migrationId\":null,\"sourceArtifactSha256\":null,\"sourceSchema\":null},\"projectId\":\"telysta:project:hash-review-native\",\"runLedgerHeadSha256\":\"819b3a1fdfbdc24f3edf01a8378d9b715fce11b8de56293301b8150af2713520\",\"schemaVersion\":\"telysta-project-manifest.v1\",\"stateSemanticHashes\":{\"main\":\"e0dea52279a49c702f1f03df3d0a3b063c82e04e009df909c866269fa93170fe\"},\"usageCorpusRootSha256\":\"93027ac1ed4691d6d3398b580985bdcc749a14be1aaa16c027dc5caf0b6fa1a0\"}",
+      "sha256": "04e1b6dfbb62a194ca838c570a5491831ee5ea04db3f02586dffc8e006b14dae"
+    },
+    {
+      "id": "AUTH-LEGACY-UNICODE",
+      "hashInputs": [
+        {
+          "label": "history:main",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: history:main\n",
+          "sha256": "aaa73507d9da0addc12c29a914215f57539bcd02d9ea66636a6b96bbbeabe13c"
+        },
+        {
+          "label": "history:é",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: history:é\n",
+          "sha256": "7579bb0e65ba20fe5db3023f5c7a139ac388c726f6cb0145a6178448919b4cdb"
+        },
+        {
+          "label": "history:é",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: history:é\n",
+          "sha256": "b62ce113a1ccb24e0b838bde4cd77abc6b9fa597524a5d997394a4c15ca82b06"
+        },
+        {
+          "label": "history:",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: history:\n",
+          "sha256": "30b1a0df887c33697ce2ed0b5db42bfdf7584dc70dcd33b203509b477601ec1a"
+        },
+        {
+          "label": "history:𐀀",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: history:𐀀\n",
+          "sha256": "c0b9c0a0cd3e065dbc23e9ddb40c2bb6cdf9e06bb7c99c9ae949a1d71ab020cb"
+        },
+        {
+          "label": "state:main",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: state:main\n",
+          "sha256": "e0dea52279a49c702f1f03df3d0a3b063c82e04e009df909c866269fa93170fe"
+        },
+        {
+          "label": "state:é",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: state:é\n",
+          "sha256": "47fdafb89420729b4adab1bb0b5115eaf906e69436042103376bf5de1eee41b1"
+        },
+        {
+          "label": "state:é",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: state:é\n",
+          "sha256": "72c625af456e7957baa3537a393e7c9913a194fa19238dd514142dfdbe96d860"
+        },
+        {
+          "label": "state:",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: state:\n",
+          "sha256": "5c2d695273c13e3da7351f0ae2f85dc1dfb2589f4d2d886466f49f98b683cd46"
+        },
+        {
+          "label": "state:𐀀",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: state:𐀀\n",
+          "sha256": "2485e59f429a78b4b3dd15c7885847ea024ba52ad02c6c1df5ac13699c5316fd"
+        },
+        {
+          "label": "eventStoreRootSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: eventStoreRootSha256\n",
+          "sha256": "82093288c4e6ea38223109f5d1739ec2ca4401c3375b185c56b94b188056dc37"
+        },
+        {
+          "label": "runLedgerHeadSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: runLedgerHeadSha256\n",
+          "sha256": "819b3a1fdfbdc24f3edf01a8378d9b715fce11b8de56293301b8150af2713520"
+        },
+        {
+          "label": "usageCorpusRootSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: usageCorpusRootSha256\n",
+          "sha256": "93027ac1ed4691d6d3398b580985bdcc749a14be1aaa16c027dc5caf0b6fa1a0"
+        },
+        {
+          "label": "dependencyBundleRootSha256",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: dependencyBundleRootSha256\n",
+          "sha256": "2ee120bc80028a91176081beb0eb42e17e2bb0bbbab95e1077024742acc39f57"
+        },
+        {
+          "label": "legacy source bytes",
+          "kind": "fake_review_preimage_not_domain_payload",
+          "rawUtf8": "ADR-012 REVIEW ONLY: legacy source bytes\n",
+          "sha256": "df721f817273de6c1a4181ef3bb3169cab033b876a7538559b6b2f098e9059bd"
+        }
+      ],
+      "rawManifestJson": "{\n  \"schemaVersion\": \"telysta-project-manifest.v1\",\n  \"authorityHashSchema\": \"telysta-project-authority-hash-draft.v1\",\n  \"projectId\": \"telysta:project:hash-review-legacy\",\n  \"historyHeads\": {\n    \"main\": \"aaa73507d9da0addc12c29a914215f57539bcd02d9ea66636a6b96bbbeabe13c\",\n    \"\\u00e9\": \"7579bb0e65ba20fe5db3023f5c7a139ac388c726f6cb0145a6178448919b4cdb\",\n    \"e\\u0301\": \"b62ce113a1ccb24e0b838bde4cd77abc6b9fa597524a5d997394a4c15ca82b06\",\n    \"\\ue000\": \"30b1a0df887c33697ce2ed0b5db42bfdf7584dc70dcd33b203509b477601ec1a\",\n    \"\\ud800\\udc00\": \"c0b9c0a0cd3e065dbc23e9ddb40c2bb6cdf9e06bb7c99c9ae949a1d71ab020cb\"\n  },\n  \"stateSemanticHashes\": {\n    \"main\": \"e0dea52279a49c702f1f03df3d0a3b063c82e04e009df909c866269fa93170fe\",\n    \"\\u00e9\": \"47fdafb89420729b4adab1bb0b5115eaf906e69436042103376bf5de1eee41b1\",\n    \"e\\u0301\": \"72c625af456e7957baa3537a393e7c9913a194fa19238dd514142dfdbe96d860\",\n    \"\\ue000\": \"5c2d695273c13e3da7351f0ae2f85dc1dfb2589f4d2d886466f49f98b683cd46\",\n    \"\\ud800\\udc00\": \"2485e59f429a78b4b3dd15c7885847ea024ba52ad02c6c1df5ac13699c5316fd\"\n  },\n  \"eventStoreRootSha256\": \"82093288c4e6ea38223109f5d1739ec2ca4401c3375b185c56b94b188056dc37\",\n  \"runLedgerHeadSha256\": \"819b3a1fdfbdc24f3edf01a8378d9b715fce11b8de56293301b8150af2713520\",\n  \"usageCorpusRootSha256\": \"93027ac1ed4691d6d3398b580985bdcc749a14be1aaa16c027dc5caf0b6fa1a0\",\n  \"dependencyBundleRootSha256\": \"2ee120bc80028a91176081beb0eb42e17e2bb0bbbab95e1077024742acc39f57\",\n  \"migrationMetadata\": {\n    \"kind\": \"legacy_import\",\n    \"sourceSchema\": \"telysta-project-file.v1\",\n    \"sourceArtifactSha256\": \"df721f817273de6c1a4181ef3bb3169cab033b876a7538559b6b2f098e9059bd\",\n    \"migrationId\": \"review/\\u8fc1\\u79fb\\t\\\"\\\\\\u0000\\b\\f\\n\\r\\u2028\\u2029\\ud83d\\ude00\"\n  },\n  \"projectAuthorityHash\": \"5b583adf44cb5ef1ac7103be2277f219e68952e71a82f82557e3f4780c094605\"\n}\n",
+      "canonicalJson": "{\"authorityHashSchema\":\"telysta-project-authority-hash-draft.v1\",\"dependencyBundleRootSha256\":\"2ee120bc80028a91176081beb0eb42e17e2bb0bbbab95e1077024742acc39f57\",\"eventStoreRootSha256\":\"82093288c4e6ea38223109f5d1739ec2ca4401c3375b185c56b94b188056dc37\",\"historyHeads\":{\"é\":\"b62ce113a1ccb24e0b838bde4cd77abc6b9fa597524a5d997394a4c15ca82b06\",\"main\":\"aaa73507d9da0addc12c29a914215f57539bcd02d9ea66636a6b96bbbeabe13c\",\"é\":\"7579bb0e65ba20fe5db3023f5c7a139ac388c726f6cb0145a6178448919b4cdb\",\"𐀀\":\"c0b9c0a0cd3e065dbc23e9ddb40c2bb6cdf9e06bb7c99c9ae949a1d71ab020cb\",\"\":\"30b1a0df887c33697ce2ed0b5db42bfdf7584dc70dcd33b203509b477601ec1a\"},\"migrationMetadata\":{\"kind\":\"legacy_import\",\"migrationId\":\"review/迁移\\t\\\"\\\\\\u0000\\b\\f\\n\\r  😀\",\"sourceArtifactSha256\":\"df721f817273de6c1a4181ef3bb3169cab033b876a7538559b6b2f098e9059bd\",\"sourceSchema\":\"telysta-project-file.v1\"},\"projectId\":\"telysta:project:hash-review-legacy\",\"runLedgerHeadSha256\":\"819b3a1fdfbdc24f3edf01a8378d9b715fce11b8de56293301b8150af2713520\",\"schemaVersion\":\"telysta-project-manifest.v1\",\"stateSemanticHashes\":{\"é\":\"72c625af456e7957baa3537a393e7c9913a194fa19238dd514142dfdbe96d860\",\"main\":\"e0dea52279a49c702f1f03df3d0a3b063c82e04e009df909c866269fa93170fe\",\"é\":\"47fdafb89420729b4adab1bb0b5115eaf906e69436042103376bf5de1eee41b1\",\"𐀀\":\"2485e59f429a78b4b3dd15c7885847ea024ba52ad02c6c1df5ac13699c5316fd\",\"\":\"5c2d695273c13e3da7351f0ae2f85dc1dfb2589f4d2d886466f49f98b683cd46\"},\"usageCorpusRootSha256\":\"93027ac1ed4691d6d3398b580985bdcc749a14be1aaa16c027dc5caf0b6fa1a0\"}",
+      "sha256": "5b583adf44cb5ef1ac7103be2277f219e68952e71a82f82557e3f4780c094605"
+    }
+  ]
+}

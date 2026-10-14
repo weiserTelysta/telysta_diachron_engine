@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "x-telysta-status": "planning_only_not_a_production_persistence_format",
   "x-telysta-projectAuthorityHashOwner": "ADR-012",
-  "x-telysta-projectAuthorityHashFixtureStatus": "format_sentinel_only_missing_canonicalizer_coverage_and_known_answer",
+  "x-telysta-projectAuthorityHashFixtureStatus": "main_records_format_sentinels_separate_mutable_review_known_answers",
   "x-telysta-entityIdSchema": "telysta-entity-id.v1",
   "x-telysta-proposedEntityKinds": ["operation", "job", "attempt"],
   "required": [
@@ -186,7 +186,10 @@
         "runLedgerHeadSha256",
         "usageCorpusRootSha256",
         "migrationMetadata",
-        "projectAuthorityHash"
+        "projectAuthorityHash",
+        "authorityHashSchema",
+        "stateSemanticHashes",
+        "dependencyBundleRootSha256"
       ],
       "properties": {
         "schemaVersion": {"const": "telysta-project-manifest.v1"},
@@ -194,8 +197,16 @@
         "historyHeads": {
           "type": "object",
           "minProperties": 1,
+          "propertyNames": {"minLength": 1},
           "additionalProperties": {"$ref": "#/$defs/sha256"}
         },
+        "authorityHashSchema": {"const": "telysta-project-authority-hash-draft.v1"},
+        "stateSemanticHashes": {
+          "type": "object", "minProperties": 1,
+          "propertyNames": {"minLength": 1},
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        },
+        "dependencyBundleRootSha256": {"$ref": "#/$defs/sha256"},
         "eventStoreRootSha256": {"$ref": "#/$defs/sha256"},
         "runLedgerHeadSha256": {"$ref": "#/$defs/sha256"},
         "usageCorpusRootSha256": {"$ref": "#/$defs/sha256"},

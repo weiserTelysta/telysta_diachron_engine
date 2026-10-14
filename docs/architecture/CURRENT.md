@@ -46,6 +46,12 @@ experiments/meaning-workbench/
 
 scripts/concepticon_slice.py + experiments/concepticon-slice/
   └─ offline research selection and record membership; no production writer
+
+scripts/project_authority_review.py + review-only Python/Rust tests
+  └─ mutable ADR-012 canonical-byte/hash vectors; no package/graph/replay authority
+
+scripts/linguistic_review.py + experiments/linguistic-execution/
+  └─ pinned built-in review groups and case-to-Gate map; production adapters future
 ```
 
 ## 2. 当前权威数据

@@ -794,6 +794,11 @@ Meaning 禁读 oracle，并独立检查
 这些可修订向量仍未绑定生产 runner；不能计作 G2 表达能力或 sealed 证据。
 2026-10-14 的平台预算/恢复 planning 校验与当前只读 Blueprint 原文输入修复
 已进入本地复审/验证；实际结论集中在 WORK_LOG，不在此复制测试数或动态 hash。
+ADR-012 authority coverage/profile 与 known-answer 向量继续在 R0A-03 评审范围内
+闭合；只读 Python/Rust 研究检查不得成为 target writer 或正式 baseline acceptance。
+R0B-04A 已有[最小研究 registry](../experiments/linguistic-execution/manifest.json)
+与固定三组 hermetic review harness；逐案保留 G0B/G2/G4 执行门。它没有实现生产
+adapter schema/真实领域运行或冻结 TaskPack，不视为整个 R0B-04A 已 Complete。
 
 若只有一个具备实际容量的 owner，全局 WIP 自动降为 1。任一时刻最多一个包改变
 schema、writer 或 replay；R0A-09、R0A-10 和 R0B evidence 只在当前 Active 包进入

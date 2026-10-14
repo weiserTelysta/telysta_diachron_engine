@@ -54,6 +54,13 @@ schema validator 之外还须检查这些跨记录关系；当前 unit helpers �
 不能签发生产 validated context。rootSeed 已同步 ADR-013 的 Proposed 规范十进制
 字符串决定；schema/Node/Rust 交叉检查不等于独立接受或生产 DTO 已实施。
 
+ProjectManifest 的 authority hash/profile/coverage 唯一见
+[ADR-012 §3.2](./adr/ADR-012-project-package-commit-authority.md#32-authority-hash-覆盖与规范字节proposed)。
+planning schema 已显式加入 stateSemanticHashes 与 dependency bundle root；
+state/history branch key 集必须相等。主 record bundle 的 hash 仍是格式 sentinel；
+[独立 known-answer review vectors](../tests/fixtures/project_authority_hash_review_v1.json)
+才有可重算规范字节，二者不得混用。工具只校验 manifest 局部关系，不验证可达图。
+
 ## 3. 与当前 v1 的迁移映射
 
 | 当前 v1 | 目标解释 | 迁移限制 |

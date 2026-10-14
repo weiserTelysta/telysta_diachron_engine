@@ -19,6 +19,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 import pytest
 from scripts.generate_gate_evidence import fingerprint_workspace, render_status
+from scripts.project_authority_review import validate_manifest
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -223,13 +224,17 @@ def test_schema_draft_names_every_identity_and_recovery_record() -> None:
     _assert_run_and_checkpoint_locks(records)
 
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+    for manifest in records["projectManifests"]:
+        # The bundle has format sentinels, so check local coverage/relationships
+        # without pretending that its projectAuthorityHash is a known answer.
+        validate_manifest(manifest)
     assert "Planning-only" in schema["description"]
     assert schema["type"] == "object"
     assert schema["additionalProperties"] is False
     assert schema["x-telysta-status"] == "planning_only_not_a_production_persistence_format"
     assert schema["x-telysta-projectAuthorityHashOwner"] == "ADR-012"
     assert schema["x-telysta-projectAuthorityHashFixtureStatus"] == (
-        "format_sentinel_only_missing_canonicalizer_coverage_and_known_answer"
+        "main_records_format_sentinels_separate_mutable_review_known_answers"
     )
     assert schema["x-telysta-entityIdSchema"] == "telysta-entity-id.v1"
     assert set(schema["x-telysta-proposedEntityKinds"]) == {"operation", "job", "attempt"}
@@ -254,6 +259,9 @@ def test_schema_draft_names_every_identity_and_recovery_record() -> None:
         "usageCorpusRootSha256",
         "migrationMetadata",
         "projectAuthorityHash",
+        "authorityHashSchema",
+        "stateSemanticHashes",
+        "dependencyBundleRootSha256",
     } <= set(definitions["projectManifest"]["required"])
     authority_hash = definitions["projectManifest"]["properties"][
         "projectAuthorityHash"

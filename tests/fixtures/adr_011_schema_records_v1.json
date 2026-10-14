@@ -7,6 +7,11 @@
       "historyHeads": {
         "main": "1111111111111111111111111111111111111111111111111111111111111111"
       },
+      "authorityHashSchema": "telysta-project-authority-hash-draft.v1",
+      "stateSemanticHashes": {
+        "main": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "dependencyBundleRootSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
       "eventStoreRootSha256": "2222222222222222222222222222222222222222222222222222222222222222",
       "runLedgerHeadSha256": "3333333333333333333333333333333333333333333333333333333333333333",
       "usageCorpusRootSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

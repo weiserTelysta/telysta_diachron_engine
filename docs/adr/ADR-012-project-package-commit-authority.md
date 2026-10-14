@@ -99,6 +99,56 @@ primary：仅当字节 hash 与 record 的 pre/post 之一相符、对应图完�
 `publicationReview`；pre/post graph refs 是 review notation，不是实际 payload hash。
 其一致性检查不冒充 storage fault injection；G1 必须绑定真实平台调用和图验证。
 
+### 3.2 Authority hash 覆盖与规范字节（Proposed）
+
+本轮选择 `telysta-project-authority-hash-draft.v1`，在 candidate manifest 中用
+`authorityHashSchema` 显式锁定。新增 `stateSemanticHashes`（与 `historyHeads`
+拥有完全相同的非空 branch key 集）和 `dependencyBundleRootSha256`，避免只在
+文字中声称覆盖 state/dependency 却没有对应字段。`historyHeads` 的值为
+`HistoryHeadHash`；`stateSemanticHashes` 的值为对应 head 的 `StateSemanticHash`。
+两者不是 object 文件的字节 hash，不得互换。其关联仍须由未来 replay 验证。
+
+对通过 planning schema 与跨字段检查的完整 manifest，仅删除**根层**
+`projectAuthorityHash` 一个字段，其他字段全部保留。剩余值只有 object、string
+与 null；本 profile 拒绝 number、boolean、array 和未知字段。采用
+[RFC 8785 §3.2](https://www.rfc-editor.org/rfc/rfc8785#section-3.2) 的此受限子集：
+所有层的 key 按未转义字符串的 UTF-16 code units 排序；string 使用该节定义的
+控制字符、引号及反斜线转义，其余 Unicode scalar 原样输出；无空白、BOM 或末尾
+换行，以 UTF-8 编码。不执行 NFC/NFKC、大小写折叠或 trim。重复 key（包括转义后
+相同的 key）、无效 UTF-8、未配对 surrogate 和非 JSON 常量均拒绝，不能先用
+会丢弃重复 key 的解析器转换再称为验证过的输入。这里没有实现完整数值 JCS。
+
+```text
+preimage = ASCII("telysta-project-authority-hash-draft.v1") + 0x00
+         + canonical_manifest_without_root_projectAuthorityHash
+ProjectAuthorityHash = lowercase_hex(SHA-256(preimage))
+```
+
+覆盖全部 schema 字段，不建立可静默漏掉新字段的白名单。新增字段或修改规范化
+规则必须修订版本、ADR 和迁移；当前封闭 schema 会拒绝未知字段。根字段的排除
+只解决 hash 自引用，不能豁免 schema 或 checksum 比对：已发布 manifest 的该字段
+必须等于重算结果。准备 candidate 时可暂用合法的全零 hash，再填入计算结果。
+
+| 覆盖项 | 意义与边界 |
+|---|---|
+| schemaVersion、authorityHashSchema、ProjectId | 协议与项目身份 |
+| historyHeads 全部 key/value、stateSemanticHashes 全部 key/value | 所有命名 head 与对应结构摘要，不能只覆盖当前 UI branch |
+| eventStoreRootSha256、runLedgerHeadSha256、usageCorpusRootSha256、dependencyBundleRootSha256 | 权威不可变对象的原始 payload SHA-256 roots；由其内容引用继续承诺下游对象 |
+| migrationMetadata 全部字段，包括显式 null | native/legacy 来源，不能补默认值或推断未知来源 |
+| 根 projectAuthorityHash | 唯一排除项；加载时另行校验相等 |
+
+Job、staging、projection、recovery record、detached receipt 不得作为 manifest
+字段或被权威对象引用；不是在 hash 中偷偷跳过它们。authority graph 不允许引用
+candidate manifest 字节或 target ProjectAuthorityHash，否则出现递归承诺。
+loader 必须另行验证每个可达 payload 的原始 hash、schema、引用关系与 replay；
+manifest hash 本身不能证明这些事实，也不等同于真实性、作者批准或因果证据。
+
+可重算的两组 [known-answer review vectors](../../tests/fixtures/project_authority_hash_review_v1.json)
+和 [只读研究工具](../../scripts/project_authority_review.py)分别固定 native/legacy、
+Unicode、排除自身与 domain separation 的规范字节。payload preimages 仅为明确
+标记的假对象，不是有效 LanguageState/history/ledger/dependency schema。Python
+与 Rust test-only canonicalizer 交叉检查；不是生产 schema、迁移器或 writer。
+
 ## 4. 兼容与迁移
 
 - v1 loader 行为保持不变；正常 load 不猜测 v2；
@@ -124,10 +174,10 @@ schema、纯状态机/故障矩阵、planning fixture、`ProjectAuthorityHash` �
 known-answer 向量和 migration/GC/replay 验收设计。这些评审材料不得写 target package，
 也不是 R1 实现。
 
-当前尚未定义 `ProjectAuthorityHash` canonicalizer/coverage manifest，也没有可重算的
-排除自身 known-answer 向量；ADR-011 planning record 中的重复十六进制值只是格式
-sentinel，不是 known-answer 或执行证据。因此本 ADR 保持 `Proposed`，不得标记
-`Accepted`。
+本轮已提出 §3.2 coverage/profile 与可重算的 review known-answer 向量，仍需独立
+评审与接受；ADR-011 主 record bundle 中重复十六进制值仍只是格式 sentinel，
+不得混同两组材料。可执行研究工具不验证 target object graph 或旧项目迁移，
+不构成任何生产接受条件已自动完成；本 ADR 保持 `Proposed`。
 
 ADR-011/012/013 Accepted 且 G0A=`passed` 后，R1 才能以 deterministic fake operation
 实现 package writer，并实际执行 crash boundary、并发 stale commit、对象篡改/缺失、

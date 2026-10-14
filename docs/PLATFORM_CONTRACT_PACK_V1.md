@@ -178,6 +178,7 @@ R1 必须用不依赖 LanguageState v3 的 deterministic fake operation 证明�
 - ADR-011 的身份与迁移决定尚无独立批准；
 - ADR-012 的单发布点/package authority 尚无 code owner、storage reviewer 和 migration reviewer；
 - ADR-013 的 RNG compatibility 尚无独立 determinism reviewer；
-- 当前仓库没有 reviewed clean-checkout baseline，也没有具名 owner/capacity。
+- 隔离 clean 候选已完成本地 AI 复查（见 WORK_LOG），但没有正式 accepted baseline、
+  受信跨平台 attestation 或具名 owner/capacity。
 
 在上述条件满足前，允许补 fixture、fake-task protocol 和 fault matrix；禁止创建新的 production writer、JobStore、ProjectManifest v2 或桌面 mutation command。
