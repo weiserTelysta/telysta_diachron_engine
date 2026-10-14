@@ -50,6 +50,10 @@ function buildDraft(input) {
   const canonCount = canonItems.length;
   if (canonCount < 3 || canonCount > 5) gaps.push("尚未完成 3–5 条真实创作材料的形成性任务；不记为作者研究成功。");
   const canonIntents = text(input, "canonIntents", 10000);
+  const canonIntentSource = text(input, "canonIntentSource", 10000);
+  if (canonIntents.trim() && canonIntentSource !== canon) {
+    throw new Error("创作材料已改变或关联来源未确认，请先重新核对材料序号与意图。原笔记已保留。");
+  }
   const linkedIntents = [];
   const intentLines = canonIntents.split(/\r?\n/).filter((line) => line.trim());
   for (const [index, line] of intentLines.entries()) {
@@ -89,6 +93,28 @@ function literal(value) {
   return `${fence}text\n${value}\n${fence}`;
 }
 
+// This binds research notes to the exact author input, not to a language state.
+// Reordering, normalization or other edits never silently retarget old notes.
+function createIntentBinding() {
+  let source = null;
+  function check(canon, notes) {
+    if (typeof canon !== "string" || typeof notes !== "string") throw new Error("材料和意图必须是文本。");
+  }
+  return {
+    update(canon, notes) {
+      check(canon, notes);
+      if (!notes.trim()) source = null;
+      else if (source === null) source = canon;
+      return Boolean(notes.trim()) && source !== canon;
+    },
+    confirm(canon, notes) {
+      check(canon, notes);
+      source = notes.trim() ? canon : null;
+    },
+    source() { return source ?? ""; },
+  };
+}
+
 function toMarkdown(draft) {
   return [
     "# Telysta · 作者流程草稿",
@@ -121,13 +147,18 @@ function toMarkdown(draft) {
   ].join("\n");
 }
 
-if (typeof module !== "undefined") module.exports = { buildDraft, toMarkdown };
+if (typeof module !== "undefined") module.exports = { buildDraft, toMarkdown, createIntentBinding };
 
 if (typeof document !== "undefined") {
   const form = document.querySelector("#draft-form");
   const preview = document.querySelector("#preview");
   const status = document.querySelector("#status");
   const download = document.querySelector("#download");
+  const canon = document.querySelector("#canon");
+  const canonIntents = document.querySelector("#canon-intents");
+  const intentStatus = document.querySelector("#intent-status");
+  const confirmIntents = document.querySelector("#confirm-intents");
+  const binding = createIntentBinding();
   let currentMarkdown = null;
 
   function invalidateDraft() {
@@ -137,13 +168,33 @@ if (typeof document !== "undefined") {
     preview.hidden = true;
     status.textContent = "输入已更改，请重新整理草稿后导出。";
   }
-  form.addEventListener("input", invalidateDraft);
-  form.addEventListener("change", invalidateDraft);
+  function updateIntentState() {
+    const stale = binding.update(canon.value, canonIntents.value);
+    intentStatus.hidden = !stale;
+    confirmIntents.hidden = !stale;
+    confirmIntents.disabled = !stale;
+    intentStatus.textContent = stale ? "材料已改变，旧意图笔记仍保留。请核对每个序号对应的材料和含义，再确认关联。" : "";
+  }
+  function edited() {
+    invalidateDraft();
+    updateIntentState();
+  }
+  form.addEventListener("input", edited);
+  form.addEventListener("change", edited);
+  confirmIntents.addEventListener("click", () => {
+    invalidateDraft();
+    binding.confirm(canon.value, canonIntents.value);
+    updateIntentState();
+    status.textContent = "已按您的确认重新关联笔记；这不表示意义已分析或语言学验证通过。请重新整理草稿。";
+  });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     invalidateDraft();
     try {
-      const draft = buildDraft(Object.fromEntries(new FormData(form)));
+      updateIntentState();
+      const input = Object.fromEntries(new FormData(form));
+      input.canonIntentSource = binding.source();
+      const draft = buildDraft(input);
       currentMarkdown = toMarkdown(draft);
       preview.textContent = currentMarkdown;
       preview.hidden = false;

@@ -40,8 +40,10 @@
             <textarea id="canon" name="canon" rows="4" maxlength="10000" placeholder="输入您自己的创作材料；也可以留空探索流程。"></textarea>
             <p class="field-note">已有材料代表您的创作选择，不作为语言演化的经验数据。</p>
             <label for="canon-intents">这些材料要表达什么？</label>
-            <textarea id="canon-intents" name="canonIntents" rows="5" maxlength="10000" aria-describedby="intent-help" placeholder="每行：材料序号 | 一项希望表达的意思。可以为同一材料写多项。"></textarea>
+            <textarea id="canon-intents" name="canonIntents" rows="5" maxlength="10000" aria-describedby="intent-help intent-status" placeholder="每行：材料序号 | 一项希望表达的意思。可以为同一材料写多项。"></textarea>
             <p class="field-note" id="intent-help">围绕上方 3–5 条非空材料记录 5–10 项真实意图，例如“2 | 请求对方不要关门；说话者身份尚未确定”。这些是您的笔记，原型不会自动分析或确认意义。</p>
+            <p class="field-note" id="intent-status" role="status" aria-live="polite" hidden></p>
+            <button id="confirm-intents" type="button" class="secondary" hidden disabled>已重新核对材料与意图</button>
           </section>
 
           <section class="panel" id="meaning" aria-labelledby="meaning-title">

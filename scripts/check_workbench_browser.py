@@ -66,6 +66,26 @@ def main() -> int:
         text = output.read_text(encoding="utf-8")
         assert canon in text and intentions in text and "不是语言手册" in text
 
+        reordered = "守卫的名字\n河口城\n<script>window.injected = true</script>"
+        page.locator("#canon").fill(reordered)
+        assert page.locator("#download").is_disabled()
+        assert page.locator("#canon-intents").input_value() == intentions
+        assert page.locator("#confirm-intents").is_visible()
+        page.get_by_role("button", name="整理流程草稿").click()
+        assert "重新核对" in page.locator("#status").inner_text()
+        assert page.locator("#download").is_disabled()
+        assert page.locator("#preview").is_hidden()
+        page.locator("#canon").fill(canon)
+        assert page.locator("#confirm-intents").is_hidden(), "exact reversion preserves original binding"
+        page.locator("#canon").fill(reordered)
+        page.locator("#confirm-intents").focus()
+        page.keyboard.press("Enter")
+        assert page.locator("#confirm-intents").is_hidden()
+        page.get_by_role("button", name="整理流程草稿").click()
+        assert reordered in page.locator("#preview").inner_text()
+        assert page.locator("#download").is_enabled()
+        assert page.locator("#canon-intents").input_value() == intentions
+
         page.locator("#language-brief").fill("已修改的构想")
         assert page.locator("#download").is_disabled(), "editing must invalidate stale export"
         assert page.locator("#preview").is_hidden()
@@ -84,7 +104,7 @@ def main() -> int:
         assert not errors, errors
         assert not remote_requests, remote_requests
         browser.close()
-    print("Workbench browser checks passed: offline, export, invalidation, focus, 390/720px reflow.")
+    print("Workbench browser checks passed: offline, export, material binding/review, invalidation, focus, 390/720px reflow.")
     return 0
 
 

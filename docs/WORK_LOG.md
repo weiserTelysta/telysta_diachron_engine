@@ -311,3 +311,37 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
 - 本轮另存本地候选 `codex/review-orthography-2026-10-14`；保留之前两个候选
   分支，不切换或提交用户当前分支，不包含 references 或真实 `.env` 文件。新候选
   沿用既有锁定 venv/构建缓存，精确结果由其生成证据记录，不称重新 bootstrap。
+
+## 2026-10-14 续作：真实材料约束与关联保护
+
+- 新上下文 `/root/next_slice_architecture_review` 复核下一纵切：当前 session/query
+  仅支持既定摘要，不能从 Genesis/整状态修订推断音变因果；新增生产命令与客户端
+  仍受 R1 门约束。建议优先真实作者流程，不无限累加研究 oracle。该评审不接受
+  Proposed ADR、不替代 accountable owner 或跨平台终态证据。
+- 用户问题：编辑或调序已有材料后，旧序号笔记是否仍指向原材料。实际发现同条数
+  调序会静默重绑定；先用旧实现复现两个失败测试，再增加原始输入绑定与显式
+  重新核对。保留笔记、废弃旧预览、暂停整理和导出；精确还原才恢复，无 NFC/trim
+  或行数猜测。用户保留拼写是 creative preference，关联不静默改变是软件约束；
+  这是临时研究 UI，不改 Blueprint/状态/历史 schema、RNG 或生产语义 baseline。
+- `/root/canon_intent_binding_review` 按历时语言学指南独立复查，Node 10 项与
+  官方 Chromium 检查通过，另运行 11 项实际浏览器探针，覆盖同数替换/调序、
+  Unicode 原始差异、空白、只改笔记不解除过期、精确还原、清空重写和键盘确认。
+  最终无 finding。reviewer 没有重跑旧版本；RED 由主会话实际复现。已审 app.js
+  SHA-256 `f42e5962123fba3d8058dd701de873807de0bdcbd84605fffa56773b63ac96a1`，
+  测试 `aa4933ae64a8379bd6bf3900b0f826afacce7d9d88944eeaba50c1fb77ac3713`。
+  README 后续仅更新部分采集说明；不把浏览器自动化称真人任务或辅助技术认证。
+- 用户直接提供两条名称，后确认含义未定、保留原拼写。助手离线代录两条名称及
+  两条保留约束，未推断发音/词源/语义，也未代选固定练习或候选概念。实际导出
+  保留原文与未知项，无远端请求。原始材料、截图与记录留在 ignored
+  `target/author-pilot/2026-10-14/`，不提交为 fixture/default corpus；草稿 SHA-256
+  `093993657d811ab9c5f69291bdab47d259342e571e18078f6ab48f9390bed785`。
+  这不是完整作者研究：材料仅两条，约束不算 5–10 项交际意图，作者未亲自操作
+  UI，比较/编辑任务、替代工作流及转向条件未观察。不计 ProductUsabilityEvidence、
+  G0B、语言生成、语言手册或音频能力。
+- 本切片进入完整门与新隔离候选保存；当前分支和旧候选保持，私人材料不复制。
+  下一断点：读取本轮生成记录，继续观察真实作者任务或取得 G0A 尚缺的责任与
+  受信平台证据，再启动对应生产纵切；不绕开 G0A/Accepted ADR 追求演示功能。
+- 本轮主检出完整门通过：706 Python passed / 8 strict xfailed、86 Rust、20 Node，
+  fmt/clippy/desktop build/docs 通过；独立 Chromium 交互检查亦通过。新增本地候选
+  `codex/review-canon-binding-2026-10-14` 沿用既有锁定 venv 与 Rust cache，不称新
+  bootstrap 或远端批准。最终 source/run/results 以各自生成记录为准，G0A 仍 blocked。

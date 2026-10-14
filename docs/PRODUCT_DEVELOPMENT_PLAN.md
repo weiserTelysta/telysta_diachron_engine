@@ -791,6 +791,10 @@ Ready 门：
 复审，R0A-10 有真实运行材料的采集/校验工具；R0B-06P 的非权威
 [作者流程原型](../experiments/meaning-workbench/README.md) 已可本地试用。
 这些都是实现/研究候选，不替代独立关闭、真实作者研究或 GateEvidence。
+2026-10-14 已部分采集两条自有名称及保留原拼写约束，助手代录并导出未知项；
+未观察作者界面操作，未采集完整交际意图，不计形成性任务通过。材料编辑/调序
+后的笔记关联现要求重新核对；原始材料不进入公共 fixture。下一产品切片优先
+观察作者实际工作流与失败，再修订合同；不以更多有限 oracle 替代产品进展。
 
 R0B-05 的 [Concepticon 离线研究切片](../experiments/concepticon-slice/README.md)
 已完成本地实现及独立 AI 复审，生产 payload adapter 尚待绑定。R0B-04 已修补

@@ -2,12 +2,13 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const { readFileSync } = require("node:fs");
 const { join } = require("node:path");
-const { buildDraft, toMarkdown } = require("./app.js");
+const { buildDraft, toMarkdown, createIntentBinding } = require("./app.js");
 
 function input() {
   return {
     brief: "用于一个故事的语言。",
     canon: "河口城\n过河\n守卫",
+    canonIntentSource: "河口城\n过河\n守卫",
     canonIntents: "1 | 这里是一座河口城\n1 | 城名保持不变\n2 | 请求对方过河\n2 | 时间尚未确定\n3 | 指一位守卫",
     concept: "analytic",
     speaker: "speaker", referent: "known", number: "one", source: "seen",
@@ -53,7 +54,8 @@ test("fixed exercise selections cannot replace intentions linked to the authors 
   const invalid = buildDraft({ ...input(), canonIntents: "4 | 不存在的材料\n不是关联笔记" });
   assert.equal(invalid.linkedIntents.length, 0);
   assert.match(invalid.gaps.join("\n"), /第 1 行未关联有效材料/);
-  const changed = buildDraft({ ...input(), canon: "新城\n新的对白\n新的名字" });
+  assert.throws(() => buildDraft({ ...input(), canon: "新城\n新的对白\n新的名字" }), /重新核对/);
+  const changed = buildDraft({ ...input(), canon: "新城\n新的对白\n新的名字", canonIntentSource: "新城\n新的对白\n新的名字" });
   assert.equal(changed.linkedIntents[2].canonItem, "新的对白");
 });
 
@@ -65,11 +67,46 @@ test("unknown choices, blank briefs and oversize content fail closed", () => {
 
 test("export preserves canon Unicode and wraps hostile Markdown in literal fences", () => {
   const canon = "<script>alert(1)</script>\n````\n# pretend approval\nŋ a\u0301";
-  const draft = buildDraft({ ...input(), canon });
+  const draft = buildDraft({ ...input(), canon, canonIntentSource: canon });
   const markdown = toMarkdown(draft);
   assert.equal(draft.canon, canon);
   assert.ok(markdown.includes(`\n\`\`\`\`\`text\n${canon}\n\`\`\`\`\`\n`));
   assert.match(markdown, /telysta-formative-draft.v1/);
+});
+
+test("linked intentions reject missing or stale source material before export", () => {
+  const missing = input();
+  delete missing.canonIntentSource;
+  assert.throws(() => buildDraft(missing), /重新核对/);
+  for (const canon of ["守卫\n过河\n河口城", "河口城\n新的对白\n守卫", "河口城\n过河\n守卫\n新增名字"]) {
+    assert.throws(() => buildDraft({ ...input(), canon }), /重新核对/);
+  }
+  assert.equal(buildDraft({ ...input(), canonIntents: "" }).linkedIntents.length, 0);
+});
+
+test("material edits preserve the old binding until explicit review or exact reversion", () => {
+  const binding = createIntentBinding();
+  const original = input();
+  assert.equal(binding.update(original.canon, original.canonIntents), false);
+  const changed = "守卫\n过河\n河口城";
+  assert.equal(binding.update(changed, original.canonIntents), true);
+  assert.equal(binding.source(), original.canon);
+  assert.equal(binding.update(changed, `${original.canonIntents}\n3 | 新笔记`), true);
+  assert.equal(binding.update(original.canon, original.canonIntents), false);
+  assert.equal(binding.update(changed, original.canonIntents), true);
+  binding.confirm(changed, original.canonIntents);
+  assert.equal(binding.update(changed, original.canonIntents), false);
+  assert.equal(binding.source(), changed);
+});
+
+test("fresh notes bind to current raw input without Unicode folding", () => {
+  const binding = createIntentBinding();
+  assert.equal(binding.update("a\u0301", ""), false);
+  assert.equal(binding.update("a\u0301", "1 | 原样保留"), false);
+  assert.equal(binding.update("á", "1 | 原样保留"), true);
+  assert.equal(binding.update("á", ""), false);
+  assert.equal(binding.update("á", "1 | 重新写的笔记"), false);
+  assert.equal(binding.source(), "á");
 });
 
 test("prototype has no production bridge, remote assets or silent persistence", () => {
