@@ -4,10 +4,10 @@
   "gateId": "G0A",
   "gateName": "Platform Contract Ready",
   "decision": "blocked",
-  "decisionDate": "2026-10-14",
+  "decisionDate": "2026-10-15",
   "source": {
-    "subjectCommit": "fb5c4e47dfb1b4d72afc5fe0537865d28adaa901",
-    "subjectTree": "c71f8cf95bb2917b069982c4c7953a4abe59d87e",
+    "subjectCommit": "409cc557d4bedfe0bed87863d8212f1e64df451e",
+    "subjectTree": "8e599b11bd30526612d69cea4cbd559ba1f47d03",
     "worktreeDirty": false,
     "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
@@ -18,12 +18,12 @@
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:17b6788faf80d507b06b3877275fe1d9",
-        "subjectCommit": "fb5c4e47dfb1b4d72afc5fe0537865d28adaa901",
-        "subjectTree": "c71f8cf95bb2917b069982c4c7953a4abe59d87e",
+        "runId": "gate-run:bf63cc3812d15c82287fc305864ede47",
+        "subjectCommit": "409cc557d4bedfe0bed87863d8212f1e64df451e",
+        "subjectTree": "8e599b11bd30526612d69cea4cbd559ba1f47d03",
         "platformFamily": "linux",
-        "startedAt": "2026-10-14T02:58:06Z",
-        "finishedAt": "2026-10-14T02:58:45Z",
+        "startedAt": "2026-10-15T01:33:12Z",
+        "finishedAt": "2026-10-15T01:33:52Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
