@@ -420,3 +420,12 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
 - 责任信息目前只确认“由用户指定的其他维护者或团队负责”，尚无具体人选；
   owner/capacity 保持未知。下一切片为本地验证证据合同评审及已确认问题修复，
   不借用户禁止远端执行之机绕过其余 ADR/Gate，也不以更多 oracle 代替产品。
+- 正式补丁 `9c15712` 经同一独立 reviewer 在三个新本地副本终核：3.10.22、
+  3.12.15、3.14.8 各 707 passed / 8 strict xfailed，715 collected/executed、
+  707 passedCalls；检查后均无 tracked diff。归档 workflow 与旧版原字节一致，
+  无活跃 workflow；15 个 input locks 与 Poetry check --lock 均通过。独立复查
+  记录 SHA-256 `b12646b220a54d992ae4c2477b790c19ce38e35f0da12ede29d3d6b02b3efe4e`。
+- 主检出及隔离候选的完整本地门均通过：707 Python passed / 8 strict xfailed、
+  86 Rust；另运行 20 Node 项全部通过，fmt/clippy/desktop build/docs 通过。
+  最后只补本执行记录，再由生成器绑定最终 source/run；不修改生产 baseline。
+  本轮不执行更多远端任务，阶段提交仅保存代码，G0A 仍 blocked。
