@@ -3,7 +3,7 @@ document_type: product-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-15
+last_verified: 2026-10-16
 owner: unassigned
 reviewers: []
 ---
@@ -11,7 +11,7 @@ reviewers: []
 # Telysta 产品开发执行计划
 
 - 状态：`Active planning baseline / Domain Implementation Hold`
-- 最近修订：2026-10-15
+- 最近修订：2026-10-16
 - 适用范围：产品定义、Rust 核心、Tauri 工作台、语言生成、历时模拟、验证、数据、迁移与发布
 - 当前阶段：`R0A 计划/决策修复 + R0B WS-1 领域证据`
 - 当前阻断：G0A 为 `blocked`；2026-07-19 复审又重新打开 Gate/CI hermeticity、真实 MSRV、当前 v1 create/append/migration/index authority 和 legacy evidence 边界；R0B evidence preparation 正在进行，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`，G0B=`not evaluated` 且没有通过性 GateEvidence；ADR-007～014 均未完成所需接受流程，ADR-014 已形成 Proposed 草案但 owner/reviewer 未分配；Project/Operation/Run/Job、Meaning/Grammar/Lexical Class/Realization、TheoryProfile、ChangeSet locus、聚合与 replay 边界尚未闭合。ADR-005 是分阶段研究背景，不是 WS-1 前置
@@ -97,6 +97,11 @@ R2 的可执行微型语言，再由 R3 完成作者任务；不以大量词表�
 - **文档收敛**：执行计划是唯一 WBS，路线图只保留摘要和稳定链接，能力图
   保存领域合同与 Gate 定义；实际检查与恢复断点只记在
   [执行记录](./WORK_LOG.md)。历史合同与 schema 在迁移完成前继续保留。
+- **仅本地执行（2026-10-16）**：构建、测试、模拟与客户端都在本地运行；
+  GitHub 只保存阶段代码，不启用远端 CI、托管服务或计算。旧 workflow 已归档，
+  本地验证入口统一见开发环境。原 Proposed Gate policy 的远端 provenance
+  条款需改为可审阅的本地证据合同，不能为了旧 Gate 再启动远端任务，也不
+  在合同未闭合时直接放行。此用户范围优先于下文保留的旧远端验证要求。
 
 本轮优先关闭 R0A-09 的既有 v1 correctness 缺口；其本地回归通过不代替
 独立批准、clean-checkout 与跨平台终态证据。论文依据及适用范围见
@@ -786,6 +791,9 @@ Ready 门：
 | `WIP-GATE` | R0A-05/06 candidate → R0A-08 → R0A-09 → R0A-10 → refresh R0A-05/06 → G0A | policy v2、可信 evidence、current authority fault-injection、legacy raw evidence、clean subject 与独立 attestation |
 | `WIP-PRODUCT` | R0B-06P / `FormativeJourney.r0b` | 不写权威状态的 Meaning Workbench 原型、真实 canon 形成性证据与失败/转向记录 |
 | `QUEUED-DOMAIN` | R0B-01～05（含 R0B-01A-D/01A/04A/04B-D/04B）、R0B-06 与 R0B-07 | Meaning/Grammar/Corpus/TaskPack/Capability、产品 evidence contract、execution contract、ADR review vectors、冻结反例与数据锁 |
+
+R0A-08 下一步仅准备本地 clean-checkout/平台验证和替代旧远端条款的候选合同。
+没有远端运行任务；旧 policy/validator 尚未完成本地替代前继续保持 blocked。
 
 2026-10-12 本地执行断点见 [WORK_LOG](./WORK_LOG.md)：R0A-09 修复候选进入
 复审，R0A-10 有真实运行材料的采集/校验工具；R0B-06P 的非权威

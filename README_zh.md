@@ -90,7 +90,8 @@ Python 命令只覆盖 legacy/research 基线和文档治理，不能替代 Rust
 
 Linux 桌面构建还需要[开发环境指南](./docs/DEVELOPMENT_SETUP.md)列出的 Tauri 系统依赖。
 Windows 上的精确 1.88.0 检查有既往本地记录；本轮 Linux 工作区检查见
-[执行记录](./docs/WORK_LOG.md)。Fresh-checkout CI 与独立证据仍待完成，G0A 保持 blocked。
+[执行记录](./docs/WORK_LOG.md)。运行与验证均在本地，GitHub 只保存代码。
+clean-checkout、决定接受和独立证据仍未闭合，G0A 保持 blocked。
 
 ### 运行旧引擎研究界面
 

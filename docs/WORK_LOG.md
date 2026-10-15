@@ -3,7 +3,7 @@ document_type: runbook
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-15
+last_verified: 2026-10-16
 ---
 
 # 执行记录与恢复入口
@@ -388,3 +388,35 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   fmt/clippy/desktop build/docs 通过。生产 Node/浏览器代码没有改变，不把上一轮
   浏览器结果当新发音测试。新本地候选使用既有锁定 venv/构建缓存；精确最终
   source/run 由生成 GateEvidence 记录，G0A 仍 blocked，无远端 provenance。
+
+## 2026-10-16 续作：仅本地验证与阶段代码保存
+
+- 用户授权必要的阶段 git push；已将先前冻结候选 `e481bc4` 推送至
+  `codex/review-pronunciation-contract-2026-10-15`。旧 workflow 的 push trigger
+  自动启动 GitHub run `38780279304`。随后用户明确“远端不要执行”，该指令立即
+  覆盖后续执行安排。已核实旧运行终态为 Failure，没有继续运行；不是取消成功
+  或远端通过。其 Python 3.12/3.14 失败原因未取得，不据本地结果推断原因。
+- 原 workflow 原字节移动到 `docs/archive/ci-workflow-2026-10-16.yml`，活跃目录
+  不保留 yml/yaml。新增本地回归拒绝任何活跃工作流；旧 matrix 仅作历史参考。
+  本地候选分支 `codex/local-verification-2026-10-16` 的首个提交 `5b4cb49`
+  保存此变更并已推送，6 项本地相关检查通过。没有创建 PR、merge、部署、
+  hosted service 或新的远端运行入口；后续 push 只保存代码。
+- 用户执行偏好同步到根 AGENTS、README、执行计划和开发环境；主计划统一声明
+  本地运行/验证，不再安排远端 CI。旧 Proposed policy 的远端 predicate 与新
+  范围不一致，须评审本地替代证据合同；本轮不删 predicate 放行、不伪造受信
+  provenance，现有 Gate 继续 fail closed。语言/RNG/存储 schema 与语义不变。
+- 本地复现实际缺陷：Python 3.10 无 `tomllib`，三个直接导入使 Docs/collection
+  失败。已增加标准 backport 导入、显式条件开发依赖 `tomli>=2.4.1,<3.0`，
+  用仓库外 Poetry 2.4.1 重锁；既有 tomli 2.4.1 payload 和所有包版本未升级，
+  lock 仅 content-hash 改变。研究 manifest 的三项 input locks 随源码同步。
+- `/root/python_ci_compatibility_review` 在 /tmp 独立取得冻结候选的实际 RED：
+  CPython 3.10.22 的 check.py 在 Docs exit 1，两测试 collection exit 2。其
+  最小修复副本完整 GREEN：706 passed / 8 strict xfailed。原冻结候选本地
+  3.12.15/3.14.8 各 706 passed / 8 xfailed；这些是 Debian 本地结果，不是
+  Windows 或远端证明。解释器/uv 与锁定环境均留在 /tmp，不成为产品依赖。
+- 正式补丁相关 78 项、文档、Poetry check --lock 已通过，进入完整本地门和
+  最终跨版本复核。作者原始材料与 references 不纳入任何提交。实际版本、
+  source/run、完整结果由本轮生成记录与最终断点确认，不能沿用旧候选证据。
+- 责任信息目前只确认“由用户指定的其他维护者或团队负责”，尚无具体人选；
+  owner/capacity 保持未知。下一切片为本地验证证据合同评审及已确认问题修复，
+  不借用户禁止远端执行之机绕过其余 ADR/Gate，也不以更多 oracle 代替产品。

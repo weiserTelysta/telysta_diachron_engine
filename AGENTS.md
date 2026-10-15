@@ -49,6 +49,11 @@ Read these documents before changing a core domain:
 
 ## Local verification
 
+Run builds, tests, simulations, and application processes locally. Git remotes
+are for code backup and stage commits; do not add or enable remote workflows,
+CI runners, hosted application services, or remote computation without a new
+explicit user instruction. Archived workflow examples are not executable plans.
+
 Python baseline:
 
 ```powershell

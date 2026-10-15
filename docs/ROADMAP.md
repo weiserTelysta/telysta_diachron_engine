@@ -3,7 +3,7 @@ document_type: roadmap
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-15
+last_verified: 2026-10-16
 owner: unassigned
 reviewers: []
 ---
@@ -12,7 +12,7 @@ reviewers: []
 
 - 状态：`Active planning baseline / pending reviewed subject`
 - 基线日期：2026-07-12
-- 最近路线修订：2026-10-15
+- 最近路线修订：2026-10-16
 - 适用范围：引擎、桌面客户端、规则系统、项目存储与质量体系
 - 维护方式：每个阶段结束时更新状态和证据，不以功能数量代替完成度
 
@@ -48,6 +48,8 @@ R0B 当前已有可离线复现的真实 Concepticon 研究切片和 Meaning sco
 材料调序关联保护已修复。研究记录集中在 WORK_LOG，不计语言生成能力或 G0B。
 发音阶段/依赖候选合同统一归 ADR-014 §4.6.1，主计划引用同一处；其人工
 trace 已独立复审，但没有生产计划或音频执行链，不增加实施放行声明。
+2026-10-16 起仅本地运行/验证，GitHub 只保存代码，自动 CI 已归档。本文历史
+远端要求不再产生执行任务；本地替代证据合同与当前队列统一见执行计划。
 
 ## 2. 当前核心判断
 

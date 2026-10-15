@@ -96,8 +96,8 @@ not a replacement for the Rust and desktop gates.
 Linux desktop builds also require the Tauri system packages documented in
 [the development setup guide](./docs/DEVELOPMENT_SETUP.md). The exact 1.88.0
 Windows checks have a prior local record; the current Linux workspace checks are recorded
-in the [work log](./docs/WORK_LOG.md). Fresh-checkout CI and independent evidence are still
-pending, so G0A remains blocked.
+in the [work log](./docs/WORK_LOG.md). Verification runs locally; GitHub stores code only.
+Clean-checkout, accepted decisions and independent evidence remain incomplete, so G0A stays blocked.
 
 ### Run the legacy research UI
 

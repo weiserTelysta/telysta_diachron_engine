@@ -10,6 +10,11 @@ reviewers: []
 
 # GateEvidence v3：闭合 Policy、Delivery Readiness 与远端 Provenance
 
+2026-10-16 执行范围变更：用户要求仅本地运行与验证，GitHub 只保存代码。
+下文远端条款保留为旧 Proposed 合同背景，不授权再次启用远端任务。须独立
+评审本地 clean subject、可重验运行记录与评审同意的替代合同；现有 schema/
+policy 先保持原版本，生成器仍拒绝签发 passed，不能直接删掉 predicate 放行。
+
 > **实施边界：** 本文件、[G0A policy v2](../G0A_POLICY_V2.json)、
 > [policy schema](../G0A_POLICY_V2.schema.json) 与
 > [GateEvidenceManifest v3 schema](../GATE_EVIDENCE_MANIFEST_V3.schema.json)

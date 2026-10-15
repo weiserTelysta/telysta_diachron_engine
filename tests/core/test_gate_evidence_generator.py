@@ -7,13 +7,17 @@ import json
 import shutil
 import subprocess
 import sys
-import tomllib
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
 import pytest
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 compatibility.
+    import tomli as tomllib
 
 import scripts.generate_gate_evidence as gate_evidence
 from scripts.generate_gate_evidence import (

@@ -12,7 +12,6 @@ import platform
 import subprocess
 import sys
 import tempfile
-import tomllib
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
@@ -26,6 +25,11 @@ from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 from referencing import Registry, Resource
 import yaml
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 uses the locked stdlib backport.
+    import tomli as tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]

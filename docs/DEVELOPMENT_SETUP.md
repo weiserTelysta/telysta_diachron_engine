@@ -3,7 +3,7 @@ document_type: runbook
 decision_status: not-applicable
 implementation_status: implemented
 normative_scope: current
-last_verified: 2026-10-12
+last_verified: 2026-10-16
 ---
 
 # 开发环境与质量检查
@@ -11,12 +11,17 @@ last_verified: 2026-10-12
 > 本文记录本地质量入口。Python 命令维护旧引擎基线、黄金场景和跨仓库文档检查；
 > Rust workspace 与 Tauri 使用独立的 Rust 质量门。正式产品方向见
 > [ADR-006](./adr/ADR-006-rust-native-core-python-research-bridge.md)，完整强制命令以
-> 仓库根目录 [AGENTS.md](../AGENTS.md) 和 CI 为准。
+> 仓库根目录 [AGENTS.md](../AGENTS.md) 为准。运行与验证均在本地，GitHub 只保存代码。
 
 - 状态：`Current local quality runbook`
-- 基线日期：2026-07-12；最后核验：2026-10-12
+- 基线日期：2026-07-12；最后核验：2026-10-16
 - 默认开发版本：Python 3.13
 - 支持范围：Python 3.10–3.14
+
+2026-10-16 用户明确关闭远端执行。旧 CI 工作流保留为
+[历史参考](./archive/ci-workflow-2026-10-16.yml)，已移出 `.github/workflows/`；
+没有 push、PR、定时或手动远端执行入口。后续新增活跃 workflow 会使本地检查失败。
+Git push 只保存阶段代码，不把旧远端 CI 要求当作继续执行的授权。
 
 ## 1. Windows 环境
 
@@ -67,7 +72,7 @@ rustup toolchain install 1.88.0 --profile minimal --component rustfmt,clippy
 ```
 
 Windows 还需要 Microsoft C++ Build Tools 与 WebView2 开发/运行环境。Debian/Ubuntu
-开发机与 CI 使用 [Tauri v2 官方前置要求](https://v2.tauri.app/start/prerequisites/)
+开发机使用 [Tauri v2 官方前置要求](https://v2.tauri.app/start/prerequisites/)
 列出的原生依赖：
 
 ```bash
@@ -110,7 +115,7 @@ macOS/Linux：
 
 pytest 使用系统为当前进程分配的独立临时目录；不得在共享工作树中固定一个 basetemp，
 以免连续运行或并发 agent 互相删除目录。测试缓存插件在该总门禁中关闭。任一步失败都会
-返回非零退出码。CI 与开发者使用同一个脚本，避免本地和远程检查漂移。
+返回非零退出码。本地开发和独立本地复查使用同一个脚本。
 
 需要刷新 G0A 证据时，不手工编辑测试数量或工作区计数。执行：
 
@@ -145,16 +150,15 @@ Rustfmt、Rust test、Clippy、desktop locked build 和 JavaScript 检查。所�
 全部通过后才创建带 UTC 开始/结束时间的 `verificationRuns`，记录真实 Python 可执行路径、
 已安装分发集合摘要、Python/Rust/Cargo/Node 版本、锁文件摘要和实际命令。验证前会拒绝与
 `poetry.lock` 不一致的 `.venv`，并要求本次正式验证使用 workspace 锁定的精确
-Rust 1.88.0 工具链。CI 的 Windows/Linux MSRV job 也必须使用同一版本；本地较新
+Rust 1.88.0 工具链。Windows/Linux 本地 MSRV 检查使用同一版本；本地较新
 工具链不伪装成 MSRV 证明。任一命令
 失败会清除当前成功标记，尚未执行的后续协议继续保持 `not_run_for_fingerprint`。
 
-GateEvidence v3 的 `subjectCommit`/`subjectTree` 仍指向被验证提交；证据和
-`STATUS.md` 只能在后续 attestation 范围内发布。v3 还要求 policy hash、完整
-delivery readiness，以及绑定同一 subject 的 Windows/Linux provider、workflow、run/job
-identity 和 artifact digest。当前 workflow 或本地实现候选存在不等于这些远端证据已经
-产生；现有 v1/v2 evidence 只能作为强制降为 `blocked` 的迁移输入。普通开发循环仍可只运行
-相关子门，但不能据此签发 GateEvidence pass。
+GateEvidence 的 `subjectCommit`/`subjectTree` 指向被验证提交；证据和 STATUS
+只在后续 attestation 范围内发布。旧 Proposed policy v2/v3 model 中的远端
+provenance 条款与当前用户要求不再一致，须另行评审本地证据替代合同；不得为
+满足旧条款启动远端任务。现有生成器继续 fail closed，普通本地检查通过不能
+签发 G0A pass，也不能把历史 v1/v2 pass 当作当前证据。
 
 Unix 上 `.venv/bin/python` 常是软链接。启动子进程时保留 launcher 路径，
 不能先 `resolve()` 到系统 Python，否则丢失 `pyvenv.cfg` 与锁定依赖环境。
@@ -180,11 +184,9 @@ node --test experiments/meaning-workbench/app.test.cjs
 
 2026-07-19 的 Windows 本地实现检查点中，精确 1.88.0 workspace tests 为
 `62 passed`，fmt、Clippy `-D warnings`、desktop locked build 与 `node --check`
-均通过。Linux/fresh-checkout 远程 CI、run identity、artifact digest 和跨平台聚合
-尚未完成；该记录不是 GateEvidence，也不关闭 R0A-08 或 G0A。
-
-CI 的 `ubuntu-24.04`/`windows-2025` MSRV lanes 才验证最低版本；附加 stable lanes
-用于发现向前兼容漂移，不能替代 1.88.0 证明。workflow 文件存在也不是远端通过证据。
+均通过。该记录不是当前 GateEvidence，也不关闭 R0A-08 或 G0A。
+后续在本地 fresh checkout 复验精确版本；附加 stable 工具链只检查向前兼容，
+不能替代 1.88.0 证明。不同操作系统的本地结果仍须分别记录，不从 Linux 推导 Windows。
 
 本轮实际执行断点统一记录在 [WORK_LOG](./WORK_LOG.md)，不在多个文档复制
 动态测试数量。可选浏览器自测及独立工具环境见
@@ -195,7 +197,7 @@ CI 的 `ubuntu-24.04`/`windows-2025` MSRV lanes 才验证最低版本；附加 s
 - `pyproject.toml` 是直接依赖和工具配置来源；
 - `poetry.lock` 必须提交，用于锁定完整依赖图；
 - 添加或升级依赖后必须重新运行一键检查；
-- CI 使用固定 Poetry 2.4.1，升级 Poetry 需要独立提交；
+- 本地锁定环境使用 Poetry 2.4.1，升级 Poetry 需要独立提交；
 - 不在 `pyproject.toml` 中固定个人镜像源。需要镜像时使用本机 Poetry/pip 配置；
 - 当前项目使用 Poetry application mode，不构建或安装根 Python 包。
 
@@ -209,9 +211,10 @@ uvx --from poetry==2.4.1 poetry sync --no-interaction
 ## 7. Python 支持策略
 
 - 3.13 是旧引擎基线、研究桥接和迁移期对照的默认版本；
-- CI 在 Linux 验证最低版本 3.10、中间版本 3.12 和最高版本 3.14；
-- CI 额外在 Windows + Python 3.13 验证主要桌面开发平台；
-- 新 Python 次版本先加入 CI，验证通过后再扩大 `requires-python` 范围。
+- 在本地分别验证最低版本 3.10、中间版本 3.12 和最高版本 3.14；
+- Windows + Python 3.13 的本地结果单独记录，不用 Linux 代替；
+- 新 Python 次版本先本地验证，再扩大 `requires-python` 范围；
+- Python 3.10 使用已锁定的 `tomli` 开发依赖，3.11+ 使用标准库 `tomllib`。
 
 ## 8. 静态检查策略
 
