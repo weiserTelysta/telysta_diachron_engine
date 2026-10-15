@@ -6,8 +6,8 @@
   "decision": "blocked",
   "decisionDate": "2026-10-15",
   "source": {
-    "subjectCommit": "409cc557d4bedfe0bed87863d8212f1e64df451e",
-    "subjectTree": "8e599b11bd30526612d69cea4cbd559ba1f47d03",
+    "subjectCommit": "ef2b4973ba0f356c35e0fcfa7f22c5f3132bb14c",
+    "subjectTree": "821d309c32fc863dc21d4cfd0640fba4c22f8187",
     "worktreeDirty": false,
     "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
@@ -18,12 +18,12 @@
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:bf63cc3812d15c82287fc305864ede47",
-        "subjectCommit": "409cc557d4bedfe0bed87863d8212f1e64df451e",
-        "subjectTree": "8e599b11bd30526612d69cea4cbd559ba1f47d03",
+        "runId": "gate-run:e8624f09ec20bee5a39d1d579a78ea22",
+        "subjectCommit": "ef2b4973ba0f356c35e0fcfa7f22c5f3132bb14c",
+        "subjectTree": "821d309c32fc863dc21d4cfd0640fba4c22f8187",
         "platformFamily": "linux",
-        "startedAt": "2026-10-15T01:33:12Z",
-        "finishedAt": "2026-10-15T01:33:52Z",
+        "startedAt": "2026-10-15T18:02:28Z",
+        "finishedAt": "2026-10-15T18:03:14Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
@@ -47,7 +47,7 @@
           },
           "lockFileSha256": {
             "Cargo.lock": "fab920b9408aa28210ce846d167618d793aca2db194c040c6bd5264f46cc59c0",
-            "poetry.lock": "633156df7b6afe0bbe54e2c0ae7163f6600166e83db03f75bc3fed128fd8a6b4"
+            "poetry.lock": "06aca495e60375b8e91ed91f12a213dc521502638f62e1297bacbc5f57baff23"
           }
         },
         "remoteProvenance": null
@@ -286,7 +286,7 @@
       "evidenceId": "evidence:b85d8c01a502f3ea2f00f9a030e0cdbf",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
-      "sha256": "33bd1f1b39e017da9aae52629ebdf37cb69da33b9cdcf4821edbd8d4c799cf19",
+      "sha256": "669c0b902d7bbf4f62a77b207709bc501dd69174c319dc48d86ea4796a2b4c14",
       "result": "pending"
     }
   ],
