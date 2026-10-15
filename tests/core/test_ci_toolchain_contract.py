@@ -1,4 +1,8 @@
-"""CI must preserve the repository's exact Rust and platform contract."""
+"""Keep local toolchains exact and remote execution disabled.
+
+The archived CI matrix is a historical reference, not an active verification
+service or evidence of a platform run.
+"""
 
 from __future__ import annotations
 
@@ -6,13 +10,17 @@ import json
 import re
 import struct
 from pathlib import Path
-import tomllib
 from typing import Any
 
 import yaml
 
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 compatibility.
+    import tomli as tomllib
+
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOW_PATH = ROOT / ".github" / "workflows" / "ci.yml"
+WORKFLOW_PATH = ROOT / "docs" / "archive" / "ci-workflow-2026-10-16.yml"
 WORKSPACE_MANIFEST_PATH = ROOT / "Cargo.toml"
 RUST_TOOLCHAIN_PATH = ROOT / "rust-toolchain.toml"
 EXPRESSION_CONTEXT = re.compile(r"\$\{\{\s*([A-Za-z_][A-Za-z0-9_-]*)[.\s]")
@@ -47,7 +55,7 @@ def _required_rust_version() -> str:
     return workspace_version
 
 
-def test_rust_ci_covers_exact_msrv_and_stable_on_both_platforms() -> None:
+def test_archived_rust_matrix_preserves_the_exact_platform_reference() -> None:
     required_rust_version = _required_rust_version()
     jobs = _workflow()["jobs"]
     rust = jobs["rust"]
@@ -105,7 +113,7 @@ def test_rust_ci_covers_exact_msrv_and_stable_on_both_platforms() -> None:
         assert package in linux_packages
 
 
-def test_python_ci_uses_the_hermetic_runner_without_an_early_poetry_cache() -> None:
+def test_archived_python_matrix_preserves_the_hermetic_runner_reference() -> None:
     jobs = _workflow()["jobs"]
     for step in jobs["python"]["steps"]:
         if step.get("uses") == "actions/setup-python@v6":
@@ -122,6 +130,12 @@ def test_job_level_environment_uses_only_server_available_contexts() -> None:
                 f"job-level env {job_name}.{variable} uses unavailable "
                 f"contexts: {sorted(contexts - JOB_ENV_CONTEXTS)}"
             )
+
+
+def test_repository_does_not_schedule_remote_execution() -> None:
+    workflows = ROOT / ".github" / "workflows"
+    active = [path for path in workflows.rglob("*") if path.suffix.lower() in {".yml", ".yaml"}]
+    assert not active, f"Local-only verification forbids active GitHub workflows: {active}"
 
 
 def test_desktop_icons_are_available_for_linux_and_windows() -> None:
