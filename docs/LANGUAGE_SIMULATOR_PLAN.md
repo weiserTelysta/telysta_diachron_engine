@@ -497,7 +497,7 @@ hash 的 immutable effective manifest，禁止原地升级。
 |---|---|---|---|
 | SPH-001 | Source Semantic Parser | 源文本 → Discourse IR，LLM 可选 | 歧义可显示和人工修正 |
 | SPH-002 | Orthographic Realizer | 形态结果 → 正字法 | 拼写规则版本化 |
-| SPH-003 | PronunciationPlan v1 | morphology → phonology → typed allophony → utterance prosody → phones | R3 提供确定性、可审计发音计划；不承诺自然音频 |
+| SPH-003 | PronunciationPlan v1 | 当前 typed 形式 → profile 锁定的结构韵律/异音/话语韵律阶段程序 → phones；候选合同统一见 ADR-014 §4.6.1 | R3 提供确定性、可审计发音计划；不承诺自然音频 |
 | SPH-003A | SpeechRenderPlan / PhoneticPlan v2 | tempo、coarticulation、actor guidance、音频/TTS 映射 | R7 在 v1 上扩展渲染，不反向定义语言结构 |
 | SPH-004 | Deterministic Speech Preview | STORY-10A 在 R3/G3 提供受限本地试听与 WAV；R7 扩展表现性 | typed phones/韵律与 renderer locks 决定输出，覆盖外显式拒绝；不使用外语拼写猜读，不宣称自然人声 |
 | SPH-005 | Neural Speech Option | 音系特征条件化语音 | 与确定性发音分开标注质量 |

@@ -3,7 +3,7 @@ document_type: adr
 decision_status: proposed
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-10-12
+last_verified: 2026-10-15
 owner: unassigned
 reviewers: []
 ---
@@ -279,7 +279,8 @@ reading。不同同音词不能只靠 phoneme string 选择拼写；同形/合�
 
 当前[有限关系 oracle](../../tests/core/test_orthography_review_vectors.py)只检查
 R04/R09/R15/R16/R20 的 declared spelling↔analysis facets：独立 requested input、
-全部许可读法、禁止/重复读法、respelling、显式不完整、当前 phones 与锁的一致性。
+全部许可读法、禁止/重复读法、respelling、显式不完整、当前音系引用与锁的一致性。
+该引用列表不是 phones；此 oracle 没有执行异音、韵律或发音计划。
 它使用手工阳性对照与 hostile mutations，不产生真实 parser 观察；其余 17 案、
 Unicode normalization、IGT、音变与 replay 未执行。registry 只增加研究检查组，
 production adapters 仍 future，不据此冻结本 ADR 或关闭 R0B-04B/G2。
@@ -344,6 +345,70 @@ mutable planning notation：分别攻击否定/量化 scope、承诺状态、spe
 中性 `Ask(Report(r,p))` 不承诺 p 的例子不定义所有语言 evidential 的承诺性质。
 当前没有 production adapter 或表达成功证据；永远返回 gap、reject-all 或把所有
 读法加入 forest 的实现均不能通过 declared supported profile 的完整表达验收。
+
+#### 4.6.1 发音计划的候选边界
+
+本节是 STORY-10 的可修订研究合同，不是生产 schema 或受支持能力。继续归
+R0B-04B-D 的 realization 评审范围，不新开实施线。当前 v2 IPA/class 不能
+通过字符串猜测补成 typed phonology；首次研究输入须显式人工准备并标注来源。
+
+`PronunciationPlan v1` 拟由同一当前 PCU/analysis 的纯 query 派生：输入绑定
+language/revision/lect、analysis/WordForm 与 ordered segment occurrences、
+当前形态音系形式、结构边界、已确认话语语境，以及 registry/capability、
+allophony/prosody profile 和阶段程序 locks。拼写、宽式 IPA 与 gloss 仅作显示；
+保守拼写不是祖读音缓存。不同分析可以同音，不能因输出相同合并 WordForm。
+
+供异音规则读取的 **结构韵律**（音节、韵律域、重音或语言自己的承载单位）与
+后续 **话语韵律**（锁定语境下的韵律实现）必须区分。不能固定为“所有异音
+先执行、再分配所有韵律”。一个受限研究 profile 可声明如下有限阶段程序：
+
+| 阶段 | 输入与结果 | 必须保留的观察 |
+|---|---|---|
+| 绑定当前形式 | 已选分析与当前 revision → ordered typed segment occurrences | owner、来源、顺序；禁止回退旧拼写/旧 revision |
+| 结构韵律 | 当前形式、边界与 profile → typed 音节/韵律域与规则所需结构 | 每项结构的 occurrence 引用、具名规则与前提 |
+| 异音实现 | 当前 typed 特征 + 已具备的结构环境 → phone occurrences | 规则顺序、匹配环境、效果、来源及输入输出对齐 |
+| 话语韵律 | phone/结构结果 + 已确认语境 → 支持范围内的韵律计划 | 重音/声调/边界贡献的承载单位；未知条件显式返回 |
+| 完整性检查 | 上述结果与 locks → complete plan 或具名缺口/歧义/不完整 | 当前输入绑定、全部 trace、覆盖和已知限制 |
+
+该顺序是 profile 选择，不是普遍语言规律。形态音系、插入/删除与重音可能
+相互依赖；阶段程序必须列明所读写的结构、失效/重算范围和有限执行次序。
+读取尚未产生或已失效的韵律信息、未声明循环/冲突、预算耗尽均不能沿用旧值
+或任取一条规则。版本化重算程序尚未支持时返回 gap/incomplete，不能无限迭代。
+未知 lect/style/语境或多个合法发音须报告，不取首项冒充作者已选择。
+
+phone occurrence 是分析 artifact 内的局部 token，不新建权威 Phoneme/Lexeme。
+输入 segment occurrence 与输出 phone occurrence 允许多对多；重复音段有不同
+occurrence，插入须有规则/anchor，删除须有 trace，不能按字符串位置推断来源。
+声调/重音不是普通额外音段；profile 决定 tone-bearing unit、关联及其实现。
+v1 保存 typed 类别与结构，不把毫秒、F0、formant 或音色默认值当语言学真值；
+渲染级时序/声学参数由后续版本化 renderer/SpeechRenderPlan 负责。
+
+以下人工符号 trace 是评审输入，不是自然语言语料、生成结果或新 wire 格式。
+统一用研究 registry 中 typed `P-T={stop, coronal, voiceless}`，`P-A={vowel}`；
+输入 occurrence 分别为 `s-t`、`s-a`，phone token 为 `q-t`、`q-a`。研究规则
+`R-ASP` 仅在 `s-t` 属于 **重读音节 onset** 时给其 phone 增加 aspiration，
+否则保留 plain；这属于创作 profile，未声称任何跨语言频率或必然规律。
+第二对单独用 `s-a1,s-t,s-a2`：两个 `s-a*` 同为 P-A 的不同 occurrence。
+onset 案 `Σ1=[s-a1], Σ2=[s-t,s-a2]`；coda 案
+`Σ1=[s-a1,s-t], Σ2=[s-a2]`。两案的 Σ1/Σ2 都给定 `stressed=true`；
+只改变音节边界。`q-a1←s-a1`、`q-a2←s-a2` 均保留，不合并重复元音。
+此压力测试明确允许该局部双重读结构，不据此设定自然语言默认重音规则。
+
+| 最小对照 | 人工推导的必需结果 | 禁止结果 |
+|---|---|---|
+| 同一 `s-t,s-a`：重读 onset / 非重读 onset | `q-t` aspirated / plain，均来源 `s-t`；`q-a←s-a` | 先异音后读到重音；永远 aspirated；丢来源 |
+| `s-a1,s-t,s-a2`：上述 onset / coda 结构，两案目标音节均重读 | `q-t` aspirated / plain；边界来自结构输入；两个元音各自对齐 | 按拼写分词或串相同忽略边界；合并相同音段的 token |
+| 当前形式已删除 `s-t`，旧拼写保留其字母 / 当前形式仍有 `s-t` | 前者不输出 `q-t`，读当前 `s-a`；后者按当前环境实现 | 从旧字母复活 `P-T`；伪造历史原因 |
+| 有效输入 / stale revision、必读结构缺失；另测输入要求具名 tone-bearing association 而 profile 不支持它 | 有效输入完整；三个负例分别给出具名缺口或不完整；无声调需求不因缺声调能力失败 | 猜读；把缺口包装完整计划；静默丢必需声调；无条件拒绝非声调输入 |
+
+首个 production plan 的验收还须补同音不同分析、重复 occurrence、插入/删除
+trace、tone-bearing 对齐、非法引用、冲突/重算和跨进程确定性。此表尚无执行
+adapter；四对手算不证明 STORY-10 完成，不能授权音频渲染。
+
+STORY-10A 只消费经完整性验证的当前 plan 和显式选定合法读法。renderer 的
+覆盖不足是独立 rendering gap，不能改 phonology、转交外语拼写 TTS 或静默
+吞音。文档、IPA 展示与未来 WAV 必须引用同一 analysis/plan/renderer locks；
+没有已验证计划的名称继续保持读音未知。query purity 依下节；无状态迁移。
 
 ### 4.7 Command/Query 分离
 

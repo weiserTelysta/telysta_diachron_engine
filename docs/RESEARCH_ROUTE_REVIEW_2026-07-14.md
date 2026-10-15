@@ -364,6 +364,10 @@ underlying segments
 → phonetic plan
 ~~~
 
+这是研究分层，不能把图当成适用于所有 profile 的唯一执行次序。当前候选
+阶段合同统一见 [ADR-014 §4.6.1](./adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md#461-发音计划的候选边界)：
+区分供规则读取的结构韵律与话语韵律，明确依赖、失效/重算与有限次序。
+
 - 有序上下文规则可以使用有限状态关系；
 - phonotactic hard constraints 与梯度偏好分开；
 - MaxEnt 可作为一个可替换 PhonotacticModel，不是自然度真理；
@@ -902,6 +906,15 @@ TTS 继续后置，必须建立在同一 morphology → phonology → allophony 
 2026-10-14 再核对官方 UAX #15 rev58，仍为 Unicode 18.0.0；本机 Python
 `unicodedata.unidata_version` 为 15.1.0。新增有限正字法 oracle 不执行 normalization，
 不拿运行库版本差异冒充 Unicode 18 conformance。上述标准参照与具体实现锁继续分开。
+
+2026-10-15 发音前置复核：[KlattGrid 官方说明](https://www.fon.hum.uva.nl/praat/manual/KlattGrid.html)
+明确分开声源、滤波及两者交互的时变参数；这里只读网页说明，没有运行 Praat、
+复制实现或分发依赖。它说明渲染参数需要独立合同，不证明语言音系或任何默认
+声学值正确。[Yan et al. 2021](https://arxiv.org/abs/2107.11628v1) 本轮只读官方摘要，
+用七种语言的 ASR 研究语言特定 phone–phoneme 映射；不是造语/TTS 的正确性证明，
+不采用其模型或数据。[Kaplan & Kay 1994](https://aclanthology.org/J94-3001/) 重新
+核对元数据，没有在本轮重读全文；规则系统仍是候选方法，不能替代阶段依赖合同。
+新增规则示例均为人工 profile 偏好；当前音系引用检查不验证 phones 或音频。
 
 ### 本地资料库
 

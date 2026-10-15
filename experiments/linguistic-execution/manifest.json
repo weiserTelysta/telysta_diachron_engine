@@ -14,7 +14,7 @@
     "tests/core/test_audit_correction_fixture_contract.py": "0b4de8beced62744abc21260575e912781b87c2c491e8ef6c9fb9d12a01626c2",
     "tests/core/test_concepticon_slice.py": "5097878ae60df16dc2f9e02076ceb6e1ef5a345d73de64f008354524c617add6",
     "tests/core/test_meaning_review_vectors.py": "a9af6c1377bacd8c7a80cf6c3925912732aeb7b80ed8b02767c99a2d1202d6dd",
-    "tests/core/test_orthography_review_vectors.py": "dd8c1bb07feebede9ef6ceea11bb177be2ca9a6a39363a1bbdaf227c2c29a010",
+    "tests/core/test_orthography_review_vectors.py": "9f0993bb9b7be7fa9b3e8484768dbb2ff75d4eebe43071569d0a088c0bf57aae",
     "tests/fixtures/linguistic_regression_cases_v1.json": "2d2e710f06e7064b35ba718a8f94aaed1aee9722e1d7c7487a8c0b2895a39bcf",
     "tests/fixtures/meaning_review_vectors_v1.json": "21b90043217d5b7e2fb701d1ecf12c494260f235f15ae67aaaf789be37e69bf2",
     "tests/fixtures/orthography_review_vectors_v1.json": "daa2fd1c8caee59ba8245d7c0b1c66a4de827fa57a62f0350d1e912c6a958703"

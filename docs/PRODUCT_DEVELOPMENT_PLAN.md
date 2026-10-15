@@ -3,7 +3,7 @@ document_type: product-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-14
+last_verified: 2026-10-15
 owner: unassigned
 reviewers: []
 ---
@@ -11,7 +11,7 @@ reviewers: []
 # Telysta 产品开发执行计划
 
 - 状态：`Active planning baseline / Domain Implementation Hold`
-- 最近修订：2026-10-14
+- 最近修订：2026-10-15
 - 适用范围：产品定义、Rust 核心、Tauri 工作台、语言生成、历时模拟、验证、数据、迁移与发布
 - 当前阶段：`R0A 计划/决策修复 + R0B WS-1 领域证据`
 - 当前阻断：G0A 为 `blocked`；2026-07-19 复审又重新打开 Gate/CI hermeticity、真实 MSRV、当前 v1 create/append/migration/index authority 和 legacy evidence 边界；R0B evidence preparation 正在进行，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`，G0B=`not evaluated` 且没有通过性 GateEvidence；ADR-007～014 均未完成所需接受流程，ADR-014 已形成 Proposed 草案但 owner/reviewer 未分配；Project/Operation/Run/Job、Meaning/Grammar/Lexical Class/Realization、TheoryProfile、ChangeSet locus、聚合与 replay 边界尚未闭合。ADR-005 是分阶段研究背景，不是 WS-1 前置
@@ -430,7 +430,7 @@ accept、reject、retcon 或 branch。AuthorCanon 只证明作者选择与产品
 | STORY-08 | Structural RulePack v1 | WS1-09、稳定 Grammar/Change IR | 声明式 validate → conflicts → dry-run → impact → authorial structural transform → explain | 无任意代码；R3 变换不在 UI 中伪装为社群传播历史 |
 | STORY-09A | Creator Workbench Integration Shell | R1、G2 | Forge / Write / Inspect / Quality 导航、versioned API adapter、首个 Canon Intake 纵切 | 从 ALPHA-01 起持续集成；形成性构建明示非 G3，不等待 STORY-01～08 全部完成 |
 | STORY-09B | Creator Workbench Closed Alpha | STORY-01～08、STORY-10/10A、STORY-09A、ALPHA-01～06 | 完整固定路径、错误恢复、claim projection 与确认性研究构建 | 目标叙事作者完成候选和短场景并试听受支持形式；expert 可追踪现代形式；中英文状态不变；只作为 G3 candidate，不提前生效 Alpha 声明 |
-| STORY-10 | Deterministic PronunciationPlan v1 | WS1-04、STORY-03/05 | morphology → phonology → typed allophony → utterance prosody → phones | 同一分析与锁跨进程结果一致；覆盖音段、边界、重音/声调；只承诺发音计划，不承诺音频自然性 |
+| STORY-10 | Deterministic PronunciationPlan v1 | WS1-04、STORY-03/05 | 当前 typed 形式 → profile 锁定的结构韵律/异音/话语韵律阶段程序 → phones；候选边界见 ADR-014 §4.6.1 | 同一分析与锁跨进程结果一致；覆盖音段、边界、重音/声调；只承诺发音计划，不承诺音频自然性 |
 | STORY-10A | Basic Local Pronunciation Preview | STORY-10、STORY-09A | 版本化受限本地 renderer、音段/韵律覆盖表、试听与 WAV 导出；承接 SPH-004 基础范围 | R3/G3 必需；仅消费验证后的当前 PronunciationPlan；相同 plan/renderer locks 输出稳定；验证音段、时长、重音/边界与支持的声调，覆盖外显式拒绝；删除/合流后的保守拼写读当前音；锁定许可，不宣称自然人声 |
 
 R3 不要求庞大词典。完成度由 TaskPack 覆盖、生产力、意义保真、canon 稳定性和第二人使用决定。
@@ -809,6 +809,10 @@ R0B-04A 已有[最小研究 registry](../experiments/linguistic-execution/manife
 与固定四组 hermetic review harness；要求逐项实际通过，逐案保留 G0B/G2/G4 执行门。
 新增正字法组仅检查五个有限关系 facet；它没有实现生产
 adapter schema/真实领域运行或冻结 TaskPack，不视为整个 R0B-04A 已 Complete。
+STORY-10 的阶段依赖与四对人工 trace 已并入
+[ADR-014 §4.6.1](./adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md#461-发音计划的候选边界)，
+由既有 R0B-04B-D realization 范围评审；不是新 WIP、生产 plan 或 renderer。
+当前正字法 oracle 仅比较音系引用，不能作为异音/韵律/基础读音证据。
 
 若只有一个具备实际容量的 owner，全局 WIP 自动降为 1。任一时刻最多一个包改变
 schema、writer 或 replay；R0A-09、R0A-10 和 R0B evidence 只在当前 Active 包进入

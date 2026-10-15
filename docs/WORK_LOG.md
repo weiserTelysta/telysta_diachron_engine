@@ -3,7 +3,7 @@ document_type: runbook
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-14
+last_verified: 2026-10-15
 ---
 
 # 执行记录与恢复入口
@@ -345,3 +345,46 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   fmt/clippy/desktop build/docs 通过；独立 Chromium 交互检查亦通过。新增本地候选
   `codex/review-canon-binding-2026-10-14` 沿用既有锁定 venv 与 Rust cache，不称新
   bootstrap 或远端批准。最终 source/run/results 以各自生成记录为准，G0A 仍 blocked。
+
+## 2026-10-15 续作：发音前置合同评审
+
+上一轮是 progress：完成关联保护、真实材料部分采集及本地候选保存；候选
+`codex/review-canon-binding-2026-10-14` 封存于 `93ab1f2`，不把它的验证移用到
+本轮新字节。完整产品目标未缩减，G0A/Accepted ADR 仍限制生产推进。
+
+- 用户重申客户端、可信结构/历史、句子、语言文档和基础读音目标。复查发现
+  STORY-10/SPH-003 的简写次序没有区分异音所需的结构韵律与后续话语韵律。
+  新上下文 `/root/pronunciation_boundary_review` 独立给出重读 onset 异音反例，
+  并指出现有正字法 oracle 实际只比较音系引用，不是 phones/发音计划。
+- 候选阶段合同与四对人工 trace 合并至 ADR-014 §4.6.1；两个主计划只同步
+  摘要并链接，研究路线的旧示意图显式退回研究分层。不另建发音规划文档或
+  研究执行器。闭合当前输入/locks、结构韵律依赖、有限次序/重算、局部 phone
+  token、多对多来源和独立 renderer coverage gap。生产 schema、writer、RNG、
+  hash/replay 与迁移均未改变；R0B-04B-D 内评审，不新增第三条 WIP。
+- 示例 aspiration 是 creative profile，不是经验先验/普遍因果律。当前输入
+  绑定、不静默吞音和拒绝 stale lock 是软件约束。新文献阅读范围和限制统一
+  记录在研究路线 §17：Praat 官方说明、Yan 2021 官方摘要及 Kaplan/Kay 元数据；
+  未运行/分发外部语音工具、模型或数据，不引入依赖或凭据。
+- 复查原反例后，又补全 coda 对照的三个 occurrence/两个完整音节，两个元音
+  分别对齐；只有必需声调关联不受支持才产生该缺口，无声调需求不无条件拒绝。
+  `/root/pronunciation_boundary_review` 终核无 finding，ADR-014 SHA-256
+  `3b10a79d7ee4351a1fd500ab5d1f11d44aef0b26945e4c1894d514edad3a4ea8`。
+  这是只读合同复审，没有运行生产发音验证或接受 ADR。
+- `/root/pronunciation_empirical_review` 按实证指南另行终核最终 ADR 字节和三项
+  一手来源，无剩余 finding；确认双重读仅作人工压力输入、声调缺口有必需条件，
+  且网页说明/摘要/元数据的使用未越界。它未重读全文或核查全部历史文献，也
+  不证明生产发音/自然性。本轮仍只有一份候选合同，不设独立第二套发音 schema。
+- 正字法研究测试只修正 docstring/局部变量的 phones 用词并刷新对应 manifest
+  输入锁；判定行为不变。相关 25 项与文档检查通过，完整门继续由生成记录绑定。
+  四对手算尚无 adapter，不算 STORY-10/10A、语言生成、手册或音频交付。
+- 自动恢复边界按 [OpenAI 官方 Goals 文档](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex)
+  核对：持续目标由系统在空闲等安全边界触发续作，生命周期恢复仍由用户/系统
+  控制。本会话没有可配置的额度重置唤醒工具；未创建定时器或承诺五小时后唤醒。
+  代码、生成证据与本文用于恢复，保留完整目标，不把阶段完成称为项目完成。
+- 下一断点：核对本轮生成证据与最终复审结论；真实作者操作、责任分配、决定
+  接受和受信平台终态证据仍未取得。下一产品实现仍优先有来源的作者任务失败，
+  G0A 前不扩张正式命令/生成器，不以无限增补 oracle 替代可交付产品。
+- 本轮主检出完整门通过：706 Python passed / 8 strict xfailed、86 Rust，
+  fmt/clippy/desktop build/docs 通过。生产 Node/浏览器代码没有改变，不把上一轮
+  浏览器结果当新发音测试。新本地候选使用既有锁定 venv/构建缓存；精确最终
+  source/run 由生成 GateEvidence 记录，G0A 仍 blocked，无远端 provenance。

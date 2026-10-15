@@ -130,7 +130,7 @@ def _budget(case: dict) -> int:
 
 
 def assert_observation(case: dict, observation: dict, *, requested_input: QueryKey) -> None:
-    """Check finite licensed readings, exact respelling, current phones and locks."""
+    """Check licensed readings, respelling, current phonology references and locks."""
     assert set(observation) == {
         "schemaVersion",
         "caseId",
@@ -159,8 +159,8 @@ def assert_observation(case: dict, observation: dict, *, requested_input: QueryK
         assert identity in licensed
         reading = licensed[identity]
         assert row["wordForm"] == reading.word_form
-        expected_phones = None if reading.current_phonology is None else list(reading.current_phonology)
-        assert row["currentPhonology"] == expected_phones
+        expected_phonology = None if reading.current_phonology is None else list(reading.current_phonology)
+        assert row["currentPhonology"] == expected_phonology
         assert _query_key(row["respelling"]) == key
         ids.append(identity)
     assert len(ids) == len(set(ids))
