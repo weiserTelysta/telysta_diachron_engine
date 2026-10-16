@@ -149,6 +149,76 @@
         "docs/LANGUAGE_SIMULATOR_PLAN.md": "3fd1d6f6a1bdca78bf2cb88dc6ec482fb223d1b94260389a85ae77f71c9ab605"
       },
       "documentationVerdict": "accept; no expanded implementation or provenance claim"
+    },
+    {
+      "workPackage": "R1-01A",
+      "slice": "immutable_operation_run_inputs",
+      "date": "2026-10-16",
+      "designStatus": "accepted_for_local_development",
+      "implementationStatus": "implemented_and_independently_ai_reviewed; full local software run recorded separately",
+      "proposalRecoverableFromCommit": "da834117597d098905ff876f0f947ab7e66232ce",
+      "reviewedProposalSha256": "0b38fdda99f356922c45cb088d116a60564647c5859b96690bee345d6e4897d8",
+      "reviewedProposalSection14Sha256": "bed8e72c6340af77883a9f714e6e791a177d06be55df3ef31575e7ecbf3e561f",
+      "acceptedAdrSha256": "f33bc8a7e6fabc9aa2b3131d729983fd5e5b589d7f3f8f5d7c93ce62986e70bb",
+      "fixtureSha256": "3987495ea77777b0ddf12efe6de8804821c89ea5bf7bfc721cb11a8e4b5711ce",
+      "designReviews": [
+        {
+          "reviewer": "/root/operation_input_contract_review",
+          "reviewerKind": "independent_ai_session",
+          "verdict": "accept_local_development_addendum",
+          "blockingFindings": [],
+          "actualChecks": "Read-only design analysis; independently recomputed canonical bodies and all six fixture hashes, checked parent RNG/path/NoRng/u64 wire; no production tests existed."
+        },
+        {
+          "reviewer": "/root/operation_input_provenance_review",
+          "reviewerKind": "independent_ai_session",
+          "verdict": "accept_local_development_addendum",
+          "blockingFindings": [],
+          "actualChecks": "Read-only provenance/legacy/time/lock contract comparison; no production tests run."
+        }
+      ],
+      "scope": "Closed immutable typed request/spec/run declarations and hashes; not registration, dependency resolution, execution/context, writer, migration or linguistic validity",
+      "implementationSha256": {
+        "crates/telysta-core/src/operation.rs": "3656eb93c1169d137eb2b714d6e37a4adf4c5695522f2ab338f0590feca9d529",
+        "crates/telysta-core/tests/operation_inputs.rs": "31f91b89f38523a24ddfd7060f7a44028ca73eb4fbcbb60ab4accdeda6c12adc",
+        "crates/telysta-core/src/lib.rs": "e1e36cac8f3e55ffb9c265ae704a15b44c829cae061d913817260f5a063c45c3",
+        "tests/fixtures/operation_input_known_answers_v1.json": "3987495ea77777b0ddf12efe6de8804821c89ea5bf7bfc721cb11a8e4b5711ce"
+      },
+      "implementationReviews": [
+        {
+          "reviewer": "/root/operation_input_contract_review",
+          "verdict": "accept_local_development_implementation",
+          "blockingFindings": [],
+          "actualChecks": {
+            "rustIntegration": 10,
+            "coreCompileFail": 7,
+            "coreClippy": "passed",
+            "workspaceFmt": "passed",
+            "independentPreserveOrderRawJsonProbes": 263,
+            "knownAnswerCases": 2
+          },
+          "scope": "Closed input/hash/parent validation only; independent temporary program outside repo used preserve_order; not resolver/registration/context/writer."
+        },
+        {
+          "reviewer": "/root/operation_input_provenance_review",
+          "verdict": "accept_local_development_implementation",
+          "blockingFindings": [],
+          "actualChecks": {
+            "rustIntegration": 10,
+            "operationCompileFail": 2,
+            "independentlyRecomputedDigests": 6
+          },
+          "scope": "Provenance/time/legacy input boundaries only; declarations do not authenticate approval or dependency availability."
+        }
+      ],
+      "finalDocumentationSha256": {
+        "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md": "f33bc8a7e6fabc9aa2b3131d729983fd5e5b589d7f3f8f5d7c93ce62986e70bb",
+        "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md": "67449f46a6126fdeb4769df37d8580c353b6a7c1c1786d3c7e2c191106022ad2",
+        "docs/architecture/CURRENT.md": "d899db9f85643700a3173801fa60ad4cb6e46f6161e566da077c59dce526d042",
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md": "f8bc9da280a673a8b083a65c35ffcec453e31dabccdb59e06655d2d220f9a3a1",
+        "docs/ROADMAP.md": "67a8e8ba4c6f01b20fa51b00e1eaa3c24c44c06d76a425a7d48d34b23ce7aa74"
+      },
+      "clarifications": "P3 own supported schema vs referenced payload schema syntax; mutable Request declarations vs immutable Spec. No technical scope change."
     }
   ]
 }

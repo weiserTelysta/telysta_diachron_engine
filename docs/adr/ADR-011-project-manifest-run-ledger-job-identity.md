@@ -77,7 +77,7 @@ local-value 直接复用现有 v1 的验证函数，不新增或放宽语法。�
 现有 `telysta-entity-id.v1` kind 目录保持冻结；其 parser 继续拒绝 operation、job、
 attempt。仅已有 Project/Run 支持从旧 `EntityId` 的显式、检查 kind 的转换，
 保留原 bytes，不自动迁移历史或推断来源。新记录必须独立声明身份词汇与自身
-schema；本片尚未实现 OperationSpec/RunSpec、registry、ledger 或 writer。
+schema；不可变输入声明见本 ADR §14，registry、ledger 或 writer 尚未实现。
 
 ### 4.1 ProjectManifest
 
@@ -386,7 +386,10 @@ Project load 必须验证 manifest、history 和 RunLedger 的引用完整性。
 
 ## 14. R1-01A 不可变输入合同
 
-本节状态：`Proposed addendum; independent AI acceptance required before implementation`。
+本节状态：`Accepted for local development, 2026-10-16`。
+独立 AI `/root/operation_input_contract_review` 与
+`/root/operation_input_provenance_review` 已接受本补充合同，记录见既有
+[AI 开发接受记录](../evidence/AI_LOCAL_DEVELOPMENT_V1.json)；设计接受与实际实现验证分别记录。
 范围仅为 core 的请求形状、内容摘要及父子锁验证，不注册或执行操作，不签发
 OperationContext，不写 manifest/history/ledger/JobStore。假设均为硬工程约束，
 不增加语言学先验、传播模型或自然度结论。
@@ -396,8 +399,11 @@ OperationContext，不写 manifest/history/ledger/JobStore。假设均为硬工�
 规划记录中的 spec v1 从未是生产格式，继续保留原 bytes/sentinel。本片使用
 `telysta-operation-request.v1`、`telysta-operation-spec.v2` 和
 `telysta-run-spec.v2`，不隐式读取规划 spec v1、旧 RunContext 或 legacy history。
-全部 object 为封闭字段集，未知/重复字段、缺字段、未知 schema 均拒绝；不提供
-默认值猜测。字符串原样保留，不 trim、大小写折叠或 Unicode 规范化。
+全部 object 为封闭字段集，未知/重复字段、缺字段均拒绝；request/spec/run、
+identity、time、tree/distribution 的自身版本必须被本实现明确支持。command、
+output 与 ContentLock 引用的 payload schema 这里只检查版本化标识语法，不代表
+支持或可执行；实际 resolver/command 验证继续拒绝不可用依赖。不提供默认值
+猜测。字符串原样保留，不 trim、大小写折叠或 Unicode 规范化。
 
 OperationRequest 字段：
 

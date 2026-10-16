@@ -8,7 +8,9 @@
 - Schema 记录 fixture：[`tests/fixtures/adr_011_schema_records_v1.json`](../tests/fixtures/adr_011_schema_records_v1.json)
 - 序列 fixture：[`tests/fixtures/adr_011_sequences_v1.json`](../tests/fixtures/adr_011_sequences_v1.json)
 
-本文只把 ADR-011 的评审条件变成可检查合同，不是 Accepted 持久化格式。Rust `EntityKind`、`ProjectHistory`、`ProjectFile`、storage writer、desktop checkpoint 和 Tauri 命令在 ADR-011 正式 Accepted 前不得依据本文修改。
+本文保留 ADR-011 的规划评审材料，不是生产持久化格式。当前不可变输入 v2
+唯一合同见 [ADR-011 §14](./adr/ADR-011-project-manifest-run-ledger-job-identity.md#14-r1-01a-不可变输入合同)；
+它拒绝本草案 spec v1/sentinel，不隐式迁移，不修改旧 history/storage/Tauri 命令。
 
 ## 1. 用户可见问题
 
@@ -55,8 +57,9 @@ planning schema 的 proposed-kind 标签保留原评审上下文；值检查通�
 sweep/替代模型改变输入时创建新 Operation。预算和完整 frontier 的唯一语义定义
 见 [ADR-013 §3.4](./adr/ADR-013-rng-compatibility-and-distribution-versioning.md#34-counter-overflow-与-resume)。
 schema validator 之外还须检查这些跨记录关系；当前 unit helpers 是 planning oracle，
-不能签发生产 validated context。rootSeed 已同步 ADR-013 的 Proposed 规范十进制
-字符串决定；schema/Node/Rust 交叉检查不等于独立接受或生产 DTO 已实施。
+不能签发生产 validated context。rootSeed 已同步 ADR-013 的规范十进制字符串
+决定；新 v2 输入声明在 Rust 落实该编码，不表示旧 RunContext、Tauri command、
+frontier/cursor 或可执行上下文已升级。原 schema/Node/Rust 交叉检查保持规划范围。
 
 ProjectManifest 的 authority hash/profile/coverage 唯一见
 [ADR-012 §3.2](./adr/ADR-012-project-package-commit-authority.md#32-authority-hash-覆盖与规范字节已接受开发合同)。

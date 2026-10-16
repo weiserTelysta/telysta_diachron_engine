@@ -28,6 +28,7 @@ telysta-application
 
 telysta-core
   ├─ EntityId / TimeModel + distinct execution ID wrappers
+  ├─ OperationRequest declarations / immutable OperationSpec v2 / parent-checked RunSpec v2
   ├─ LanguageState v2
   ├─ LanguageBlueprint v2 + FeatureRegistry
   ├─ DataManifest / DataReference
@@ -69,15 +70,17 @@ scripts/linguistic_review.py + experiments/linguistic-execution/
 | History | `telysta-project-history.v1` | `Genesis` + full `StateRevision` replay |
 | Project storage | `telysta-project-file.v1` | 原子保存、恢复、迁移、索引、并发保护 |
 | RNG | versioned RngTree v1 | path-derived stream、known-answer tests |
+| Operation/Run inputs | request v1 / spec v2 / run v2 | 请求声明、不可变 spec、规范摘要、父锁与批内唯一性校验；未登记或执行 |
 | Data catalog | `telysta-data-manifest.v1` | 元数据与 pinned payload 原始字节 checksum 校验；catalog hash 可为空；无 table/record membership 校验 |
 
 ## 3. 已知边界
 
 - `telysta-application` 首片已接管现有读会话与 Blueprint 检查；desktop 不再
-  直接依赖 storage。尚无目标 Operation/Run/Job、staging 或 mutation use case。
+  直接依赖 storage。尚无 Operation/Run 登记、Job、staging 或 mutation use case。
 - core 已有 ADR-011 的五类独立执行 ID 封装，复用 v1 local-value 验证；旧
   EntityId kind/parser 不变。这里只证明身份类型和字节有效，不证明对象存在、
-  父子关系、不可变请求锁或 ledger 已实现。
+  父子关系或 ledger 已实现。另有不可变输入模块按 ADR-011 §14 检查显式父 spec
+  与继承锁；它不授予 OperationContext、验证依赖/作者批准或持久化全局唯一性。
 - 内置 Blueprint feature 的 compiler capability 当前均为 `planned`。
 - Blueprint inspector 原文经 `blueprintJson` 直接交 Rust 校验，保留旧 typed 参数；
   编辑使旧报告失效，迟到响应绑定请求文本，不写状态。没有开放正式编译入口。

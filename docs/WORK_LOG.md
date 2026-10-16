@@ -567,3 +567,36 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   逐字节审阅指针合并在既有 AI 接受记录。完整本地门继续绑定最终候选源；
   下一片实现不可变 Operation/Run 输入及父子锁验证，再落实 append-only ledger
   和单发布点存储。当前不能展示真实生成、JobStore、读音或 G1 已完成。
+
+## 2026-10-16 R1-01A：不可变操作输入与父子锁
+
+- 上轮身份源 `ddda0af` / 验证备份 `ddd1346` 已保存；本轮继续取得实际进展，
+  不等待被用户解除的人工/专家条件。问题是 candidate、重试与未来 staging
+  必须绑定同一输入，不能覆盖 seed/参数/来源或以可重算 checksum 冒充父关系。
+- 先把具体生产声明合同合并到 ADR-011 §14，两个独立新上下文 AI 分别从架构/
+  确定性及 provenance/兼容角度接受，再实施。原 Proposed 输入可由 `da83411`
+  恢复；规划 v1/spec sentinel 不重写，新 request v1/spec v2/run v2 明确拒绝
+  隐式读取它们。全为硬工程约束，无经验先验、语言因果模型或审美要求变化。
+- 新 core operation 模块冻结 OperationSpec 私有字段，分别摘要 request 与含
+  OperationId/key 的 spec。完整基点、时间、组件版本、依赖内容锁、actor 与
+  干预报告声明进入父摘要；各字段不丢入可删除缓存。规范化只处理封闭 typed
+  字段，固定 ASCII keys 递归排序/数组原序/安全整数；新分域 profile 不改
+  LanguageState 或 ProjectAuthorityHash，也不声称完整 JCS。
+- Run 必须从显式父 spec 构造或 raw JSON 加载；全对象重建比对拒绝重算 self
+  hash 后覆盖父 seed/参数/预算/path/identity。NoRng 明示，role/runKey 派生
+  流根；批内检查 RunId 和 role/key 各自唯一，不假装持久化登记已经完成。
+  u64 rootSeed 使用规范十进制字符串，预算 safe-domain 含零，不改 legacy RNG。
+- 两例 synthetic/unavailable known-answer 由独立 Python 生成，独立 reviewer
+  再重算六个摘要，Rust 直接验证规范 bytes/hash。10 项新 integration 包含
+  hostile JSON、基点/时间/schema、父锁突变及显式旧格式拒绝；新增两个私有/
+  无父 Deserialize compile-fail。架构 reviewer 实跑 10 integration、core 全部
+  7 compile-fail、fmt/clippy，并用仓库外 preserve_order 程序拒绝 263 个逐对象
+  duplicate/missing/unknown raw JSON 探针；provenance reviewer 独立实跑 10+2
+  并重算 known answers。两位均 accept，无代码阻断。
+- 采纳 P3：明确自身 schema 的支持检查与所引用 payload schema 的语法检查
+  不同，并将 CURRENT 的可变未验证 Request 与不可变 Spec 分开描述。没有
+  resolver/命令支持目录、OperationContext、实际批准、writer 或旧历史迁移；
+  输入声明通过不产生执行资格。同步说明和逐字节范围保存在既有 AI 记录，
+  不增加第二份规范；最终完整本地门绑定干净候选，不移用上轮结果。
+- 下一纵切是 ledger 的声明/登记/幂等冲突与可验证追加，再接 ADR-012 单发布点
+  和恢复；Job、真实语言生成/历史、说明书与读音仍在完整项目目标中。

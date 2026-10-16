@@ -10,7 +10,7 @@ reviewers: []
 
 # Telysta Diachron Engine 项目路线图
 
-- 状态：`AI-reviewed local development / R1-01A identity foundation`
+- 状态：`AI-reviewed local development / R1-01A immutable input foundation`
 - 基线日期：2026-07-12
 - 最近路线修订：2026-10-16
 - 适用范围：引擎、桌面客户端、规则系统、项目存储与质量体系
@@ -19,8 +19,9 @@ reviewers: []
 2026-10-16 用户要求以独立 AI 替代人工/专家等待；平台 ADR-011/012/013 已按此
 接受，本地开发按 [Agent 模型 §3.1](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)与
 [执行队列](./PRODUCT_DEVELOPMENT_PLAN.md#22-当前执行队列)继续。R1-01 首片抽取现有
-读会话/Blueprint，已完成独立代码审阅和本地检查；R1-01A 正落实独立身份与
-不可变请求基础。历史 G0A blocked 不伪造 passed，也不再以人力/远端条件停工。
+读会话/Blueprint，已完成独立代码审阅和本地检查；R1-01A 已落实独立身份与
+不可变请求/父子锁基础，继续登记和账本。历史 G0A blocked 不伪造 passed，
+也不再以人力/远端条件停工。
 
 ## 1. 产品目标
 

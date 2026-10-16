@@ -9,6 +9,7 @@ pub mod data;
 pub mod execution_identity;
 pub mod hash;
 pub mod identity;
+pub mod operation;
 pub mod project;
 pub mod rng;
 pub mod state;

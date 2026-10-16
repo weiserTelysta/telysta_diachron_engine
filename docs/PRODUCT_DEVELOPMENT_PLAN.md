@@ -799,8 +799,10 @@ Gate 前至少一次预注册 benchmark，并使用对应 JourneyPack 与证据�
 
 当前实现：R1-01 已抽取已有 v1 读会话和 Blueprint inspector，完成本地全量检查
 与独立 AI 代码复审，保持 DTO/schema，不开放 create/commit 或暴露 runtime。
-R1-01A 首片新增五类独立身份封装，旧 EntityId v1 parser/kind 保持不变；
-下一片实现不可变 Operation/Run 输入与父子锁校验，再接 ledger/原子存储。
+R1-01A 已有五类独立身份，以及按新接受 §14 实现的不可变 Operation/Run 输入、
+规范摘要、父子锁与批内唯一性校验；旧 EntityId v1、history、storage、RNG 字节
+保持不变。下一片落实 ledger 登记/idempotency 与原子存储，禁止用输入构造成功
+代替依赖 resolver、OperationContext、真实批准或持久唯一性。
 这些不表示 JobStore、目标 package writer 或完整 R1/G1 已交付。
 
 ### 现在允许执行
