@@ -476,3 +476,8 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   Windows 本地证明、所需决定接受和真实作者操作尚缺。产品目标、Rosé Pine、
   同版本说明书及受限本地发音未降级；未配置额度恢复自动唤醒，使用保存的代码、
   evidence 与本记录恢复工作，不声称已完成整个项目。
+- 最终故障复核另实际复现 capture ctor 失败时旧 JSON `passed` 可残留（RED）。
+  已把 clean snapshot、固定 plan、记录创建整体延后至既有 blocked checkpoint
+  落盘后执行，未复制第二套失效流程；ctor/plan/dirty 三场景均检查旧 pass 清除且
+  不运行命令。早期 bootstrap/refresh 无 recorder 时不错误封口，初始化前中断
+  保留原中断和 blocked。该代码变化后需重新绑定最终完整门。

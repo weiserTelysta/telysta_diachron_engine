@@ -184,6 +184,35 @@ def test_local_capture_rejects_dirty_source_without_creating_bundle(tmp_path: Pa
     assert not (root / "target/local-verification").exists()
 
 
+@pytest.mark.parametrize("failure", ["ctor", "plan", "dirty"])
+def test_local_capture_creation_failure_cannot_preserve_old_pass(tmp_path, monkeypatch, failure) -> None:
+    root = _repository(tmp_path)
+    for relative in gate_evidence.LOCK_FILES:
+        (root / relative).write_bytes(b"test lock\n")
+    _git(root, "add", "Cargo.lock", "poetry.lock")
+    _git(root, "commit", "-m", "add locks")
+    evidence_path, status_path = _write_gate_outputs(root, _passing_evidence())
+    if failure == "dirty":
+        (root / "README.md").write_text("uncommitted change\n", encoding="utf-8")
+    observed = []
+    def fail_creation(*args):
+        observed.append(json.loads(evidence_path.read_text(encoding="utf-8"))["decision"])
+        raise OSError("test capture creation failure")
+    monkeypatch.setattr(gate_evidence, "LocalRunRecorder", fail_creation)
+    monkeypatch.setattr(gate_evidence, "_local_command_plan", fail_creation if failure == "plan" else lambda _: [])
+    def unexpected_commands(*args):
+        pytest.fail("verification commands must not run after capture setup fails")
+    monkeypatch.setattr(gate_evidence, "verify_commands", unexpected_commands)
+    assert gate_evidence.generate(
+        root, evidence_path.relative_to(root), status_path.relative_to(root),
+        verify=True, record_local=True,
+    ) == 1
+    assert observed == ([] if failure == "dirty" else ["blocked"])
+    persisted = json.loads(evidence_path.read_text(encoding="utf-8"))
+    assert persisted["decision"] == "blocked"
+    assert "G0A has passed" in persisted["claims"]["forbidden"]
+
+
 @pytest.fixture
 def ignore_gate_policy(monkeypatch: pytest.MonkeyPatch) -> None:
     # Unit fixtures below test structural predicates with synthetic accounts

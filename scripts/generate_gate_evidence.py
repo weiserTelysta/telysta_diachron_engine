@@ -16,7 +16,7 @@ from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import urlparse
 
 from jsonschema import Draft202012Validator, FormatChecker
@@ -2707,7 +2707,7 @@ def _generate_locked(
     status_path: Path = DEFAULT_STATUS_PATH,
     *,
     verify: bool = False,
-    recorder: LocalRunRecorder | None = None,
+    start_recording: Callable[[], LocalRunRecorder] | None = None,
 ) -> int:
     try:
         evidence = json.loads((root / evidence_path).read_text(encoding="utf-8"))
@@ -2818,6 +2818,9 @@ def _generate_locked(
         )
         return 1
 
+    # Capture setup may fail too. Only attempt it after invalidating the old
+    # decision on disk, using the same checkpoint as normal verification.
+    recorder = start_recording() if start_recording is not None else None
     commands_passed = (
         verify_commands(root, refreshed) if recorder is None
         else verify_commands(root, refreshed, recorder)
@@ -3118,20 +3121,27 @@ def generate(
             if record_local:
                 if not verify:
                     raise ValueError("--record-local requires --verify")
-                initial = _local_source_snapshot(root)
-                if initial["fingerprint"]["dirty"]:
-                    raise ValueError("local diagnostic capture requires a clean source checkout")
-                recorder = LocalRunRecorder(root, initial, _local_command_plan(root))
-                print(f"Local diagnostic bundle: {recorder.path}", flush=True)
+                recorder = None
+                def start_recording() -> LocalRunRecorder:
+                    nonlocal recorder
+                    initial = _local_source_snapshot(root)
+                    if initial["fingerprint"]["dirty"]:
+                        raise ValueError("local diagnostic capture requires a clean source checkout")
+                    recorder = LocalRunRecorder(root, initial, _local_command_plan(root))
+                    print(f"Local diagnostic bundle: {recorder.path}", flush=True)
+                    return recorder
                 try:
                     result = _generate_locked(
-                        root, evidence_path, status_path, verify=True, recorder=recorder,
+                        root, evidence_path, status_path, verify=True, start_recording=start_recording,
                     )
                 except BaseException as error:
-                    recorder.finish(
-                        1, _local_source_snapshot(root), f"{type(error).__name__}: {error}",
-                    )
+                    if recorder is not None:
+                        recorder.finish(
+                            1, _local_source_snapshot(root), f"{type(error).__name__}: {error}",
+                        )
                     raise
+                if recorder is None:
+                    return result  # Bootstrap/refresh failed before capture setup.
                 recorder.finish(result, _local_source_snapshot(root))
                 if result == 0 and recorder.document["result"] != "passed":
                     raise ValueError("local diagnostic capture did not complete consistently")
