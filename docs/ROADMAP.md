@@ -171,30 +171,19 @@ R3 证明命名/对白/短场景可持续扩充；R6 验证高级篇章、文学
 
 当前从 R0A 平台/仓库决策与 R0B 领域/产品证据并行继续；后续实现严格按下列 Next/Blocked 状态推进：
 
-### A-001：开发环境与 CI ⚠ Reopened by 2026-07-19 review
+### A-001：本地开发环境与验证 ⚠ R0A-08 In progress
 
-完成日期：2026-07-12
+2026-07-12 的完成判断在 2026-07-19 复审后重新打开：零执行 pytest、旧 pass
+残留、工具链声明漂移和缺平台证明均须修复。当前已有 hermetic runner、
+fail-closed 发布、verifier lease、精确 Rust 1.88.0 门与 clean source 本地诊断
+采集候选；普通软件检查通过不能关闭 Gate。2026-10-16 用户要求仅本地执行，
+旧 workflow 已归档，GitHub 只保存代码，不再安排远端证明或 CI。
 
-完成证据：
-
-- 支持 Python 3.10–3.14，默认开发版本为 3.13；
-- 使用 Poetry 2.4.1 application mode 和完整 `poetry.lock`；
-- `scripts/check.py` 统一运行编译、Ruff 正确性检查和 pytest；
-- 本地基线为 474 项测试全部通过；
-- CI 验证 Linux 3.10/3.12/3.14 与 Windows 3.13；
-- Windows、macOS 和 Linux 安装流程记录于 `docs/DEVELOPMENT_SETUP.md`。
-
-复审修正：原完成记录保留为历史，但不再作为当前关闭证据。pytest 可在
-`--collect-only` 下零执行成功；Gate 失败可能保留旧 passed；声明的 Rust 1.77.2
-与 lock graph/实际 1.96 evidence 不一致，Linux desktop job 也未证明 Tauri 原生依赖。
-COR-05 已在当前工作树完成 hermetic runner 与 fail-closed evidence 的本地实现检查点：
-33 项定向测试通过并证明 `collected=33, executed=33`，hostile addopts 下的最终完整门
-实际执行 588 项，结果为 `580 passed, 8 xfailed`。但这不是通过性 GateEvidence；独立
-复核、clean subject 与受信远端 provenance 仍未完成。单 verifier lease 及锁竞争负例
-已经形成后续本地实现候选。COR-07 已将 locked graph、workspace、toolchain、generator 与 CI 的
-候选 MSRV 统一到 1.88.0，Windows exact gate 本地通过；Linux/fresh-checkout CI 与
-provenance 仍待远端。当前关闭包仍为
-`R0A-08 Verification Trust Repair`，状态保持 `In progress`。
+安装、Python 3.10–3.14/Poetry 工具链及唯一执行入口集中在
+[开发环境](./DEVELOPMENT_SETUP.md)，实际运行、独立复审与历史数量集中在
+[WORK_LOG](./WORK_LOG.md)及生成记录，不在路线图重复保存易过期的测试数字。
+下一步为本地证据替代合同、Windows 本地证明及其余独立关闭项；旧 policy 未被
+接受或替换前继续 blocked，不将本地诊断 checksum 当作评审同意。
 
 ### A-002：黄金场景与状态哈希 ✅
 

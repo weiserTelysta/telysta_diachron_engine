@@ -457,7 +457,22 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   反例；已补完整 plan/source 比对、严格结构、普通文件与 aware 时间检查。
   原始字节子进程、启动/命令失败、中断、写故障、源/锁变化和最终 docs/发布
   失败进入测试。说明集中合并到 DEVELOPMENT_SETUP；主计划和 v3 model 只链接，
-  不增加第二份计划或重复保存运行计数。完整本地门与最终独立复查结果待本轮断点记录。
+  不增加第二份计划或重复保存运行计数。
 - 终核又实际复现“分发 digest 非 hash、Rust/Cargo 版本不符但布尔值 true”可误报；
   已约束 hash 结构，并在本地 wrapper 复用现有 exact-MSRV 版本判定和计划解释器
   绑定。短命令成功 bundle 上逐字段篡改均必须拒绝，不另写工具链版本解析器。
+- 最终限定代码复审无剩余 finding；两文件 89 项通过，精确 SHA 长度的最后小改动
+  另跑 5 项 capture 回归。新 helper 的 24 项在既有本地 Python 3.10.22/3.14.8
+  环境各通过；这不是两个版本新的全套结果。源 `7e7c4cb325491f50266170e06ba344e94a4b73ec`
+  的真实完整本地 capture 为 `run-c8w8e1ig`：738 Python passed / 8 strict xfailed、
+  86 Rust，fmt/clippy/desktop build/JS syntax/最终 docs 均通过，10 条日志完整。
+- 同 reviewer 对该真实 bundle 独立运行只读检查并复核实际锁和全部日志，初末
+  source 相同，无新增 finding；manifest SHA-256
+  `74bc59a9cd56c10157ff7988f0d267709c62916862a3a78e06231de161ef83ef`。
+  核查不认证执行真实性、不接受 Gate。源码再补本文和路线图简化后，最终源需
+  重新完整本地采集，不能移用 `7e7c4cb` 的运行；最终断点写入本地 target 并由
+  生成 evidence 绑定。路线图合并掉旧数量与远端等待项，只链接 runbook/执行记录。
+- 下一循环仍先处理本地替代合同和可确认的作者任务失败；实际 owner/capacity、
+  Windows 本地证明、所需决定接受和真实作者操作尚缺。产品目标、Rosé Pine、
+  同版本说明书及受限本地发音未降级；未配置额度恢复自动唤醒，使用保存的代码、
+  evidence 与本记录恢复工作，不声称已完成整个项目。

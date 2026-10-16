@@ -752,7 +752,7 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 | 计划因并行失控 | 多领域同时半完成 | 关键路径、WIP 限制、阶段 gate | 全阶段 |
 | Gate 假通过或旧 pass 残留 | pytest 只收集、验证失败但 STATUS 仍 passed | hermetic runner、执行计数、原子 fail-closed evidence | R0A-08 |
 | 当前 v1 权威历史被覆盖/改写 | 双创建成功、候选 history 不是旧历史前缀 | create-if-absent、core extension validator、无通用 replacement writer | R0A-09 |
-| 工具链声明漂移 | 新 Rust 通过但声明 MSRV 无法解析 lock | 单一 toolchain source、精确 MSRV CI 与 evidence | R0A-08 |
+| 工具链声明漂移 | 新 Rust 通过但声明 MSRV 无法解析 lock | 单一 toolchain source、精确 MSRV 本地检查与 evidence | R0A-08 |
 
 ## 21. 工作包执行模板
 
