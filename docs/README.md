@@ -25,7 +25,7 @@
 - [文档治理策略](./governance/DOCUMENT_POLICY.md)
 - [文档权威与阅读顺序](./governance/AUTHORITY_ORDER.md)
 - [ADR Index](./governance/ADR_INDEX.md)
-- [计划优化记录（2026-07-16）](./PLAN_OPTIMIZATION_2026-07-16.md)
+- [计划优化历史摘要（2026-07-16）](./PLAN_OPTIMIZATION_2026-07-16.md)：只保留修订理由与合并去向，不维护第二套阶段图或队列。
 - [审计修正执行计划（2026-07-18）](./AUDIT_CORRECTION_PLAN_2026-07-18.md)：把 P0/P1 缺陷映射到现有 WBS、Gate、负例、迁移与清理放行条件。
 - [审计缺陷控制台账（2026-07-18）](./AUDIT_DEFECT_LEDGER_2026-07-18.md)：P0/P1 的工作包、fixture、Gate、责任与关闭证据。
 - [G0A GateEvidence（2026-07-17）](./G0A_GATE_EVIDENCE_2026-07-17.json)：当前为 v3 的 `blocked` 本地候选；格式迁移不等于可信 attestation 或 Gate 通过。
@@ -84,7 +84,8 @@
 - [规则系统与语言质量计划](./RULE_QUALITY_PLAN.md)
 - [开发文档（Legacy / Non-authoritative）](./development.md)
 
-`PLAN_OPTIMIZATION_2026-07-16.md` 只保存一次计划修订的理由和同步清单。被采纳的内容必须回写前三份主计划；在同步完成前，不得只依据该记录启动持久化 schema、回放或插件边界实现。
+`PLAN_OPTIMIZATION_2026-07-16.md` 已收敛为历史理由与现行正文的链接；完整旧文仍可从
+所列源提交恢复。该记录不授权持久化 schema、回放或插件边界实现。
 
 ## 文档状态约定
 

@@ -3,7 +3,7 @@ document_type: plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-07-19
+last_verified: 2026-10-16
 source_revision: 599f50d3b952178bcb841afa86edd3886cef1024
 owner: unassigned
 reviewers: []
@@ -23,19 +23,15 @@ reviewers: []
 - [专业语言模拟器实施总计划](./LANGUAGE_SIMULATOR_PLAN.md)维护长期能力地图；
 - [当前状态](./STATUS.md)和 GateEvidence 决定是否已经放行，计划文字不能代替 Gate 证据。
 
-当前判断：
+动态阶段状态和当前允许项只从[执行计划 §22](./PRODUCT_DEVELOPMENT_PLAN.md#22-当前执行队列)
+及生成 [STATUS](./STATUS.md)读取；实际运行与复核集中在 [WORK_LOG](./WORK_LOG.md)。
+2026-07-19 对 `599f50d3b952178bcb841afa86edd3886cef1024` 的执行后复审重新打开
+基础验证、当前 v1 authority、migration/index 和 legacy evidence 边界，这是本修正
+覆盖层的历史原因，不意味着普通测试可接受 ADR 或解锁正式领域实现。
 
-- G0A = `blocked`；
-- 2026-07-19 对 `599f50d3b952178bcb841afa86edd3886cef1024` 的执行后复审重新打开了
-  Gate/CI、当前 Rust v1 authority writer、migration archive/index 与 legacy
-  evidence 边界；现有 GateEvidence 中的成功运行不得解释为 MSRV、fresh checkout
-  或不可伪造人工评审已经成立；
-- R0B evidence preparation = `in progress`，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`；G0B = `not evaluated`，当前尚无 G0B GateEvidence；
-- R1 = `blocked by G0A`；
-- WS-1 = `blocked by G1 + G0B`；
-- 当前可以并行修正文档、ADR、fixture、数据锁和不写权威状态的研究实验；
-- 当前不得实现生产 `LanguageState v3`、正式 reducer、Genesis 创建入口、大批生产规则或 Python/Rust 双写；
-- 第一段 Rust 领域代码只能在 `G1 + G0B` 关闭后，以一个完整 WS-1 纵切进入。
+2026-10-16 用户明确仅本地执行；下文旧远端 CI/provenance 条款保留为待替换的
+合同背景，不是运行授权。[开发环境](./DEVELOPMENT_SETUP.md)是唯一操作入口。
+不改变本文的修正判据或 G1 + G0B 前的领域实现 Hold，不静默删除 predicate 放行。
 
 ## 2. 修正目标与允许声明
 
@@ -431,13 +427,19 @@ bundle。DET-N01 的 planning locks 是显式 sentinel，真实 payload 绑定�
 
 类型化音系必须把 categorical validator 与可选 gradient ranker 分开；梯度高分不能救活违反硬约束的候选。Genesis、借词、复合、形态音系和变化必须共享同一最终 validator。
 
-### 8.1 Orthography / IGT / PCU 扩展包（尚未起草）
+### 8.1 Orthography / IGT / PCU 扩展包
 
 当前 24-case v1 不覆盖正字法权威与同图 IGT，不能用于接受新增 authority。执行顺序
 必须是 `R0B-01A-D Proposed ADR → R0B-04B-D review vectors → R0B-01A Accepted
 ADR → R0B-04B reviewed/frozen fixture → G2 real adapter evidence`。review vectors
 可以随 Proposed ADR 修订，不是 frozen evidence；ADR 接受后的 fixture 必须重新登记
 schema/version、content hash、reviewer 和 expected diagnostics。
+
+2026-10-16 核对：Proposed ADR-014 与独立的
+[22 个 mutable review vectors](../tests/fixtures/orthography_review_vectors_v1.json)
+已有草案；对应[有限关系检查](../tests/core/test_orthography_review_vectors.py)只覆盖五项
+声明关系，不执行 normalization、parser、音变或生产图验证。下面仍是待接受并
+冻结的 hostile pack 要求；不能把 ORT-R 研究向量直接改名成已完成的 ORT-N/P fixture。
 
 | Planned vector | 必须证明 |
 |---|---|

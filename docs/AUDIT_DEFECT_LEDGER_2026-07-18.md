@@ -3,7 +3,7 @@ document_type: evidence
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: current
-last_verified: 2026-10-12
+last_verified: 2026-10-16
 source_revision: 599f50d3b952178bcb841afa86edd3886cef1024
 owner: unassigned
 reviewers: []
@@ -15,21 +15,17 @@ reviewers: []
 
 本文把[语言学与架构审计](./LINGUISTIC_AND_ARCHITECTURE_AUDIT_2026-07-18.md)中的 P0/P1 缺陷绑定到修正工作包、ADR、planning fixture、目标 Gate 和关闭证据。Planning fixture 只有在 reviewed subject merge、内容 hash/reviewer 登记和该 bundle 的 evidence protocol 完成后才成为 frozen/immutable 基线。本文不是 GateEvidence，不批准 ADR，也不把 planning-only fixture 描述为已实现能力。
 
-当前状态：
+动态 Gate 与阶段状态集中在生成 [STATUS](./STATUS.md)和
+[执行队列](./PRODUCT_DEVELOPMENT_PLAN.md#22-当前执行队列)，本台账只维护缺陷映射。
+2026-07-19 的复审重新打开基础关闭项；后续本地修复、clean capture 和独立 AI
+复查见 [WORK_LOG](./WORK_LOG.md)。普通软件检查不能把本表项目改为 Closed。
+运行范围统一遵循[本地开发约定](./DEVELOPMENT_SETUP.md)，旧远端 provenance
+描述是历史阻断背景，不再生成远端执行任务。
 
-- G0A = `blocked`；
-- 2026-07-19 执行后复审确认：Gate runner 与 GateEvidence fail-closed 生命周期已在
-  当前工作树完成本地修复并通过 hostile tests，且已加入单 verifier lease，但仍待独立
-  复核、clean subject 与受信远端 provenance；当前 v1 project writer、migration archive 和 SQLite projection 已在
-  2026-10-12 补充本地修复与故障测试，仍待完整平台复验与独立关闭；A-001、B-001.1、FND-008.1 的完成声明必须按对应缺陷重新验证；
-- R0B evidence preparation = `in progress`，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`；G0B = `not evaluated`，当前尚无 G0B GateEvidence；
-- R1 = `blocked by G0A`；
-- WS-1 = `blocked by G1 + G0B`；
-- [ADR-014](./adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md)已形成 `Proposed` 草案，但 owner/reviewer 未分配；
-- fixture 合同只检查 planning 预期的结构与内部一致性，不代表预期已冻结或 Rust target 已实现。
-- 当前 24-case linguistic bundle 不含 Orthography/IGT/PCU authority cases；新增
-  review vectors 与 frozen hostile pack 均未起草，不得据此接受新增正字法权威或声明
-  G-LANG 已覆盖拼写。
+2026-10-16 核对：24-case linguistic bundle 不含 ORT/IGT/PCU 扩展；独立的
+[22 个 mutable review vectors](../tests/fixtures/orthography_review_vectors_v1.json)
+已经起草，尚未冻结或绑定生产 adapter。Accepted ADR 后的 frozen hostile pack
+尚未形成；五项有限关系研究检查不能证明 G-LANG 拼写覆盖，也不接受正字法权威。
 
 责任缩写：
 
@@ -61,7 +57,7 @@ reviewers: []
 
 | ID | 问题 | 修正工作包 / ADR | 当前证据 | Target Gate | Owner / reviewer | 状态 |
 |---|---|---|---|---|---|---|
-| P0-01A | G0A 证据基线不能支持平台放行声明 | COR-00/01、R0A-05/06 | G0A handoff、GateEvidence v2、台账 | G0A | unassigned / AR+MR | Blocked by Gate |
+| P0-01A | G0A 证据基线不能支持平台放行声明 | COR-00/01、R0A-05/06 | G0A handoff、GateEvidence v3 blocked 候选、台账 | G0A | unassigned / AR+MR | Blocked by Gate |
 | P0-01B | 累计证据不能支持“产品完成”声明 | R0B-03/04/06/07、WS-1、R3、R6 claim ladder | Capability/TaskPack/Product/Expert evidence 均尚未闭合 | claim-specific G0B → G2 → G3 → G6 | unassigned / AR+LR+DR | Open / cumulative |
 | P0-02 | Lexeme/Sense/WordForm/Morpheme/Paradigm/Construction 无统一身份 | R0B-01A、COR-L01/03、ARC-21、ADR-014 | LEX-N01、MOR-N01/02、HOM-N01 | G0B + G2 | unassigned / AR+LR+MR | Contract drafted + Fixture drafted + contract-tested |
 | P0-03 | 权威写入、事件和历史无法完整解释变化 | ADR-009/011/012、ARC-12/13/22/23 | EVT-N01、LEGACY-REPLAY-004..008 | G0A + G0B + G1 + G2 | unassigned / AR+MR | Partial / Blocked by Gate |
@@ -74,7 +70,7 @@ reviewers: []
 | P0-10 | 环境、气候或奇幻族群被写成直接因果 | COR-L05A、R0B-07、WS2 TheoryProfile | DATA-N01；causal-basis probe 尚待模型合同 | G0B + G4 | unassigned / DR+LR | Partial |
 | P0-11 | realization/analysis/query 会修改语言状态 | ADR-014、COR-L04、ARC-10 | QRY-N01 | G0B + G1 + G2 | unassigned / AR+LR | Contract drafted + Fixture drafted + contract-tested |
 | P0-12 | “音变”把不同机制压成逐词彩票 | COR-L02、ARC-22、WS2 | PH-N05、HOM-N02、EVT-N01 | G2 + G4 | unassigned / LR+DR | Fixture drafted + contract-tested / mechanism deferred |
-| P0-13 | pytest 可零执行返回成功，重新验证失败又可能保留旧 passed | COR-05、R0A-05/06 | hermetic/zero-execution/tear/failed-run tests 本地通过；clean subject 与独立复核待完成 | G0A | unassigned / AR+release reviewer | Locally mitigated / open pending independent closure |
+| P0-13 | pytest 可零执行返回成功，重新验证失败又可能保留旧 passed | COR-05、R0A-05/06 | hermetic/zero-execution/tear/failed-run 本地检查及 clean capture/AI 复查见 WORK_LOG；正式 terminal 关闭证据仍缺 | G0A | unassigned / AR+release reviewer | Locally mitigated / open pending independent closure |
 | P0-14 | 当前 v1 可并发覆盖新项目，并接受截断或 fork 的完整 history replacement | COR-08、B-004、FND-008.1 | 2026-10-12 core extension/session hash/save 收紧及竞争/分叉/截断回归；本地 AI 复审记录见 WORK_LOG | G0A + G1 | unassigned / AR+MR | Locally mitigated / formal closure pending；writer exposure forbidden |
 | P0-15 | migration 可以在 source archive 未被证明完整时成功并清除 journal | COR-09、FND-008.1 | 2026-10-12 archive bytes/name/schema/registry/target 复验、foreign primary 保留、链接拒绝；本地 AI 复审见 WORK_LOG | G0A + G1 | unassigned / AR+MR | Locally mitigated / formal closure pending |
 | P0-16 | 正字法身份、hash、migration/replay 未定义，裸音系串无法保持同音异写或保守拼写 | COR-L01/04、R0B-01A-D/01A、R0B-04B-D/04B、WS1-04A | 2026-10-12 ADR-014 §4.4A 与 22 个 planning vectors 已起草；未接受或冻结 | G0B + G2 | unassigned / AR+LR+MR | Drafted / ADR blocker |
@@ -98,10 +94,10 @@ reviewers: []
 | P1-13 | authoritative input schema 过宽 | ARC-11/21 | CAP-N01、LEGACY-REPLAY-004 | G1 + G2 | unassigned / AR+MR | Partial |
 | P1-14 | evaluator 验证实现而非语言能力 | COR-L07、R0B-04/07 | 24-case bundle；sealed TaskPack 尚待冻结 | G0B + G2 | unassigned / LR+DR | Partial |
 | P1-15 | provenance 覆盖不完整 | ARC-21/22/23 | MOR-N02、LEGACY-REPLAY-005..008 | G2 | unassigned / AR+MR | Partial |
-| P1-16 | DataReference 只证明标签存在 | COR-L05A、R0B-05 | DATA-N01；原始 payload checksum 校验已补齐，但记录成员与真实切片仍未实现 | G0B | unassigned / DR+AR | Fixture drafted + contract-tested / payload slice pending |
+| P1-16 | DataReference 只证明标签存在 | COR-L05A、R0B-05 | DATA-N01；原始 payload checksum 与 Concepticon 离线研究切片已有实现，生产记录成员 adapter 仍未绑定 | G0B | unassigned / DR+AR | Fixture drafted + contract-tested / production adapter pending |
 | P1-17 | Tauri API 仍是 spike 边界 | ARC-10/11/14、COR-L09 | QRY-N01、CAP-N01；IPC fixture 待 R1 | G1 + G2 | unassigned / AR | Blocked by G0A |
 | P1-18 | SoundChange IR 无法表达核心历时过程 | COR-L02、ARC-22、WS2 | PH-N05、EVT-N01 | G2 + G4 | unassigned / LR+AR | Partial |
-| P1-19 | 声明的 Rust 1.77.2 与 lock graph、实际 1.96 evidence 和 Linux desktop CI 不一致 | COR-07、A-001、B-001.1 | locked graph floor 1.88.0；Windows exact gate 本地通过；Linux/CI provenance 待完成 | G0A | unassigned / AR+release reviewer | Locally mitigated / open pending cross-platform attestation |
+| P1-19 | 历史声明的 Rust 1.77.2 与 lock graph、实际 1.96 evidence 和 Linux desktop CI 不一致 | COR-07、A-001、B-001.1 | locked graph floor 1.88.0；当前 Linux 本地精确门见 WORK_LOG；Windows 本地终态证据仍待取得，不安排远端运行 | G0A | unassigned / AR+release reviewer | Locally mitigated / open pending cross-platform attestation |
 | P1-20 | R0A-07、review attestation 与 passed 后 lifecycle 不能被现有 policy 完整验证 | COR-06、R0A-06/07 | Proposed policy v2/GateEvidence v3 已结构化校验 capacity/estimate/WIP/timebox、稳定账户、subject 与有效期；仍待独立复核和真实 readiness | G0A | unassigned / AR+MR+product owner | Locally mitigated / open pending attestation |
 | P1-21 | SQLite index publish/query 有 authority TOCTOU，可返回未绑定当前 history 的旧 projection | COR-09、R1-07 | 2026-10-12 lease 覆盖 load/rebuild/query；独立子进程竞争测试本地通过 | G0A + G1 | unassigned / AR+storage reviewer | Locally mitigated / independent closure pending |
 | P1-22 | IPC/persisted DTO 忽略未知字段，旧 number seed 无法覆盖 JavaScript 安全整数以上范围 | COR-08、ARC-11、ADR-013 | hostile JSON 与 `2^53±1/u64::MAX` fixture 待补 | G0A + G1 | unassigned / AR+MR | Partial / target wire blocked by ADR-013 |

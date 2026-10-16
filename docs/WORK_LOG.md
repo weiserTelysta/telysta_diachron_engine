@@ -481,3 +481,33 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   落盘后执行，未复制第二套失效流程；ctor/plan/dirty 三场景均检查旧 pass 清除且
   不运行命令。早期 bootstrap/refresh 无 recorder 时不错误封口，初始化前中断
   保留原中断和 blocked。该代码变化后需重新绑定最终完整门。
+
+## 2026-10-16 续作：历史规划合并与过期描述修正
+
+- 上轮属于 progress：实际锁修复、本地 raw capture、失败初始化旧 pass 清除及
+  独立复核完成；阶段分支 `codex/local-diagnostics-2026-10-16` 保存源 `3816645`
+  与仅两份生成文件的后续提交 `4bfbd58`。完整本地结果与恢复指针集中在
+  `target/local-diagnostics-2026-10-16/final-checkpoint.json`，没有远端运行。
+- 本轮问题是重复的历史阶段图/Meaning/evaluator/Gate 清单与过期状态会误导
+  后续实现。非权威历史摘要不改变当前领域 schema、writer、RNG、hash、replay、
+  迁移或 Gate 关闭；文档唯一来源和保留追溯属于软件/治理约束，未引入语言学
+  先验或把创作偏好改成因果规则。
+- 新上下文 `/root/document_consolidation_review` 逐节对照三主计划与 ADR，确认
+  原优化记录的大段正文已有覆盖；指出两项精确要求不能静默丢失：每 R 阶段
+  至少一次形成性研究/Gate 前预注册 benchmark，以及 R3–R7 仅范围级估算。
+  两项已明确迁入 canonical 执行计划 §16.2/§21，旧文只链接，不降低完成要求。
+- `PLAN_OPTIMIZATION_2026-07-16.md` 原 245 行收敛为历史理由与现行正文映射，
+  保留 17 个章节标题、日期/联合复审来源、拆门理由、旧 seal/create 顺序纠正、
+  后续 R3 基础试听范围和原全文 Git 源。文件不移动、不删除，新增 historical
+  YAML 并移出 metadata exemption；不复制新计划、schema 或迁移算法。
+- 台账与审计覆盖层将动态阶段状态合并到 STATUS/PDP/WORK_LOG；修正“正字法
+  向量未起草”的矛盾，明确 22 个 mutable review vectors 与五项有限关系检查
+  都不是已冻结 hostile pack、生产 parser 或 G-LANG 证据。Concepticon 研究切片
+  与未绑定生产 adapter 区分；Linux 精确本地检查不冒充 Windows 终态证据。
+  独立关闭状态仍未完成，所有相关 P0/P1 未标 Closed，旧远端条款不授权执行。
+- 原历史文件可从所列 `9ff7e5e` 同路径恢复；17 个旧标题与新摘要的 heading
+  链接逐项核对，相关 18 项文档/fixture 检查通过。最终内容复核和完整本地门
+  绑定最终候选；原始作者材料、references 和运行日志继续只保留本地。
+- 同 reviewer 终核未发现阻断问题，确认两项迁入要求完整、历史追溯/章节链接
+  有效，且研究向量未被提升为生产能力或 Gate 证据。采纳其唯一可选建议，把
+  sealed 任务隔离直接链接到 R0B-04 与验证矩阵，减少查找。全项目目标仍未完成。

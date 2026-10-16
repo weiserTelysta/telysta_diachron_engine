@@ -44,7 +44,6 @@ LEGACY_METADATA_EXEMPTIONS = frozenset(
         "docs/LANGUAGE_BLUEPRINT_V1.md",
         "docs/LEGACY_EVENT_COVERAGE.md",
         "docs/MODULE_MIGRATION_MATRIX.md",
-        "docs/PLAN_OPTIMIZATION_2026-07-16.md",
         "docs/PLATFORM_CONTRACT_PACK_V1.md",
         "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
         "docs/README.md",

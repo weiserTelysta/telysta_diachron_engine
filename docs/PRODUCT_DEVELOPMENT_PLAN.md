@@ -682,6 +682,10 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 证据和表示边界。三类参与者不得互相冒充 primary persona。形成性研究与 Gate 确认
 样本隔离；每个阶段持续迭代，不在 R0 后永久冻结用户理解。
 
+沿用 2026-07-16 计划修订的最低研究频次：每个 R 阶段至少一次形成性研究，
+Gate 前至少一次预注册 benchmark，并使用对应 JourneyPack 与证据角色。频次是
+研究计划要求，不代表当前已招募参与者或完成研究；自动化检查不计入次数。
+
 低保真原型必须使用独立的 prototype/fixture adapter，持续显示
 `Concept Prototype / no authoritative state`，不得调用 create/commit、访问正式项目
 路径或把人工准备候选描述为“已生成、已验证、已保存”。
@@ -755,6 +759,10 @@ Guided/Expert 是同一任务中的渐进披露；Research 是 Lab 工作区。�
 | 工具链声明漂移 | 新 Rust 通过但声明 MSRV 无法解析 lock | 单一 toolchain source、精确 MSRV 本地检查与 evidence | R0A-08 |
 
 ## 21. 工作包执行模板
+
+估算采用滚动近程：R0A、R0B、R1、R2 才做交付级估算；R3–R7 只保留范围级
+估算，接近执行且研究不确定性降低后再细化。此规则沿用历史计划修订，既不
+跳过下列 Ready/In Progress 信息，也不凭 S/M/L 推导未经证实的发布日期。
 
 任何工作包进入 `In Progress` 前必须补齐：
 

@@ -1,245 +1,126 @@
+---
+document_type: legacy
+decision_status: not-applicable
+implementation_status: historical
+normative_scope: historical
+last_verified: 2026-10-16
+source_revision: 9ff7e5e8cb820afde281a2c47a74d35e95c1e995
+---
+
 # Telysta 计划优化记录
 
-- 状态：`Planning change record merged into the three authoritative plans / no persisted-schema decision`
-- 日期：2026-07-16
-- 依据：[路线严格评审](./RESEARCH_ROUTE_REVIEW_2026-07-14.md)、2026-07-15 工程/语言学/产品联合复审
-- 影响范围：[项目路线图](./ROADMAP.md)、[专业语言模拟器实施总计划](./LANGUAGE_SIMULATOR_PLAN.md)、[产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)
-
-本文记录执行顺序和证据门的修订，不替代 Accepted ADR。涉及项目身份、Run/Event 归属、LanguageState v3、ChangeSet locus、聚合边界、回放或插件执行的条目仍必须先由 ADR 决定。
-
-本文是 2026-07-16 的历史计划优化记录，不是当前执行 WBS 或 Gate 状态源。工作包
-ID、依赖、R2A–R2F 映射、Stop/Go 和当前队列以
-[产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)为唯一 canonical WBS；Gate
-requirement 与 decision 分别以版本化 policy 和 GateEvidence 为机器事实。若本文的
-历史顺序与当前执行计划不同，不得据本文启动实现。
+- 历史日期：2026-07-16；依据为 [路线严格评审](./RESEARCH_ROUTE_REVIEW_2026-07-14.md)
+  与 2026-07-15 工程/语言学/产品联合复审。
+- 本文只保留修订理由、后续纠正和合并去向，不接受任何持久化 schema、writer、
+  replay 或插件决定。当前 WBS、依赖、Ready 条件与执行队列只在
+  [产品开发执行计划](./PRODUCT_DEVELOPMENT_PLAN.md)维护；Gate 只从版本化证据读取。
+- 合并前全文保存在源提交 `9ff7e5e8cb820afde281a2c47a74d35e95c1e995` 的同一路径。
+  本次未移动或删除历史合同、schema、fixture，也不新增第四份计划。
 
 ## 1. 结论
 
-项目继续采用 `Conditional Go + Domain Implementation Hold`：Rust 单一权威、Tauri 薄客户端、确定性 RngTree、事务回放、typed IR、独立 evaluator、Canon impact 和 ODD/TRACE 方向保留；原计划不得按单一 G0 串行执行。这里的 Hold 只冻结尚未由 Accepted ADR 和对应 Gate 放行的持久化领域语义，不冻结文档、fixture、数据锁、UX 原型、研究实验，也不冻结 G0A 关闭后的 R1 平台 walking skeleton。
-
-当前首先要证明两个不同问题：
-
-1. 平台能否安全承载未来任务，而不提前冻结语言学模型；
-2. WS-1 的语言、语义、任务和作者闭环是否具备足够明确的领域合同。
-
-SpeechCommunity、PopulationVariation 和真实传播模型属于第三个、更晚的决策门，不能阻塞 application/Job 平台，也不能在其 ADR 接受前进入生产 schema。
+2026-07-16 修订的关键理由是拆开三个问题：平台能否承载任务、WS-1 能否表示
+并验证语言、后续传播模型是否有经验支持。不能让 SpeechCommunity/Variation
+阻塞 R1/R2，也不能把结构变换当成真实社会传播。Rust 单一权威与领域实现 Hold
+保留；文档、fixture、数据锁及非权威研究不因 Hold 一并停止。
+当前并行边界集中在[执行计划 §3](./PRODUCT_DEVELOPMENT_PLAN.md#3-关键路径与并行边界)。
 
 ## 2. 产品切入口
 
-首发价值切入口固定为：
-
-> 面向严肃世界观作者的 Canon-safe、可审计 Story Language Kit。
-
-R2 先证明一个可执行微型语言，R3 证明作者可以持续使用和扩充。语言变化模拟器是 R4 的第二能力层；语言家族是 R5 的第三能力层。最终愿景仍是可审计的语言历史模拟器，但不得用远期家族目标替代早期产品价值验证。
-
-R0B 产品研究必须使用目标作者自己的姓名、台词和场景，比较其现有表格、Wiki、词典/音变工具工作流，并定义转向条件。完成团队提供的固定任务只能证明操作可行，不能证明产品价值。
+当时选定面向严肃叙事作者的 Canon-safe Story Language Kit，先以 R2 证明可执行
+微型语言，再以 R3 证明持续创作；不以远期家族或文学愿景替代早期作者价值。
+产品定义、1.0 范围和用户后续要求合并至
+[执行计划 §1](./PRODUCT_DEVELOPMENT_PLAN.md#1-产品北极星)。
 
 ## 3. 修订后的决策门
 
-```text
-R0A planning repair + repository baseline
-        ↓
-G0A Platform Contract Ready
-        ↓
-R1 application / JobStore / API / staging / query / benchmark
-        ↓
-G1 Platform Ready
-
-R0B WS-1 domain evidence ───────────────────────────────┐
-        ↓                                                │
-G0B WS-1 Domain Ready                                    │
-        └────────────────────────────────────────────────┘
-                         ↓
-R2A–R2F executable-language vertical slice
-                         ↓
-G2 Executable Language
-                         ↓
-R3 Story Language Kit + continuous product validation
-                         ↓
-G3 Creator Capability
-
-R3B WS-2 model decision + storage/experiment readiness
-        ↓
-G3B WS-2 Model Ready
-        ↓
-R4 Mechanistic Change Simulator v1
-        ↓
-R5 Family / Contact / Blind Reconstruction
-
-R3 后可并行：single-language discourse/literary track
-R5 后集成：family-history literary track
-R7 core：release hardening
-R7 optional trains：speech / neural voice / LLM / extension preview
-```
+阶段图与依赖只维护于[执行计划 §3](./PRODUCT_DEVELOPMENT_PLAN.md#3-关键路径与并行边界)；
+完整 Gate 定义只维护于[能力地图 §10](./LANGUAGE_SIMULATOR_PLAN.md#10-跨阶段质量门)。
+本文不再复制可漂移的阶段图、requirement 集合或通过条件。
 
 ### G0A：Platform Contract Ready
 
-本节只保留 Gate 设计理由，不维护当前 required requirement 集合或状态；当前集合、
-接受谓词和 decision 以版本化 policy、canonical WBS 和 GateEvidence 为准。
-
-只包含进入 R1 所需条件：
-
-- 当前 Rust/Tauri/CI/合同/fixture 进入 clean-checkout 基线；
-- Project、Operation/Run、Job、事件归属、staging 与 authoritative/derived storage 中影响持久化身份、回放和权威写入的决定已 Accepted；
-- application 依赖方向、versioned request/query/error/event、Job journal/cursor 和权限边界可评审；
-- RNG 与既有历史兼容策略明确；
-- 产品首发切入口作为可证伪假设、允许声明和平台支持范围明确；R0B 产品证据失败会触发 G0A 相关声明重验，而不是把首发 wedge 当成已经验证的市场事实。
+拆门理由是先接受进入 R1 所需的平台身份、权威存储、RNG 与应用边界，
+而不是先冻结整个语言模型。对应[执行计划 §6](./PRODUCT_DEVELOPMENT_PLAN.md#6-r0a--r0b计划修复与领域证据)。
 
 ### G0B：WS-1 Domain Ready
 
-只包含进入正式 WS-1 schema/实现所需条件：
-
-- Registry、LanguageState v3、Meaning/Grammar、GenesisArtifact、TaskPack、Canon 和 evaluator 边界无阻断未决项；
-- WS-1 支持/计划/拒绝能力矩阵冻结；
-- 两个结构上非同构的对照轮廓能够由同一 IR 表达；
-- 数据 execution slice、四类 TaskPack、缺陷注入、Canon fixture 和 Meaning Workbench 原型可复现；
-- 所有影响持久化身份、回放或创建信任边界的 ADR 已 Accepted。
+领域接受、双 profile、Meaning/Grammar、TaskPack 与 evaluator 独立收口；
+G0B 不能代替 G1，G1 也不能代替 G0B。对应[能力地图 G0B](./LANGUAGE_SIMULATOR_PLAN.md#g0bws-1-domain-ready)。
 
 ### G3B：WS-2 Model Ready
 
-只包含真实传播实现的前置条件：
-
-- SpeechCommunity、lect、Variation aggregate、UsageObservation 和 ChangeProcess 的身份/hash/replay ADR 已 Accepted；
-- ChangeProcess 使用 process graph，而不是唯一线性阶段；
-- AuthorCanon、TaskFixture、SyntheticUsage 和 ExternalEmpiricalObservation 不可互换；
-- headless ExperimentRunner、参数恢复/可辨识性协议和存储规模决策已就绪；
-- 模型声明、适用域、失败模式和 ODD/TRACE 证据模板已锁定。
+真实传播另需 model/observation/source typing、参数恢复与可辨识性，不能用架构
+Spike 证明机制真实。对应[执行计划 §10](./PRODUCT_DEVELOPMENT_PLAN.md#10-r3b--r4ws-2-模型就绪与机制性变化-v1)。
 
 ## 4. 必须显式解决的 ADR 决策
 
-R0A/R0B 不预先给出下列持久化答案，但必须为其建立独立决策记录，不能继续隐含在工作包描述中：
-
-1. `ProjectManifest / RunLedger / OperationId / RunId / JobId / AttemptId` 的身份与迁移；Authoring/Retcon 由 OperationKind 和 provenance 表达；
-2. ChangeSet 的 typed locus：WS-1 结构 lect 与 WS-2 community-conditioned locus；
-3. Meaning/Grammar/Task certification 的权威边界；
-4. TheoryProfile、ModelEvidence、参数、校准与验证工件；
-5. LanguageStructure、Variation、UsageCorpus、Canon、Job 和派生索引的聚合/回放边界；
-6. 离线重验所需 registry/rule/data/TaskPack/evaluator payload 保存和 `ReplayCapability`。
-
-ADR-005 还必须把“架构边界可接受”与“经验模型已获得验证”分开。Spike 可以证明表示与实现可行，不能证明某个社会语言学机制真实。
+原记录列出的身份/Run/Event、typed ChangeSet locus、Meaning/Grammar/Task authority、
+TheoryProfile/ModelEvidence、聚合/replay 和离线 payload/ReplayCapability 问题，
+由[ADR Index](./governance/ADR_INDEX.md)与[目标架构](./architecture/TARGET.md)分别维护
+决定状态和边界；工作包文字不构成这些决定的答案。ADR-005 的架构可行性与模型
+经验有效性仍须分开，不能由 Spike 自动接受后者。
 
 ## 5. 语言与科学验证修订
 
 ### 5.1 Meaning 分层
 
-```text
-SceneFacts
-→ InteractionContext
-→ CommunicativeIntent
-→ PropositionGraph
-→ LanguageSpecificObligations
-→ Grammar Realization
-
-PragmaticCommitments 作为可追踪并行层
-```
-
-每层分别定义 equivalence、允许歧义、scope/commitment 和 typed gap。`ComparativeConcept ↔ LanguageInternalCategory ↔ Lexeme/ConstructionMeaning` 只作为带 provenance 的跨语言词汇/范畴对齐，不是整个 Task meaning pipeline；比较概念不得直接成为所有候选语言的时体、格、词类或语义真值。
+Scene/Context/Intent/Proposition/Obligations 与并行 Commitments 的分层、各层
+等价/歧义/gap，以及 comparative concept 不等于语言内部范畴的要求，集中于
+[能力地图 §5.9](./LANGUAGE_SIMULATOR_PLAN.md#59-meaning--grammar-ir)和 ADR-014。
 
 ### 5.2 分阶段语义与话语能力
 
-- G2：事件、角色、指称、否定、最小量化/辖域、时体和疑问；
-- G3：指示、基本照应、言语行为、共同知识、信息结构和 register；
-- G6：模态/反事实、预设、嵌套引语、跨句时间、篇章关系和 viewpoint。
-
-未实现能力必须返回 typed gap。TaskCase 文案不能伪装成已经实现的语义表示。
+G2/G3/G6 的表达范围与 typed gap 只在[执行计划 §8–12](./PRODUCT_DEVELOPMENT_PLAN.md#8-r2--ws-1可执行语言纵切)
+维护；自然语言任务文案不能冒充已实现的意义表示。
 
 ### 5.3 Evaluator 与任务隔离
 
-```text
-DevelopmentPack
-CandidateSelectionPack
-SealedAuditPack
-ExternalElicitationPack
-```
-
-最终 evaluator 同时检查 coverage、negative precision、semantic false acceptance、歧义分布和未覆盖规则。任何被开发者查看并用于调试的 sealed pack 立即失去 held-out 身份。
+四类 TaskPack 与 sealed 可见性/失效边界见
+[执行计划 §6](./PRODUCT_DEVELOPMENT_PLAN.md#6-r0a--r0b计划修复与领域证据)；negative
+precision、禁读与歧义的验证见[§15](./PRODUCT_DEVELOPMENT_PLAN.md#15-验证矩阵)。
 
 ### 5.4 模型证据
 
-G4 前除 replay、multi-seed、sensitivity 和 ablation 外，还必须有：
-
-- synthetic parameter recovery；
-- identifiability/equifinality 检查；
-- observation model 与校准目标；
-- calibration/validation 数据隔离；
-- uncertainty coverage 或明确的不可识别报告；
-- 替代 TheoryProfile 与无该机制对照。
-
-S 曲线只能作为可比较的输出模式，不能充当传播原因。
+恢复、可辨识性/equifinality、观测模型、校准/验证隔离、不确定性和替代模型的
+要求集中于[执行计划 §10、§17](./PRODUCT_DEVELOPMENT_PLAN.md#17-数据模型与科学证据计划)；
+S 曲线只作待解释模式，不是传播原因。
 
 ## 6. 产品与 UX 证据修订
 
-`LanguageCapabilityCertificate` 与 `ProductUsabilityEvidence` 分开：
-
-- 前者锁定语言 revision、lect、Grammar、TaskPack、Canon、evaluator、数据/模型和限制；
-- 后者锁定用户群、真实任务、使用情境、UI build、平台/辅助技术、成功率、误完成、耗时、恢复、信心和满意度。
-
-R0B 原型和 WS-1 必须提供 `Meaning Workbench v0`：作者可以用场景模板和 obligation 卡片确认角色、时体、指称、语气与目标语言强制信息；自然语言或 LLM 只产生提案，typed Meaning 才是权威输入。
-
-人本研究不是 R0B 后永久冻结。每个 R 阶段至少有一次形成性研究，Gate 前有一次预注册 benchmark；无障碍参与者从 R0B 开始进入关键任务。
+能力证书与可用性证据分离、真实作者任务、Meaning Workbench、持续形成性研究
+与预注册 benchmark 的要求已合并至[执行计划 §14、§16](./PRODUCT_DEVELOPMENT_PLAN.md#16-ux-与产品验证计划)。
+团队固定练习或自动自测不能替代真实 canon 工作流与产品价值验证。
 
 ## 7. 工程顺序修订
 
-- R1 在 ADR-011 Accepted 后先建立 Project/Operation/Run ledger shell，再将 Persistent Job 拆为 JobStore、worker lease、event journal/cursor、result staging/GC 和 restart/resume contract；
-- R1 增加 query projection、dependency bundle/replay capability 和通用 headless ExperimentRunner；
-- 当前 canonical R2 顺序为 `R2A in-memory typed language`
-  → `R2B candidate compiler / independent evaluator`
-  → `R2C typed ChangeSet / atomic reducer`
-  → `R2D append-only history / seal / create / reopen / ReplayCapability`
-  → `R2E Meaning Workbench / authoring round trip`
-  → `R2F Tauri vertical slice`；本记录原先把 seal/create 提前到
-  ChangeSet/history 之前，该顺序已被当前执行计划修正；
-- R3 增加最小 InteractionContext/Discourse 和 corpus source typing；R3 RulePack 的直接应用标为 authorial structural transform，不宣称社会传播；
-- R4 前完成 storage scale decision；R5 的 storage 工作只作复验；
-- R3 交付 deterministic PronunciationPlan v1；最小 surface variation 与 production/perception mapping 在 R3B 完成，先于 R4/R5 音位化和借词；R7 只增加 SpeechRenderPlan/TTS；
-- R5 的重建挑战只向 reconstructor 暴露后代观测，ground truth 由独立 scorer 保管；
-- R6 单语言篇章/文学能力不再被 R5 家族工程整体阻塞；只有家族文学集成依赖 R5；
-- release hardening 不依赖神经语音、LLM 或插件预览。
+本记录最初把 seal/create 放在 ChangeSet/history 之前；这一倒置已被当前 canonical
+WBS 纠正。R2 内部门只在[执行计划 §8](./PRODUCT_DEVELOPMENT_PLAN.md#8-r2--ws-1可执行语言纵切)
+维护；R1 的 fake artifact 不能冒充 WS-1 权威历史。
+
+其余 R1 ledger/Job/query/headless runner、R3 语料来源、R4 前存储决策、R5 盲重建
+观测与 scorer 隔离、R6 单语言/家族文学拆分和可选发布列车，分别由
+[执行计划 §7–13、§18](./PRODUCT_DEVELOPMENT_PLAN.md#7-r1平台与仓库收口)承接，
+不在历史记录重复维护工程顺序。
+
+发音范围也已按用户后续要求修订：R3 必须提供受限本地试听，R2 随语言导出最小
+说明；不沿用旧文中“语音只在 R7”的歧义。完整表现性语音仍在 R7，神经语音和
+LLM 保持可选；范围见[执行计划 §1.3](./PRODUCT_DEVELOPMENT_PLAN.md#13-2026-10-12-用户目标落实与路线复审)。
 
 ## 8. Gate 证据与交付可行性
 
-每个 Gate 生成版本化 `GateEvidenceManifest`：
-
-```text
-gate/schema version
-claims and non-claims
-fixture / TaskPack / data / model hashes
-environment and support matrix
-metrics and pass/fail predicates
-reviewers and independence
-severity rubric and adjudication
-waivers and expiry
-results, known failures and next blocker
-```
-
-Gate 通过必须能由该 manifest 重演和复核，不能只依赖会议结论。
-
-只对当前 rolling wave（R0A、R0B、R1、R2）做交付估算。工作包进入 Ready 前必须具备 owner、reviewer、S/M/L 或三点估算、实际专业容量、WIP 上限、timebox 和超限降范围规则。R3–R7 只保留范围级估算，避免在研究不确定性尚未降低时制造虚假日期。
+版本化 evidence、独立复核和过期规则只由[执行计划 §6、§21](./PRODUCT_DEVELOPMENT_PLAN.md#21-工作包执行模板)
+及其链接的 policy/model 维护。滚动近程估算与远期范围估算的区分也已合并至 §21，
+不从研究不确定性推导虚假发布日期。用户要求本地执行，旧远端条款不再是运行授权。
 
 ## 9. 当前允许与停止项
 
-现在允许：
-
-- repository baseline、合同/ADR 修订、fixture、数据锁、Meaning/Task/Canon 反例；
-- Product Evidence、Meaning Workbench 和不可提交正式状态的 UX prototype；
-- application/Job/query/experiment 的假确定性任务设计与合同测试；
-- 不写生产状态的 Python 数据/模型实验。
-
-继续停止：
-
-- LanguageState v3、RunLedger 和 ChangeSet 的正式持久化实现，直到对应 ADR Accepted；
-- SpeechCommunity/Variation 正式 schema；
-- 大批生产规则、全量数据导入、正式 UI 视觉精修；
-- 神经 TTS、权威 LLM、任意代码插件；
-- 未经迁移矩阵和等价任务验证的 legacy 删除。
+本文不保存“当前”状态。[执行计划 §22](./PRODUCT_DEVELOPMENT_PLAN.md#22-当前执行队列)
+和生成 [STATUS](./STATUS.md) 是现行入口；历史允许项不授权正式 writer、领域持久化、
+大批规则或正式视觉精修，legacy 删除仍须遵守迁移矩阵。
 
 ## 10. 下一次实现入口
 
-以下是 2026-07-16 时点的历史建议，不表示当前工作包已经 Ready。当前 Next 必须由
-canonical WBS、GateEvidence 和 owner/capacity 记录联合决定。
-
-1. 关闭 G0A，进入 R1 平台 walking skeleton；
-2. 并行完成 G0B 的 WS-1 领域证据；
-3. G1 与 G0B 均关闭后，按 R2A–R2F 逐门实施；
-4. 不等待 R4/R5 的社会传播和家族模型来验证 R1/R2；
-5. 不允许 R1/R2 的结构变换被产品文案描述为真实语言传播。
+历史建议的核心是平台与领域证据并行、G1 + G0B 后再进入 R2，不等待 R4/R5 来
+验证 R1/R2，也不把作者结构变换称为真实传播。实际 Next 只从 §22、Gate 与真实
+owner/capacity 决定，本文没有独立队列。
