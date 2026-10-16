@@ -6,8 +6,8 @@
   "decision": "blocked",
   "decisionDate": "2026-10-16",
   "source": {
-    "subjectCommit": "dbce27cc6454d4d3931638ca945d086701e7b80b",
-    "subjectTree": "80e8a00301523e63a4242d6a0895fc5090305d63",
+    "subjectCommit": "1212084f6cae1ec464ab789504c7fd8cd7c1fa35",
+    "subjectTree": "b0e6de3a2816cdf888749ac3b48657350f5534dc",
     "worktreeDirty": false,
     "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
@@ -18,12 +18,12 @@
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:36e8073667c7d70d1d84f8e734dc5683",
-        "subjectCommit": "dbce27cc6454d4d3931638ca945d086701e7b80b",
-        "subjectTree": "80e8a00301523e63a4242d6a0895fc5090305d63",
+        "runId": "gate-run:b4fd4a8ffa2e26c83d6150b65796cd0a",
+        "subjectCommit": "1212084f6cae1ec464ab789504c7fd8cd7c1fa35",
+        "subjectTree": "b0e6de3a2816cdf888749ac3b48657350f5534dc",
         "platformFamily": "linux",
-        "startedAt": "2026-10-16T03:14:51Z",
-        "finishedAt": "2026-10-16T03:15:25Z",
+        "startedAt": "2026-10-16T15:18:02Z",
+        "finishedAt": "2026-10-16T15:18:49Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
@@ -46,7 +46,7 @@
             "node": "v24.21.0"
           },
           "lockFileSha256": {
-            "Cargo.lock": "fab920b9408aa28210ce846d167618d793aca2db194c040c6bd5264f46cc59c0",
+            "Cargo.lock": "95491ae50f209acb48df08bbebb8a05e18562400eac60561d2c5e91d7172a3bc",
             "poetry.lock": "06aca495e60375b8e91ed91f12a213dc521502638f62e1297bacbc5f57baff23"
           }
         },
@@ -103,7 +103,7 @@
       "evidenceId": "evidence:1e9a85b06cd2183f3901b9027db03abf",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
-      "sha256": "5cf5d8e3879c6cd485a65da57cebe486bf2bd09287a7c77263b19edb2f10b546",
+      "sha256": "a1e2e9b0c82c434dba0c8aebf4ec96d4f574dfab26e2af4aaaeb122cf6a35e0a",
       "result": "pending"
     },
     {
@@ -117,7 +117,7 @@
       "evidenceId": "evidence:de1b0d630d716722a6ccb653e3ecb826",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
-      "sha256": "e6b0e6f4d8ead411449a9e7172011efac47000990b58af5b65a17b21c54667ee",
+      "sha256": "99d4e7bcbd160c0c0b98391e861b7a9dfd1ba6974a2ae7ac2247bd4ca3e49480",
       "result": "pending"
     },
     {
@@ -138,21 +138,21 @@
       "evidenceId": "evidence:6ac60e19a14c9d6d0aa528a6222c4f2e",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PLATFORM_CONTRACT_PACK_V1.md",
-      "sha256": "29c8a421170b053367b02343e0f6d05b0a7b69c9b76823468ef0baceee9e731f",
+      "sha256": "3a1314e4bba7116b2c9498a5c72cb630e29184bdc33d841b305ba7036aa64629",
       "result": "pending"
     },
     {
       "evidenceId": "evidence:9dea6d4574d0b93f52fa11ee7ba09e54",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-012-project-package-commit-authority.md",
-      "sha256": "3b33bae92bed0532f166e84c69002a4802aef425531705dc64a78c8a39a0704e",
+      "sha256": "4c4b81f004994b404a5ac511aef4723a10954de84292f64a00adebdcca775edd",
       "result": "pending"
     },
     {
       "evidenceId": "evidence:9fd37d0af47316e5d25f6b2d5af416c6",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md",
-      "sha256": "8327b96696a25403f48ae2d2761d101645622ec3559b5a54617b468f605e4848",
+      "sha256": "8c70c0cbb2bd766f8ceb890c7bb03a2ebbd45837aa816e382c1e314d6085eab4",
       "result": "pending"
     },
     {
@@ -199,7 +199,7 @@
       "evidenceId": "evidence:068d43468da41b57daad5a5b64543fb9",
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
-      "sha256": "c4e770c7c71994b04597fbb7d2b47cfbd14e7e5f5e27fb2e76473137ca74d60d",
+      "sha256": "fd94598da8e0a6973c5da2e33b010077d1bad95a111de5268a8c9a58b83db9ae",
       "result": "pass",
       "protocol": "cargo +1.88.0 fmt --all --check",
       "details": "no formatting differences",
@@ -210,7 +210,7 @@
       "evidenceId": "evidence:cf06cb178c887bf8c178671a86e7895b",
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
-      "sha256": "c4e770c7c71994b04597fbb7d2b47cfbd14e7e5f5e27fb2e76473137ca74d60d",
+      "sha256": "fd94598da8e0a6973c5da2e33b010077d1bad95a111de5268a8c9a58b83db9ae",
       "result": "pass",
       "protocol": "cargo +1.88.0 test --workspace --locked",
       "details": "Rust workspace tests passed",
@@ -243,7 +243,7 @@
       "evidenceId": "evidence:bbeb19192b1d2f6d56756b1b50f9a9ef",
       "kind": "SoftwareVerificationEvidence",
       "path": "Cargo.toml",
-      "sha256": "c4e770c7c71994b04597fbb7d2b47cfbd14e7e5f5e27fb2e76473137ca74d60d",
+      "sha256": "fd94598da8e0a6973c5da2e33b010077d1bad95a111de5268a8c9a58b83db9ae",
       "result": "pass",
       "protocol": "cargo +1.88.0 clippy --workspace --all-targets --locked -- -D warnings",
       "details": "zero warnings",
@@ -254,7 +254,7 @@
       "evidenceId": "evidence:78c601865f5c07d2115ad640e195df1f",
       "kind": "SoftwareVerificationEvidence",
       "path": "apps/desktop/src-tauri/Cargo.toml",
-      "sha256": "6e1ada2e88aa95ad227552107ccf000ea3734fa872d9485d743f7c23346b98d3",
+      "sha256": "273e075a1c5a35d39d5a13cf0471d9a7989e4b77f72e36ffdcfbd87b50aa0ac0",
       "result": "pass",
       "protocol": "cargo +1.88.0 build -p telysta-desktop --locked",
       "details": "desktop application compiled with the exact workspace MSRV",
@@ -286,7 +286,7 @@
       "evidenceId": "evidence:b85d8c01a502f3ea2f00f9a030e0cdbf",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/governance/GATE_EVIDENCE_MODEL_V3.md",
-      "sha256": "fadb13e4bb910e37ef64a94926729fe3daddfc0f9ecb138f1a46dae9c9402626",
+      "sha256": "98ec6a9f052cb1625bfef52b76738117b4b43a56b14d6a7aac1a2a9e0279ce7d",
       "result": "pending"
     }
   ],

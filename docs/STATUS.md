@@ -4,7 +4,7 @@ decision_status: not-applicable
 implementation_status: generated
 normative_scope: current
 last_verified: not-verified
-base_commit: dbce27cc6454d4d3931638ca945d086701e7b80b
+base_commit: 1212084f6cae1ec464ab789504c7fd8cd7c1fa35
 worktree_fingerprint: 4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13
 generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
@@ -13,14 +13,22 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 
 > 此文件由 `scripts/generate_gate_evidence.py` 生成，不得手工维护状态或测试数量。
 
-## Gate
+## 当前开发授权
+
+2026-10-16 用户授权开发阶段以独立 AI 替代人工/专家等待。有效范围与工程约束见
+[Agent 操作模型 §3.1](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)
+和 [AI 开发接受记录](./evidence/AI_LOCAL_DEVELOPMENT_V1.json)。
+以下是旧 policy v2/v3 证据体系的历史评估；其人工/远端等待不再阻止本地开发，
+也不将旧 blocked 改称 passed。AI 接受、软件实现、平台与语言学验证仍分别记录。
+
+## 旧政策 Gate 评估
 
 | Gate | Decision | Worktree | Verified |
 |---|---|---|---|
 | G0A | `blocked` | clean (0 entries) | not-verified |
 
-- Subject commit: `dbce27cc6454d4d3931638ca945d086701e7b80b`
-- Subject tree: `80e8a00301523e63a4242d6a0895fc5090305d63`
+- Subject commit: `1212084f6cae1ec464ab789504c7fd8cd7c1fa35`
+- Subject tree: `b0e6de3a2816cdf888749ac3b48657350f5534dc`
 - Fingerprint: `4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13`
 - Fingerprint schema: `telysta-git-worktree-fingerprint.v2`
 - 当前实现能力见 [Current Architecture](./architecture/CURRENT.md)。
@@ -41,14 +49,14 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 | R0A-09 | `incomplete` | current v1 authority repair |
 | R0A-10 | `incomplete` | legacy evidence containment |
 
-## 当前允许声明
+## 旧政策证据支持的声明
 
 - ADR-011 planning evidence is executable and ready for independent review
 - R0A-03 platform and R0A-04 RNG compatibility evidence are ready for independent review
 - the current Rust RNG behavior matches the recorded v1 known-answer vectors
 - the recorded clean worktree passes the recorded Python and Rust verification commands
 
-## 当前禁止声明
+## 旧政策证据未支持的声明
 
 - G0A has passed
 - ADR-011 is Accepted
@@ -57,7 +65,7 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 - the repository has a reproducible clean-checkout baseline
 - LanguageState v3 or Genesis production implementation may start
 
-## Blockers
+## 旧政策 Blockers
 
 - `G0A-B01`：ADR-011 independent approval is absent
 - `G0A-B03`：ADR-012 platform authority and ADR-013 RNG compatibility lack independent approval
