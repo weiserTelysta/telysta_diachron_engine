@@ -165,6 +165,33 @@ Unix 上 `.venv/bin/python` 常是软链接。启动子进程时保留 launcher 
 preflight 同时检查 `.venv` prefix 与解释器目标，证据记录实际 launcher。
 命令参数使用平台路径；证据中的历史 Windows protocol 文本不直接充当 Unix argv。
 
+### 本地原始日志记录
+
+在已提交、排除两份生成文件后无其他改动的 checkout 中，使用同一仓库解释器运行：
+
+```bash
+.venv/bin/python -I scripts/generate_gate_evidence.py --verify --record-local
+.venv/bin/python -I scripts/generate_gate_evidence.py --check-local target/local-verification/run-实际编号
+```
+
+Windows 使用 `.venv\Scripts\python.exe`。第二条命令只读，不运行验证命令、不写
+GateEvidence；需要对应的源提交、目录和解释器路径仍保持一致。目录由工具独占创建，
+不能手填编号覆盖旧记录。工作区有源改动时先使用普通 `--verify` 迭代，不能用 dirty
+fingerprint 冒充可重新检出的源提交。
+
+`telysta-local-verification-bundle.v1` 放在忽略的 `target/local-verification/`，复用
+现有命令表与 verifier lease，保存每条命令的原始 stdout/stderr 合并字节、大小、
+SHA-256、argv、目录、开始/结束、退出码/异常，以及完整 preflight 环境、实际工作区
+锁文件摘要和初末 commit/tree/fingerprint。包含最终生成文档检查；最终发布或源变化
+失败也不能封成成功。中断未封口记录保持 incomplete；文件写入错误返回失败。
+锁文件摘要自本次修复起读取命令实际消费的工作区字节，不回写或重构旧运行记录。
+
+检查器拒绝非普通文件、日志缺失/篡改、错误命令/目录、缺环境、源变化、无效结构和
+倒序时间；机器时钟回退也不静默算作一致的成功。这只是当前本地文件的一致性检查，
+不能证明记录未被整体伪造、源在任意瞬间未变、独立重建、跨平台兼容或评审批准，
+不会修改 G0A policy、添加 remoteProvenance 或签发 Gate pass。日志可能包含本机路径和
+诊断内容，只保留本地，不随阶段源码提交。
+
 ## 5. 单独运行
 
 ```powershell

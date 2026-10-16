@@ -429,3 +429,35 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   86 Rust；另运行 20 Node 项全部通过，fmt/clippy/desktop build/docs 通过。
   最后只补本执行记录，再由生成器绑定最终 source/run；不修改生产 baseline。
   本轮不执行更多远端任务，阶段提交仅保存代码，G0A 仍 blocked。
+
+## 2026-10-16 续作：真实输入锁与本地诊断记录
+
+- 复审长期目标与当前允许范围：R2 的可执行微型语言/同版本说明书、R3 的作者
+  流程/基础本地读音、后续机制历史和语言家族仍是交付路径。现有原型和有限
+  oracle 不能替代这些产品；未生成语言、说明书或音频。当前允许修复验证本身，
+  不新增生产权威写入者、不在 G0A 前实现被保留的正式命令。
+- 独立 `/root/local_evidence_slice_review` 在新上下文建议最小本地采集，并发现
+  `_lock_file_hashes` 取 HEAD blob、执行却读取工作区的真实不一致。两个新回归
+  先 RED 后 GREEN：现在取实际工作区字节，缺失不回退 HEAD。subject comparator
+  仍独立检查提交内的锁，不重写历史运行，也不声称 dirty 输入属于旧提交。
+- 新 `telysta-local-verification-bundle.v1` 是忽略目录中的本地诊断 sidecar，复用
+  原命令表/lease，在最终 docs、发布和 fingerprint 检查之后封口。原始合并日志
+  直接落盘，不解码/截断/缓存全部输出；完整 preflight 与初末源/实际锁同时记录。
+  源干净是软件硬约束；记录成功仅为软件诊断，不是假设、经验先验或自然性评分。
+  语言 schema、writer、RNG、semantic hash、replay、迁移和 Gate policy 未改变。
+- 一手资料仅作采集设计参考：[W3C PROV-DM](https://www.w3.org/TR/prov-dm/) 的
+  entity/activity/input 关系与 [Reproducible Builds 环境记录](https://reproducible-builds.org/docs/recording/)。
+  本轮查阅网页相关内容，未声称该 sidecar 实现完整 PROV 标准或已独立重建。
+  SCiL 2026 论文页只作最新研究范围核对，未用未读全文推导新语言学规则。
+- 只读 checker 绑定同一 checkout 的实际当前 snapshot、完整固定 plan 与目录，
+  检查结构、原始 log hash/大小、完整环境和时间次序。它不运行 bundle 的 argv。
+  全体记录仍可能被整体改写；本地 checksum 不是执行真实性、独立评审同意或
+  跨平台证明，不添加 remoteProvenance，不改变 blocked 状态。
+- 独立复审实际指出任意 argv、bool 退出码、无效时间、缺字段、FIFO 阻塞等
+  反例；已补完整 plan/source 比对、严格结构、普通文件与 aware 时间检查。
+  原始字节子进程、启动/命令失败、中断、写故障、源/锁变化和最终 docs/发布
+  失败进入测试。说明集中合并到 DEVELOPMENT_SETUP；主计划和 v3 model 只链接，
+  不增加第二份计划或重复保存运行计数。完整本地门与最终独立复查结果待本轮断点记录。
+- 终核又实际复现“分发 digest 非 hash、Rust/Cargo 版本不符但布尔值 true”可误报；
+  已约束 hash 结构，并在本地 wrapper 复用现有 exact-MSRV 版本判定和计划解释器
+  绑定。短命令成功 bundle 上逐字段篡改均必须拒绝，不另写工具链版本解析器。

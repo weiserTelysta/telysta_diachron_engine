@@ -792,8 +792,12 @@ Ready 门：
 | `WIP-PRODUCT` | R0B-06P / `FormativeJourney.r0b` | 不写权威状态的 Meaning Workbench 原型、真实 canon 形成性证据与失败/转向记录 |
 | `QUEUED-DOMAIN` | R0B-01～05（含 R0B-01A-D/01A/04A/04B-D/04B）、R0B-06 与 R0B-07 | Meaning/Grammar/Corpus/TaskPack/Capability、产品 evidence contract、execution contract、ADR review vectors、冻结反例与数据锁 |
 
-R0A-08 下一步仅准备本地 clean-checkout/平台验证和替代旧远端条款的候选合同。
-没有远端运行任务；旧 policy/validator 尚未完成本地替代前继续保持 blocked。
+R0A-08 已进入本地 clean-checkout 诊断采集切片，使用现有命令表与 lease 记录原始
+日志、实际输入锁、完整环境和最终发布结果；操作入口集中在
+[开发环境](./DEVELOPMENT_SETUP.md#本地原始日志记录)，不新增一套执行计划。
+下一步独立复审最终字节和真实本地 bundle，再评审替代旧远端条款的候选合同。
+没有远端运行任务；诊断材料不承担批准，旧 policy/validator 尚未完成本地替代前
+继续保持 blocked。Windows 本地证明、实际 owner/capacity 和决定接受仍缺失。
 
 2026-10-12 本地执行断点见 [WORK_LOG](./WORK_LOG.md)：R0A-09 修复候选进入
 复审，R0A-10 有真实运行材料的采集/校验工具；R0B-06P 的非权威

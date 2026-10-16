@@ -15,6 +15,11 @@ reviewers: []
 评审本地 clean subject、可重验运行记录与评审同意的替代合同；现有 schema/
 policy 先保持原版本，生成器仍拒绝签发 passed，不能直接删掉 predicate 放行。
 
+本地软件诊断使用独立版本的 sidecar，入口与限制统一见
+[开发环境：本地原始日志记录](../DEVELOPMENT_SETUP.md#本地原始日志记录)。它只记录
+现有命令的输出与输入绑定，不改变本文的 Gate schema、policy 或决定接受状态，
+不能填写成 remoteProvenance、受信执行证明或 terminal acceptance evidence。
+
 > **实施边界：** 本文件、[G0A policy v2](../G0A_POLICY_V2.json)、
 > [policy schema](../G0A_POLICY_V2.schema.json) 与
 > [GateEvidenceManifest v3 schema](../GATE_EVIDENCE_MANIFEST_V3.schema.json)

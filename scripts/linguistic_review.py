@@ -50,7 +50,8 @@ LOCK_PATHS = {
     *PACKS.values(), *(path for paths in RUNNERS.values() for path in paths),
     "experiments/concepticon-slice/lock.json", "experiments/concepticon-slice/slice.json",
     "scripts/concepticon_slice.py", "scripts/linguistic_review.py",
-    "scripts/pytest_runner.py", "scripts/generate_gate_evidence.py", "poetry.lock",
+    "scripts/pytest_runner.py", "scripts/generate_gate_evidence.py",
+    "scripts/local_verification.py", "poetry.lock",
     "pyproject.toml",
 }
 

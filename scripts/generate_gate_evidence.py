@@ -13,7 +13,7 @@ import subprocess
 import sys
 import tempfile
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -25,6 +25,12 @@ from packaging.utils import canonicalize_name
 from packaging.version import InvalidVersion, Version
 from referencing import Registry, Resource
 import yaml
+
+if __package__:
+    from .local_verification import LocalRunRecorder, check_bundle
+else:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from local_verification import LocalRunRecorder, check_bundle
 
 try:
     import tomllib
@@ -2130,13 +2136,9 @@ def _tool_version(root: Path, *command: str) -> str:
 
 
 def _lock_file_hashes(root: Path) -> dict[str, str]:
-    subject = _git(root, "rev-parse", "HEAD").decode("ascii").strip()
     hashes: dict[str, str] = {}
     for relative in LOCK_FILES:
-        try:
-            payload = _subject_blob(root, subject, relative.as_posix())
-        except subprocess.CalledProcessError:
-            raise FileNotFoundError(f"verification lock file is missing: {relative}")
+        payload = (root / relative).read_bytes()
         hashes[relative.as_posix()] = hashlib.sha256(payload).hexdigest()
     return hashes
 
@@ -2408,7 +2410,17 @@ def _append_failure_run(
     )
 
 
-def verify_commands(root: Path, evidence: dict[str, Any]) -> bool:
+def _run_command(
+    root: Path, protocol: str, command: list[str], recorder: LocalRunRecorder | None = None,
+) -> subprocess.CompletedProcess:
+    if recorder is not None:
+        return recorder.run(protocol, command)
+    return subprocess.run(command, cwd=root, check=False)
+
+
+def verify_commands(
+    root: Path, evidence: dict[str, Any], recorder: LocalRunRecorder | None = None,
+) -> bool:
     """Run the full local gate and record each command result."""
 
     _mark_software_stale(evidence)
@@ -2418,6 +2430,8 @@ def verify_commands(root: Path, evidence: dict[str, Any]) -> bool:
         _validate_repository_python(root)
     except (FileNotFoundError, RuntimeError) as error:
         environment = _best_effort_verification_environment(root)
+        if recorder is not None and environment is not None:
+            recorder.environment(copy.deepcopy(environment))
         item = _software_item(evidence, PYTHON_GATE_PROTOCOL)
         item["result"] = "fail"
         item["details"] = str(error)
@@ -2442,6 +2456,8 @@ def verify_commands(root: Path, evidence: dict[str, Any]) -> bool:
         environment = _verification_environment(root)
     except Exception as error:  # noqa: BLE001 - preflight faults must be recorded.
         environment = _fallback_verification_environment(root)
+        if recorder is not None and environment is not None:
+            recorder.environment(copy.deepcopy(environment))
         item = _software_item(evidence, PYTHON_GATE_PROTOCOL)
         item["result"] = "fail"
         item["details"] = f"verification environment preflight failed: {type(error).__name__}: {error}"
@@ -2461,6 +2477,8 @@ def verify_commands(root: Path, evidence: dict[str, Any]) -> bool:
             dirty=evidence["source"]["worktreeDirty"],
         )
         return False
+    if recorder is not None:
+        recorder.environment(copy.deepcopy(environment))
     if environment["pythonLockStatus"] != "match":
         item = _software_item(evidence, PYTHON_GATE_PROTOCOL)
         item["result"] = "fail"
@@ -2516,7 +2534,7 @@ def verify_commands(root: Path, evidence: dict[str, Any]) -> bool:
         item = _software_item(evidence, protocol)
         try:
             command = command_factory(root)
-            completed = subprocess.run(command, cwd=root, check=False)
+            completed = _run_command(root, protocol, command, recorder)
         except Exception as error:  # noqa: BLE001 - command faults are gate failures.
             item["result"] = "fail"
             item["details"] = f"command could not complete: {type(error).__name__}: {error}"
@@ -2689,6 +2707,7 @@ def _generate_locked(
     status_path: Path = DEFAULT_STATUS_PATH,
     *,
     verify: bool = False,
+    recorder: LocalRunRecorder | None = None,
 ) -> int:
     try:
         evidence = json.loads((root / evidence_path).read_text(encoding="utf-8"))
@@ -2799,7 +2818,11 @@ def _generate_locked(
         )
         return 1
 
-    if not verify_commands(root, refreshed):
+    commands_passed = (
+        verify_commands(root, refreshed) if recorder is None
+        else verify_commands(root, refreshed, recorder)
+    )
+    if not commands_passed:
         _set_gate_blocked(
             refreshed,
             reason="the latest local verification run failed",
@@ -2835,10 +2858,9 @@ def _generate_locked(
 
     final_docs_started_at = _utc_timestamp()
     try:
-        final_docs_check = subprocess.run(
-            [sys.executable, "-I", "scripts/docs_check.py"],
-            cwd=root,
-            check=False,
+        final_docs_check = _run_command(
+            root, FINAL_DOCS_CHECK_PROTOCOL,
+            [sys.executable, "-I", "scripts/docs_check.py"], recorder,
         )
     except Exception as error:  # noqa: BLE001 - command launch is a gate failure.
         _record_post_verification_failure(
@@ -3043,17 +3065,83 @@ def _generate_locked(
     return 0
 
 
+def _local_source_snapshot(root: Path) -> dict[str, Any]:
+    return {
+        "fingerprint": asdict(fingerprint_workspace(root)),
+        "tree": _git(root, "rev-parse", "HEAD^{tree}").decode("ascii").strip(),
+        "lockFileSha256": _lock_file_hashes(root),
+    }
+
+
+def _local_command_plan(root: Path) -> list[dict[str, Any]]:
+    return [
+        {"protocol": protocol, "argv": factory(root)}
+        for protocol, factory, _ in VERIFICATION_COMMANDS
+    ] + [{
+        "protocol": FINAL_DOCS_CHECK_PROTOCOL,
+        "argv": [sys.executable, "-I", "scripts/docs_check.py"],
+    }]
+
+
+def _check_local_bundle(root: Path, path: Path) -> dict[str, Any]:
+    plan = _local_command_plan(root)
+    bundle = check_bundle(
+        path, plan, _local_source_snapshot(root), root, VERIFICATION_ENVIRONMENT_FIELDS,
+    )
+    if bundle["result"] == "passed":
+        environment = bundle["environment"]
+        if (environment["requiredRustVersion"] != REQUIRED_RUST_VERSION
+                or not _tool_version_matches_release(
+                    environment["rustcVersion"], tool="rustc", required_version=REQUIRED_RUST_VERSION,
+                )
+                or not _tool_version_matches_release(
+                    environment["cargoVersion"], tool="cargo", required_version=REQUIRED_RUST_VERSION,
+                )):
+            raise ValueError("recorded Rust toolchain contradicts the exact MSRV preflight")
+        if environment["pythonExecutable"] != plan[-1]["argv"][0]:
+            raise ValueError("recorded Python interpreter differs from the executed plan")
+    return bundle
+
+
 def generate(
     root: Path = ROOT,
     evidence_path: Path = DEFAULT_EVIDENCE_PATH,
     status_path: Path = DEFAULT_STATUS_PATH,
     *,
     verify: bool = False,
+    record_local: bool = False,
 ) -> int:
     """Generate GateEvidence while holding the repository verifier lease."""
 
     try:
         with verifier_lease(root):
+            if record_local:
+                if not verify:
+                    raise ValueError("--record-local requires --verify")
+                initial = _local_source_snapshot(root)
+                if initial["fingerprint"]["dirty"]:
+                    raise ValueError("local diagnostic capture requires a clean source checkout")
+                recorder = LocalRunRecorder(root, initial, _local_command_plan(root))
+                print(f"Local diagnostic bundle: {recorder.path}", flush=True)
+                try:
+                    result = _generate_locked(
+                        root, evidence_path, status_path, verify=True, recorder=recorder,
+                    )
+                except BaseException as error:
+                    recorder.finish(
+                        1, _local_source_snapshot(root), f"{type(error).__name__}: {error}",
+                    )
+                    raise
+                recorder.finish(result, _local_source_snapshot(root))
+                if result == 0 and recorder.document["result"] != "passed":
+                    raise ValueError("local diagnostic capture did not complete consistently")
+                if result == 0:
+                    try:
+                        _check_local_bundle(root, recorder.path)
+                    except Exception as error:
+                        recorder.finish(1, _local_source_snapshot(root), str(error))
+                        raise
+                return result
             return _generate_locked(
                 root,
                 evidence_path,
@@ -3082,10 +3170,26 @@ def main() -> int:
         action="store_true",
         help="run all local quality gates before recording verification as passing",
     )
+    parser.add_argument(
+        "--record-local", action="store_true",
+        help="save raw local diagnostics from a clean source; requires --verify",
+    )
+    parser.add_argument(
+        "--check-local", type=Path,
+        help="check an existing local bundle without executing commands or approving a Gate",
+    )
     args = parser.parse_args()
+    if args.check_local and (args.verify or args.record_local):
+        parser.error("--check-local cannot be combined with execution options")
+    if args.record_local and not args.verify:
+        parser.error("--record-local requires --verify")
     try:
-        return generate(verify=args.verify)
-    except ValueError as error:
+        if args.check_local:
+            bundle = _check_local_bundle(ROOT, args.check_local.absolute())
+            print(f"Local bundle is internally consistent ({bundle['result']}); no Gate approval.")
+            return 0
+        return generate(verify=args.verify, record_local=args.record_local)
+    except (ValueError, KeyError, TypeError, OSError) as error:
         parser.error(str(error))
         return 2
 

@@ -71,6 +71,119 @@ def _repository(tmp_path: Path) -> Path:
     return tmp_path
 
 
+def test_execution_lock_hashes_use_workspace_bytes_not_head(tmp_path: Path) -> None:
+    root = _repository(tmp_path)
+    for relative in gate_evidence.LOCK_FILES:
+        (root / relative).write_bytes(b"committed lock\n")
+    _git(root, "add", "Cargo.lock", "poetry.lock")
+    _git(root, "commit", "-m", "add input locks")
+    (root / "poetry.lock").write_bytes(b"actual uncommitted input\n")
+
+    assert gate_evidence._lock_file_hashes(root) == {
+        "Cargo.lock": hashlib.sha256(b"committed lock\n").hexdigest(),
+        "poetry.lock": hashlib.sha256(b"actual uncommitted input\n").hexdigest(),
+    }
+
+
+def test_execution_lock_missing_from_workspace_does_not_fall_back_to_head(tmp_path: Path) -> None:
+    root = _repository(tmp_path)
+    for relative in gate_evidence.LOCK_FILES:
+        (root / relative).write_bytes(b"committed lock\n")
+    _git(root, "add", "Cargo.lock", "poetry.lock")
+    _git(root, "commit", "-m", "add input locks")
+    (root / "poetry.lock").unlink()
+
+    with pytest.raises(FileNotFoundError, match="poetry.lock"):
+        gate_evidence._lock_file_hashes(root)
+
+
+@pytest.mark.parametrize("failure", [None, "final-docs", "publication", "source-change"])
+def test_local_capture_includes_final_docs_and_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: str | None,
+) -> None:
+    root = _repository(tmp_path)
+    (root / ".gitignore").write_text("target/\n", encoding="utf-8")
+    for relative in gate_evidence.LOCK_FILES:
+        (root / relative).write_bytes(b"test lock\n")
+    (root / "scripts").mkdir()
+    (root / "scripts/docs_check.py").write_text(
+        "raise SystemExit(7)\n" if failure == "final-docs" else "print('final-docs-output')\n",
+        encoding="utf-8",
+    )
+    _git(root, "add", ".gitignore", "Cargo.lock", "poetry.lock", "scripts")
+    _git(root, "commit", "-m", "add local verifier inputs")
+    evidence_path, status_path = _write_gate_outputs(root, _evidence())
+    commands = ((gate_evidence.PYTHON_GATE_PROTOCOL,
+                 lambda _: [sys.executable, "-I", "-c", "print('primary-output')"], "test command"),)
+    monkeypatch.setattr(gate_evidence, "VERIFICATION_COMMANDS", commands)
+
+    def passing_commands(root_arg, candidate, recorder):
+        environment = {key: "test" for key in gate_evidence.VERIFICATION_ENVIRONMENT_FIELDS}
+        environment.update(
+            lockFileSha256=gate_evidence._lock_file_hashes(root_arg),
+            pythonLockStatus="match", pythonLockMismatches=[], rustVersionMeetsWorkspace=True,
+            pythonInstalledDistributionsSha256="e" * 64, pythonExecutable=sys.executable,
+            requiredRustVersion=gate_evidence.REQUIRED_RUST_VERSION,
+            rustcVersion="rustc 1.88.0 (test)", cargoVersion="cargo 1.88.0 (test)",
+        )
+        recorder.environment(environment)
+        assert gate_evidence._run_command(root_arg, commands[0][0], commands[0][1](root_arg), recorder).returncode == 0
+        _append_test_run(candidate, result="pass")
+        if failure == "source-change":
+            (root_arg / "README.md").write_text("changed while running\n", encoding="utf-8")
+        return True
+
+    monkeypatch.setattr(gate_evidence, "verify_commands", passing_commands)
+    if failure == "publication":
+        real_write = gate_evidence.write_generated_outputs
+        calls = 0
+        def write(*args, **kwargs):
+            nonlocal calls
+            calls += 1
+            if calls == 3:
+                raise OSError("test final publication failure")
+            return real_write(*args, **kwargs)
+        monkeypatch.setattr(gate_evidence, "write_generated_outputs", write)
+    result = gate_evidence.generate(
+        root, evidence_path.relative_to(root), status_path.relative_to(root),
+        verify=True, record_local=True,
+    )
+    bundle_path, = (root / "target/local-verification").glob("run-*")
+    bundle = json.loads((bundle_path / "manifest.json").read_text(encoding="utf-8"))
+    assert result == (0 if failure is None else (7 if failure == "final-docs" else 1))
+    assert bundle["result"] == ("passed" if failure is None else "failed")
+    assert len(bundle["commands"]) == 2
+    assert (bundle_path / "00.log").read_bytes().strip() == b"primary-output"
+    assert bundle["commands"][-1]["protocol"] == gate_evidence.FINAL_DOCS_CHECK_PROTOCOL
+    persisted = json.loads(evidence_path.read_text(encoding="utf-8"))
+    assert persisted["decision"] == "blocked"
+    if failure is None:
+        assert (bundle_path / "01.log").read_bytes().strip() == b"final-docs-output"
+        assert gate_evidence.check_bundle(
+            bundle_path, gate_evidence._local_command_plan(root), gate_evidence._local_source_snapshot(root),
+            root, gate_evidence.VERIFICATION_ENVIRONMENT_FIELDS,
+        )["result"] == "passed"
+        for field, invalid in (
+            ("pythonInstalledDistributionsSha256", "not-a-sha256"),
+            ("pythonInstalledDistributionsSha256", "e" * 64 + "\n"),
+            ("rustcVersion", "rustc 1.99.0"), ("cargoVersion", "cargo 1.99.0"),
+            ("requiredRustVersion", "1.99.0"), ("pythonExecutable", "/wrong/python"),
+        ):
+            altered = json.loads(json.dumps(bundle))
+            altered["environment"][field] = invalid
+            (bundle_path / "manifest.json").write_text(json.dumps(altered), encoding="utf-8")
+            with pytest.raises(ValueError):
+                gate_evidence._check_local_bundle(root, bundle_path)
+
+
+def test_local_capture_rejects_dirty_source_without_creating_bundle(tmp_path: Path) -> None:
+    root = _repository(tmp_path)
+    for relative in gate_evidence.LOCK_FILES:
+        (root / relative).write_bytes(b"uncommitted lock\n")
+    assert gate_evidence.generate(root, verify=True, record_local=True) == 1
+    assert not (root / "target/local-verification").exists()
+
+
 @pytest.fixture
 def ignore_gate_policy(monkeypatch: pytest.MonkeyPatch) -> None:
     # Unit fixtures below test structural predicates with synthetic accounts
@@ -1761,6 +1874,10 @@ def test_gate_module_import_is_safe_before_toolchain_preflight(
     shutil.copyfile(
         gate_evidence.ROOT / "scripts" / "generate_gate_evidence.py",
         copied_generator,
+    )
+    shutil.copyfile(
+        gate_evidence.ROOT / "scripts" / "local_verification.py",
+        scripts / "local_verification.py",
     )
     if toolchain_text is not None:
         (tmp_path / "rust-toolchain.toml").write_text(
