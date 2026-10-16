@@ -3,7 +3,7 @@ document_type: capability-plan
 decision_status: not-applicable
 implementation_status: in-progress
 normative_scope: target
-last_verified: 2026-10-12
+last_verified: 2026-10-16
 owner: unassigned
 reviewers: []
 ---
@@ -14,8 +14,12 @@ reviewers: []
 - 技术架构：Rust 原生生产核心已经 `Accepted`，见 [ADR-006](./adr/ADR-006-rust-native-core-python-research-bridge.md)
 - 语言学架构：社区驱动模拟仍为分阶段 `Proposed`，不是 WS-1 前置；其局部机制须由后续 ADR 与 G2/G3/G4/G5 证据接受、替代或否决，见 [ADR-005](./adr/ADR-005-community-driven-language-simulation.md)
 - 基线日期：2026-07-12；最近路线修订：2026-07-19
-- 当前工作包：`R0A-08 verification trust + R0A-09 current v1 authority + R0A-10 legacy evidence containment + R0B WS-1 领域证据；GEN-001.2 implementation blocked`
+- 当前工作包：`R1-01 application 首片 + R0B 领域合同 AI 审阅；目标语言编译器尚未实现`
 - 目标：将现有研究原型逐步演进为可复现、可审计、可实际创作并可扩展至语言家族的语言历史模拟器
+
+2026-10-16 用户决定以独立 AI 替代人工/专家审批等待；人力、专家到位与旧远端
+条款不再阻塞本地开发，统一见 [Agent 模型 §3.1](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+实际软件、语言/历史机制与用户证据仍分别验证，不能把 AI 审阅称作人类认证。
 
 ## 1. 文档职责
 

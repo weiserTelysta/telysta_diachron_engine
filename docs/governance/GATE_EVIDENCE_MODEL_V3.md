@@ -27,6 +27,10 @@ policy 先保持原版本，生成器仍拒绝签发 passed，不能直接删掉
 > GateEvidence 与派生 STATUS 尚未形成有效 v3 attestation，也未完成独立评审。不得据此
 > 声称 policy v2 已接受、GateEvidence v3 已验证、G0A 已通过或 R1 可以启动。
 
+2026-10-16 后续用户决定：人工/专家等待由独立 AI 替代，旧 v3 的人类/远端
+前置不再是本地研发统一开工门。当前授权统一见 [Agent 模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)；
+旧 v3 结果保留，不改称 passed。实现仍实际测试并按已接受技术 ADR 分片。
+
 ## 1. 目标
 
 v3 关闭 v2 复审中暴露的三类缺口：

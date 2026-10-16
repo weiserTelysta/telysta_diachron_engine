@@ -9,6 +9,19 @@ This repository builds a local-first, auditable language-history simulator. It i
 - Tauri and the webview are clients of versioned Rust commands. They must not invent a second Blueprint or LanguageState schema.
 - LLMs may parse, explain, or propose. They never commit authoritative state without deterministic schema and domain validation.
 
+### User-authorized AI development review (2026-10-16)
+
+Independent AI reviews replace human/expert availability and human staffing gates
+for local development, as explicitly requested by the user. Record actual agent
+identities, reviewed bytes, findings and scope; the author cannot self-approve.
+Do not wait for human owner names, expert recruitment or human capacity estimates.
+The AI coordinator uses WIP 1 and advances one tested slice at a time.
+This changes development acceptance, not domain validation, migration safety or
+the truth of scientific, usability and platform claims. Unobtained human evidence
+remains unobtained. The effective policy and relation to historical GateEvidence
+are in `docs/AGENT_OPERATING_MODEL.md` section 3.1; older human/remote readiness
+predicates must not silently override this user-authorized local development mode.
+
 Read these documents before changing a core domain:
 
 1. `docs/STATUS.md`

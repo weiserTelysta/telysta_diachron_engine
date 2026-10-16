@@ -1,20 +1,27 @@
 ---
 document_type: adr
-decision_status: proposed
+decision_status: accepted
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-10-14
-owner: unassigned
-reviewers: []
+last_verified: 2026-10-16
+owner: "ai:/root (execution coordinator)"
+reviewers:
+  - ai:/root/ai_architecture_acceptance
+  - ai:/root/ai_migration_acceptance
+  - ai:/root/ai_linguistic_provenance_acceptance
 ---
 
 # ADR-012：Project Package、单发布点与 Replay Authority
 
-- 状态：`Proposed`
+- 状态：`Accepted for AI-reviewed local development; production implementation remains staged`
 - 日期：2026-07-17
 - 决策范围：R1 project package、history/ledger/dependency objects、staging commit、JobStore 与 query authority
 - 前置决策：ADR-006、ADR-011
 - 详细合同：[R0A Platform Contract Pack v1](../PLATFORM_CONTRACT_PACK_V1.md)
+
+2026-10-16 经三个独立 AI 会话接受为本地开发技术合同；执行模式、用户授权及
+接受范围见 [Agent 操作模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+这不是目标 writer、迁移器、语言学真实性或跨平台发布已验证的声明。
 
 ## 1. 问题
 
@@ -66,7 +73,7 @@ commit 必须：
 
 未被任一有效 manifest、保留 ledger、migration archive 或 active staging 引用的 object 才能 GC。SQLite/projection 不参与 authority。JobStore 记录执行事实，但删除它不会改变已提交 Project/LanguageState。
 
-### 3.1 持久化与结果未知的发布（Proposed）
+### 3.1 持久化与结果未知的发布（已接受开发合同）
 
 R1 首先验证受支持本地文件系统上的**进程崩溃**一致性。系统崩溃/掉电保证必须另有
 平台、文件系统及存储设备的同步能力与故障证据；不能凭 rename 或单文件 fsync
@@ -99,7 +106,7 @@ primary：仅当字节 hash 与 record 的 pre/post 之一相符、对应图完�
 `publicationReview`；pre/post graph refs 是 review notation，不是实际 payload hash。
 其一致性检查不冒充 storage fault injection；G1 必须绑定真实平台调用和图验证。
 
-### 3.2 Authority hash 覆盖与规范字节（Proposed）
+### 3.2 Authority hash 覆盖与规范字节（已接受开发合同）
 
 本轮选择 `telysta-project-authority-hash-draft.v1`，在 candidate manifest 中用
 `authorityHashSchema` 显式锁定。新增 `stateSemanticHashes`（与 `historyHeads`
@@ -168,18 +175,18 @@ Unicode、排除自身与 domain separation 的规范字节。payload preimages 
 
 优点是 commit point 明确、不可变对象可去重、staging 与 published state 分离；代价是 loader/GC 必须验证 object graph，可达性与 migration fault injection 成为必测路径。
 
-Accepted 前必须具名记录 code owner、independent architecture/storage reviewer 和
-independent migration reviewer，作者和 owner 不占 independent reviewer 槽位；并冻结
+本地开发接受已记录独立 AI architecture/storage、migration 与 provenance 审阅；
+作者不占 independent reviewer 槽位。实现时仍必须版本化并验证
 schema、纯状态机/故障矩阵、planning fixture、`ProjectAuthorityHash` 排除自身字段的
 known-answer 向量和 migration/GC/replay 验收设计。这些评审材料不得写 target package，
 也不是 R1 实现。
 
-本轮已提出 §3.2 coverage/profile 与可重算的 review known-answer 向量，仍需独立
-评审与接受；ADR-011 主 record bundle 中重复十六进制值仍只是格式 sentinel，
+本轮已提出 §3.2 coverage/profile 与可重算的 review known-answer 向量，已完成独立 AI
+设计接受；ADR-011 主 record bundle 中重复十六进制值仍只是格式 sentinel，
 不得混同两组材料。可执行研究工具不验证 target object graph 或旧项目迁移，
-不构成任何生产接受条件已自动完成；本 ADR 保持 `Proposed`。
+不构成任何生产实现条件已自动完成；本 ADR 已接受为本地开发设计合同。
 
-ADR-011/012/013 Accepted 且 G0A=`passed` 后，R1 才能以 deterministic fake operation
+ADR-011/012/013 的 AI 设计接受与本地开发模式落实后，R1 可按分片以 deterministic fake operation
 实现 package writer，并实际执行 crash boundary、并发 stale commit、对象篡改/缺失、
 GC reachability、v1 migration 中断和 clean-checkout replay；这些 executable 结果属于
 G1，而不是 ADR-012 的循环接受前置。本文本身不授权当前代码写入 target package。

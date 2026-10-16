@@ -1964,7 +1964,15 @@ def render_status(evidence: dict[str, Any]) -> str:
         "",
         "> 此文件由 `scripts/generate_gate_evidence.py` 生成，不得手工维护状态或测试数量。",
         "",
-        "## Gate",
+        "## 当前开发授权",
+        "",
+        "2026-10-16 用户授权开发阶段以独立 AI 替代人工/专家等待。有效范围与工程约束见",
+        "[Agent 操作模型 §3.1](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)",
+        "和 [AI 开发接受记录](./evidence/AI_LOCAL_DEVELOPMENT_V1.json)。",
+        "以下是旧 policy v2/v3 证据体系的历史评估；其人工/远端等待不再阻止本地开发，",
+        "也不将旧 blocked 改称 passed。AI 接受、软件实现、平台与语言学验证仍分别记录。",
+        "",
+        "## 旧政策 Gate 评估",
         "",
         "| Gate | Decision | Worktree | Verified |",
         "|---|---|---|---|",
@@ -1988,11 +1996,11 @@ def render_status(evidence: dict[str, Any]) -> str:
         "|---|---|---|",
     ]
     lines.extend(f"| {item['id']} | `{item['status']}` | {item['name']} |" for item in evidence["requirements"])
-    lines.extend(["", "## 当前允许声明", ""])
+    lines.extend(["", "## 旧政策证据支持的声明", ""])
     lines.extend(f"- {claim}" for claim in evidence["claims"]["allowed"])
-    lines.extend(["", "## 当前禁止声明", ""])
+    lines.extend(["", "## 旧政策证据未支持的声明", ""])
     lines.extend(f"- {claim}" for claim in evidence["claims"]["forbidden"])
-    lines.extend(["", "## Blockers", ""])
+    lines.extend(["", "## 旧政策 Blockers", ""])
     lines.extend(f"- `{item['id']}`：{item['summary']}" for item in evidence["blockers"])
     lines.extend(
         [

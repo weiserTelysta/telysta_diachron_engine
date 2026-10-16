@@ -8,6 +8,14 @@ last_verified: 2026-10-12
 
 # G0A 独立评审与 Clean Baseline 交接
 
+## 2026-10-16 开发模式变更
+
+用户明确取消人工/专家等待，改用独立 AI；本文件的旧具名人类、人力容量及
+远端 attestation 前置不再是本地开发的阻断条件。当前接受来源见
+[AI 记录](../evidence/AI_LOCAL_DEVELOPMENT_V1.json)与 [Agent 模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+下面保留历史流程与 clean subject 分离纪律；不能据此要求重新等待人类，亦不
+代表旧政策已通过。schema/迁移/lease/CAS/确定性与软件门继续实际执行。
+
 ## 目的与边界
 
 本交接包把 G0A 的待审合同、工作树纳入范围和提交顺序变成可复核流程。它不接受 ADR，

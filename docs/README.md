@@ -18,10 +18,15 @@
 保存领域设计。[目标架构](./architecture/TARGET.md)、[迁移地图](./architecture/MIGRATION.md)
 和[Agent 操作模型](./AGENT_OPERATING_MODEL.md)按需查阅。
 
+当前开发按用户授权的 [独立 AI 模式](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)推进；
+旧政策的人工/专家/远端审批不再是本地开工前置。G0A 数值保留历史评估，
+不代表当前依赖于人工到位；已有软件能力仍以实际代码与本地测试为准。
+
 以下目录保留合同、研究与迁移证据的精确入口，不要求每次通读。
 
 ## 治理、执行证据与开发
 
+- [AI 本地开发接受记录](./evidence/AI_LOCAL_DEVELOPMENT_V1.json)：按用户授权以独立 AI 替代人工/专家等待；不冒充专家认证或旧 Gate 通过。
 - [文档治理策略](./governance/DOCUMENT_POLICY.md)
 - [文档权威与阅读顺序](./governance/AUTHORITY_ORDER.md)
 - [ADR Index](./governance/ADR_INDEX.md)

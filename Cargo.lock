@@ -3218,6 +3218,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "telysta-application"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "telysta-core",
+ "telysta-storage",
+]
+
+[[package]]
 name = "telysta-core"
 version = "0.1.0"
 dependencies = [
@@ -3235,8 +3244,8 @@ dependencies = [
  "sha2",
  "tauri",
  "tauri-build",
+ "telysta-application",
  "telysta-core",
- "telysta-storage",
 ]
 
 [[package]]

@@ -55,7 +55,7 @@ schema validator 之外还须检查这些跨记录关系；当前 unit helpers �
 字符串决定；schema/Node/Rust 交叉检查不等于独立接受或生产 DTO 已实施。
 
 ProjectManifest 的 authority hash/profile/coverage 唯一见
-[ADR-012 §3.2](./adr/ADR-012-project-package-commit-authority.md#32-authority-hash-覆盖与规范字节proposed)。
+[ADR-012 §3.2](./adr/ADR-012-project-package-commit-authority.md#32-authority-hash-覆盖与规范字节已接受开发合同)。
 planning schema 已显式加入 stateSemanticHashes 与 dependency bundle root；
 state/history branch key 集必须相等。主 record bundle 的 hash 仍是格式 sentinel；
 [独立 known-answer review vectors](../tests/fixtures/project_authority_hash_review_v1.json)
@@ -146,4 +146,4 @@ fixture 的负例只登记期望判定和稳定错误码；R1 的 production imp
 | provenance 语言学边界 | 第 7 节 | Linguistic self-review complete |
 | v1 migration 可停止/回滚/不伪造 | 第 3–5 节 | Migration self-review complete |
 
-当前仍不能将 ADR-011 标记为 Accepted：缺少具名 code owner、独立 architecture reviewer 和 migration reviewer 的批准记录。进入该评审前允许继续完善 fixture、错误码和 GateEvidence；不得开始 R1-01A 的持久化实现。
+2026-10-16 ADR-011 已获三个独立 AI 会话的本地开发合同接受，人工等待按用户要求移除。评审来源与范围见 [AI 接受记录](./evidence/AI_LOCAL_DEVELOPMENT_V1.json)；planning schema 仍不是生产格式，后续 writer 必须版本化并实际验证。

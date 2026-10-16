@@ -1,20 +1,27 @@
 ---
 document_type: adr
-decision_status: proposed
+decision_status: accepted
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-10-14
-owner: unassigned
-reviewers: []
+last_verified: 2026-10-16
+owner: "ai:/root (execution coordinator)"
+reviewers:
+  - ai:/root/ai_architecture_acceptance
+  - ai:/root/ai_migration_acceptance
+  - ai:/root/ai_linguistic_provenance_acceptance
 ---
 
 # ADR-013：RNG 兼容性与 Distribution 版本化
 
-- 状态：`Proposed`
+- 状态：`Accepted for AI-reviewed local development; production implementation remains staged`
 - 日期：2026-07-17
 - 决策范围：`telysta-rng-tree.v1` 保留策略、bounded distribution、known-answer、counter overflow、checkpoint/replay
 - 前置合同：[Determinism Contract v1](../DETERMINISM_CONTRACT_V1.md)
 - Known-answer fixture：[`tests/fixtures/rng_known_answers_v1.json`](../../tests/fixtures/rng_known_answers_v1.json)
+
+2026-10-16 经三个独立 AI 会话接受为本地开发技术合同；执行模式、用户授权及
+接受范围见 [Agent 操作模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+这不是目标 writer、迁移器、语言学真实性或跨平台发布已验证的声明。
 
 ## 1. 问题
 
@@ -44,7 +51,7 @@ fixture 已覆盖 `u64::MAX`，不能继续把该 wire 问题留给客户端自�
 验证后解析并要求 `parsed.to_string() == text`；Webview 不经 Number/parseInt 转换，
 也不把 BigInt 直接放入 JSON。ADR-011 planning schema/records 已同步该字符串；
 Python range oracle、Node ECMAScript grammar/JSON round trip 和 Rust parse 交叉检查，
-但仍须独立接受和未来 target DTO 绑定，不能宣称生产 wire 已升级。
+设计已独立接受，但仍须未来 target DTO 绑定，不能宣称生产 wire 已升级。
 
 现有 `RunContext v1`、demo command 与冻结 RNG known-answer 保留原格式和字节。
 未来显式迁移从归档原文由 Rust 精确解出 legacy u64 后生成规范字符串，保存源
@@ -96,7 +103,7 @@ return value % upper_exclusive
 stream path 与 `maxRawDraws`；同一锁中 path 唯一，Run 继承父预算。完整路径为
 Run pathRoot + relativePath；未声明流拒绝执行。预算/计数采用
 `0..=2^53-1` 的 JSON safe integer 子域，这只是有限执行策略，不改变 v1 raw
-算法，也不替代 §3.0 的独立接受与生产 DTO 绑定。零预算有效，但第一 draw 即耗尽。
+算法，也不替代 §3.0 的生产 DTO 绑定与实际测试。零预算有效，但第一 draw 即耗尽。
 
 `telysta-rng-frontier-draft.v1` 列出全部已声明流（未用流为零计数）的完整 path、
 distributionVersion、预算、consumedRawDraws 与 nextCounter；初始 counter 为零，
@@ -129,6 +136,6 @@ R1/WS-1 在 Accepted 后还必须增加：
 
 该决定不把 RNG 当成语言学自然度来源；它只保证同一已声明随机实验可重演。优点是既有输出不变、sampler 演化可审计、resume 不会伪确定；代价是每个新分布都要版本、fixture 和兼容表。
 
-本文尚缺具名 code owner、independent determinism reviewer 和 independent migration
-reviewer；作者和 owner 不得占任一 independent reviewer 槽位。因此本文仍为
-Proposed，不授权修改 persisted RunContext、开始 RunSpec writer 或把 G0A 标记为通过。
+本文已由独立 AI 完成 architecture/determinism、migration 与 provenance 设计接受；
+作者未占 independent reviewer 槽位。尚未实现的 persisted RunContext/RunSpec 变更
+仍须版本化、迁移和实际验证；本次接受不把旧 G0A 标记为通过。

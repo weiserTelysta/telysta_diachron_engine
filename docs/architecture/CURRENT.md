@@ -3,7 +3,7 @@ document_type: architecture-description
 decision_status: not-applicable
 implementation_status: verified
 normative_scope: current
-last_verified: 2026-10-14
+last_verified: 2026-10-16
 verification_source: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
 
@@ -18,8 +18,13 @@ verification_source: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ```text
 Tauri static webview
   ├─ versioned command/event DTO
-  ├─ direct telysta-core calls
-  └─ direct telysta-storage ProjectRuntime calls
+  ├─ telysta-application: project sessions + Blueprint inspection
+  └─ legacy technical demo via telysta-core (not a project writer)
+
+telysta-application
+  ├─ private v1 ProjectRuntime; open/get/refresh/close only
+  ├─ versioned existing Blueprint inspection/report
+  └─ telysta-core + telysta-storage; no Tauri dependency
 
 telysta-core
   ├─ EntityId / TimeModel
@@ -68,7 +73,8 @@ scripts/linguistic_review.py + experiments/linguistic-execution/
 
 ## 3. 已知边界
 
-- 没有 `telysta-application`；desktop 仍直接依赖 core/storage。
+- `telysta-application` 首片已接管现有读会话与 Blueprint 检查；desktop 不再
+  直接依赖 storage。尚无目标 Operation/Run/Job、staging 或 mutation use case。
 - 内置 Blueprint feature 的 compiler capability 当前均为 `planned`。
 - Blueprint inspector 原文经 `blueprintJson` 直接交 Rust 校验，保留旧 typed 参数；
   编辑使旧报告失效，迟到响应绑定请求文本，不写状态。没有开放正式编译入口。
@@ -81,8 +87,11 @@ scripts/linguistic_review.py + experiments/linguistic-execution/
 
 ## 4. 当前依赖纪律
 
-当前 desktop → storage 直接依赖是过渡状态，只能支持已实现的读会话和技术 Spike。
-在 application boundary 建立前，不得沿此路径增加新的长期 writer 或领域编排。
+当前正式会话路径为 desktop → application → storage/core；runtime 私有，
+application 不暴露 create/commit 或完整可写状态。open/refresh 仍可能触发既有
+恢复或派生索引重建，不宣称完全不写磁盘。DemoEngine 仍是独立技术 Spike。
+生产依赖方向由 `tests/core/test_application_boundary.py` 检查，私有 runtime 与
+未开放 commit 由 Rust compile-fail tests 检查。
 
 ## 5. 2026-10-12 本地修复候选
 

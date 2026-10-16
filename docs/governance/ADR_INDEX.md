@@ -3,7 +3,7 @@ document_type: index
 decision_status: not-applicable
 implementation_status: implemented
 normative_scope: current
-last_verified: 2026-07-18
+last_verified: 2026-10-16
 ---
 
 # Telysta ADR Index
@@ -29,18 +29,22 @@ ADR 接受前置又成为接受 ADR 后才能生成的结果。
 | [ADR-008](../adr/ADR-008-registry-bundle-domain-registries.md) | Proposed | RegistryBundle 与分域注册表 |
 | [ADR-009](../adr/ADR-009-atomic-change-set-and-usage-observations.md) | Proposed | typed ChangeSet、UsageObservation 与 legacy boundary |
 | [ADR-010](../adr/ADR-010-genesis-artifact-trust-boundary.md) | Proposed | VerifiedGenesisArtifact 信任边界 |
-| [ADR-011](../adr/ADR-011-project-manifest-run-ledger-job-identity.md) | Proposed | Project/Operation/Run/Job 身份和 lifecycle |
-| [ADR-012](../adr/ADR-012-project-package-commit-authority.md) | Proposed | 单 manifest 发布点、不可变对象图与 authority hash review profile |
-| [ADR-013](../adr/ADR-013-rng-compatibility-and-distribution-versioning.md) | Proposed | RNG/distribution/checkpoint 兼容 |
+| [ADR-011](../adr/ADR-011-project-manifest-run-ledger-job-identity.md) | Accepted（AI 本地开发合同） | Project/Operation/Run/Job 身份和 lifecycle |
+| [ADR-012](../adr/ADR-012-project-package-commit-authority.md) | Accepted（AI 本地开发合同） | 单 manifest 发布点、不可变对象图与 authority hash review profile |
+| [ADR-013](../adr/ADR-013-rng-compatibility-and-distribution-versioning.md) | Accepted（AI 本地开发合同） | RNG/distribution/checkpoint 兼容 |
 | [ADR-014](../adr/ADR-014-meaning-grammar-lexical-identity-realization-authority.md) | Proposed | Meaning/Grammar/Lexical Identity/Class/Realization 与正字法 base/投影权威边界 |
 
 ## 当前实施门
 
+2026-10-16 用户授权开发审阅由独立 AI 替代人工/专家；有效开发模式与证据种类见
+[Agent 操作模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+ADR-011/012/013 与平台合同已完成独立 AI 接受，不自动证明其 writer/迁移/JobStore
+已实现，也不将旧 G0A blocked 改为 passed。旧人工/远端等待不再阻止本地分片实现。
+
 - ADR-006 已授权 Rust 原生生产核心和 Tauri 方向。
-- ADR-007～014 尚未共同授权 LanguageState v3、Genesis、typed ChangeSet、
+- ADR-007/008/009/010/014 尚未共同授权 LanguageState v3、Genesis、typed ChangeSet、
   ProjectManifest、JobStore 或 target project package 的生产实现。
-- ADR-011/012/013 必须独立批准并关闭相关 G0A 阻断项后，才能开始 R1 持久化
-  walking skeleton。
+- ADR-011/012/013 已为 R1 本地分片提供设计接受；新持久化实现仍须版本化、实际故障/迁移验证与独立 AI 代码复审。
 - G0B 的领域决定必须按 `ADR-008 → ADR-014 → ADR-009 → ADR-010 → ADR-007`
   完成独立评审并依次接受；每个节点可由本索引规则下的 Accepted replacement 占位，
   但 ADR-007 umbrella 节点不得从最终关闭条件中省略。

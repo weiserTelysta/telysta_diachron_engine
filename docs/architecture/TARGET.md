@@ -10,7 +10,9 @@ reviewers: []
 
 # Target Architecture
 
-本文组合主计划和 Proposed ADR 中的目标视图。它不是独立 ADR，也不授权绕过 G0A/G0B。
+本文组合已接受的平台 ADR 与仍在审阅的领域 ADR。执行授权按用户指定的
+[AI 本地开发模式](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)；
+目标视图本身不证明功能实现。
 
 ## 1. 目标依赖方向
 
@@ -65,7 +67,7 @@ Author Brief
 
 ## 4. Target project package
 
-ADR-011/012 提议：
+ADR-011/012 已接受的本地开发设计（目标 writer 尚未实现）：
 
 - 一个可变 ProjectManifest 作为唯一发布点；
 - history、RunLedger、dependency bundle 和结果为不可变 content-addressed objects；
@@ -78,8 +80,8 @@ ADR-011/012 提议：
 以下事项在 ADR/Gate 关闭前不得实现为生产格式：
 
 - LanguageState v3 的最终实体和聚合边界；
-- ProjectManifest/RunLedger/JobStore identity；
-- target package 的发布、GC 与恢复语义；
-- RNG distribution、cursor 和 checkpoint wire 兼容；
+- ProjectManifest/RunLedger/JobStore 的生产 schema 与迁移实现；
+- target package 的发布、GC 与恢复实现；
+- RNG distribution、cursor 和 checkpoint wire 的生产实现及兼容验证；
 - GenesisArtifact 与 evaluator 信任边界；
 - plugin/WASM 执行边界。

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "telysta-ai-local-development-review.v1",
+  "date": "2026-10-16",
+  "decision": "accepted_for_local_development",
+  "authorization": {
+    "source": "explicit_user_instruction",
+    "instruction": "跳过人工审核的阶段，先用 AI 代替；找不到专家，跳过这一要求，继续最终目标",
+    "executionOwner": "ai:/root",
+    "humanExpertRequiredForDevelopment": false,
+    "wipLimit": 1
+  },
+  "reviewedBytesRecoverableFromCommit": "4123265a5a7fc9c76f720fe44c6ba160b7cb5bba",
+  "reviewedSourceSha256": {
+    "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md": "5cf5d8e3879c6cd485a65da57cebe486bf2bd09287a7c77263b19edb2f10b546",
+    "docs/adr/ADR-012-project-package-commit-authority.md": "3b33bae92bed0532f166e84c69002a4802aef425531705dc64a78c8a39a0704e",
+    "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md": "8327b96696a25403f48ae2d2761d101645622ec3559b5a54617b468f605e4848",
+    "docs/PLATFORM_CONTRACT_PACK_V1.md": "29c8a421170b053367b02343e0f6d05b0a7b69c9b76823468ef0baceee9e731f"
+  },
+  "scope": [
+    "ADR-011/012/013 and platform pack accepted as local-development technical contracts",
+    "Implement first application slice using existing v1 open/session/refresh/close and blueprint inspection",
+    "No new language-state writer, project format or creation command in this slice"
+  ],
+  "reviews": [
+    {
+      "role": "architecture",
+      "reviewer": "/root/ai_architecture_acceptance",
+      "reviewerKind": "independent_ai_session",
+      "author": false,
+      "verdict": "accept_local_development_contract",
+      "blockingFindings": [],
+      "actualChecks": {
+        "python": 35,
+        "rust_adr_authority_rng": 4,
+        "rust_storage": 30,
+        "node": 1
+      },
+      "limits": "Contract/read-boundary review only; no human expertise, empirical language validation or old Gate pass implied."
+    },
+    {
+      "role": "migration",
+      "reviewer": "/root/ai_migration_acceptance",
+      "reviewerKind": "independent_ai_session",
+      "author": false,
+      "verdict": "accept_local_development_contract",
+      "blockingFindings": [],
+      "actualChecks": {
+        "python": 35,
+        "rust_core_storage": 81,
+        "node": 1
+      },
+      "limits": "Contract/read-boundary review only; no human expertise, empirical language validation or old Gate pass implied."
+    },
+    {
+      "role": "linguistic_provenance",
+      "reviewer": "/root/ai_linguistic_provenance_acceptance",
+      "reviewerKind": "independent_ai_session",
+      "author": false,
+      "verdict": "accept_local_development_contract",
+      "blockingFindings": [],
+      "actualChecks": {},
+      "limits": "Contract/read-boundary review only; no human expertise, empirical language validation or old Gate pass implied."
+    }
+  ],
+  "unproven": [
+    "target package writer and crash recovery implementation",
+    "LanguageState v3, Genesis, Meaning/Grammar compiler and language naturalness",
+    "human expert assessment or actual author study",
+    "Windows/macOS verification or external provider attestation"
+  ],
+  "historicalGateEvidence": "G0A policy v2/GateEvidence v3 remains blocked under obsolete human/remote readiness policy; not relabeled passed",
+  "implementationStatus": "implemented_and_independently_ai_reviewed; current full software runs recorded separately",
+  "acceptedAnnotatedSha256": {
+    "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md": "a1e2e9b0c82c434dba0c8aebf4ec96d4f574dfab26e2af4aaaeb122cf6a35e0a",
+    "docs/adr/ADR-012-project-package-commit-authority.md": "4c4b81f004994b404a5ac511aef4723a10954de84292f64a00adebdcca775edd",
+    "docs/adr/ADR-013-rng-compatibility-and-distribution-versioning.md": "8c70c0cbb2bd766f8ceb890c7bb03a2ebbd45837aa816e382c1e314d6085eab4",
+    "docs/PLATFORM_CONTRACT_PACK_V1.md": "3a1314e4bba7116b2c9498a5c72cb630e29184bdc33d841b305ba7036aa64629"
+  },
+  "implementationSha256": {
+    "crates/telysta-application/src/lib.rs": "8d0915ce842463479fbc6b4866bdb388d59ec6b1ae81ff1ec6180bf473e9bcc6",
+    "crates/telysta-application/tests/project_sessions.rs": "ba5b6e2d9e0b3a4f70b4f61dbd65266c6eea5bbe321671ce516f11766470179a",
+    "crates/telysta-application/Cargo.toml": "b29c45a5c0ba72254044106e5db39eb4e9408c72029187f1029745d8b280bd97",
+    "apps/desktop/src-tauri/src/main.rs": "76285a5b2a2b43f7afec6d057de25274455aa614dd4bac7f06d07a83b77ad158",
+    "apps/desktop/src-tauri/Cargo.toml": "273e075a1c5a35d39d5a13cf0471d9a7989e4b77f72e36ffdcfbd87b50aa0ac0",
+    "Cargo.toml": "fd94598da8e0a6973c5da2e33b010077d1bad95a111de5268a8c9a58b83db9ae",
+    "Cargo.lock": "95491ae50f209acb48df08bbebb8a05e18562400eac60561d2c5e91d7172a3bc",
+    "tests/core/test_application_boundary.py": "382a2e231d27a240217842a44392407f05ebcdf85212ff6ab77baac08fca4dc5"
+  },
+  "implementationReviews": [
+    {
+      "reviewer": "/root/ai_architecture_acceptance",
+      "verdict": "accept",
+      "blockingFindings": [],
+      "actualChecks": {
+        "applicationRust": 8,
+        "desktopRust": 2,
+        "pythonDependency": 2,
+        "nodeFrontend": 9,
+        "applicationClippy": "pass",
+        "workspaceFmt": "pass"
+      },
+      "scope": "v1 session/Blueprint boundary extraction; no target writer or G1 claim"
+    },
+    {
+      "reviewer": "/root/ai_migration_acceptance",
+      "verdict": "accept",
+      "blockingFindings": [],
+      "actualChecks": {
+        "applicationRust": 8,
+        "storageRust": 30
+      },
+      "scope": "Existing storage/lib.rs, storage/session.rs and core/project.rs unchanged; no new mutation entry."
+    }
+  ]
+}

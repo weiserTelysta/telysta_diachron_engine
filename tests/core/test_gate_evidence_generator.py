@@ -1600,9 +1600,18 @@ def test_failure_run_ids_do_not_collide_within_one_second(
     assert len(run_ids) == len(set(run_ids)) == 2
 
 
-def test_gate_policy_rejects_proposed_architecture_decisions() -> None:
+def test_gate_policy_rejects_proposed_architecture_decisions(tmp_path: Path) -> None:
+    root = _repository(tmp_path)
+    adr_directory = root / "docs/adr"
+    adr_directory.mkdir()
+    for name in (
+        "ADR-011-project-manifest-run-ledger-job-identity.md",
+        "ADR-012-project-package-commit-authority.md",
+        "ADR-013-rng-compatibility-and-distribution-versioning.md",
+    ):
+        (adr_directory / name).write_text("---\ndecision_status: proposed\n---\n", encoding="utf-8")
     evidence = json.loads((gate_evidence.ROOT / gate_evidence.DEFAULT_EVIDENCE_PATH).read_text(encoding="utf-8"))
-    issues = _gate_policy_issues(evidence, root=gate_evidence.ROOT)
+    issues = _gate_policy_issues(evidence, root=root)
     assert any("ADR-011" in issue and "got proposed" in issue for issue in issues)
     assert any("ADR-012" in issue and "got proposed" in issue for issue in issues)
     assert any("ADR-013" in issue and "got proposed" in issue for issue in issues)

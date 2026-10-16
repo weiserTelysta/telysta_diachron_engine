@@ -2,6 +2,7 @@
 members = [
     "crates/telysta-core",
     "crates/telysta-storage",
+    "crates/telysta-application",
     "apps/desktop/src-tauri",
 ]
 resolver = "2"

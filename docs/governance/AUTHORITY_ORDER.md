@@ -46,6 +46,10 @@ reviewers: []
 阅读 Proposed target 不等于获得实施授权。涉及持久化身份、replay 或 writer 的工作必须
 同时满足 `AGENTS.md` 停止条件和对应 Gate。
 
+2026-10-16 用户明确以独立 AI 替代人工/专家审批等待；该最新用户决定覆盖旧
+文档的人力/专家/远端开发前置，统一落实在 [Agent 操作模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+旧 GateEvidence 保留其政策下的历史结果；实际本地开发与真实发布/科学证据分开。
+
 ## 3. 当前执行权威
 
 - 当前执行队列：[PRODUCT_DEVELOPMENT_PLAN.md](../PRODUCT_DEVELOPMENT_PLAN.md)

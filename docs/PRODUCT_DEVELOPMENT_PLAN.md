@@ -10,11 +10,11 @@ reviewers: []
 
 # Telysta 产品开发执行计划
 
-- 状态：`Active planning baseline / Domain Implementation Hold`
+- 状态：`AI-reviewed local development / unaccepted domain changes remain staged`
 - 最近修订：2026-10-16
 - 适用范围：产品定义、Rust 核心、Tauri 工作台、语言生成、历时模拟、验证、数据、迁移与发布
-- 当前阶段：`R0A 计划/决策修复 + R0B WS-1 领域证据`
-- 当前阻断：G0A 为 `blocked`；2026-07-19 复审又重新打开 Gate/CI hermeticity、真实 MSRV、当前 v1 create/append/migration/index authority 和 legacy evidence 边界；R0B evidence preparation 正在进行，但具体工作包在 owner/reviewer/capacity 分配前仍为 `Planned`，G0B=`not evaluated` 且没有通过性 GateEvidence；ADR-007～014 均未完成所需接受流程，ADR-014 已形成 Proposed 草案但 owner/reviewer 未分配；Project/Operation/Run/Job、Meaning/Grammar/Lexical Class/Realization、TheoryProfile、ChangeSet locus、聚合与 replay 边界尚未闭合。ADR-005 是分阶段研究背景，不是 WS-1 前置
+- 当前阶段：`R1-01 application 读会话边界 + R0B 领域合同逐项 AI 审阅`
+- 当前开发授权：2026-10-16 用户明确跳过人工/专家审批等待，改用独立 AI；平台 ADR-011/012/013 已按该方式接受。具体执行规则统一见 [Agent 操作模型 §3.1](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16) 和 [接受记录](./evidence/AI_LOCAL_DEVELOPMENT_V1.json)。旧 G0A 的人工/远端条款不再是本地开工门，保留其历史 blocked，不冒充通过。ADR-007/008/009/010/014 领域设计仍逐项接受，尚未实现的 writer/迁移/编译器仍需实际验证。
 
 本文把 [项目路线图](./ROADMAP.md)、[专业语言模拟器实施总计划](./LANGUAGE_SIMULATOR_PLAN.md)、[路线严格评审](./RESEARCH_ROUTE_REVIEW_2026-07-14.md) 与 [计划优化记录](./PLAN_OPTIMIZATION_2026-07-16.md) 转换为可执行的关键路径和工作包。[审计修正执行计划](./AUDIT_CORRECTION_PLAN_2026-07-18.md)把 2026-07-18 的语言学/架构缺陷和 2026-07-19 的执行后复审映射回本文工作包、Gate 与验收证据，不形成第二套 WBS。它们都不替代 Accepted ADR，也不直接决定持久化实体身份、事件回放或插件边界。
 
@@ -61,7 +61,7 @@ Telysta 不以“一键生成 Tolkien 级语言”为可验证承诺。产品目
 - 对既有 `CanonCorpus` 执行影响分析，禁止规则变化静默破坏已发表形式；
 - 在不能表达目标意义时返回 typed `ExpressionGap`，不得临时随机造词或丢失意义；
 - 导出 Language Bible：发音、语法、词典、名字册、历史、IGT 语料、使用证明和已知限制；
-- 由未参与开发的创作者完成新场景和命名任务，并通过外部语言学审计。
+- 由未参与开发的创作者完成新场景和命名任务，并通过独立 AI 语言学审阅；外部专家评议作为可选后续评估，不再是 1.0 交付前置。
 
 神经 TTS、任意代码插件、完整自动文学翻译、个体级大规模 agent simulation 与“普适自然度”均不是 1.0 硬门。
 
@@ -789,6 +789,19 @@ Gate 前至少一次预注册 benchmark，并使用对应 JourneyPack 与证据�
 
 ## 22. 当前执行队列
 
+### 2026-10-16 有效开发模式
+
+按用户明确决定，人工/专家、具名人类 owner、招聘与工时容量不再阻塞本地研发，
+旧条款在这些方面由 Agent 操作模型 §3.1 覆盖，不等于取消确定性、版本、迁移、
+事务、故障测试或把未知研究证据当作通过。`/root` 为 AI 执行协调者，WIP=1，
+独立 AI 负责不同审阅角色。以下旧 Gate/WIP 背景只保留工程依赖与证据追溯，
+不再据其中人力或远端条件停工。
+
+当前实现：R1-01 首片抽取已有 v1 读会话和 Blueprint inspector，保持 DTO/schema，
+不开放 create/commit、不暴露 storage runtime；完成实际测试与 AI 代码复审后，
+进入 R1-01A 的版本化身份/ledger 实现。不能把本片当作 JobStore、目标 package
+writer 或完整 R1/G1 已交付；后续每片继续经对应 ADR 和实际工程门验证。
+
 ### 现在允许执行
 
 初始全局 WIP limit 为 2；这里只声明 intended slots，不绕过 R0A-07 的 owner/capacity
@@ -854,9 +867,9 @@ R1 所需决定 Accepted、R0A-08/09/10 关闭并通过 G0A 后才可以实施 R
 - 删除 Python legacy；
 - 把 current demo worker 或 `project.json` 直接扩展成长期架构。
 
-### 下一次实现启动门：G0A
+### 历史 G0A 启动门（人工/远端部分已由 AI 本地模式覆盖）
 
-恢复 R1 平台实现前必须同时满足：
+以下保留原政策背景；当前本地实现以本节开头的 AI 模式为准，技术不变量与实际软件验证仍执行：
 
 - [当前 G0A GateEvidence](./G0A_GATE_EVIDENCE_2026-07-17.json) 的 `decision` 必须等于 `passed`，且不存在未登记 waiver；截至 2026-07-19 该值仍为 `blocked`；
 - GateEvidence 必须引用精确包含 `R0A-01`、`R0A-02-ADR011`、`R0A-03`、`R0A-04`、`R0A-05`、`R0A-06`、`R0A-07`、`R0A-08`、`R0A-09`、`R0A-10` 和完整 DeliveryReadiness 的新 policy；旧 policy 下的 `passed` 不满足本启动门；

@@ -1,13 +1,26 @@
+---
+document_type: contract
+decision_status: accepted
+implementation_status: partial
+normative_scope: target
+last_verified: 2026-10-16
+owner: "ai:/root (execution coordinator)"
+reviewers:
+  - ai:/root/ai_architecture_acceptance
+  - ai:/root/ai_migration_acceptance
+  - ai:/root/ai_linguistic_provenance_acceptance
+---
+
 # R0A Platform Contract Pack v1
 
-- 状态：`Review-ready planning contract / production implementation forbidden`
+- 状态：`Accepted local-development contract / implementation staged`
 - 日期：2026-07-17
 - 对应工作包：`R0A-03`
 - 身份前置：[ADR-011](./adr/ADR-011-project-manifest-run-ledger-job-identity.md)
 - 发布与存储提案：[ADR-012](./adr/ADR-012-project-package-commit-authority.md)
 - RNG 前置：[ADR-013](./adr/ADR-013-rng-compatibility-and-distribution-versioning.md)
 
-本文冻结 R1 walking skeleton 的边界和验收协议，不冻结 LanguageState v3、Genesis、Grammar、ChangeProcess 或语言学模型。ADR-011～013 未 Accepted 且 G0A 未关闭前，本文只能用于 fixture、假任务和评审，不能成为新的生产 writer。
+本文冻结 R1 walking skeleton 的边界和验收协议，不冻结 LanguageState v3、Genesis、Grammar、ChangeProcess 或语言学模型。ADR-011～013 已获独立 AI 开发接受；按用户授权的本地开发模式分片实现，设计合同本身不证明新的生产 writer 已完成。
 
 ## 1. 用户问题与范围
 
@@ -78,7 +91,7 @@ DomainEvent     = schemaVersion + projectId + sequence + eventSchema
 
 Operation/Run 输入继承与 RNG frontier 采用 ADR-011/013 的固定输入决定；Run
 不能 override seed/model/parameter/budget。发布协议唯一见
-[ADR-012 §3.1](./adr/ADR-012-project-package-commit-authority.md#31-持久化与结果未知的发布proposed)。
+[ADR-012 §3.1](./adr/ADR-012-project-package-commit-authority.md#31-持久化与结果未知的发布已接受开发合同)。
 `commit_outcome_unknown` 对应 `retry_after_refresh`：先查询并完成恢复/核对原
 Operation，不能据此自动重新执行 mutation 或创建新 Operation。
 
@@ -173,12 +186,12 @@ R1 必须用不依赖 LanguageState v3 的 deterministic fake operation 证明�
 
 本合同已把 R1 的 crate、API、Job、journal、staging、query、dependency、replay 和 storage 边界收敛到可实现的 walking skeleton，并显式暴露 v1 单文件存储与 ADR-011 多对象目标之间的冲突。
 
-它仍不能被标记为 Accepted：
+2026-10-16 用户授权开发阶段以独立 AI 替代人工/专家等待；本合同与 ADR-011/012/013
+已完成架构、迁移/恢复及 provenance 审阅，接受为本地开发设计合同。
+[审阅记录](./evidence/AI_LOCAL_DEVELOPMENT_V1.json)保存原始被审字节、实际代理与范围；
+[Agent 操作模型 §3.1](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)
+定义有效开发授权，不把旧 G0A 伪造为 passed。
 
-- ADR-011 的身份与迁移决定尚无独立批准；
-- ADR-012 的单发布点/package authority 尚无 code owner、storage reviewer 和 migration reviewer；
-- ADR-013 的 RNG compatibility 尚无独立 determinism reviewer；
-- 隔离 clean 候选已完成本地 AI 复查（见 WORK_LOG），但没有正式 accepted baseline、
-  受信跨平台 attestation 或具名 owner/capacity。
-
-在上述条件满足前，允许补 fixture、fake-task protocol 和 fault matrix；禁止创建新的 production writer、JobStore、ProjectManifest v2 或桌面 mutation command。
+首次实现仅抽取现有读会话与 Blueprint 检查入口，禁止透传 runtime/create/commit。
+目标 package writer、JobStore、ProjectManifest 和桌面 mutation command 各自需要
+后续版本化实现、独立代码审阅及实际故障测试；设计接受不证明它们已实现。

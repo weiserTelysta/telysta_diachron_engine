@@ -1,0 +1,13 @@
+[package]
+name = "telysta-application"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Application use cases for the local Telysta desktop client."
+
+[dependencies]
+serde_json.workspace = true
+telysta-core = { path = "../telysta-core" }
+telysta-storage = { path = "../telysta-storage" }

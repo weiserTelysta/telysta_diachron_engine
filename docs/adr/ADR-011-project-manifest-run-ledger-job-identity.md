@@ -1,20 +1,27 @@
 ---
 document_type: adr
-decision_status: proposed
+decision_status: accepted
 implementation_status: not-started
 normative_scope: target
-last_verified: 2026-10-14
-owner: unassigned
-reviewers: []
+last_verified: 2026-10-16
+owner: "ai:/root (execution coordinator)"
+reviewers:
+  - ai:/root/ai_architecture_acceptance
+  - ai:/root/ai_migration_acceptance
+  - ai:/root/ai_linguistic_provenance_acceptance
 ---
 
 # ADR-011：ProjectManifest、RunLedger 与 Job Identity
 
-- 状态：`Proposed (acceptance evidence ready; independent approval pending)`
+- 状态：`Accepted for AI-reviewed local development; production implementation remains staged`
 - 日期：2026-07-16
 - 决策范围：项目身份、语义操作、确定性运行、后台 Job/Attempt、staging/commit、恢复与现有单 RunContext 历史迁移
 - 前置决策：ADR-006
 - 设计上下文：ADR-007、ADR-009、ADR-010；这些 ADR 不构成本 ADR 的循环前置
+
+2026-10-16 经三个独立 AI 会话接受为本地开发技术合同；执行模式、用户授权及
+接受范围见 [Agent 操作模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+这不是目标 writer、迁移器、语言学真实性或跨平台发布已验证的声明。
 
 ## 1. 用户与工程问题
 
@@ -350,7 +357,8 @@ Project load 必须验证 manifest、history 和 RunLedger 的引用完整性。
 
 ## 13. 接受条件
 
-本 ADR 当前保持 `Proposed`。转为 `Accepted` 前必须具备：
+本 ADR 的技术接受条件如下；第 1 项人员安排已按用户授权改用独立 AI，
+其余材料经本轮独立审阅。以下验收设计不等于相应生产实现已完成：
 
 1. 具名 code owner、independent architecture reviewer、linguistics reviewer 和 migration reviewer 已登记；作者和 owner 不占任一 independent reviewer 槽位；
 2. ProjectManifest、OperationSpec、RunSpec、RunLedger、JobRecord、AttemptRecord 和 checkpoint 的最小 schema 草案，并由 Draft 2020-12 validator 对实际记录 fixture 执行根对象、未知字段、ID、RNG 与 migration 负例；
@@ -362,4 +370,4 @@ Project load 必须验证 manifest、history 和 RunLedger 的引用完整性。
 
 在状态改为 `Accepted` 前，不得改变现有持久化 ProjectHistory 的身份、正式回放语义或生产项目创建入口。
 
-评审材料已整理为 [Project、Operation、Run、Job 与 Attempt 合同草案](../PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md)，包括规划期 schema、实际记录 fixture、四条序列 fixture、负例、责任矩阵和迁移评审。Schema 记录由 Draft 2020-12 validator 验证，并以 Rust 测试交叉检查已接受 EntityId/RngPath 值语法；这些材料不等于 code owner、独立架构 reviewer 或 migration reviewer 的批准，因此不改变本 ADR 的 Proposed 状态。
+评审材料已整理为 [Project、Operation、Run、Job 与 Attempt 合同草案](../PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md)，包括规划期 schema、实际记录 fixture、四条序列 fixture、负例、责任矩阵和迁移评审。Schema 记录由 Draft 2020-12 validator 验证，并以 Rust 测试交叉检查已接受 EntityId/RngPath 值语法；技术材料与独立 AI 接受分别记录；当前已接受的是设计合同，生产格式与 writer 仍按实际实现切片验证。

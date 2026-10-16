@@ -10,12 +10,14 @@ use std::{
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use tauri::{Emitter, Manager};
+use telysta_application::{
+    inspect_blueprint, ProjectApplication, ProjectRuntimeError, ProjectSession,
+};
 use telysta_core::{
-    blueprint::{BlueprintError, BlueprintValidationReport, FeatureRegistry, LanguageBlueprint},
+    blueprint::{BlueprintError, BlueprintValidationReport, LanguageBlueprint},
     CancelResult, CommandResponse, DemoCheckpoint, DemoEngine, DemoProgress, DemoRun,
     DemoRunStatus, EngineEvent, EngineInfo,
 };
-use telysta_storage::{ProjectRuntime, ProjectRuntimeError, ProjectSession};
 
 const DESKTOP_CHECKPOINT_SCHEMA: &str = "telysta-desktop-demo-checkpoint.v1";
 
@@ -60,7 +62,7 @@ struct DesktopState {
     checkpoint_base: Arc<PathBuf>,
     checkpoint_write_lock: Arc<Mutex<()>>,
     active_workers: Arc<Mutex<BTreeSet<String>>>,
-    project_runtime: Arc<Mutex<ProjectRuntime>>,
+    projects: Arc<Mutex<ProjectApplication>>,
 }
 
 struct WorkerLease {
@@ -83,7 +85,7 @@ impl DesktopState {
             checkpoint_base: Arc::new(checkpoint_base),
             checkpoint_write_lock: Arc::new(Mutex::new(())),
             active_workers: Arc::new(Mutex::new(BTreeSet::new())),
-            project_runtime: Arc::new(Mutex::new(ProjectRuntime::default())),
+            projects: Arc::new(Mutex::new(ProjectApplication::default())),
         })
     }
 
@@ -147,48 +149,48 @@ impl DesktopState {
     }
 
     fn open_project(&self, project_root: String) -> Result<ProjectSession, ProjectRuntimeError> {
-        self.project_runtime
+        self.projects
             .lock()
             .map_err(|_| ProjectRuntimeError::Storage {
-                message: "project runtime lock poisoned".to_owned(),
+                message: "project application lock poisoned".to_owned(),
             })?
-            .open_existing(PathBuf::from(project_root))
+            .open_project(PathBuf::from(project_root))
     }
 
     fn project_session(
         &self,
         project_id: &telysta_core::identity::EntityId,
     ) -> Result<ProjectSession, ProjectRuntimeError> {
-        self.project_runtime
+        self.projects
             .lock()
             .map_err(|_| ProjectRuntimeError::Storage {
-                message: "project runtime lock poisoned".to_owned(),
+                message: "project application lock poisoned".to_owned(),
             })?
-            .session(project_id)
+            .get_project_session(project_id)
     }
 
     fn refresh_project(
         &self,
         project_id: &telysta_core::identity::EntityId,
     ) -> Result<ProjectSession, ProjectRuntimeError> {
-        self.project_runtime
+        self.projects
             .lock()
             .map_err(|_| ProjectRuntimeError::Storage {
-                message: "project runtime lock poisoned".to_owned(),
+                message: "project application lock poisoned".to_owned(),
             })?
-            .refresh(project_id)
+            .refresh_project(project_id)
     }
 
     fn close_project(
         &self,
         project_id: &telysta_core::identity::EntityId,
     ) -> Result<ProjectSession, ProjectRuntimeError> {
-        self.project_runtime
+        self.projects
             .lock()
             .map_err(|_| ProjectRuntimeError::Storage {
-                message: "project runtime lock poisoned".to_owned(),
+                message: "project application lock poisoned".to_owned(),
             })?
-            .close(project_id)
+            .close_project(project_id)
     }
 
     fn claim_worker(&self, run_id: &str) -> Result<Option<WorkerLease>, String> {
@@ -305,28 +307,7 @@ fn validate_blueprint(
     blueprint: Option<LanguageBlueprint>,
     blueprint_json: Option<String>,
 ) -> Result<CommandResponse<BlueprintValidationReport>, BlueprintError> {
-    parse_blueprint_input(blueprint, blueprint_json)?
-        .validation_report(&FeatureRegistry::builtin_phonology_v1())
-        .map(|report| CommandResponse::new("validate_blueprint", report))
-}
-
-fn parse_blueprint_input(
-    blueprint: Option<LanguageBlueprint>,
-    blueprint_json: Option<String>,
-) -> Result<LanguageBlueprint, BlueprintError> {
-    match (blueprint, blueprint_json) {
-        (Some(blueprint), None) => Ok(blueprint),
-        (None, Some(raw)) => serde_json::from_str(&raw).map_err(|error| BlueprintError {
-            code: "invalid_blueprint_json".to_owned(),
-            path: Some("blueprintJson".to_owned()),
-            message: error.to_string(),
-        }),
-        _ => Err(BlueprintError {
-            code: "invalid_blueprint_input".to_owned(),
-            path: None,
-            message: "provide exactly one of blueprint or blueprintJson".to_owned(),
-        }),
-    }
+    inspect_blueprint(blueprint, blueprint_json)
 }
 
 fn spawn_demo_worker(
@@ -496,7 +477,7 @@ mod tests {
             checkpoint_base: Arc::new(PathBuf::from("unused-in-test")),
             checkpoint_write_lock: Arc::new(Mutex::new(())),
             active_workers: Arc::new(Mutex::new(BTreeSet::new())),
-            project_runtime: Arc::new(Mutex::new(ProjectRuntime::default())),
+            projects: Arc::new(Mutex::new(ProjectApplication::default())),
         };
 
         let lease = state.claim_worker("run-id").expect("claim");
@@ -510,113 +491,5 @@ mod tests {
             .claim_worker("run-id")
             .expect("claim after release")
             .is_some());
-    }
-
-    fn command_blueprint() -> LanguageBlueprint {
-        serde_json::from_value(serde_json::json!({
-            "schemaVersion": "telysta-language-blueprint.v2",
-            "blueprintId": "telysta:blueprint:desktop-command-test",
-            "displayName": "Desktop command test",
-            "historyScope": {
-                "originYear": 0,
-                "horizonYears": 1200,
-                "branching": "allowed",
-                "contact": "allowed"
-            },
-            "generationPolicy": {
-                "candidateCount": 4,
-                "selection": "pareto_frontier"
-            },
-            "evidence": {
-                "telysta:evidence:desktop-preference": {
-                    "id": "telysta:evidence:desktop-preference",
-                    "class": "creativePreference",
-                    "note": "Desktop integration test preference.",
-                    "citation": null,
-                    "dataReferences": []
-                }
-            },
-            "intents": {
-                "telysta:intent:desktop-inventory": {
-                    "id": "telysta:intent:desktop-inventory",
-                    "featureId": "telysta:feature:consonant-inventory-size",
-                    "desiredValue": {
-                        "kind": "integer_range",
-                        "minimum": 18,
-                        "maximum": 28
-                    },
-                    "control": {
-                        "kind": "preferred",
-                        "strengthBasisPoints": 6500
-                    },
-                    "priorityBasisPoints": 6500,
-                    "evidenceIds": ["telysta:evidence:desktop-preference"],
-                    "explanation": "Prefer a medium consonant inventory."
-                }
-            }
-        }))
-        .expect("valid v2 blueprint")
-    }
-
-    #[test]
-    fn blueprint_command_uses_the_built_in_registry_and_reports_capability() {
-        let response =
-            validate_blueprint(Some(command_blueprint()), None).expect("validation response");
-        assert_eq!(response.command, "validate_blueprint");
-        assert_eq!(
-            response.data.feature_registry_version,
-            telysta_core::blueprint::BUILTIN_PHONOLOGY_REGISTRY_VERSION
-        );
-        assert!(!response.data.ready_for_compilation);
-        assert!(response.data.diagnostics.iter().any(|diagnostic| {
-            diagnostic.code == telysta_core::blueprint::BlueprintDiagnosticCode::CompilerUnavailable
-        }));
-    }
-
-    #[test]
-    fn raw_blueprint_preserves_i64_values_and_legacy_reports() {
-        let blueprint = command_blueprint();
-        let raw = String::from_utf8(blueprint.canonical_json().unwrap()).unwrap();
-        let old = validate_blueprint(Some(blueprint), None).unwrap();
-        let current = validate_blueprint(None, Some(raw.clone())).unwrap();
-        assert_eq!(old.data, current.data);
-
-        let large = raw
-            .replace("\"minimum\":18", "\"minimum\":9007199254740993")
-            .replace("\"maximum\":28", "\"maximum\":9007199254740994");
-        let parsed = parse_blueprint_input(None, Some(large.clone())).unwrap();
-        assert_eq!(
-            parsed.intents().values().next().unwrap().desired_value,
-            telysta_core::blueprint::BlueprintValue::IntegerRange {
-                minimum: 9007199254740993,
-                maximum: 9007199254740994,
-            }
-        );
-        let report = validate_blueprint(None, Some(large)).unwrap();
-        assert_eq!(
-            report.data.blueprint_document_sha256,
-            parsed.document_sha256().unwrap()
-        );
-        assert!(!report.data.ready_for_compilation);
-    }
-
-    #[test]
-    fn raw_blueprint_rejects_fractional_tokens_and_ambiguous_inputs() {
-        let raw = String::from_utf8(command_blueprint().canonical_json().unwrap()).unwrap();
-        let fractional = raw.replace(
-            "\"candidateCount\":4",
-            "\"candidateCount\":4.0000000000000001",
-        );
-        for invalid in [fractional, "{".to_owned()] {
-            let error = validate_blueprint(None, Some(invalid)).unwrap_err();
-            assert_eq!(error.code, "invalid_blueprint_json");
-            assert_eq!(error.path.as_deref(), Some("blueprintJson"));
-        }
-        for (typed, raw) in [(None, None), (Some(command_blueprint()), Some(raw))] {
-            assert_eq!(
-                validate_blueprint(typed, raw).unwrap_err().code,
-                "invalid_blueprint_input"
-            );
-        }
     }
 }

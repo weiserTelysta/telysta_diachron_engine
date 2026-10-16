@@ -3,7 +3,7 @@ document_type: migration-plan
 decision_status: proposed
 implementation_status: in-progress
 normative_scope: migration
-last_verified: 2026-07-17
+last_verified: 2026-10-16
 owner: unassigned
 reviewers: []
 ---
@@ -24,7 +24,7 @@ reviewers: []
 |---|---|---|---|
 | F0 | dirty local foundation | reviewed Git baseline、clean-checkout evidence | G0A prerequisite |
 | F1 | 分散文档和状态口径 | authority/status/current-target-migration/docs-check | governance ready |
-| R1 | desktop 直连 core/storage | 新增 `telysta-application`，用 deterministic fake operation 验证 lifecycle | G1 platform walking skeleton |
+| R1 | application 已封装现有读会话/Blueprint；目标 Job 尚无 | 在该边界实现 deterministic fake operation 并验证 lifecycle | G1 platform walking skeleton |
 | WS-1 | State v2/full revision | 冻结 v3 IR、Genesis、Meaning/Grammar、一个 typed structural ChangeSet | G2 executable micro-language |
 | Product wedge | inspector UI | Brief→Candidate→Scene→History→Export | G3 Story Language Kit |
 | WS-2 | 无传播模型 | innovation/variation/propagation/conventionalization | G4 mechanistic change |
@@ -33,13 +33,12 @@ reviewers: []
 
 ## 3. R1 前的停止门
 
-只有以下条件同时成立才进入 R1：
-
-- GateEvidence `decision == "passed"`；
-- ADR-011/012/013 及相关 storage/application 决定 Accepted；
-- clean-checkout 全量质量门可复现；
-- owner/reviewer/capacity 已记录；
-- 不会把 v1 `RunContext` 或 demo checkpoint 扩展为 target schema。
+2026-10-16 按用户明确要求，人工/专家与人力登记等待改为独立 AI 审阅；
+有效规则集中在 [Agent 模型 §3.1](../AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16)。
+ADR-011/012/013 已完成本地开发设计接受，R1-01 首片只提取已有会话与检查入口，
+没有迁移 schema、开放 writer 或改变历史语义。后续每个新格式/写入片段必须
+以已接受 ADR、版本化验证、实际故障/迁移/replay 测试及独立 AI 代码复审证明；
+clean checkout 和锁定工具链检查继续执行。不用 v1 RunContext/demo 充当目标格式。
 
 ## 4. R1 walking skeleton
 

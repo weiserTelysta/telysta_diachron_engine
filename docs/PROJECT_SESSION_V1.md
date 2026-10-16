@@ -3,7 +3,7 @@ document_type: contract
 decision_status: accepted
 implementation_status: implemented
 normative_scope: current
-last_verified: 2026-10-14
+last_verified: 2026-10-16
 implementation_schema: telysta-project-session.v1
 implementation_path: crates/telysta-storage/src/session.rs
 implementation_constant: PROJECT_SESSION_SCHEMA
@@ -58,6 +58,9 @@ UI 不能据此直接改写 `LanguageState`。
 重复打开、项目 ID 冲突、未知会话、run/project 身份不匹配、陈旧写入和底层
 存储错误。
 
+2026-10-16 起，Tauri 经 `telysta-application::ProjectApplication` 调用既有读会话；
+application 私有持有 runtime，未开放创建/提交 writer。Blueprint 解析/报告也移入
+application，保持原 CommandResponse、JSON token、错误及 planned capability。
 静态 Webview 通过显式启用的 Tauri global API 调用这些命令。当前检查器一次
 呈现一个会话，先关闭再打开另一个；打开、刷新和关闭串行执行，避免迟到的
 刷新响应恢复已关闭的会话。失败保留可重试状态；Blueprint 不能编译时明确

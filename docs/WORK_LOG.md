@@ -511,3 +511,34 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
 - 同 reviewer 终核未发现阻断问题，确认两项迁入要求完整、历史追溯/章节链接
   有效，且研究向量未被提升为生产能力或 Gate 证据。采纳其唯一可选建议，把
   sealed 任务隔离直接链接到 R0B-04 与验证矩阵，减少查找。全项目目标仍未完成。
+
+## 2026-10-16 用户解除人工审批等待：AI 接受与 R1-01 首片
+
+- 最新用户明确“跳过人工审核的阶段”“先用 AI 代替”，暂找不到专家时不再以此
+  阻塞研发。该指令覆盖旧人类 owner/reviewer/capacity 及专家等待；执行协调为
+  `/root`（AI），WIP=1。有效规则合并到 Agent Operating Model §3.1 与根 AGENTS，
+  不再要求用户提供人名后才能写代码。旧 blocked 审计已被此次新授权取代。
+- 新上下文架构、迁移/恢复、形式/历史 provenance 三个 AI 会话完整审阅平台
+  ADR-011/012/013 与合同，均 accept，无技术阻断。先记录原始四文件 SHA 和可
+  恢复 commit，再将设计接受标为 Accepted，并复查接受注释没有改变技术语义。
+  人工身份没有伪造；未宣称专家认证、真实用户试用、目标 writer 或 Windows。
+  具体会话、检查范围和 hash 集中在 `docs/evidence/AI_LOCAL_DEVELOPMENT_V1.json`。
+- 旧 G0A v3/policy v2 的人类/远端条款不再作为统一开发禁令；它的历史 blocked
+  结果保留，生成 STATUS 明确区分旧政策评估与当前 AI 开发授权，没有伪造 pass。
+  原 test 把真实 ADR 永远 Proposed 当先验，已改为临时 Proposed 反例，仍验证
+  旧 policy 拒绝未接受决定，不删除负例。Rust typed validation、版本、RNG、
+  lease/CAS、历史前缀、迁移与软件门均继续强制；科学/产品证据仍按实际范围报告。
+- 实现 `telysta-application`，私有持有现有 ProjectRuntime，仅公开四个会话方法；
+  同时迁入 Blueprint 检查及三个旧回归，保持原 DTO/错误、raw JSON numeric token
+  和 planned compiler 报告。Tauri 改依赖 application，不再直接依赖 storage；
+  现有 Mutex 和九个命令保持，Demo 仍是技术 Spike。storage/core 项目代码完全
+  不变，未增加项目格式、语言 writer、create/commit、RNG 或 replay 变化。
+- 三个真实存储集成测试覆盖会话/重复打开/权威 bytes、缺项目不创建、失败 refresh
+  保留会话；两个 compile-fail 禁止取出 runtime 或调用 commit；新增生产依赖方向
+  检查。独立架构审阅实际通过 app 8、desktop 2、Node 9、Python boundary 2、fmt/
+  app clippy；迁移审阅独立通过 app 8/storage 30，无阻断。native 依赖未配置的
+  首次 desktop 探测失败后使用既有 PKG_CONFIG_PATH 重跑通过，没有联网安装。
+- Cargo.lock 仅增加本地 crate 和改内部边，保留 lock v3，所有第三方版本不变。
+  同步 CURRENT/TARGET/MIGRATION、三主计划、合同与索引；完整本地门绑定本轮
+  最终字节，不移用旧运行。下一片为 R1-01A 的版本化身份/不可变请求与 ledger
+  基础，再推进 Job、真正语言编译/说明和读音；设计接受不等于整个 R1/G1 已完成。
