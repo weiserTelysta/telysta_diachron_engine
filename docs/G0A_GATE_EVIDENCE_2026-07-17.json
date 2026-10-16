@@ -6,8 +6,8 @@
   "decision": "blocked",
   "decisionDate": "2026-10-16",
   "source": {
-    "subjectCommit": "381664548d082ed5c20e9cec49d1ffa74cb1a062",
-    "subjectTree": "04006f0bd724f054bf22464203b1b67e4e2dde0e",
+    "subjectCommit": "dbce27cc6454d4d3931638ca945d086701e7b80b",
+    "subjectTree": "80e8a00301523e63a4242d6a0895fc5090305d63",
     "worktreeDirty": false,
     "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
@@ -18,12 +18,12 @@
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:b22437a3e69d9c241ccdc03100317d3e",
-        "subjectCommit": "381664548d082ed5c20e9cec49d1ffa74cb1a062",
-        "subjectTree": "04006f0bd724f054bf22464203b1b67e4e2dde0e",
+        "runId": "gate-run:36e8073667c7d70d1d84f8e734dc5683",
+        "subjectCommit": "dbce27cc6454d4d3931638ca945d086701e7b80b",
+        "subjectTree": "80e8a00301523e63a4242d6a0895fc5090305d63",
         "platformFamily": "linux",
-        "startedAt": "2026-10-16T03:02:12Z",
-        "finishedAt": "2026-10-16T03:02:46Z",
+        "startedAt": "2026-10-16T03:14:51Z",
+        "finishedAt": "2026-10-16T03:15:25Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
