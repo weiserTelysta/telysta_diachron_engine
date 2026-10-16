@@ -383,3 +383,85 @@ Project load 必须验证 manifest、history 和 RunLedger 的引用完整性。
 在状态改为 `Accepted` 前，不得改变现有持久化 ProjectHistory 的身份、正式回放语义或生产项目创建入口。
 
 评审材料已整理为 [Project、Operation、Run、Job 与 Attempt 合同草案](../PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md)，包括规划期 schema、实际记录 fixture、四条序列 fixture、负例、责任矩阵和迁移评审。Schema 记录由 Draft 2020-12 validator 验证，并以 Rust 测试交叉检查已接受 EntityId/RngPath 值语法；技术材料与独立 AI 接受分别记录；当前已接受的是设计合同，生产格式与 writer 仍按实际实现切片验证。
+
+## 14. R1-01A 不可变输入合同
+
+本节状态：`Proposed addendum; independent AI acceptance required before implementation`。
+范围仅为 core 的请求形状、内容摘要及父子锁验证，不注册或执行操作，不签发
+OperationContext，不写 manifest/history/ledger/JobStore。假设均为硬工程约束，
+不增加语言学先验、传播模型或自然度结论。
+
+### 14.1 独立版本与字段
+
+规划记录中的 spec v1 从未是生产格式，继续保留原 bytes/sentinel。本片使用
+`telysta-operation-request.v1`、`telysta-operation-spec.v2` 和
+`telysta-run-spec.v2`，不隐式读取规划 spec v1、旧 RunContext 或 legacy history。
+全部 object 为封闭字段集，未知/重复字段、缺字段、未知 schema 均拒绝；不提供
+默认值猜测。字符串原样保留，不 trim、大小写折叠或 Unicode 规范化。
+
+OperationRequest 字段：
+
+| 字段 | 约束 |
+|---|---|
+| schemaVersion、identitySchema | 上述 request v1 与 `telysta-execution-id.v1` |
+| projectId、kind、targetHistory | typed ProjectId；§4.2 六种 kind；非空白分支名 |
+| baseHistory | 显式 `{kind: empty}` 或 `{kind: existing, historySha256}`；Genesis 必须 empty，Import 可 empty/已有基点，其他 kind 必须 existing |
+| commandSchema、commandPayloadSha256、parameterSha256 | 版本化命令 schema 与两项 lowercase SHA-256；只声明内容锁，不证明 payload 可用/合法 |
+| engineVersion、compilerVersion、reducerVersion | 非空白精确版本；不能用版本字符串替代 dependency 内容锁 |
+| dependencyBundle | `{schemaVersion, contentSha256}`；版本化 bundle schema 与 raw content hash，锁定全部实际 registry/data/rule/model/组件；此片不实现其 payload/resolver，不宣称锁完整/可执行 |
+| time | `{schemaVersion, originYear, generationYears, stepYears, atYear}`；使用现有 TimeModel v2 的完整参数和 i32 年份，经现有 TimeModel 验证，time reference 由该完整模型构造 |
+| rngLock | 显式 no_rng 或下节 rng_tree，无隐式随机源 |
+| actorProvenance | `{kind, actorId, source}`；user/migration/system 与非空白原始字符串，属于声明，不认证批准或机制 |
+| authorIntervention | 显式 `{kind: none}` 或 `{kind: recorded, report: {schemaVersion, contentSha256}}`；Authoring/Retcon 必须 recorded；报告存在性、影响与实际确认仍由未来 application 验证 |
+
+OperationSpec 字段为 schemaVersion、operationId、idempotencyKey、request、
+requestSha256、operationSpecSha256。idempotencyKey 非空白；request hash 不含
+OperationId 或 key，spec hash 则同时绑定它们。私有字段/只读 getter 保证单个
+spec 不可变；相同 ID/key 的全局冲突和登记不可变性由后续 ledger/application
+实现，不能从构造成功推断已登记或可提交。
+
+### 14.2 RNG 锁与 Run 继承
+
+rng_tree 的封闭字段为 kind、schemaVersion、rootSeed、pathRoot、
+distributionVersion、streamBudgets。严格执行 ADR-013：tree 仅接受当前 v1，
+distributionVersion 仅接受已命名的 next-u64 v1 / uniform-u64 v1；rootSeed 是
+规范 ASCII u64 十进制字符串，拒绝 JSON number、指数、符号、前导零或溢出。
+pathRoot/relativePath 复用现有 RngPath，streamBudgets 非空、relativePath 唯一，
+每项 `{relativePath, maxRawDraws}` 预算范围 `0..=2^53-1`，包含零预算。
+预算只锁定声明；实际耗尽、frontier、checkpoint/resume 另行实现，不修改旧 RNG。
+
+RunSpec v2 字段为 schemaVersion、runId、operationId、operationSpecSha256、
+role、runKey、parameterSha256、rngLock、inputSemanticSha256、outputSchema、
+runSpecSha256。role 为 candidate/replicate/counterfactual/migration/single；
+runKey 为一个合法的 1–64 字节 RNG 段。其 parameterSha256 和 rngLock 必须从
+父 spec 派生，只有 pathRoot 追加 `.role.runKey`，其余锁不变；NoRng 保持 NoRng。
+完整父 spec hash 传递绑定基点、时间与全部依赖，不在 Run 中复制可覆盖的第二份。
+
+构造和 raw JSON 加载 Run 必须显式提供父 OperationSpec，重新派生并比较全部
+父锁及 self hash；RunSpec 不实现无父的 Deserialize。inputSemanticSha256 只声明
+输入内容，outputSchema 必须版本化；正确性和可用性不是此处的检查范围。
+同一批 Run 的验证另拒绝重复 RunId 或重复 `(role, runKey)`，并逐项检查父 hash；
+跨批次持久唯一性留给 ledger，不由内存集合伪装实现。
+
+### 14.3 摘要与 hostile 输入
+
+本片 hash profile `telysta-operation-input-hash.v1` 仅用于这些封闭 typed 记录。
+所有 object 的字段名都是固定 ASCII：按字段名排序，数组保留声明顺序，string
+使用 serde_json 的 JSON 转义，整数只使用上述 safe 域，UTF-8 无额外空白/末尾
+换行。不接受任意 JSON/float，也不声称实现完整 JCS 或改变 StateSemanticHash。
+
+```text
+preimage = ASCII("telysta-operation-input-hash.v1") + 0x00
+         + ASCII(kind) + 0x00 + canonical_typed_body
+digest = lowercase_hex(SHA-256(preimage))
+```
+
+kind 分别为 request / operation / run。request body 为完整 Request；operation
+body 为除 operationSpecSha256 外的完整 spec（包含已重算 requestSha256）；run
+body 为除 runSpecSha256 外的完整 spec。Hash 不替代 schema、父关系、payload
+可用性或语言学验证；任何改变字段/规范化的后续格式必须升版本。
+
+验证必须包含独立已知字节/hash、u64::MAX 经 JSON 字符串往返、重复/未知字段、
+错误身份/基点/schema/hash、NoRng、父输入与 Run 锁突变、批内唯一性和私有/无父
+反序列化 compile-fail。现有 storage/history/RNG known-answer/legacy 字节不变，
+因此没有隐式持久化迁移或 replay 变化；新 writer 与可执行上下文不在本片交付。

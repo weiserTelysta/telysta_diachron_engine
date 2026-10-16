@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "telysta-operation-input-known-answers.v1",
+  "scope": "Synthetic typed input/hash checks only; declared dependency/report/state payloads unavailable. No executable project, language, approval or migration evidence.",
+  "hashProfile": "telysta-operation-input-hash.v1",
+  "cases": [
+    {
+      "name": "random",
+      "operation": {
+        "schemaVersion": "telysta-operation-spec.v2",
+        "operationId": "telysta:operation:random-fixture",
+        "idempotencyKey": "synthetic-random-request",
+        "request": {
+          "schemaVersion": "telysta-operation-request.v1",
+          "identitySchema": "telysta-execution-id.v1",
+          "projectId": "telysta:project:input-fixture",
+          "kind": "simulation",
+          "targetHistory": "main",
+          "baseHistory": {
+            "kind": "existing",
+            "historySha256": "4a8bb5720317693711323ad0a7dd373c6f3cf002066fbbbf04778bbdec0a9d58"
+          },
+          "commandSchema": "telysta-platform-fixture-command.v1",
+          "commandPayloadSha256": "b6e9e1d7a7c9e854ed4ba7611e137245bbd0862942e558a88175481b8b8fdfe8",
+          "parameterSha256": "4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f",
+          "engineVersion": "0.1.0",
+          "compilerVersion": "fixture-compiler.v1",
+          "reducerVersion": "fixture-reducer.v1",
+          "dependencyBundle": {
+            "schemaVersion": "telysta-dependency-bundle.v1",
+            "contentSha256": "b70dfb11a3c577c1d5f7d281bd3fe2a441ab166d55785a2bc470e74c33128356"
+          },
+          "time": {
+            "schemaVersion": "telysta-time-model.v2",
+            "originYear": -100,
+            "generationYears": 25,
+            "stepYears": 5,
+            "atYear": 42
+          },
+          "rngLock": {
+            "kind": "rng_tree",
+            "schemaVersion": "telysta-rng-tree.v1",
+            "rootSeed": "18446744073709551615",
+            "pathRoot": "fixture.inputs",
+            "distributionVersion": "telysta-rng-uniform-u64.v1",
+            "streamBudgets": [
+              {
+                "relativePath": "phonology.draws",
+                "maxRawDraws": 1024
+              },
+              {
+                "relativePath": "unused",
+                "maxRawDraws": 0
+              }
+            ]
+          },
+          "actorProvenance": {
+            "kind": "user",
+            "actorId": "synthetic-author",
+            "source": "Synthetic author 🜁; no approval claimed"
+          },
+          "authorIntervention": {
+            "kind": "none"
+          }
+        },
+        "requestSha256": "336aa36f21543d5d46ffe770854adcc65896e36f22f5fddf867aca41e9200e17",
+        "operationSpecSha256": "1762343d1aa73fb3597067479297a4e2578d87c38d3e2183734f30227cbe5c08"
+      },
+      "run": {
+        "schemaVersion": "telysta-run-spec.v2",
+        "runId": "telysta:run:random-fixture",
+        "operationId": "telysta:operation:random-fixture",
+        "operationSpecSha256": "1762343d1aa73fb3597067479297a4e2578d87c38d3e2183734f30227cbe5c08",
+        "role": "candidate",
+        "runKey": "0001",
+        "parameterSha256": "4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f",
+        "rngLock": {
+          "kind": "rng_tree",
+          "schemaVersion": "telysta-rng-tree.v1",
+          "rootSeed": "18446744073709551615",
+          "pathRoot": "fixture.inputs.candidate.0001",
+          "distributionVersion": "telysta-rng-uniform-u64.v1",
+          "streamBudgets": [
+            {
+              "relativePath": "phonology.draws",
+              "maxRawDraws": 1024
+            },
+            {
+              "relativePath": "unused",
+              "maxRawDraws": 0
+            }
+          ]
+        },
+        "inputSemanticSha256": "87c816b6a916a6f875083a885686c0b49c927e27d4621cdddd032debad2a629f",
+        "outputSchema": "telysta-platform-fixture-result.v1",
+        "runSpecSha256": "255705a7b5a4901b4912ac196503356a954b209d5bfe97956b676e078db4f249"
+      },
+      "canonicalRequest": "{\"actorProvenance\":{\"actorId\":\"synthetic-author\",\"kind\":\"user\",\"source\":\"Synthetic author 🜁; no approval claimed\"},\"authorIntervention\":{\"kind\":\"none\"},\"baseHistory\":{\"historySha256\":\"4a8bb5720317693711323ad0a7dd373c6f3cf002066fbbbf04778bbdec0a9d58\",\"kind\":\"existing\"},\"commandPayloadSha256\":\"b6e9e1d7a7c9e854ed4ba7611e137245bbd0862942e558a88175481b8b8fdfe8\",\"commandSchema\":\"telysta-platform-fixture-command.v1\",\"compilerVersion\":\"fixture-compiler.v1\",\"dependencyBundle\":{\"contentSha256\":\"b70dfb11a3c577c1d5f7d281bd3fe2a441ab166d55785a2bc470e74c33128356\",\"schemaVersion\":\"telysta-dependency-bundle.v1\"},\"engineVersion\":\"0.1.0\",\"identitySchema\":\"telysta-execution-id.v1\",\"kind\":\"simulation\",\"parameterSha256\":\"4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f\",\"projectId\":\"telysta:project:input-fixture\",\"reducerVersion\":\"fixture-reducer.v1\",\"rngLock\":{\"distributionVersion\":\"telysta-rng-uniform-u64.v1\",\"kind\":\"rng_tree\",\"pathRoot\":\"fixture.inputs\",\"rootSeed\":\"18446744073709551615\",\"schemaVersion\":\"telysta-rng-tree.v1\",\"streamBudgets\":[{\"maxRawDraws\":1024,\"relativePath\":\"phonology.draws\"},{\"maxRawDraws\":0,\"relativePath\":\"unused\"}]},\"schemaVersion\":\"telysta-operation-request.v1\",\"targetHistory\":\"main\",\"time\":{\"atYear\":42,\"generationYears\":25,\"originYear\":-100,\"schemaVersion\":\"telysta-time-model.v2\",\"stepYears\":5}}",
+      "canonicalOperationBody": "{\"idempotencyKey\":\"synthetic-random-request\",\"operationId\":\"telysta:operation:random-fixture\",\"request\":{\"actorProvenance\":{\"actorId\":\"synthetic-author\",\"kind\":\"user\",\"source\":\"Synthetic author 🜁; no approval claimed\"},\"authorIntervention\":{\"kind\":\"none\"},\"baseHistory\":{\"historySha256\":\"4a8bb5720317693711323ad0a7dd373c6f3cf002066fbbbf04778bbdec0a9d58\",\"kind\":\"existing\"},\"commandPayloadSha256\":\"b6e9e1d7a7c9e854ed4ba7611e137245bbd0862942e558a88175481b8b8fdfe8\",\"commandSchema\":\"telysta-platform-fixture-command.v1\",\"compilerVersion\":\"fixture-compiler.v1\",\"dependencyBundle\":{\"contentSha256\":\"b70dfb11a3c577c1d5f7d281bd3fe2a441ab166d55785a2bc470e74c33128356\",\"schemaVersion\":\"telysta-dependency-bundle.v1\"},\"engineVersion\":\"0.1.0\",\"identitySchema\":\"telysta-execution-id.v1\",\"kind\":\"simulation\",\"parameterSha256\":\"4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f\",\"projectId\":\"telysta:project:input-fixture\",\"reducerVersion\":\"fixture-reducer.v1\",\"rngLock\":{\"distributionVersion\":\"telysta-rng-uniform-u64.v1\",\"kind\":\"rng_tree\",\"pathRoot\":\"fixture.inputs\",\"rootSeed\":\"18446744073709551615\",\"schemaVersion\":\"telysta-rng-tree.v1\",\"streamBudgets\":[{\"maxRawDraws\":1024,\"relativePath\":\"phonology.draws\"},{\"maxRawDraws\":0,\"relativePath\":\"unused\"}]},\"schemaVersion\":\"telysta-operation-request.v1\",\"targetHistory\":\"main\",\"time\":{\"atYear\":42,\"generationYears\":25,\"originYear\":-100,\"schemaVersion\":\"telysta-time-model.v2\",\"stepYears\":5}},\"requestSha256\":\"336aa36f21543d5d46ffe770854adcc65896e36f22f5fddf867aca41e9200e17\",\"schemaVersion\":\"telysta-operation-spec.v2\"}",
+      "canonicalRunBody": "{\"inputSemanticSha256\":\"87c816b6a916a6f875083a885686c0b49c927e27d4621cdddd032debad2a629f\",\"operationId\":\"telysta:operation:random-fixture\",\"operationSpecSha256\":\"1762343d1aa73fb3597067479297a4e2578d87c38d3e2183734f30227cbe5c08\",\"outputSchema\":\"telysta-platform-fixture-result.v1\",\"parameterSha256\":\"4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f\",\"rngLock\":{\"distributionVersion\":\"telysta-rng-uniform-u64.v1\",\"kind\":\"rng_tree\",\"pathRoot\":\"fixture.inputs.candidate.0001\",\"rootSeed\":\"18446744073709551615\",\"schemaVersion\":\"telysta-rng-tree.v1\",\"streamBudgets\":[{\"maxRawDraws\":1024,\"relativePath\":\"phonology.draws\"},{\"maxRawDraws\":0,\"relativePath\":\"unused\"}]},\"role\":\"candidate\",\"runId\":\"telysta:run:random-fixture\",\"runKey\":\"0001\",\"schemaVersion\":\"telysta-run-spec.v2\"}"
+    },
+    {
+      "name": "no-rng",
+      "operation": {
+        "schemaVersion": "telysta-operation-spec.v2",
+        "operationId": "telysta:operation:no-rng-fixture",
+        "idempotencyKey": "synthetic-no-rng-request",
+        "request": {
+          "schemaVersion": "telysta-operation-request.v1",
+          "identitySchema": "telysta-execution-id.v1",
+          "projectId": "telysta:project:input-fixture",
+          "kind": "authoring",
+          "targetHistory": "main",
+          "baseHistory": {
+            "kind": "existing",
+            "historySha256": "4a8bb5720317693711323ad0a7dd373c6f3cf002066fbbbf04778bbdec0a9d58"
+          },
+          "commandSchema": "telysta-platform-fixture-command.v1",
+          "commandPayloadSha256": "b6e9e1d7a7c9e854ed4ba7611e137245bbd0862942e558a88175481b8b8fdfe8",
+          "parameterSha256": "4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f",
+          "engineVersion": "0.1.0",
+          "compilerVersion": "fixture-compiler.v1",
+          "reducerVersion": "fixture-reducer.v1",
+          "dependencyBundle": {
+            "schemaVersion": "telysta-dependency-bundle.v1",
+            "contentSha256": "b70dfb11a3c577c1d5f7d281bd3fe2a441ab166d55785a2bc470e74c33128356"
+          },
+          "time": {
+            "schemaVersion": "telysta-time-model.v2",
+            "originYear": -100,
+            "generationYears": 25,
+            "stepYears": 5,
+            "atYear": 42
+          },
+          "rngLock": {
+            "kind": "no_rng"
+          },
+          "actorProvenance": {
+            "kind": "user",
+            "actorId": "synthetic-author",
+            "source": "Synthetic author 🜁; no approval claimed"
+          },
+          "authorIntervention": {
+            "kind": "recorded",
+            "report": {
+              "schemaVersion": "telysta-author-intervention.v1",
+              "contentSha256": "1222258ec90f974fd7eb2bd9356f161f1816c227b187f2e945455fb6284c0700"
+            }
+          }
+        },
+        "requestSha256": "5e50fe2beb19c3f3b897d6cecf7b10e4f13802d771c8965a4efa535b9e24a5e9",
+        "operationSpecSha256": "7e66aea6d439b575e17adf5dd0353cdd89d4a9a627527225472605665e9c0679"
+      },
+      "run": {
+        "schemaVersion": "telysta-run-spec.v2",
+        "runId": "telysta:run:no-rng-fixture",
+        "operationId": "telysta:operation:no-rng-fixture",
+        "operationSpecSha256": "7e66aea6d439b575e17adf5dd0353cdd89d4a9a627527225472605665e9c0679",
+        "role": "candidate",
+        "runKey": "0001",
+        "parameterSha256": "4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f",
+        "rngLock": {
+          "kind": "no_rng"
+        },
+        "inputSemanticSha256": "87c816b6a916a6f875083a885686c0b49c927e27d4621cdddd032debad2a629f",
+        "outputSchema": "telysta-platform-fixture-result.v1",
+        "runSpecSha256": "109637528f2c38fa95e9daac8abffdbffb479df55df481f00d6396b707193c48"
+      },
+      "canonicalRequest": "{\"actorProvenance\":{\"actorId\":\"synthetic-author\",\"kind\":\"user\",\"source\":\"Synthetic author 🜁; no approval claimed\"},\"authorIntervention\":{\"kind\":\"recorded\",\"report\":{\"contentSha256\":\"1222258ec90f974fd7eb2bd9356f161f1816c227b187f2e945455fb6284c0700\",\"schemaVersion\":\"telysta-author-intervention.v1\"}},\"baseHistory\":{\"historySha256\":\"4a8bb5720317693711323ad0a7dd373c6f3cf002066fbbbf04778bbdec0a9d58\",\"kind\":\"existing\"},\"commandPayloadSha256\":\"b6e9e1d7a7c9e854ed4ba7611e137245bbd0862942e558a88175481b8b8fdfe8\",\"commandSchema\":\"telysta-platform-fixture-command.v1\",\"compilerVersion\":\"fixture-compiler.v1\",\"dependencyBundle\":{\"contentSha256\":\"b70dfb11a3c577c1d5f7d281bd3fe2a441ab166d55785a2bc470e74c33128356\",\"schemaVersion\":\"telysta-dependency-bundle.v1\"},\"engineVersion\":\"0.1.0\",\"identitySchema\":\"telysta-execution-id.v1\",\"kind\":\"authoring\",\"parameterSha256\":\"4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f\",\"projectId\":\"telysta:project:input-fixture\",\"reducerVersion\":\"fixture-reducer.v1\",\"rngLock\":{\"kind\":\"no_rng\"},\"schemaVersion\":\"telysta-operation-request.v1\",\"targetHistory\":\"main\",\"time\":{\"atYear\":42,\"generationYears\":25,\"originYear\":-100,\"schemaVersion\":\"telysta-time-model.v2\",\"stepYears\":5}}",
+      "canonicalOperationBody": "{\"idempotencyKey\":\"synthetic-no-rng-request\",\"operationId\":\"telysta:operation:no-rng-fixture\",\"request\":{\"actorProvenance\":{\"actorId\":\"synthetic-author\",\"kind\":\"user\",\"source\":\"Synthetic author 🜁; no approval claimed\"},\"authorIntervention\":{\"kind\":\"recorded\",\"report\":{\"contentSha256\":\"1222258ec90f974fd7eb2bd9356f161f1816c227b187f2e945455fb6284c0700\",\"schemaVersion\":\"telysta-author-intervention.v1\"}},\"baseHistory\":{\"historySha256\":\"4a8bb5720317693711323ad0a7dd373c6f3cf002066fbbbf04778bbdec0a9d58\",\"kind\":\"existing\"},\"commandPayloadSha256\":\"b6e9e1d7a7c9e854ed4ba7611e137245bbd0862942e558a88175481b8b8fdfe8\",\"commandSchema\":\"telysta-platform-fixture-command.v1\",\"compilerVersion\":\"fixture-compiler.v1\",\"dependencyBundle\":{\"contentSha256\":\"b70dfb11a3c577c1d5f7d281bd3fe2a441ab166d55785a2bc470e74c33128356\",\"schemaVersion\":\"telysta-dependency-bundle.v1\"},\"engineVersion\":\"0.1.0\",\"identitySchema\":\"telysta-execution-id.v1\",\"kind\":\"authoring\",\"parameterSha256\":\"4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f\",\"projectId\":\"telysta:project:input-fixture\",\"reducerVersion\":\"fixture-reducer.v1\",\"rngLock\":{\"kind\":\"no_rng\"},\"schemaVersion\":\"telysta-operation-request.v1\",\"targetHistory\":\"main\",\"time\":{\"atYear\":42,\"generationYears\":25,\"originYear\":-100,\"schemaVersion\":\"telysta-time-model.v2\",\"stepYears\":5}},\"requestSha256\":\"5e50fe2beb19c3f3b897d6cecf7b10e4f13802d771c8965a4efa535b9e24a5e9\",\"schemaVersion\":\"telysta-operation-spec.v2\"}",
+      "canonicalRunBody": "{\"inputSemanticSha256\":\"87c816b6a916a6f875083a885686c0b49c927e27d4621cdddd032debad2a629f\",\"operationId\":\"telysta:operation:no-rng-fixture\",\"operationSpecSha256\":\"7e66aea6d439b575e17adf5dd0353cdd89d4a9a627527225472605665e9c0679\",\"outputSchema\":\"telysta-platform-fixture-result.v1\",\"parameterSha256\":\"4052816d02d5d5de63d51ea608d6e449b43a77e774ec5585709578f63e835d6f\",\"rngLock\":{\"kind\":\"no_rng\"},\"role\":\"candidate\",\"runId\":\"telysta:run:no-rng-fixture\",\"runKey\":\"0001\",\"schemaVersion\":\"telysta-run-spec.v2\"}"
+    }
+  ]
+}
