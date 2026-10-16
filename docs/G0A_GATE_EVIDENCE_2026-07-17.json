@@ -6,8 +6,8 @@
   "decision": "blocked",
   "decisionDate": "2026-10-16",
   "source": {
-    "subjectCommit": "ddda0af4318709a77595781ee349063c134b9a47",
-    "subjectTree": "f7d26e012b91fbbd6fcf0e97177c525693668bb8",
+    "subjectCommit": "453f291c2a6e605218204519825f42f65271fe34",
+    "subjectTree": "a84e0b57c8254d2760c2c9ef417c40c9f1861bae",
     "worktreeDirty": false,
     "worktreeStatusEntryCount": 0,
     "worktreeFingerprintSchema": "telysta-git-worktree-fingerprint.v2",
@@ -18,12 +18,12 @@
     ],
     "verificationRuns": [
       {
-        "runId": "gate-run:8071892dd6321de6774a061927b08d8a",
-        "subjectCommit": "ddda0af4318709a77595781ee349063c134b9a47",
-        "subjectTree": "f7d26e012b91fbbd6fcf0e97177c525693668bb8",
+        "runId": "gate-run:bb1c7916243cc70f605e223f4f39a991",
+        "subjectCommit": "453f291c2a6e605218204519825f42f65271fe34",
+        "subjectTree": "a84e0b57c8254d2760c2c9ef417c40c9f1861bae",
         "platformFamily": "linux",
-        "startedAt": "2026-10-16T15:26:03Z",
-        "finishedAt": "2026-10-16T15:26:56Z",
+        "startedAt": "2026-10-16T15:44:33Z",
+        "finishedAt": "2026-10-16T15:45:34Z",
         "result": "pass",
         "protocols": [
           ".\\.venv\\Scripts\\python.exe -I scripts\\check.py",
@@ -103,7 +103,7 @@
       "evidenceId": "evidence:1e9a85b06cd2183f3901b9027db03abf",
       "kind": "ArchitectureDecisionEvidence",
       "path": "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md",
-      "sha256": "50c6520bf3f733773e9e5c7869dfea8d6f237decb0a5bc7673b23010b39f109e",
+      "sha256": "f33bc8a7e6fabc9aa2b3131d729983fd5e5b589d7f3f8f5d7c93ce62986e70bb",
       "result": "pending"
     },
     {
@@ -117,7 +117,7 @@
       "evidenceId": "evidence:de1b0d630d716722a6ccb653e3ecb826",
       "kind": "ArchitectureContractEvidence",
       "path": "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md",
-      "sha256": "09c641432b296d542eb4d391a37a2c12d6bcbca277e54f9a0912819e0ffb5b7a",
+      "sha256": "67449f46a6126fdeb4769df37d8580c353b6a7c1c1786d3c7e2c191106022ad2",
       "result": "pending"
     },
     {

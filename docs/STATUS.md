@@ -4,7 +4,7 @@ decision_status: not-applicable
 implementation_status: generated
 normative_scope: current
 last_verified: not-verified
-base_commit: ddda0af4318709a77595781ee349063c134b9a47
+base_commit: 453f291c2a6e605218204519825f42f65271fe34
 worktree_fingerprint: 4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13
 generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 ---
@@ -27,8 +27,8 @@ generated_from: docs/G0A_GATE_EVIDENCE_2026-07-17.json
 |---|---|---|---|
 | G0A | `blocked` | clean (0 entries) | not-verified |
 
-- Subject commit: `ddda0af4318709a77595781ee349063c134b9a47`
-- Subject tree: `f7d26e012b91fbbd6fcf0e97177c525693668bb8`
+- Subject commit: `453f291c2a6e605218204519825f42f65271fe34`
+- Subject tree: `a84e0b57c8254d2760c2c9ef417c40c9f1861bae`
 - Fingerprint: `4120786705e4c495e89db4216c4991d59ec838a8d7940405ed8bc786b1c6fa13`
 - Fingerprint schema: `telysta-git-worktree-fingerprint.v2`
 - 当前实现能力见 [Current Architecture](./architecture/CURRENT.md)。
