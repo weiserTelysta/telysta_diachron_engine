@@ -542,3 +542,28 @@ export PKG_CONFIG_PATH="$HOME/.local/share/telysta-tooling/native/usr/lib/x86_64
   同步 CURRENT/TARGET/MIGRATION、三主计划、合同与索引；完整本地门绑定本轮
   最终字节，不移用旧运行。下一片为 R1-01A 的版本化身份/不可变请求与 ledger
   基础，再推进 Job、真正语言编译/说明和读音；设计接受不等于整个 R1/G1 已完成。
+
+## 2026-10-16 R1-01A：不可混用的执行身份
+
+- 上轮应用边界源 `1212084`、验证/备份 `a35f701` 已保存在阶段分支；本轮是
+  progress，继续执行，不恢复已被用户解除的人类 owner/专家等待。
+- 问题是后续 ledger/Job 必须在类型层区分项目、语义请求、确定性运行、调度及
+  worker 尝试，避免一次重试改变语言历史身份。依据 Accepted ADR-011 §4 的
+  等价强类型封装选项；身份隔离与冻结旧目录是硬工程约束，无语言学先验、
+  机制有效性假说或审美偏好变化。
+- 新 core `execution_identity` 提供五类私有字段 newtype，独立词汇版本
+  `telysta-execution-id.v1`；构造/parse/FromStr/serde 直接共用现有 local-value
+  validator。不是把新 kind 塞进 EntityId v1，也没有用字符串替换规避 typed ID。
+  只有 Project/Run 支持从现有 EntityId 显式检查 kind 的转换，保留原 bytes。
+- 没有新 writer、记录格式、随机流或历史迁移；现有 ProjectHistory、storage、
+  Cargo.lock 和规划 fixture 字节与上轮完全一致。解析身份不证明对象存在、父子
+  关系、不可变输入或来源正确；planning 记录和 format sentinel 仍不是生产锁。
+- 新上下文 `/root/execution_identity_review` 按形式模型指南独立审阅并实跑
+  8 项 ID 合同/兼容检查及 5 项 compile-fail，accept，无阻断 finding。覆盖全部
+  1–96 长度、单字符范围、错误前缀/类型/字符、serde、旧 kind 拒绝新前缀及
+  规划 ID 字节交叉检查；作者另跑 core all-target clippy 与 docs check 均通过。
+  开始时混用 `--doc --test` 的命令被 cargo 拒绝，改用两个合法命令后通过。
+- 身份合同合并进 ADR-011 §4，三主计划只同步当前队列；不新增一份规范文档。
+  逐字节审阅指针合并在既有 AI 接受记录。完整本地门继续绑定最终候选源；
+  下一片实现不可变 Operation/Run 输入及父子锁验证，再落实 append-only ledger
+  和单发布点存储。当前不能展示真实生成、JobStore、读音或 G1 已完成。

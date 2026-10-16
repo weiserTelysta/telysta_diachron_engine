@@ -1,7 +1,7 @@
 ---
 document_type: adr
 decision_status: accepted
-implementation_status: not-started
+implementation_status: partial
 normative_scope: target
 last_verified: 2026-10-16
 owner: "ai:/root (execution coordinator)"
@@ -65,7 +65,19 @@ ProjectId
             └── AttemptId (one worker execution)
 ```
 
-五种 ID 使用不同 `EntityKind` 或等价的强类型封装，不能互换、复用或仅依靠字符串前缀区分。规划草案中的 Project/Run 已是当前 Rust `EntityKind`；Operation/Job/Attempt 仍是提议 kind，只复用 `telysta-entity-id.v1` 的 local-value 语法，在本 ADR Accepted 前不得加入生产枚举或 writer。
+五种 ID 使用不同 `EntityKind` 或等价的强类型封装，不能互换、复用或仅依靠字符串前缀区分。
+
+2026-10-16 R1-01A 身份切片采用等价封装：Rust `execution_identity` 模块定义
+`ProjectId`、`OperationId`、`RunId`、`JobId`、`AttemptId`，词汇版本为
+`telysta-execution-id.v1`。wire 值仍为 `telysta:<kind>:<local-value>` 字符串，
+local-value 直接复用现有 v1 的验证函数，不新增或放宽语法。所有构造与 serde
+入口均检查固定 kind；私有字段、不同类型和 compile-fail checks 防止身份互换。
+这不是项目或记录 schema，也不证明 ID 对应对象已登记、属于某个父对象或可提交。
+
+现有 `telysta-entity-id.v1` kind 目录保持冻结；其 parser 继续拒绝 operation、job、
+attempt。仅已有 Project/Run 支持从旧 `EntityId` 的显式、检查 kind 的转换，
+保留原 bytes，不自动迁移历史或推断来源。新记录必须独立声明身份词汇与自身
+schema；本片尚未实现 OperationSpec/RunSpec、registry、ledger 或 writer。
 
 ### 4.1 ProjectManifest
 

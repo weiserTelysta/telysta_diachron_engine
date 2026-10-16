@@ -13,7 +13,7 @@ reviewers: []
 - 状态：`AI-reviewed local development / unaccepted domain changes remain staged`
 - 最近修订：2026-10-16
 - 适用范围：产品定义、Rust 核心、Tauri 工作台、语言生成、历时模拟、验证、数据、迁移与发布
-- 当前阶段：`R1-01 application 读会话边界 + R0B 领域合同逐项 AI 审阅`
+- 当前阶段：`R1-01 application 边界已落地；R1-01A 身份/不可变输入基础 + R0B 领域合同逐项 AI 审阅`
 - 当前开发授权：2026-10-16 用户明确跳过人工/专家审批等待，改用独立 AI；平台 ADR-011/012/013 已按该方式接受。具体执行规则统一见 [Agent 操作模型 §3.1](./AGENT_OPERATING_MODEL.md#31-用户授权的-ai-本地开发审阅2026-10-16) 和 [接受记录](./evidence/AI_LOCAL_DEVELOPMENT_V1.json)。旧 G0A 的人工/远端条款不再是本地开工门，保留其历史 blocked，不冒充通过。ADR-007/008/009/010/014 领域设计仍逐项接受，尚未实现的 writer/迁移/编译器仍需实际验证。
 
 本文把 [项目路线图](./ROADMAP.md)、[专业语言模拟器实施总计划](./LANGUAGE_SIMULATOR_PLAN.md)、[路线严格评审](./RESEARCH_ROUTE_REVIEW_2026-07-14.md) 与 [计划优化记录](./PLAN_OPTIMIZATION_2026-07-16.md) 转换为可执行的关键路径和工作包。[审计修正执行计划](./AUDIT_CORRECTION_PLAN_2026-07-18.md)把 2026-07-18 的语言学/架构缺陷和 2026-07-19 的执行后复审映射回本文工作包、Gate 与验收证据，不形成第二套 WBS。它们都不替代 Accepted ADR，也不直接决定持久化实体身份、事件回放或插件边界。
@@ -797,10 +797,11 @@ Gate 前至少一次预注册 benchmark，并使用对应 JourneyPack 与证据�
 独立 AI 负责不同审阅角色。以下旧 Gate/WIP 背景只保留工程依赖与证据追溯，
 不再据其中人力或远端条件停工。
 
-当前实现：R1-01 首片抽取已有 v1 读会话和 Blueprint inspector，保持 DTO/schema，
-不开放 create/commit、不暴露 storage runtime；完成实际测试与 AI 代码复审后，
-进入 R1-01A 的版本化身份/ledger 实现。不能把本片当作 JobStore、目标 package
-writer 或完整 R1/G1 已交付；后续每片继续经对应 ADR 和实际工程门验证。
+当前实现：R1-01 已抽取已有 v1 读会话和 Blueprint inspector，完成本地全量检查
+与独立 AI 代码复审，保持 DTO/schema，不开放 create/commit 或暴露 runtime。
+R1-01A 首片新增五类独立身份封装，旧 EntityId v1 parser/kind 保持不变；
+下一片实现不可变 Operation/Run 输入与父子锁校验，再接 ledger/原子存储。
+这些不表示 JobStore、目标 package writer 或完整 R1/G1 已交付。
 
 ### 现在允许执行
 

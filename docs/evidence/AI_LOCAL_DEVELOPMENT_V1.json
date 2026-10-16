@@ -111,5 +111,44 @@
       },
       "scope": "Existing storage/lib.rs, storage/session.rs and core/project.rs unchanged; no new mutation entry."
     }
+  ],
+  "acceptedAnnotatedBytesRecoverableFromCommit": "1212084f6cae1ec464ab789504c7fd8cd7c1fa35",
+  "followupSlices": [
+    {
+      "workPackage": "R1-01A",
+      "slice": "distinct_execution_identity_wrappers",
+      "date": "2026-10-16",
+      "baselineCommit": "a35f701e8d45d91a8c5641938d0bdcfb7dc6a299",
+      "reviewer": "/root/execution_identity_review",
+      "reviewerKind": "independent_ai_session",
+      "verdict": "accept",
+      "blockingFindings": [],
+      "sourceSha256": {
+        "crates/telysta-core/src/execution_identity.rs": "bcc3df4c073ffa8b0416b9524434b61467f76777756411e416f85a5bff504e70",
+        "crates/telysta-core/src/identity.rs": "b099d6e96cbcdbd423aaade76f05dbcb15ec9f9964cec924794e35138aee4bcd",
+        "crates/telysta-core/src/lib.rs": "ee14c3ba429a31d766bec6284879d8e410312e57a564572fbc3a1210ecf3283c",
+        "crates/telysta-core/tests/execution_identity.rs": "248acb4d17a4c2646bb81f45229f69930dbd8ed593c973e3d395b6c06206cd2a"
+      },
+      "actualReviewerChecks": {
+        "rustIdentity": 8,
+        "rustCompileFail": 5
+      },
+      "scope": "ADR-011 equivalent strong wrappers, existing local-value validator; legacy EntityKind/parser unchanged; no writer, parent relationship, OperationSpec/RunSpec, ledger, context or provenance assertion",
+      "unproven": [
+        "persisted target records and schema",
+        "ledger and parent relationship validation",
+        "language generation and historical mechanisms",
+        "cross-platform validation"
+      ],
+      "reviewedDocumentationSha256": {
+        "docs/adr/ADR-011-project-manifest-run-ledger-job-identity.md": "50c6520bf3f733773e9e5c7869dfea8d6f237decb0a5bc7673b23010b39f109e",
+        "docs/PROJECT_OPERATION_JOB_CONTRACT_DRAFT.md": "09c641432b296d542eb4d391a37a2c12d6bcbca277e54f9a0912819e0ffb5b7a",
+        "docs/architecture/CURRENT.md": "c671a64d9ec75b4fb8e102d7647b48d6a1c5688713dad71c1f0dfec03d44a872",
+        "docs/PRODUCT_DEVELOPMENT_PLAN.md": "1df62e11f53951d4037275f7041cb3559bbadc742ba54f0103c331be6f21d24f",
+        "docs/ROADMAP.md": "77d47f915e0dd594844f07c4fa46f2c9a7588c0557220cefad203db9db59cca5",
+        "docs/LANGUAGE_SIMULATOR_PLAN.md": "3fd1d6f6a1bdca78bf2cb88dc6ec482fb223d1b94260389a85ae77f71c9ab605"
+      },
+      "documentationVerdict": "accept; no expanded implementation or provenance claim"
+    }
   ]
 }

@@ -14,7 +14,7 @@ reviewers: []
 - 技术架构：Rust 原生生产核心已经 `Accepted`，见 [ADR-006](./adr/ADR-006-rust-native-core-python-research-bridge.md)
 - 语言学架构：社区驱动模拟仍为分阶段 `Proposed`，不是 WS-1 前置；其局部机制须由后续 ADR 与 G2/G3/G4/G5 证据接受、替代或否决，见 [ADR-005](./adr/ADR-005-community-driven-language-simulation.md)
 - 基线日期：2026-07-12；最近路线修订：2026-07-19
-- 当前工作包：`R1-01 application 首片 + R0B 领域合同 AI 审阅；目标语言编译器尚未实现`
+- 当前工作包：`R1-01A 身份/不可变输入基础 + R0B 领域合同 AI 审阅；application 首片已落地，目标语言编译器尚未实现`
 - 目标：将现有研究原型逐步演进为可复现、可审计、可实际创作并可扩展至语言家族的语言历史模拟器
 
 2026-10-16 用户决定以独立 AI 替代人工/专家审批等待；人力、专家到位与旧远端

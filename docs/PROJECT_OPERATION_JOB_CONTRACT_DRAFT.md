@@ -44,7 +44,11 @@
 6. commit 使用 `OperationId + expected_history_hash`，并原子更新 history、RunLedger disposition 与 manifest head；
 7. legacy v1 迁移只创建 `LegacyImport + LegacyHistoryBoundary`，不得为旧 event 推断虚假的 Operation 或机制。
 
-规划期 Schema 的 `ProjectId` 与 `RunId` 直接复用当前 Rust `telysta-entity-id.v1` 的已接受 kind 和 local-value 语法；尚未进入生产 `EntityKind` 的 `OperationId`、`JobId` 与 `AttemptId` 只作为 ADR-011 提议 kind，并复用同一 1–96 字节小写 ASCII/数字/连字符 local-value 语法。Schema 或 fixture 不得被解释为已授权扩充 Rust `EntityKind`。
+规划期 Schema 的五类 ID 值已由 R1-01A 的独立 Rust 强类型封装交叉检查；
+字节语法与兼容边界统一见 [ADR-011 §4](./adr/ADR-011-project-manifest-run-ledger-job-identity.md#4-决策分离五类身份)。
+当前 `EntityId v1` 目录没有扩张，Operation/Job/Attempt 不进入其 parser。
+planning schema 的 proposed-kind 标签保留原评审上下文；值检查通过不代表整份
+记录 schema、父子关系、锁、hash 或 disposition 获得生产验证。
 
 2026-10-14 修订：采用固定输入 Operation；candidate/replicate 仅通过唯一
 `role + runKey` 派生流根，不能 override 父 parameter/model/seed/budget。

@@ -27,7 +27,7 @@ telysta-application
   └─ telysta-core + telysta-storage; no Tauri dependency
 
 telysta-core
-  ├─ EntityId / TimeModel
+  ├─ EntityId / TimeModel + distinct execution ID wrappers
   ├─ LanguageState v2
   ├─ LanguageBlueprint v2 + FeatureRegistry
   ├─ DataManifest / DataReference
@@ -75,6 +75,9 @@ scripts/linguistic_review.py + experiments/linguistic-execution/
 
 - `telysta-application` 首片已接管现有读会话与 Blueprint 检查；desktop 不再
   直接依赖 storage。尚无目标 Operation/Run/Job、staging 或 mutation use case。
+- core 已有 ADR-011 的五类独立执行 ID 封装，复用 v1 local-value 验证；旧
+  EntityId kind/parser 不变。这里只证明身份类型和字节有效，不证明对象存在、
+  父子关系、不可变请求锁或 ledger 已实现。
 - 内置 Blueprint feature 的 compiler capability 当前均为 `planned`。
 - Blueprint inspector 原文经 `blueprintJson` 直接交 Rust 校验，保留旧 typed 参数；
   编辑使旧报告失效，迟到响应绑定请求文本，不写状态。没有开放正式编译入口。

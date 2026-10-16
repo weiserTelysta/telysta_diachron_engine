@@ -6,6 +6,7 @@
 
 pub mod blueprint;
 pub mod data;
+pub mod execution_identity;
 pub mod hash;
 pub mod identity;
 pub mod project;

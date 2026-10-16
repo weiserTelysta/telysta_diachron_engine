@@ -195,7 +195,7 @@ impl fmt::Display for EntityIdError {
 
 impl Error for EntityIdError {}
 
-fn validate_value(value: &str) -> Result<(), EntityIdError> {
+pub(crate) fn validate_value(value: &str) -> Result<(), EntityIdError> {
     let valid = !value.is_empty()
         && value.len() <= 96
         && value
